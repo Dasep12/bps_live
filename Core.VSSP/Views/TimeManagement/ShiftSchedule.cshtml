@@ -1,0 +1,334 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="ShiftSchedule">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group input-group-sm input-daterange mt-1">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="startdateFilter">Schedule</label>
+                        </div>
+                        <input id="startdateFilter" type="text" class="form-control form-control-sm" placeholder="Start date">
+                        <div class="input-group-append">
+                            <span class="fa fa-calendar input-group-text"></span>
+                        </div>
+                        <input id="enddateFilter" type="text" class="form-control form-control-sm border-left-0" placeholder="End date">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridSchedule"></table>
+            <div id="jqGridPagerSchedule"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="createShiftSchedule('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("ShiftSchedulePartial/Create")
+    @Html.Partial("ShiftSchedulePartial/Update")
+
+</section>
+
+<script>
+
+    $(document).ready(function() {
+        startVal    = $('#startdateFilter');
+        endVal      = $('#enddateFilter');
+        startdate   = new Date();
+        enddate     = new Date();
+
+        startdate   = moment(startdate.setDate(startdate.getDate() - 14)).format("MM/DD/Y");
+        enddate     = moment(enddate.setDate(enddate.getDate() + 15)).format("MM/DD/Y");
+
+        if (startVal.val()==="") {
+            startVal.val(startdate)
+        }
+        if (endVal.val() === "") {
+            endVal.val(enddate)
+        }
+
+        loadJQGrid();
+
+    })
+
+    function loadJQGrid() {
+        var colN = [];
+        var colM = [];
+
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+
+        $.ajax({
+            url: '@Url.Action("ShiftScheduleJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                startdate: startdate,
+                enddate: enddate,
+            },
+            success: function (response) {
+
+                var results = response;
+                var gridArrayData = "";
+                // get the first result set, or you can loop trhrough all, assuming that each reuslt set is the same.
+                if (results.length > 0) {
+                    var columnsIn = results[0];
+                    var colNV = "";
+                    var colMV = "";
+                    var colL = "";
+                    var colD = "";
+                    var colI = "";
+
+                    //console.log(columnsIn);
+                    for (var keys in columnsIn) {
+                        //console.log(keys); // here is your column name you are looking for
+                        $.map(results, function (value, key) {
+                            switch (key) {
+                                case 0:
+
+                                    colNV += "'" + value[keys].Key + "',";
+                                    colMV = value[keys].Key;
+                                    if (keys === "0") {
+                                        colD += '"' + colMV + '":' + JSON.stringify(value[keys].Value) + ',';
+                                        colM.push({ label: 'Group Id', name: '' + colMV + '', index: '' + colMV + '', key: true, align: 'center', width: 60, fixed: true, formatter: actionFormatter },);
+                                    } else
+                                    if (keys === "1") {
+                                        colD += '"' + colMV + '":' + JSON.stringify(value[keys].Value) + ',';
+                                        colM.push({ label: 'Group Name', name: '' + colMV + '', index: '' + colMV + '', align: 'left', autoResizing: { minColWidth: 120 }, formatter: actionFormatter },);
+                                    } else
+                                    if (keys === "2") {
+                                        colD += '"' + colMV + '":' + JSON.stringify(value[keys].Value) + ',';
+                                        colM.push({ label: 'Workday', name: '' + colMV + '', index: '' + colMV + '', align: 'center', width: 60, fixed: true, formatter: actionFormatter, reformatAfterEdit: true },);
+                                    } else
+                                    if (keys === "3") {
+                                        colD += '"' + colMV + '":' + JSON.stringify(value[keys].Value) + ',';
+                                        colM.push({ label: 'Holiday', name: '' + colMV + '', index: '' + colMV + '', align: 'center', width: 55, fixed: true, formatter: actionFormatter, reformatAfterEdit: true },);
+                                    } else {
+                                        colL = moment(new Date(colMV)).format("DD MMM Y")
+                                        colI = "X" + moment(new Date(colMV)).format("YMMDD")
+                                        colD += '"' + colMV + '":' + JSON.stringify(value[keys].Value) + ',';
+
+                                        colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', align: 'center', width: 38, fixed: true, formatter: actionFormatter, reformatAfterEdit: true },);
+                                    }
+                                break;
+                            }
+                        });
+                    }
+
+                    var len = colD.length;
+                    colD = colD.substring(0, len - 1);
+
+                    gridArrayData = JSON.parse(JSON.stringify('{' + colD + '}'));
+                    colN.push(colNV);
+                    //console.log(gridArrayData);
+                } else {
+                    console.log("No columns");
+                }
+
+                $("#jqGridSchedule").jqGrid({
+                    url: '@Url.Action("ShiftScheduleJson", "TimeManagement")',
+                    datatype: "json",
+                    mtype: "GET",
+                    postData: {
+                        startdate: startdate,
+                        enddate: enddate,
+                    },
+                    colModel: colM,
+                    gridview: true,
+                    loadonce: true,
+                    pager: '#jqGridPagerSchedule',
+                    rowNum: 20,
+                    rowList: [20, 50, 100],
+                    viewrecords: true,
+                    rownumbers: true,
+                    rownumWidth: 40,
+                    autoresizeOnLoad: true,
+                    autowidth: true,
+                    shrinkToFit: false,
+                    fromServer: false,
+                    hoverrows: false,
+                    beforeSelectRow: function (rowid, e) {
+                        return false;
+                    },
+                    loadComplete: function () {
+                        var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                        for (i = 0; i < l; i++) {
+                            $this.jqGrid('editRow', ids[i], true);
+                        }
+                    },
+                }),
+                    $('#jqGridSchedule').jqGrid('navGrid', '#jqGridPagerSchedule', { search: true, edit: false, add: false, del: false, refresh: false });
+
+            }
+        });
+    }
+
+    function getContent(id,dateval,shift,remarks,obj) {
+
+        var dataContent = "<div>";
+        dataContent += "<label class='text-gray'><b>Events</b></label><br/> " + unescape(remarks) + "<hr/>";
+        dataContent += "<label class='text-gray'><b>Shift</b></label><br/>";
+        dataContent += "<table class='table table-sm table-borderless'>";
+        dataContent += "<tr><td>Group</td><td>:</td><td>" + id + "</td></tr>";
+        dataContent += "<tr><td>Shift</td><td>:</td><td>" + shift + "</td></tr>";
+        dataContent += "</table>";
+        dataContent += "<hr/><ul class='nav w-100'><li>";
+        dataContent += "<a href='#' class='btn btn-sm btn-block btn-success @ViewBag.canUpdate' onclick=\"updateShiftSchedule('" + id + "','" + dateval + "','" + shift + "')\" ><i class='fa fa-pencil'></i> Change Shift</a>";
+        dataContent += "</li></ul></div>";
+        $('#'+obj.id).attr('data-content', dataContent).popover();
+
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        if (cellvalue != null) {
+
+            var id = rowObject.GroupId;
+            var colname = options.colModel.name;
+            var colvalue = cellvalue["Value"];
+            var colbutton = "";
+
+            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'font-weight': 'bold' });
+
+            switch (colname) {
+                case "GroupId":
+                    rowObject.GroupId = colvalue;
+                    return colvalue;
+                    break;
+                case "GroupName":
+                    return colvalue;
+                    break;
+                case "Workday":
+                    return colvalue;
+                    break;
+                case "Holiday":
+                    return colvalue;
+                    break;
+                default:
+
+                    var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(colname)));
+                    var remarks = "No Event.";
+
+                    if (dateEvt.length != 0) {
+
+                        remarks = escape(dateEvt[0].Remarks);
+
+                        if (dateEvt[0].Holidays === true) {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'background': 'red', 'color': 'white', 'font-weight': 'bold' });
+                        } else {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'background': 'green', 'color': 'white', 'font-weight': 'bold' });
+                        }
+
+                    } else {
+                        var dayname = moment(new Date(colname)).format("ddd");
+
+                        if (dayname === "Sat" || dayname === "Sun") {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'color': 'red', 'font-weight': 'bold' });
+                        }
+                    }
+
+                    colbutton += "<a id='" + id + '-' + colname + "' onmousedown=\"getContent('" + id + "','" + colname + "','" + colvalue + "','" + remarks + "',this)\" tabindex='0' class='btn btn-sm btn-light' role='button' data-toggle='popover' ";
+                    colbutton += "data-timeout='2000' data-html='true' title='" + moment(new Date(colname)).format("DD MMM Y") + "' data-content='' >";
+                    colbutton += colvalue;
+                    colbutton += "</a>";
+
+                    return colbutton
+
+                    break;
+            }
+        } else {
+            return "";
+        }
+    }
+
+    $('.input-daterange input').each(function () {
+        $(this).datepicker().on('changeDate', function (e) {
+            $(this).datepicker('hide').nextAll('input').focus();
+        });
+
+    });
+
+    function reloadGridList() {
+
+        location.reload();
+
+    };
+
+    function doSuccess(startdate, enddate, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create schedule from " + startdate + " to " + enddate + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update schedule from " + startdate.CurrentShift + " to " + startdate.NewShift + " has been saved succesfully");
+
+                startVal = $('#startdateFilter').val();
+                endVal = $('#enddateFilter').val();
+
+                $("#jqGridSchedule").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        startdate: startVal,
+                        enddate: endVal,
+                    }
+                }).trigger('reloadGrid');
+
+                break;
+       }
+    }
+
+    function getWorkingDay(dateVal) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { calendardate: dateVal },
+            success: function (response) {
+
+                result = response;
+                //$.each(response, function (i, day) {
+                //    result = day.CalendarDate + ',' + day.DayId + ',' + day.Remarks;
+                //});
+            }
+        })
+
+        return result;
+
+    }
+
+    $(document).ajaxStart(function () {
+        loadblockspinner();
+    })
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

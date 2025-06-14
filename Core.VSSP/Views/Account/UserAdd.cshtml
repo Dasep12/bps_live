@@ -1,0 +1,565 @@
+﻿@model Core.VSSP.Models.UserAddModel
+
+@{
+    ViewBag.Title = "Add User";
+}
+
+<div class="form-group form-group-sm row">
+    @Html.DropDownListFor(model => model.ApprovalTypeList,
+        new SelectList(Model.ApprovalTypeList, "ApprovalLevel", "ApprovalName"),
+        new { @class = "custom-select custom-select-sm", @hidden = "true" })
+</div>
+
+@using (Html.BeginForm("CreateUser", "Account", FormMethod.Post, new { enctype = "multipart/form-data", onsubmit = "validateForm(event)", formaction = "UserList" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-plus-square-o"></i> Add User
+        </div>
+
+        <div class="card-body">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <form id="dlvForm">
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="">
+                                    <br />
+                                    @if (Model.Image != null)
+                                    {
+                                        var base64 = Convert.ToBase64String((byte[])Model.Image);
+                                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                        <img id="img-avatar" src="@imgSrc" class="img-thumbnail" alt="Photo" width="120" height="140" />
+
+                                    }
+                                    else
+                                    {
+                                        <img id="img-avatar" src="~/_VSSPAssets/Images/avatars/blank-user.jpg" class="img-thumbnail" alt="Photo" width="120" height="140" />
+                                    }
+                                    <br /><br />
+                                    <span id="btn-upload" class="btn btn-file btn-outline-dark btn-sm btn-block">
+                                        <i class="fa fa-upload"></i> Upload Photo
+                                        <input type="file" id="output" name="ImageData" accept="image/*" onchange="loadFile(event,'img-avatar')" />
+                                    </span>
+
+                                </div>
+                                <script>
+                                    var loadFile = function (event, id) {
+                                        var Foto = document.getElementById(id);
+                                        Foto.src = URL.createObjectURL(event.target.files[0]);
+                                    };
+                                </script>
+                            </div>
+                            <div class="col-md-8">
+                                @Html.LabelFor(model => model.UserID, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.UserID, new { htmlAttributes = new { @class = "form-control", @Required = true, @onkeypress = "return event.charCode != 32" } })
+                                </div>
+                                @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "password", @Required = true } })
+                                    <div class="input-group-append">
+                                        <button id="btnEye" type="button" class="btn btn-default btn-sm" onclick="passwordVisibility()"><i class="fa fa-eye-slash"></i></button>
+                                    </div>
+                                </div>
+                                @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form-group form-group-sm row">
+                            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "col-md-4 col-control-label ", @style = "padding-top:8px !important" })
+                            <div class="col-md-8">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm row">
+                            @Html.LabelFor(model => model.UserTypeID, htmlAttributes: new { @class = "col-md-4 col-control-label", @style = "padding-top:8px !important" })
+                            <div class="col-md-8">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-user-secret"></i></span>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.UserTypeID,
+                                         new SelectList(Model.UserTypeList, "ID", "UserType"),
+                                         new { @class = "form-control", @Required = true, @onchange = "ReloadGrid();ReloadApprovalGrid();" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm row">
+                            @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "col-md-4 col-control-label", @style = "padding-top:8px !important" })
+                            <div class="col-md-8">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                    </div>
+                                    @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm row">
+                            @Html.LabelFor(model => model.Area, htmlAttributes: new { @class = "col-md-4 col-control-label", @style = "padding-top:8px !important" })
+                            <div class="col-md-8">
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fa fa-map-signs"></i></span>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.Area,
+                                        new SelectList(Model.AreaList, "AreaID", "AreaName"),
+                                        new { @class = "form-control" })
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning mt-4" role="alert">
+                            <b>Confidential Access</b>
+                            <div class="font-small">
+                                Activating this item, it's giving user to access a sensitive and confidential content.
+                                Whenever you need to, be sure to assign access to users.
+                            </div>
+                            <div class="custom-control custom-checkbox ml-1">
+                                @Html.EditorFor(model => model.ConfidentialAccess, new { htmlAttributes = new { @type = "checkbox", @class = "custom-control-input" } })
+                                <label class="custom-control-label" for="ConfidentialAccess">Check this to give an access</label>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm row">
+                            <div class="col-md-12">
+                                <label class="control-label">Transaction Approval</label>
+                                <table id="jqGridApproval"></table>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label class="control-label">Approval Sign</label>
+                                        <br />
+                                        @if (Model.Sign != null)
+                                        {
+                                            var base64 = Convert.ToBase64String((byte[])Model.Sign);
+                                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                            <img id="img-sign" src="@imgSrc" class="img-thumbnail" alt="Photo" width="140" height="120" />
+
+                                        }
+                                        else
+                                        {
+                                            <img id="img-sign" src="~/_VSSPAssets/Images/noimage.png" class="img-thumbnail" alt="Sign" width="140" height="120" />
+                                        }
+                                        <span id="btn-upload" class="btn btn-file btn-outline-dark btn-sm btn-block mt-1">
+                                            <i class="fa fa-upload"></i> Upload Sign
+                                            <input type="file" id="Sign" name="ImageSign" accept="image/*" onchange="loadFile(event,'img-sign')" />
+                                        </span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <div class="col-md-12">
+                            <br />
+                            <table id="jqGridMenu"></table>
+                            <div id="jqGridPagerMenu"></div>
+                            <br />
+                            <div class="form-group">
+                                <input type="hidden" id="UserAccess" name="UserAccess" class="form-control" />
+                                <input type="hidden" id="UserApproval" name="UserApproval" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+        <div class="card-footer bg-gray-active">
+            <button type="submit" class="btn btn-sm btn-primary" style="width:80px">
+                <span class="fa fa-save"></span> Save
+            </button>
+            <a href="@Url.Action("UserManagement","Account")" class="btn btn-sm btn-danger" style="width:80px">
+                <span class="fa fa-remove"></span>
+                Cancel
+            </a>
+            @*@Html.EditorFor(model => model.ReturnAction, new { htmlAttributes = new { @class = "invisible" } })*@
+
+            @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.UserTypeID, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+        </div>
+
+    </div>
+
+}
+
+<script>
+    /* Grid Menu */
+    $(function () {
+
+        var usertype    = document.getElementById("UserTypeID").value;
+        var userid      = document.getElementById("UserID").value;
+
+        $grid = $("#jqGridMenu").jqGrid({
+            url: '@Url.Action("UserMenuListJson", "Account")',
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID  : usertype,
+                userId: "_X_",
+            },
+            colModel: [
+                { label: 'ID', name: 'MenuID', hidden: true, width: 70, fixed: true, align: 'left' },
+                { label: 'Menu Name', name: 'MenuName', autoResizing: { minColWidth: 150 }, align: 'left' },
+                { label: 'Level', name: 'MenuLevel', hidden: true, width: 50, fixed: true, align: 'center' },
+                { label: 'Has Child', name: 'hasChildren', hidden: true, width: 50, fixed: true, align: 'center' },
+                { label: 'Show Menu', name: 'IsActive', formatter: checkFormatter, width: 60, fixed: true, align: 'center' },
+                { label: 'Approval', name: 'NeedApproval', formatter: approvalFormatter, width: 60, fixed: true, align: 'center' },
+                { label: 'Show Data', name: 'CanSee', formatter: checkCrudFormatter, width: 60, fixed: true, align: 'center' },
+                { label: 'Create', name: 'CanCreate', formatter: checkCrudFormatter, width: 60, fixed: true, align: 'center' },
+                { label: 'Update', name: 'CanUpdate', formatter: checkCrudFormatter, width: 60, fixed: true, align: 'center' },
+                { label: 'Delete', name: 'CanDelete', formatter: checkCrudFormatter, width: 60, fixed: true, align: 'center' },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMenu',
+            pgbuttons: false,
+            viewrecords: false,
+            pgtext: "",
+            pginput: false,
+            rowNum: 9999,
+            //viewrecords: true,
+            height: 1000,
+            width: '100%',
+            rownumbers: true,
+            rownumWidth: 40,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+                setGridData("", "");
+            },
+        }),
+
+        $('#jqGridMenu').jqGrid('navGrid', '#jqGridPagerMenu', { search: false, edit: false, add: false, del: false });
+        $("select", "#jqGridMenu").change(function () {
+            alert(this.id);
+        });
+
+        $grid2 = $("#jqGridApproval").jqGrid({
+            url: '@Url.Action("UserMenuListJson", "Account")',
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID: usertype,
+                userId: "_X_",
+                needApproval: true
+            },
+            colModel: [
+                { label: 'ID', name: 'MenuID', key: true, hidden: true, width: 70, fixed: true, align: 'left', sortable: false },
+                { label: 'Level', name: 'ApprovalLevel', hidden: true, sortable: false },
+                { label: 'Menu Name', name: 'MenuName', autoResizing: { minColWidth: 250 }, align: 'left', sortable: false, formatter: trimFormatter },
+                { label: 'Approval Level', name: 'ApprovalLevel', hidden: true, sortable: false },
+                { label: 'Approval', name: 'ApprovalOptiom', width: 210, fixed: true, align: 'center', formatter: approvalCrudFormatter, sortable: false },
+            ],
+            gridview: true,
+            loadonce: true,
+            rowNum: 20,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            height:'100%',
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+
+                setGridApproval("", "");
+                //loadComboApprovalType();
+
+            },
+        });
+
+        function trimFormatter(cellvalue) {
+            return $.trim(cellvalue);
+        }
+        function checkFormatter(cellvalue, options, rowObject) {
+            if (rowObject.hasChildren == false) {
+                idrow = options.rowId;
+                var checked = "";
+                if (cellvalue == true) {
+                    checked = "checked='checked'"
+                }
+                return "<input type='checkbox' " + checked + " value='" + cellvalue + "' disabled /> "
+            } else {
+                return "";
+            }
+        }
+        function checkCrudFormatter(cellvalue, options, rowObject) {
+            if (rowObject.hasChildren == false) {
+                idrow = options.rowId;
+                colname = options.colModel.name;
+                var isActive = rowObject.IsActive;
+                var isdisabled = "";
+                if (isActive === false) {
+                    isdisabled = "disabled";
+                }
+                var checked = "";
+                if (rowObject.IsActive == true) {
+                    checked = "checked='checked'"
+                }
+                return "<input type='checkbox' id='" + idrow + "_" + colname + "' " + checked + " value='" + cellvalue + "' onchange=\"setGridData('" + idrow + "','" + colname + "')\" " + isdisabled +" /> "
+            } else {
+                return "";
+            }
+        }
+
+        function approvalFormatter(cellvalue, options, rowObject) {
+            if (rowObject.hasChildren == false) {
+                idrow = options.rowId;
+                var checked = "";
+                if (cellvalue == true) {
+                    checked = "<span class='text-success'><i class='fa fa-check'></i></span>"
+                } else {
+                    checked = "<span class='text-danger'><i class='fa fa-close'></i></span>"
+                }
+                return checked
+            } else {
+                return "";
+            }
+        }
+        function approvalCrudFormatter(cellvalue, options, rowObject) {
+            if (rowObject.hasChildren == false) {
+                idrow = rowObject.MenuID;
+                userid = $("#UserID").val();
+                colname = options.colModel.name;
+
+                var valData = rowObject.ApprovalLevel;
+                var $options = $("#ApprovalTypeList > option").clone();
+                var newselect = "<select class='custom-select custom-select-sm need-approval' id='select-" + idrow + "' value='" + valData + "' onchange=\"setGridApproval('" + idrow + "','" + colname + "')\" >";
+                newselect += $('<div>').append($options).html();
+                newselect += "<select>";
+
+                return newselect;
+
+            } else {
+                return "";
+            }
+        }
+    });
+
+</script>
+
+<script>
+    function ReloadGrid() {
+
+        var usertype = document.getElementById("UserTypeID").value;
+
+        //recal grid
+        $("#jqGridMenu").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID: usertype,
+            }
+        }).trigger('reloadGrid');
+
+    }
+    function ReloadApprovalGrid() {
+
+        var usertype = document.getElementById("UserTypeID").value;
+        var userid = document.getElementById("UserID").value;
+
+        //recal grid
+        $("#jqGridApproval").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID: usertype,
+                userId: userid,
+                needApproval: true
+            }
+        }).trigger('reloadGrid');
+
+    }
+    function getUserApproval(menuid,userid) {
+
+        var data;
+
+        $.ajax({
+            url: '@Url.Action("UserApprovalTypeListJson", "Account")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                userid : userid,
+                menuid : menuid
+            },
+            success: function (response) {
+
+                if (response.length != 0) {
+                    data = response;
+                } else {
+                    data = "";
+                }
+            }
+        })
+
+        return data;
+
+    }
+    $(document).ready(function () {
+        ReloadGrid();
+    })
+
+    function passwordVisibility() {
+      var x = document.getElementById("Password");
+      if (x.type === "password") {
+          x.type = "text";
+          $('#btnEye').html("<i class='fa fa-eye'></i>");
+      } else {
+          x.type = "password";
+          $('#btnEye').html("<i class='fa fa-eye-slash'></i>");
+      }
+    }
+
+    function setGridData(rowid, colname) {
+        $("#UserAccess").val(getGridData());
+    }
+
+    function getGridData() {
+        var data = $("#jqGridMenu").jqGrid('getGridParam', 'data');
+        var jsdata = "[";
+        for (var i = 0; i < data.length; i++) {
+            if (data[i].MenuLevel != "1") {
+                id = parseInt(i) + 1;
+                var idsee    = "#" + id + "_CanSee";
+                var idcreate = "#" + id + "_CanCreate";
+                var idupdate = "#" + id + "_CanUpdate";
+                var iddelete = "#" + id + "_CanDelete";
+                jsdata += '{"MenuId" : "' + data[i].MenuID + '",';
+                jsdata += '"CanSee" : "' + $(idsee).is(':checked') + '",';
+                jsdata += '"CanCreate" : "' + $(idcreate).is(':checked') + '",';
+                jsdata += '"CanUpdate" : "' + $(idupdate).is(':checked') + '",';
+                jsdata += '"CanDelete" : "' + $(iddelete).is(':checked') + '"},';
+            }
+        }
+        jsdata += "]";
+
+        return jsdata;
+    }
+
+    function setGridApproval(rowid) {
+        parameters =
+        {
+            ApprovalLevel: $("#select-"+rowid).val(),
+        }
+        $("#jqGridApproval").jqGrid('setRowData', rowid, parameters);
+        $("#UserApproval").val(getGridApproval());
+    }
+
+    function getGridApproval() {
+        var data = $("#jqGridApproval").jqGrid('getGridParam', 'data');
+        var jsdata = "[";
+        for (var i = 0; i < data.length; i++) {
+            id = "#select-" + data[i].MenuID;
+            $(id).val(data[i].ApprovalLevel);
+
+            jsdata += '{"MenuId" : "' + data[i].MenuID + '",';
+            jsdata += '"ApprovalLevel" : "' + data[i].ApprovalLevel + '"},';
+        }
+        jsdata += "]";
+
+        return jsdata;
+    }
+
+    function validateForm(event) {
+        var nameRegex = /^[a-zA-Z\-_1234567890]+$/;
+        var validUsername = $("#UserID").val().match(nameRegex);
+        if (validUsername == null) {
+            alert("Your User Id is not valid. Only characters A-Z, a-z, 1234567890 and '-_' are  acceptable.");
+            $("#UserID").focus();
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        } else {
+            var userid = $("#UserID").val();
+            $.ajax({
+                url: '@Url.Action("GetUserJson", "Account")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: {
+                    id : userid,
+                },
+                success: function (response) {
+
+                    if (response.length != 0) {
+
+                        $("#UserID").focus();
+                        alert("User ID " + response.UserID + " already used by another user")
+                        event.preventDefault();
+                        event.stopPropagation();
+                        return false;
+
+                    }
+                }
+            })
+        }
+
+        var email = $("#Email").val();
+        $.ajax({
+            url: '@Url.Action("GetUserJson", "Account")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                id : email,
+            },
+            success: function (response) {
+
+                if (response.length != 0) {
+
+                    $("#Email").focus();
+                    alert("Email " + response.Email + " already used by another user")
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+
+                }
+            }
+        })
+
+    }
+
+</script>

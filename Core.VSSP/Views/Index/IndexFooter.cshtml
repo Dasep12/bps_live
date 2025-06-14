@@ -1,0 +1,63 @@
+﻿<!-- Footer -->
+<footer class="bg3 p-t-25">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-lg-3 p-b-20">
+                <div class="container d-flex h-100">
+                    <div class="row justify-content-center align-self-center">
+                        @if (Session["AppLogo"] != null)
+                        {
+                            var base64 = Convert.ToBase64String((byte[])Session["AppLogo"]);
+                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                            <img id="image-logo" src="@imgSrc" />
+                        }
+                        else
+                        {
+                            <img id="image-logo" src="~/_VSSPAssets/Images/noimage.png" />
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-3 p-b-15">
+                <h4 class="stext-301 cl0 p-b-10">
+                    Portal
+                </h4>
+
+                <ul>
+                    <li class="p-b-5">
+                        <a href="@Url.Action("Policy","Index")" class="stext-107 cl7 hov-cl1 trans-04" style="text-decoration:none">
+                            Policy
+                        </a>
+                    </li>
+
+                    <li class="p-b-5">
+                        <a href="@Url.Action("Terms","Index")" class="stext-107 cl7 hov-cl1 trans-04" style="text-decoration:none">
+                            Terms & Condition
+                        </a>
+                    </li>
+
+                    <li class="p-b-5">
+                        <a href="@Url.Action("Faq","Index")" class="stext-107 cl7 hov-cl1 trans-04" style="text-decoration:none">
+                            Frequently Ask Question
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+
+
+    </div>
+    <div class="p-t-10 p-b-10 deep-dark-bg">
+        <p class="stext-107 text-secondary txt-center p-t-13">
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script> All rights reserved |
+            <a href="@Session["CompWebsites"].ToString()" class="text-secondary" style="text-decoration:none">@Session["CompName"].ToString()</a> @*| @Session["IpAddress"].ToString()*@
+
+            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+        </p>
+    </div>
+</footer>

@@ -1,0 +1,520 @@
+﻿
+<div class="modal animated fadeIn" id="crudLineNGModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudLineForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-LineId" class="col-sm-4 col-form-label col-form-label-sm">Line Id</label>
+                                <div class="col-md-8">
+                                    <select class="custom-select custom-select-sm" id="crud-LineId" name="LineId" value="" onchange="loadComboCustomer('@ViewBag.AreaId')" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-LineShiftId" class="col-sm-4 col-form-label col-form-label-sm">Shift Id</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-LineShiftId" name="LineShiftId" value="" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-LineCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-LineCustomerId" name="LineCustomerId" onchange="loadComboPart()" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-LinePartNumber" class="col-sm-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-LinePartNumber" name="LinePartNumber" value="" required>
+                                        <option value="">*Choose Part Number</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <hr class="mt-0 mb-0" />
+                            <button id="btn-addDefectListDetail" type="button" class="btn btn-sm btn-link ml-0 pl-0" onclick="crudDefectListDetail('Create','*')"><span class="fa fa-plus"></span> New Defect</button>
+                            <table id="jqGridCrudDefectList"></table>
+                        </div>
+
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudLineNGDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudLineNGForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-list-alt"></span> Defect List </h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-LineDefectNumber" class="col-sm-4 col-form-label col-form-label-sm">Defect #</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-LineDefectNumber" placeholder="Auto Generate">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-LineDefectId" class="col-sm-4 col-form-label col-form-label-sm">Defect Type</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-LineDefectId" required>
+                                        <option value="">*Choose Defect</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-LineQtyNG" class="col-sm-4 col-form-label col-form-label-sm">Defect Qty</label>
+                                <div class="col-sm-8">
+                                    <input type="number" min="1" class="form-control form-control-sm" id="crud-LineQtyNG" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="form-radio" class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-md-8 col-form-label">
+                                    <div class="form-check form-check-inline pt-0 mr-1">
+                                        <input class="form-check-input" type="radio" id="crud-LineRepair" name="form-radio" value="">
+                                        <label class="form-check-label small" for="crud-LineRepair">Repair</label>
+                                    </div>
+                                    <div class="form-check form-check-inline pt-0 mr-1">
+                                        <input class="form-check-input" type="radio" id="crud-LineScrap" name="form-radio" value="">
+                                        <label class="form-check-label small" for="crud-LineScrap">Scrap</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="crudLineNGError"></div>
+                    <input hidden type="text" id="LineAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudLineNG" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudLineNG(action, id) {
+
+        document.getElementById("crudLineForm").reset();
+        $('#crudLineForm').removeClass('was-validated');
+        $('#crudLineNGError').html("");
+        $('#crud-LineQtyNG').removeAttr('disabled');
+
+        $("#btn-crudLineNG").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        disableAllInput("crudLineForm")
+
+        var LineShiftId = $("#active-shiftid").val();
+        var LineCustomerId = $("#active-customerid").val();
+        var LinePartNumber = $("#active-partnumber").val();
+
+        $("#crud-LineId").val(kanbanlineid).change();
+        $("#crud-LineShiftId").val(LineShiftId);
+        $("#crud-LineCustomerId").val(LineCustomerId).change();
+        $("#crud-LinePartNumber").val(LinePartNumber);
+
+        if (LinePartNumber === '') {
+            alert("No kanban scan.");
+            return false;
+        } else {
+            $(".selectpicker").selectpicker("refresh");
+        }
+
+        //if (id != "*") {
+
+        //    var Grid = $('#jqGridMain'),
+        //        selectedRowId = id,
+        //        LinePartNumber = Grid.jqGrid('getCell', selectedRowId, 'LinePartNumber');
+
+        //    //Logo = $("#logo-" + id).attr("src");
+
+        //    $("#crud-LineId").val(id);
+        //    $("#crud-LinePartNumber").val(LinePartNumber);
+        //    $("#crud-LineQtyNG").val(AreaId).change();
+
+        //}
+
+        switch (action) {
+            case "Create":
+                $("#crud-LineId").attr("disabled", true);
+                $("#crud-LineShiftId").attr("disabled", true);
+                $("#crud-LineCustomerId").attr("disabled", true);
+                $("#crud-LinePartNumber").attr("disabled", true);
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-plus-square"></span> List N/G Part');
+                $('#crudLineNGModal').modal('show');
+                $("#crud-LinePartNumber").focus();
+                break;
+            case "Update":
+                $("#crud-LineId").attr("disabled", true);
+                $("#crud-LineShiftId").attr("disabled", true);
+                $("#crud-LineCustomerId").attr("disabled", true);
+                $("#crud-LinePartNumber").attr("disabled", true);
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-pencil-square"></span> List N/G Part');
+                $('#crudLineNGModal').modal('show');
+                $("#crud-LineQtyNG").focus();
+                break;
+            case "Delete":
+                $("#btn-crudLineNG").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-trash"></span> List N/G Part');
+                $('#crudLineNGModal').modal('show');
+                break
+        }
+
+        reloadGridDefectList();
+    }
+
+    $('#crudLineNGModal').on('hidden.bs.modal', function () {
+        $("#btn-scan").click();
+    });
+
+    $('#crud-LineId').change(function () {
+        $('#crudLineNGError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudLineNGForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+                    var prodDate = proddate;
+
+                    $.ajax({
+                        url: '@Url.Action("crudPartNG", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            prodnumber: $("#crud-LineDefectNumber").val(),
+                            proddate: prodDate,
+                            shiftid: shiftid,
+                            lineid: $("#crud-LineId").val(),
+                            customerid: $("#crud-LineCustomerId").val(),
+                            partnumber: $("#crud-LinePartNumber").val(),
+                            ngqty: $("#crud-LineQtyNG").val(),
+                            defectid: $("#crud-LineDefectId").val(),
+                            repair: $("#crud-LineRepair").prop("checked"),
+                            scrap: $("#crud-LineScrap").prop("checked"),
+                            uid: "@ViewBag.UserId",
+                            formAction: $("#LineAction").val(),
+                        },
+                        success: function (data) {
+                            $('#crudLineNGDetailModal').modal('hide');
+                            reloadGridDefectList();
+                            GetProdLatestSummary();
+                            var act = $("#LineAction").val();
+                            act = act.toLowerCase();
+                            showToast("Success", "N/G Part " + data + " has been " + act + " succesfully");
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudLineNGError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboLine();
+
+    function loadComboLine() {
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-LineId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Line")
+                );
+                $.each(response, function (i, line) {
+                    $(id).append(
+                        $('<option></option>').val(line.LineId).html(line.LineName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboCustomer(lineid) {
+
+        var id = "#crud-LineCustomerId";
+
+        $.ajax({
+            url: '@Url.Action("MLOKCustomerList", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { lineid: lineid},
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+
+                $.each(response, function (i, Customer) {
+                    $(id).append(
+                        $('<option></option>').val(Customer.CustomerId).html(Customer.CustomerName)
+                    );
+                });
+            }
+        })
+
+        $(id).selectpicker("refresh");
+    }
+    function loadComboPart() {
+
+        lineid = $("#crud-LinePartNumber").val();
+        custid = $("#crud-LineCustomerId").val();
+        var id = "#crud-LinePartNumber";
+
+        $.ajax({
+            url: '@Url.Action("BillOfMaterialsJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter: lineid, customerid: custid },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part Number")
+                );
+
+                $.each(response, function (i, part) {
+                    $(id).append(
+                        $('<option></option>').val(part.PartNumber).html('[' + part.UniqueNumber + '] ' + part.PartNumber + ' : ' + part.PartName)
+                    );
+                });
+            }
+        })
+
+        $(id).selectpicker("refresh");
+    }
+
+    loadComboDefect("");
+    function loadComboDefect(categoryid) {
+
+        $.ajax({
+            url: '@Url.Action("DefectListJson", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                categoryid: categoryid
+            },
+            success: function (response) {
+
+                var id = "#crud-LineDefectId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Defect")
+                );
+
+                $.each(response, function (i, def) {
+                    $(id).append(
+                        $('<option></option>').val(def.DefectId).html(def.DefectName)
+                    );
+                });
+            }
+        })
+    }
+
+</script>
+
+<script>
+
+    function crudDefectListDetail(action, id) {
+
+        document.getElementById("crudLineNGForm").reset();
+        $('#crudLineNGForm').removeClass('was-validated');
+        $('#crudLineNGError').html("");
+        $("#btn-crudLineNG").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        enableAllInput("crudLineNGForm")
+        disableAllInput("crudLineForm")
+
+        $("#LineAction").val(action);
+        $("#crud-LineDefectId").val(id);
+        $('#crud-LineRepair').attr("checked", true);
+        $('#crud-LineScrap').attr("checked", false);
+
+        if (id != "*") {
+            var $grid = $("#jqGridCrudDefectList"),
+                rowData = $grid.jqGrid("getRowData", id),
+                DefectNumber = rowData.ProductionNumber,
+                DefectId = rowData.DefectId,
+                DefectQty = rowData.Qty_NG,
+                Repair = rowData.Repair.includes("success"),
+                Scrap = rowData.Scrap.includes("success");
+
+            $("#crud-LineDefectNumber").val(DefectNumber);
+            $("#crud-LineDefectId").val(DefectId);
+            $("#crud-LineQtyNG").val(DefectQty);
+            $("#crud-LineRepair").prop("checked", Repair);
+            $("#crud-LineScrap").prop("checked", Scrap);
+
+        } else {
+            $("#crud-LineQtyNG").val(0);
+        }
+        switch (action) {
+            case "Create":
+                $("#crud-LineDefectNumber").attr("disabled", true);
+                $("#crudLineNGDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudLineNGDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> New Defect');
+                $('#crudLineNGDetailModal').modal('show');
+                $("#crud-LineDefectId").val("").focus();
+                break;
+            case "Update":
+                $("#crud-LineDefectNumber").attr("disabled", true);
+                $("#crud-LineDefectId").attr("disabled", true);
+                $("#crudLineNGDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudLineNGDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Defect');
+                $('#crudLineNGDetailModal').modal('show');
+                $("#crud-LineQtyNG").focus();
+                break;
+            case "Delete":
+                disableAllInput("crudLineNGForm")
+                $("#btn-crudLineNG").html("<span class='fa fa-trash'></span> Delete Defect");
+                $("#crudLineNGDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudLineNGDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' Defect');
+                $('#crudLineNGDetailModal').modal('show');
+                break;
+        }
+
+    }
+
+    $(function () {
+        $gridDefectListSequence = $("#jqGridCrudDefectList").jqGrid({
+            url: "@Url.Action("NGProcessListJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                productionNumber: "*",
+                productionDate: moment(new Date()).format("Y-M-D"),
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: actionDefectListFormatter },
+                { label: 'Number', name: 'ProductionNumber', align: 'left', hidden: true, width: 50 },
+                { label: 'DefectId', name: 'DefectId', align: 'left', hidden: true, width: 50 },
+                { label: 'Defect', name: 'DefectName', align: 'left', fixed: true, width: 128, sortable: false, sortable: false },
+                { label: 'Qty NG', name: 'Qty_NG', align: 'center', fixed: true, width: 40, sortable: false },
+                { label: 'Repair', name: 'Repair', align: 'center', fixed: true, width: 50, sortable: false, formatter: activeFormatter },
+                { label: 'Scrap', name: 'Scrap', align: 'center', fixed: true, width: 50, sortable: false, formatter: activeFormatter },
+                { label: 'Edited', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            height: 250,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            //autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //caption:"Kanban Sequence Relation",
+            loadComplete: function () {
+            },
+            ondblClickRow: function (rowid) {
+                crudDefectListDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudDefectList').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'Repair', numberOfColumns: 2, titleText: 'Status' },
+            ]
+        });
+    });
+
+    function reloadGridDefectList() {
+
+        var shiftId = $("#crud-LineShiftId").val();
+        var lineid = $("#crud-LineId").val();
+        var customerid = $("#crud-LineCustomerId").val();
+        var partnumber = $("#crud-LinePartNumber").val();
+
+        $("#jqGridCrudDefectList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                productionNumber: null,
+                productionDate: moment(new Date()).format("Y-M-D"),
+                lineId: lineid,
+                customerId: customerid,
+                partNumber: partnumber,
+                shiftId: shiftId,
+                userid: '@ViewBag.UserId'
+            }
+        }).trigger('reloadGrid');
+
+
+    };
+
+    function actionDefectListFormatter(cellvalue, options, rowObject) {
+
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudDefectListDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.DefectName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudDefectListDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.DefectName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+</script>
+

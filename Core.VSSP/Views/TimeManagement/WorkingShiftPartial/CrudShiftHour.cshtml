@@ -1,0 +1,320 @@
+﻿
+<div class="modal animated fadeIn" id="crudWorkingShiftHourModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudWorkingShiftHourForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title Group</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftHourGroupId" class="col-form-label col-form-label-sm">Group Id</label>
+                            <select type="text" class="form-control form-control-sm" id="crud-WorkingShiftHourGroupId" onchange="loadComboShiftMaster()" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftHourShiftId" class="col-form-label col-form-label-sm">Shift Id</label>
+                            <select type="text" class="form-control form-control-sm" id="crud-WorkingShiftHourShiftId" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftHourDayId" class="col-form-label col-form-label-sm">Day</label>
+                            <select type="text" class="form-control form-control-sm" id="crud-WorkingShiftHourDayId" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="crud-WorkingShiftStartTime" class="col-form-label col-form-label-sm">Start Time</label>
+                        <div class="col-md-12">
+                            <div class="input-group input-group-sm date" id="datetimepickerStart" data-date-format="HH:mm" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                                <input type="text" id="crud-WorkingShiftHourStartTime" class="form-control form-control-sm datetimepicker-input" data-target="#datetimepickerStart" readonly required/>
+                                <div class="input-group-append" data-target="#datetimepickerStart" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label for="crud-WorkingShiftEndTime" class="col-form-label col-form-label-sm">End Time</label>
+                        <div class="col-md-12">
+                            <div class="input-group input-group-sm date" id="datetimepickerEnd" data-date-format="HH:mm" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                                <input type="text" id="crud-WorkingShiftHourEndTime" class="form-control form-control-sm bg-white datetimepicker-input" data-target="#datetimepickerEnd" readonly required/>
+                                <div class="input-group-append" data-target="#datetimepickerEnd" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="crudWorkingShiftHourError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudWorkingShiftHour" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="WorkingShiftHourAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationWorkingShiftHourModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationWorkingShiftHour" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteWorkingShiftHour()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudWorkingShiftHour(action){
+
+        document.getElementById("crudWorkingShiftHourForm").reset();
+        $('#crudWorkingShiftHourForm').removeClass('was-validated');
+        $('#crudWorkingShiftHourError').html("");
+        $("#btn-crudWorkingShiftHour").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-WorkingShiftHourShiftId").removeAttr("disabled");
+        $("#crudWorkingShiftHourForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#WorkingShiftHourAction").val(action);
+
+        var groupid = $("#WorkingShiftGroupId").val();
+        var shiftid = $("#ShiftSelected").val();
+        var dayid = $("#DaySelected").val();
+
+        if (groupid === "*") {
+            groupid = "";
+        }
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridHour'),
+                selectedRowId   = dayid,
+                starttime       = Grid.jqGrid('getCell', selectedRowId, 'StartTime'),
+                endtime         = Grid.jqGrid('getCell', selectedRowId, 'EndTime');
+
+            //console.log(starttime + " " + endtime);
+
+            $("#crud-WorkingShiftHourGroupId").val(groupid);
+            loadComboShiftMaster();
+            $("#crud-WorkingShiftHourShiftId").val(shiftid);
+            $("#crud-WorkingShiftHourDayId").val(dayid);
+            $("#crud-WorkingShiftHourStartTime").val(starttime);
+            $("#crud-WorkingShiftHourEndTime").val(endtime);
+
+        } else {
+            $("#crud-WorkingShiftHourGroupId").val(groupid);
+            loadComboShiftMaster();
+            $("#crud-WorkingShiftHourShiftId").val(shiftid);
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudWorkingShiftHourModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudWorkingShiftHourModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Shift Master');
+                $('#crudWorkingShiftHourModal').modal('show');
+                $("#crud-WorkingShiftHourGroupId").focus();
+                break;
+            case "Update":
+                $("#crud-WorkingShiftHourGroupId").attr("disabled", true);
+                $("#crud-WorkingShiftHourShiftId").attr("disabled", true);
+                $("#crud-WorkingShiftHourDayId").attr("disabled", true);
+                $("#crudWorkingShiftHourModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudWorkingShiftHourModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Shift Master');
+                $('#crudWorkingShiftHourModal').modal('show');
+                $("#crud-WorkingShiftHourDayId").focus();
+                break;
+            case "Delete":
+                $("#crudWorkingShiftHourForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-WorkingShiftHourGroupId").attr("disabled", true);
+                $("#crud-WorkingShiftHourShiftId").attr("disabled", true);
+                $("#crud-WorkingShiftHourDayId").attr("disabled", true);
+                $("#btn-crudWorkingShiftHour").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudWorkingShiftHourModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudWorkingShiftHourModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Shift Master');
+                $('#crudWorkingShiftHourModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-WorkingShiftHourDayId').change(function () {
+        $('#crudWorkingShiftHourError').html("");
+    });
+
+    $(function () {
+        $('#datetimepickerStart').datetimepicker({
+            autoclose: true,
+            format: 'HH:mm'
+        });
+        $('#datetimepickerEnd').datetimepicker({
+            autoclose: true,
+            format: 'HH:mm'
+        });
+
+        loadComboShiftDay();
+
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudWorkingShiftHourForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudWorkingShiftHourForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var groupid     = $("#crud-WorkingShiftHourGroupId").val();
+                        var shiftid     = $("#crud-WorkingShiftHourShiftId").val();
+                        var dayid       = $("#crud-WorkingShiftHourDayId").val();
+                        var starttime   = $("#crud-WorkingShiftHourStartTime").val();
+                        var endtime     = $("#crud-WorkingShiftHourEndTime").val();
+                        var formaction  = $("#WorkingShiftHourAction").val();
+
+                        //console.log(starttime + ' ' + endtime);
+
+                        $.ajax({
+                            url: '@Url.Action("crudWorkingShiftHour", "TimeManagement")',
+                            type: 'POST',
+                            dataType: "JSON",
+                            async: false,
+                            data: {
+                                GroupId: groupid,
+                                ShiftId: shiftid,
+                                DayId: dayid,
+                                StartTime: starttime,
+                                EndTime: endtime,
+                                formAction: formaction
+                            },
+                            success: function (data) {
+                                $('#crudWorkingShiftHourModal').modal('hide');
+                                var act = $("#WorkingShiftHourAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.dayid + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.dayid + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.dayid + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGridWorkingHour();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudWorkingShiftHourError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+    function loadComboShiftMaster() {
+
+        var groupid = $("#crud-WorkingShiftHourGroupId").val();
+        if (groupid === "") {
+            groupid = "*";
+        }
+
+        $.ajax({
+            url: '@Url.Action("WorkingShiftMasterJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { groupid: groupid },
+            success: function (response) {
+
+                var id = "#crud-WorkingShiftHourShiftId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Shift")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.ShiftId).html(WorkingShift.ShiftId + ' : ' + WorkingShift.ShiftName)
+                    );
+                });
+            }
+        })
+    }
+
+
+    function loadComboShiftDay() {
+
+        $.ajax({
+            url: '@Url.Action("WorkingDayJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-WorkingShiftHourDayId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Day")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.DayId).html(WorkingShift.DayId + ' : ' + WorkingShift.DayName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+

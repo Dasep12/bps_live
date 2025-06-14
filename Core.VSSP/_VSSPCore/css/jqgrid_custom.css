@@ -1,0 +1,78 @@
+﻿/* CUSTOM JQGRID STYLE */
+.ui-jqgrid {
+    width: 100% !important;
+}
+
+.ui-jqgrid tbody {
+    cursor: pointer;
+}
+
+.ui-jqgrid tbody .badge {
+    margin:0 !important;
+    /*padding: 2px 4px 2px 4px !important;*/
+    font-size: 9px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.19);
+}
+
+.ui-jqgrid .ui-widget-header {
+    background-color: whitesmoke;
+    background-image: none;
+    min-height: 30px
+}
+
+th.ui-th-column div {
+    white-space: normal !important;
+    height: auto !important;
+    padding: 2px;
+}
+
+
+/*.ui-jqdialog {
+    position: absolute;
+    display: none;*/
+/*width: 400px !important;*/
+/*padding: .2em !important;
+    font-size: 11px;
+    overflow: visible;
+    margin-left: 20%;
+}*/
+/*.ui-jqdialog {
+    display: none;
+    width: 300px;
+    position: absolute;
+    padding: .2em;
+    font-size: 11px;
+    overflow: visible;
+}*/
+.ui-jqdialog{
+    min-height:60px;
+}
+.ui-jqdialog-title {
+    position: absolute;
+    padding: 0 !important;
+    margin: 0 !important;
+    top: 0 !important;
+}
+.ui-jqdialog-titlebar {
+    background-color: white;
+    border:none !important;
+    border-radius:unset !important;
+    border-bottom:solid 0.25px #808080 !important;
+}
+.ui-jqdialog a {
+    height: 20px !important;
+    padding-top: 1px !important;
+}
+.ui-jqdialog-titlebar-close:hover {
+    border: none !important;
+    border-radius: unset !important;
+    background: none !important;
+}
+.ui-jqdialog-titlebar-close::after {
+    border: none !important;
+    border-radius: unset !important;
+    background: none !important;
+}
+.ui-state-checkboxinvisible [type="checkbox"] {
+    display: none;
+}

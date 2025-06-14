@@ -1,0 +1,235 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterPartRawLineMaterialModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterPartRawLineMaterialForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Part Line Raw Material</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterRawLineMaterial" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterRawLineMaterial" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterRawLine" type="button" class="btn btn-secondary" onclick="reloadGridFilterRawLine()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterLineId" class="control-label">Line:</label>
+                                    <div class="input-group input-group-sm">
+                                        <select id="searchFilterLineId" class="form-control custom-select custom-select-sm" onchange="reloadGridFilterRawLine()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="jqGridSearchRawLine"></table>
+                                <div id="jqGridPagerSearchRawLine"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterPartRawLineMaterialError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterPartRawLineMaterial" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataRawLine()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterRawLineMaterial").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterRawLine").button().click();
+        }
+    });
+
+    var uniqueFilter = "";
+    var filterData = $('#searchFilterRawLineMaterial').val();
+    $gridFilterRawLine = $("#jqGridSearchRawLine").jqGrid({
+        url: '@Url.Action("RawMaterialsByLineListJson", "Suppliers")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+            lineid: "*",
+        },
+        colModel: [
+            { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 50, formatter: statusFormatterRawLine },
+            { label: 'Key', name: 'RawMaterialKey', key: true, hidden: true },
+            { label: 'Price', name: 'Price', align: 'center', fixed: true, width: 50, formatter: statusFormatterPrice },
+            { label: 'Supplier Id', name: 'SupplierId', align: 'left', fixed: true, width: 80 },
+            { label: 'Part Number', name: 'PartNumber', align: 'left', fixed: true, width: 100 },
+            { label: 'Supplier Part Number', name: 'PartNumberSupplier', align: 'left', fixed: true, width: 100 },
+            { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 60 },
+            { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 150 } },
+            { label: 'Model', name: 'PartModel', align: 'left', fixed: true, width: 80 },
+            { label: 'Area', name: 'AreaId', align: 'center', fixed: true, width: 80 },
+            { label: 'Location', name: 'LocationId', align: 'center', fixed: true, width: 80 },
+            { label: 'Category', name: 'CategoryId', align: 'center', fixed: true, width: 80 },
+            { label: 'Units', name: 'UnitLevel1', align: 'center', fixed: true, width: 80 },
+            { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 80 },
+            { label: 'Unit Qty', name: 'UnitQty', fixed: true, width: 50, align: 'center' },
+            { label: 'Min Stock', name: 'MinStock', fixed: true, width: 50, align: 'center' },
+            { label: 'Max Stock', name: 'MaxStock', fixed: true, width: 50, align: 'center' },
+            { label: 'Stock Kanban', name: 'StockKanban', fixed: true, width: 50, align: 'center' },
+            { label: 'Stock Qty', name: 'StockQty', fixed: true, width: 50, align: 'center' },
+            { label: 'Packing', name: 'PackingId', align: 'center', fixed: true, width: 80 },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchRawLine',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+        ondblClickRow: function () {
+            selectFilterDataRawLine();
+        },
+    });
+
+    $('#jqGridSearchRawLine').jqGrid('navGrid', '#jqGridPagerSearchRawLine', { search: false, edit: false, add: false, del: false });
+
+    function statusFormatterRawLine(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+    function statusFormatterPrice(cellvalue, options, rowObject) {
+        if (cellvalue > 0) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridFilterRawLine() {
+        var filterData = $('#searchFilterRawLineMaterial').val();
+        var lineid = $("#searchFilterLineId").val();
+        var uniqueNotInclude = "";
+        var partNotInclude = "";
+
+        //$.each(uniqueFilter, function (key, value) {
+        //    uniqueNotInclude += '{ "UniqueNumber" : "' + value + '"},';
+        //});
+
+        //uniqueNotInclude = "[" + uniqueNotInclude.substring(0,uniqueNotInclude.length-1) + "]";
+
+        $.each(uniqueFilter, function (key, value) {
+            partNotInclude += '{ "PartNumber" : "' + value + '"},';
+        });
+
+        partNotInclude = JSON.parse("[" + partNotInclude.substring(0, partNotInclude.length - 1) + "]");
+
+        $("#jqGridSearchRawLine").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+                lineid: lineid,
+                PartNotInclude: JSON.stringify(partNotInclude),
+                //UniqueNotInclude: uniqueNotInclude,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterPartRawLineMaterial(lineid, uniqueNotIn) {
+
+        if (lineid != "" && lineid != "*") {
+            $("#searchFilterLineId").attr("disabled", true);
+        } else {
+            $("#searchFilterLineId").removeAttr("disabled");
+        }
+
+        uniqueFilter = uniqueNotIn;
+        loadComboLine(lineid);
+        reloadGridFilterRawLine();
+
+        $('#filterPartRawLineMaterialModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataRawLine () {
+        var selRowId = $('#jqGridSearchRawLine').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchRawLine').jqGrid("getRowData", selRowId);
+            filterResult = rowData.PartNumber;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterPartRawLineMaterialModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+
+    }
+
+    loadComboLine("*");
+    function loadComboLine(lineid) {
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async:false,
+            data: {},
+            success: function (response) {
+
+                var id = "#searchFilterLineId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("*").html("*Choose Line")
+                );
+                $.each(response, function (i, line) {
+                    $(id).append(
+                        $('<option></option>').val(line.LineId).html(line.LineName)
+                    );
+                });
+
+                $(id).val(lineid);
+            }
+        })
+    }
+</script>

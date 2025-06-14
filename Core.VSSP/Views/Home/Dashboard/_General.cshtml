@@ -1,0 +1,485 @@
+﻿<style>
+    .table-responsive {
+        height: 405px;
+        overflow: auto;
+    }
+
+    thead tr:nth-child(1) th {
+        position: sticky;
+        background-color:aliceblue;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+<div class="row">
+    <div class="col-sm-6 col-lg-3">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-facebook">
+                <i class="fa fa-building"></i>
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body">
+                <div>
+                    <div id="customersValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Customers</div>
+                </div>
+                <div>
+                    <div id="finishgoodsValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Finish Goods</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-light-blue-gradient">
+                <i class="fa fa-line-chart"></i>
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body">
+                <div>
+                    <div id="salesValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Sales</div>
+                </div>
+                <div>
+                    <div id="deliveryValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Delivery</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-xing">
+                <i class="fa fa-industry"></i>
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body">
+                <div>
+                    <div id="suppliersValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Suppliers</div>
+                </div>
+                <div>
+                    <div id="rawmaterialsValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Raw Materials</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-blue-gradient">
+                <i class="fa fa-shopping-cart"></i>
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body">
+                <div>
+                    <div id="purchaseValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Purchase</div>
+                </div>
+                <div>
+                    <div id="receivingValue" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Receiving</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="icon-pie-chart"></i> Transaction
+                <div class="card-header-actions">
+                    <a href="#" class="card-header-action btn-setting" onclick="generalTransaction()">
+                        <i class="icon-refresh"></i>
+                    </a>
+                    <a href="#" class="card-header-action btn-minimize" data-toggle="collapse" data-target="#collapseTransaction" aria-expanded="true" aria-controls="collapseTransaction">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body collapse show" id="collapseTransaction" style="padding:0">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card border-0">
+                            <div class="card-body">
+                                <div class="chart">
+                                    <canvas id="transactionChart" style="width: 100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card border-0">
+                            <div class="card-body">
+                                <h6 id="labelGeneralProgress" class="text-muted font-weight-bold">PROGRESS ACTIVITY</h6>
+                                <hr />
+                                <div class="text-muted text-uppercase font-weight-bold">
+                                    Sales
+                                    <div id="salesPercent" class="pull-right text-muted">0%</div>
+                                </div>
+                                <div class="progress progress-xs my-1">
+                                    <div id="salesProgress" class="progress-bar bg-blue-gradient" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">Sales progress with actual delivery</small>
+                                <hr />
+                                <div class="text-muted text-uppercase font-weight-bold">
+                                    Purchase
+                                    <div id="purchasePercent" class="pull-right text-muted">0%</div>
+                                </div>
+                                <div class="progress progress-xs my-1">
+                                    <div id="purchaseProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">Purchase progress with actual receiving</small>
+                                <hr />
+                                <div class="text-muted text-uppercase font-weight-bold">
+                                    MLOK Capacity
+                                    <div id="stockPercent" class="pull-right text-muted">0%</div>
+                                </div>
+                                <div class="progress progress-xs my-1">
+                                    <div id="stockProgress" class="progress-bar bg-yahoo" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <small class="text-muted">Raw Materials Kanban with maximum stock</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <div id="total-warning-stock">
+                    <i class="fa fa-cubes"></i> Stock Warning Info
+                    <div class="card-header-actions">
+                        <a href="#stock-info" class="card-header-action btn-setting" onclick="generalStockInfo()">
+                            <i class="icon-refresh"></i>
+                        </a>
+                    </div>
+                </div>                
+            </div>
+            <div class="card-body collapse show" id="stock-info" style="padding:2px; height:410px">
+                <div class="table-responsive">
+                    <table id="tableGeneralStock" class="table table-hover border-0 auto-scroll-row" >
+                        <thead class="font-weight-bold">
+                            <tr>
+                                <th>NO.</th>
+                                <th>UNQ</th>
+                                <th class="text-left">PART #</th>
+                                <th class="text-left">PART NAME</th>
+                                <th>KANBAN</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+    </div>
+    <div id="partialUpcomingReceiving" class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="fa fa-calendar"></i> Upcoming Receiving
+                <div class="card-header-actions" style="padding:0 !important; margin: 0 !important">
+                    <div class="input-group input-group-sm" style="padding:0 !important; margin: 0 !important">
+                        <input id="upcomingReceivingFilterDate" type="date" class="form-control form-control-sm datepicker" required />
+                        <div class="input-group-append">
+                            <a id="btn-upcoming-receiving" href="#upcoming-receiving" class="btn btn-sm btn-secondary" onclick="generalUpcoming()">
+                                <i class="icon-refresh"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="upcoming-receiving">
+                @{
+                    Html.RenderAction("GeneralUpcomingReceiving", "Home");
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function generalUpcoming() {
+        var date = $('#upcomingReceivingFilterDate').val();
+        $("#upcoming-receiving").load('@Url.Action("GeneralUpcomingReceiving", "Home")' + '?filterdate=' + date)
+    }
+
+    $(document).ready(function () {
+        if ($('#upcomingReceivingFilterDate').val() === "") {
+            var date = moment(new Date()).format('YYYY-MM-DD');
+            $('#upcomingReceivingFilterDate').val(date);
+        }
+        generalUpcoming();
+    })
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        brandCardSummary();
+    })
+
+    function brandCardSummary() {
+
+        $.ajax ({
+            url: "@Url.Action("GeneralBrandCardJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async: false,
+            data: {
+                monthyear: $("#monthFilter").val(),
+            },
+            success: function (data) {
+                //console.log (data);
+                transactions = data;
+
+                $.each(transactions, function (index, data) {
+                    $("#suppliersValue").html(parseFloat(data.TotalSupplier).toLocaleString());
+                    $("#customersValue").html(parseFloat(data.TotalCustomer).toLocaleString());
+                    $("#rawmaterialsValue").html(parseFloat(data.TotalRawMaterial).toLocaleString());
+                    $("#finishgoodsValue").html(parseFloat(data.TotalFinishGoods).toLocaleString());
+                    $("#salesValue").html(parseFloat(data.TotalSales).toLocaleString());
+                    $("#deliveryValue").html(parseFloat(data.TotalDelivery).toLocaleString());
+                    $("#purchaseValue").html(parseFloat(data.TotalPurchase).toLocaleString());
+                    $("#receivingValue").html(parseFloat(data.TotalReceive).toLocaleString());
+                });
+
+                $('.counter').counterUp()
+
+            }
+        });
+    }
+</script>
+
+<script>
+
+    var chartTransaction;
+
+    $(document).ready(function () {
+        generalTransactionChart();
+    });
+
+    function generalTransaction() {
+        generalTransactionChart();
+        generalMlokProgress();
+
+    }
+
+    function generalTransactionChart() {
+
+        $('#labelGeneralProgress').html("PROGRESS ACTIVITY " + $("#monthFilter").val());
+        $('#salesProgress').attr("style", "width:0%").attr("aria-valuenow", 0);
+        $('#salesPercent').html('0%');
+        $('#purchaseProgress').attr("style", "width:0%").attr("aria-valuenow", 0);
+        $('#purchasePercent').html('0%');
+
+        $.ajax ({
+            url: "@Url.Action("GeneralTransactionChartJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async:false,
+            data: {
+                monthyear: $("#monthFilter").val(),
+            },
+            success: function (data) {
+                //console.log (data);
+                transactions = data;
+                var aLabels = [];
+                var aData = [];
+                var bData = [];
+                var cData = [];
+                var dData = [];
+                var percentSales = 0;
+                var percentPurchase = 0;
+
+                $.each(transactions, function (index, data) {
+                    aLabels.push(data.MonthTrans);
+                    aData.push(data.TotalSales);
+                    bData.push(data.TotalDelivery);
+                    cData.push(data.TotalPurchase);
+                    dData.push(data.TotalReceive);
+
+                    if (data.MonthTrans === $("#monthFilter").val()) {
+                        percentSales = data.PercentSales;
+                        percentPurchase = data.PercentPurchase;
+
+                        $('#salesProgress').attr("style", "width:" + percentSales + "%").attr("aria-valuenow", percentSales);
+                        $('#salesPercent').html(percentSales + '%');
+                        $('#purchaseProgress').attr("style", "width:" + percentPurchase + "%").attr("aria-valuenow", percentPurchase);
+                        $('#purchasePercent').html(percentPurchase + '%');
+
+                    }
+                });
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: aLabels,
+                        datasets: [
+                            {
+                                label: 'Sales        ',
+                                borderColor: 'rgba(3, 198, 252, 0.5)',
+                                backgroundColor: 'rgba(0, 204, 255, 0.4)',
+                                fill: true,
+                                data: aData
+                            },
+                            {
+                                label: 'Delivery    ',
+                                borderColor: 'rgba(255, 64, 0, 0.5)',
+                                backgroundColor: 'rgba(255, 153, 0, 0.4)',
+                                fill: true,
+                                data: bData
+                            },
+                            {
+                                label: 'Purchase ',
+                                borderColor: 'rgba(128, 128, 128, 0.5)',
+                                backgroundColor: 'rgba(134, 129, 121, 0.4)',
+                                fill: true,
+                                data: cData
+                            },
+                            {
+                                label: 'Receiving ',
+                                borderColor: 'rgba(128, 0, 255, 1)',
+                                backgroundColor: 'rgba(191, 0, 255, 0.4)',
+                                fill: true,
+                                data: dData
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            display: true
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            position: 'nearest'
+                        },
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: false
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    display: false
+                                }
+                            }]
+                        }
+                    }
+                }
+
+                if (chartTransaction) {
+                    chartTransaction.destroy();
+                }
+                var ctx = document.getElementById('transactionChart').getContext('2d');
+                chartTransaction = new Chart(ctx, config);
+            }
+        });
+    }
+</script>
+<script>
+
+    $(document).ready(function () {
+        generalStockInfo();
+        generalMlokProgress();
+    });
+
+    function generalMlokProgress() {
+
+        $('#stockProgress').attr("style", "width:0%").attr("aria-valuenow", 0);
+        $('#stockPercent').html('0%');
+
+        $.ajax({
+            url: "@Url.Action("GeneralMLOKCapacityJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async: false,
+            data: {},
+            success: function (data) {
+
+                $.each(data, function (index, stock) {
+                    percentStock = stock.PercentStock;
+
+                    $('#stockProgress').attr("style", "width:" + percentStock + "%").attr("aria-valuenow", percentStock);
+                    $('#stockPercent').html(percentStock + '%');
+
+                });
+            }
+        });
+    }
+
+    function generalStockInfo() {
+        $.ajax ({
+            url: "@Url.Action("GeneralStockInfoJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            data: {},
+            success: function (data) {
+
+                var rowStock = '';
+                var status = '';
+                var nom = 0;
+                $('#stockStatus').remove();
+
+                if (data.length > 0) {
+                    $.each(data, function (index, stock) {
+
+                        if (parseFloat(stock.StockKanban) < parseFloat(stock.MinStock)) {
+                            status = '<span class="badge badge-danger font-weight-normal" style="top:-2px !important; font-size: 11px"><i class="fa fa-minus-circle"></i> Minus</span>'
+                        } else
+                        if (parseFloat(stock.StockKanban) > parseFloat(stock.MaxStock)) {
+                            status = '<span class="badge badge-warning"><i class="fa fa-exclamation-circle"></i> Over</span>'
+                        }
+
+                        nom = parseInt(index) + 1;
+
+                        rowStock += '<tr id="sr'+ nom +'">';
+                        rowStock += '<td class="text-center">' + nom + '</td>';
+                        rowStock += '<td class="text-center">' + stock.UniqueNumber + '</td>';
+                        rowStock += '<td>' + stock.PartNumber + '</td>';
+                        rowStock += '<td>' + stock.PartName + '</td>';
+                        rowStock += '<td class="text-center">' + stock.StockKanban.toFixed(0) + '</td>';
+                        rowStock += '<td class="text-center">' + status + '</td>';
+                        rowStock += '</tr>';
+                    });
+
+                    $("#total-warning-stock").find('span').remove();
+                    if (nom != 0) {
+                        var badge = " <span class='badge badge-warning'>" + nom + "</span>";
+                        $("#total-warning-stock").append(badge);
+                    }
+
+                    $('#tableGeneralStock').removeAttr('hidden');
+                    $('#tableGeneralStock tbody').html(rowStock);
+                    autoscrollrows();
+
+                } else {
+                    $('#tableGeneralStock').attr('hidden', true);
+                    var rowStock = '';
+                    status = '<div id="stockStatus" class="col-md-12 text-center text-success mt-auto mb-auto" style="top:150px"><h1><i class="icon-check"></i></h1> <h4>Stock Quantity Safed</h4></div>';
+                    $('#stock-info').append(status);
+                }
+            }
+        });
+    }
+</script>
+

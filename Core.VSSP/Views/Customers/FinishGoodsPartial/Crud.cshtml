@@ -1,0 +1,1486 @@
+﻿
+<div class="modal animated fadeIn" id="crudFinishGoodListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudFinishGoodForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabcrudFinishGood" role="tab">
+                                FinishGood
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" data-toggle="tab" href="#tabcrudRelation" role="tab">
+                                Pass Through Raw Material
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger @ViewBag.canConfidential" data-toggle="tab" href="#tabcrudPrice" role="tab">
+                                Price
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabcrudFinishGood" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodCustomerId" name="CustomerId" value="" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodPartNumber" class="col-sm-4 col-form-label col-form-label-sm">Part Number</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-FinishGoodPartNumber" name="PartNumber" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodPartNumberCustomer" class="col-sm-4 col-form-label col-form-label-sm" style="padding-right:0 !important">Part Number Cust.</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-FinishGoodPartNumberCustomer" name="PartNumberCustomer" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodUniqueNumber" class="col-sm-4 col-form-label col-form-label-sm">Unique Number</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-FinishGoodUniqueNumber" name="UniqueNumber" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodPartName" class="col-sm-4 col-form-label col-form-label-sm">Part Name</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-FinishGoodPartName" name="PartName" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodCustomerUnitModel" class="col-sm-4 col-form-label col-form-label-sm">Model</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-FinishGoodCustomerUnitModel" name="Unit Model" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodCategoryId" class="col-sm-4 col-form-label col-form-label-sm">Category</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodCategoryId" name="CategoryId" required></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodUnitLevel1" class="col-sm-4 col-form-label col-form-label-sm">Units</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodUnitLevel1" name="UnitLevel1" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodUnitLevel2" class="col-sm-4 col-form-label col-form-label-sm">Qty / Unit</label>
+                                        <div class="col-md-3" style="padding-right:0 !important">
+                                            <input type="number" min="1" class="form-control form-control-sm" id="crud-FinishGoodUnitQty" name="UnitQty" required>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodUnitLevel2" name="UnitLevel2" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-RawMaterialPackingId" class="col-sm-4 col-form-label col-form-label-sm">Packing</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-RawMaterialPackingId" name="PackingId" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodAreaId" class="col-sm-4 col-form-label col-form-label-sm">Area</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodAreaId" name="AreaId" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodLocationId" class="col-sm-4 col-form-label col-form-label-sm">Location</label>
+                                        <div class="col-sm-8">
+                                            <select class="custom-select custom-select-sm" id="crud-FinishGoodLocationId" name="LocationId" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodPassThrough" class="col-sm-4 col-form-label col-form-label-sm">PassThrough</label>
+                                        <div class="col-sm-8">
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-FinishGoodPassThrough" onclick="showHidePassThrough()">
+                                                <label class="custom-control-label" for="crud-FinishGoodPassThrough"><small> [Yes/No]</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-FinishGoodActived" class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                                        <div class="col-sm-8">
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-FinishGoodActived">
+                                                <label class="custom-control-label" for="crud-FinishGoodActived"><small> Actived</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tabcrudPrice" role="tabpanel">
+                            <button id="btn-addPrice" type="button" class="btn btn-sm btn-outline-dark" onclick="crudPriceList('Create','*')"><span class="fa fa-plus"></span> Add New Price</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudPrice"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudRelation" role="tabpanel">
+                            <button id="btn-addRelation" type="button" class="btn btn-sm btn-outline-dark" onclick="crudRelationList('Create','*',)"><span class="fa fa-plus"></span> Add New Raw Material</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudRelation"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudFinishGoodListError"></div>
+                    <input type="hidden" id="FinishGoodId" />
+                    <input type="hidden" id="FinishGoodAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudFinishGoodList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudPriceListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="PriceAction" />
+            <input type="hidden" id="PriceId" />
+            <input type="hidden" id="PriceRowStatus" />
+
+            <form id="crudPriceForm" class="needs-validation" novalidate>
+                <input type="text" class="form-control form-control-sm" id="crud-PriceCustomerId" hidden>
+                <input type="text" class="form-control form-control-sm" id="crud-PricePartNumber" hidden>
+
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Price</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-PriceStartDate" class="col-form-label col-form-label-sm">Start Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-PriceStartDate" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-PriceEndDate" class="col-form-label col-form-label-sm">End Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-PriceEndDate">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-PriceAmount" class="col-form-label col-form-label-sm">Price</label>
+                                <input type="number" min="1" class="form-control form-control-sm" id="crud-PriceAmount" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudPriceListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudPriceList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudRelationListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="RelationAction" />
+            <input type="hidden" id="RelationId" />
+            <input type="hidden" id="RelationRowStatus" />
+
+            <form id="crudRelationForm" class="needs-validation" novalidate>
+                <input type="text" class="form-control form-control-sm" id="crud-RelationCustomerId" hidden>
+                <input type="text" class="form-control form-control-sm" id="crud-RelationPartNumber" hidden>
+
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Relation</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @*<div class="form-group form-group-sm">
+                                    <label for="crud-RelationPartNumberRawMaterial" class="col-form-label col-form-label-sm">Raw Material</label>
+                                    <div class="row">
+                                        <div class="col-md-3" style="padding-right:0 !important">
+                                            <div class="input-group input-group-sm btn-block">
+                                                <div class="input-group-prepend">
+                                                    <label class="input-group-text" for="crud-RelationSupplierId">
+                                                        <i class="fa fa-filter"></i>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-9" style="padding-left: 0 !important">
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="form-group form-group-sm">
+                                <label for="crud-RelationSupplierId" class="col-form-label col-form-label-sm">Supplier</label>
+                                <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-RelationSupplierId" name="CustomerId" onchange="loadComboRawMaterial('*')" required></select>
+                                @*<select class="custom-select custom-select-sm" id="crud-RelationSupplierId" onchange="loadComboRawMaterial('*')" required></select>*@
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-RelationPartNumberRawMaterial" class="col-form-label col-form-label-sm">Raw Material</label>
+                                <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-RelationPartNumberRawMaterial" required></select>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-RelationQtyUsage" class="col-form-label col-form-label-sm">Usage Qty</label>
+                                <input type="number" min="0.01" class="form-control form-control-sm" id="crud-RelationQtyUsage" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-RelationStartDate" class="col-form-label col-form-label-sm">Start Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-RelationStartDate" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-RelationEndDate" class="col-form-label col-form-label-sm">End Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-RelationEndDate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudRelationListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudRelationList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudFinishGoodList(action, id) {
+
+        document.getElementById("crudFinishGoodForm").reset();
+        $('#crudFinishGoodForm').removeClass('was-validated');
+        $('#crudFinishGoodListError').html("");
+        $('#btn-addPrice').removeAttr('disabled');
+        $('#btn-addRelation').removeAttr('disabled');
+        $('a[href="#tabcrudFinishGood"]').click()
+        $("#btn-crudFinishGoodList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-FinishGoodPassThrough").removeAttr("checked").removeAttr("disabled");
+        $("#crud-FinishGoodActived").removeAttr("checked").removeAttr("disabled");
+        $("#crud-FinishGoodUnitLevel2").html("").append($('<option></option>').val("").html("*Choose Unit"));
+        $("#crud-FinishGoodLocationId").html("").append($('<option></option>').val("").html("*Choose Location"));
+
+        $("#crudFinishGoodForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#FinishGoodId").val(id);
+        $("#FinishGoodAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                CustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                CustomerUnitModel = Grid.jqGrid('getCell', selectedRowId, 'CustomerUnitModel'),
+                PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber'),
+                PartNumberCustomer = Grid.jqGrid('getCell', selectedRowId, 'PartNumberCustomer'),
+                UniqueNumber = Grid.jqGrid('getCell', selectedRowId, 'UniqueNumber'),
+                PartName = Grid.jqGrid('getCell', selectedRowId, 'PartName'),
+                CategoryId = Grid.jqGrid('getCell', selectedRowId, 'CategoryId'),
+                PackingId = Grid.jqGrid('getCell', selectedRowId, 'PackingId'),
+                AreaId = Grid.jqGrid('getCell', selectedRowId, 'AreaId'),
+                LocationId = Grid.jqGrid('getCell', selectedRowId, 'LocationId'),
+                UnitLevel1 = Grid.jqGrid('getCell', selectedRowId, 'UnitLevel1'),
+                UnitLevel2 = Grid.jqGrid('getCell', selectedRowId, 'UnitLevel2'),
+                UnitQty = Grid.jqGrid('getCell', selectedRowId, 'UnitQty'),
+                PassThrough = Grid.jqGrid('getCell', selectedRowId, 'PassThrough');
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'IsActived');
+
+            loadComboUnit(UnitLevel1);
+            loadComboLocation(AreaId);
+
+            $("#crud-FinishGoodCustomerId").val(CustomerId);
+            $("#crud-FinishGoodCustomerUnitModel").val(CustomerUnitModel);
+            $("#crud-FinishGoodPartNumber").val(PartNumber);
+            $("#crud-FinishGoodPartNumberCustomer").val(PartNumberCustomer);
+            $("#crud-FinishGoodUniqueNumber").val(UniqueNumber);
+            $("#crud-FinishGoodPartName").val(PartName);
+            $("#crud-FinishGoodCategoryId").val(CategoryId);
+            $("#crud-FinishGoodUnitLevel1").val(UnitLevel1);
+            $("#crud-FinishGoodUnitLevel2").val(UnitLevel2);
+            $("#crud-FinishGoodUnitQty").val(UnitQty);
+            $("#crud-RawMaterialPackingId").val(PackingId);
+            $("#crud-FinishGoodAreaId").val(AreaId);
+            $("#crud-FinishGoodLocationId").val(LocationId);
+            if (PassThrough.includes("success")) {
+                $("#crud-FinishGoodPassThrough").attr("checked", true);
+            } else {
+                $("#crud-FinishGoodPassThrough").removeAttr("checked");
+            }
+            if (Actived.includes("success")) {
+                $("#crud-FinishGoodActived").attr("checked", true);
+            } else {
+                $("#crud-FinishGoodActived").removeAttr("checked");
+            }
+
+        }
+
+        showHidePassThrough();
+
+        reloadGridPrice(CustomerId, PartNumber);
+        reloadGridRelation(CustomerId, PartNumber);
+
+        switch (action) {
+            case "Create":
+                $("#crud-FinishGoodActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudFinishGoodListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudFinishGoodListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudFinishGoodListModal').modal('show');
+                $("#crud-FinishGoodCustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-FinishGoodCustomerId").attr("disabled","true");
+                $("#crud-FinishGoodPartNumber").attr("readonly", true);
+                $("#crudFinishGoodListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudFinishGoodListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudFinishGoodListModal').modal('show');
+                $("#crud-FinishGoodPartName").focus();
+                break;
+            case "Delete":
+                $("#crudFinishGoodForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crudFinishGoodForm select").attr("disabled", true);
+                $("#crud-FinishGoodPassThrough").attr("disabled", true);
+                $("#crud-FinishGoodActived").attr("disabled", true);
+                $('#btn-addPrice').attr('disabled', true);
+                $('#btn-addRelation').attr('disabled', true);
+                $("#btn-crudFinishGoodList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudFinishGoodListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudFinishGoodListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudFinishGoodListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudPriceList(action, id) {
+        document.getElementById("crudPriceForm").reset();
+        $('#crudPriceForm').removeClass('was-validated');
+        $('#crudPriceListError').html("");
+        $("#btn-crudPriceList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudPriceForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-PriceReceiveOrder").removeAttr("disabled");
+
+        $("#PriceAction").val(action);
+        $("#PriceId").val(id);
+        var custid = $("#crud-FinishGoodCustomerId").val();
+        var partnumber = $("#crud-FinishGoodPartNumber").val();
+
+        if (id != "*") {
+            var rowData = $("#jqGridCrudPrice").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                CustomerId = custid,
+                PartNumber = partnumber,
+                PriceStartDate = moment(new Date(rowData.StartDate)).format('YYYY-MM-DD'),
+                PriceEndDate = moment(new Date(rowData.EndDate)).format('YYYY-MM-DD'),
+                PriceAmount = rowData.Price;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#PriceRowStatus").val(RowStatus);
+            $("#crud-PriceCustomerId").val(CustomerId);
+            $("#crud-PricePartNumber").val(PartNumber);
+            $("#crud-PriceStartDate").val(PriceStartDate);
+            $("#crud-PriceEndDate").val(PriceEndDate);
+            $("#crud-PriceAmount").val(PriceAmount);
+
+        }
+
+        switch (action) {
+            case "Create":
+                if (custid === "" || partnumber === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Customer Id and Part Number before add Price.</small></div>'
+                    $('#crudFinishGoodListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-PriceCustomerId").val(custid);
+                $("#crud-PricePartNumber").val(partnumber);
+                $("#crudPriceListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudPriceListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Price');
+                $('#crudPriceListModal').modal('show');
+                $("#crud-PriceStartDate").focus();
+                break;
+            case "Update":
+                $("#crud-PriceStartDate").attr("readonly",true);
+                $("#crudPriceListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudPriceListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title Price');
+                $('#crudPriceListModal').modal('show');
+                $("#crud-PriceEndDate").focus();
+                break;
+            case "Delete":
+                $("#crudPriceForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crud-PriceReceiveOrder").attr("disabled", true);
+                $("#btn-crudPriceList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudPriceListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudPriceListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title Price');
+                $('#crudPriceListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudRelationList(action, id) {
+        document.getElementById("crudRelationForm").reset();
+        $('#crudRelationForm').removeClass('was-validated');
+        $('#crudRelationListError').html("");
+        $("#btn-crudRelationList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudRelationForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-RelationReceiveOrder").removeAttr("disabled");
+
+        $("#RelationAction").val(action);
+        $("#RelationId").val(id);
+
+        var custid = $("#crud-FinishGoodCustomerId").val();
+        var partnumber = $("#crud-FinishGoodPartNumber").val();
+
+        if (id != "*") {
+            var rowData = $("#jqGridCrudRelation").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                CustomerId = custid,
+                PartNumber = partnumber,
+                SupplierId = rowData.SupplierId,
+                RelationPartNumberRawMaterial = rowData.PartNumberRawMaterial,
+                RelationStartDate = moment(new Date(rowData.StartDate)).format('YYYY-MM-DD'),
+                RelationEndDate = moment(new Date(rowData.EndDate)).format('YYYY-MM-DD'),
+                RelationQtyUsage = rowData.QtyUsage;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#RelationRowStatus").val(RowStatus);
+            $("#crud-RelationCustomerId").val(CustomerId);
+            $("#crud-RelationPartNumber").val(PartNumber);
+            $("#crud-RelationSupplierId").val(SupplierId).change().attr("disabled", true);
+            $("#crud-RelationPartNumberRawMaterial").val(RelationPartNumberRawMaterial).attr("disabled", true);
+            $("#crud-RelationQtyUsage").val(RelationQtyUsage);
+            $("#crud-RelationStartDate").val(RelationStartDate).attr("disabled", true);
+            $("#crud-RelationEndDate").val(RelationEndDate);
+
+        }
+
+        $("#crud-RelationSupplierId").selectpicker('refresh');
+        $("#crud-RelationPartNumberRawMaterial").selectpicker('refresh');
+
+        switch (action) {
+            case "Create":
+                if (custid === "" || partnumber === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Customer Id and Part Number before add Relation.</small></div>'
+                    $('#crudFinishGoodListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-RelationCustomerId").val(custid);
+                $("#crud-RelationPartNumber").val(partnumber);
+                $("#crudRelationListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudRelationListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Raw Material');
+                $('#crudRelationListModal').modal('show');
+                $("#crud-RelationPartNumberSupplierId").focus();
+                break;
+            case "Update":
+                $("#crudRelationListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudRelationListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title Raw Material');
+                $('#crudRelationListModal').modal('show');
+                $("#crud-RelationQtyUsage").focus();
+                break;
+            case "Delete":
+                $("#crudRelationForm input,select").each(function () {
+                    $(this).attr("readonly",true).attr("disabled",true);
+                });
+                $("#crud-RelationReceiveOrder").attr("disabled", true);
+                $("#btn-crudRelationList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudRelationListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudRelationListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title Raw Material');
+                $('#crudRelationListModal').modal('show');
+                break
+        }
+
+    }
+
+    //PRICE
+    $(document).ready(function () {
+        $(function () {
+            $("#crudPriceForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+                //$(this).validate();
+                //console.log(resValid);
+
+                $("#crudPriceForm input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+                        var startdate = $('#crud-PriceStartDate').val();
+                        var enddate = $('#crud-PriceEndDate').val();
+                        var action = $('#PriceAction').val();
+                        var rowStatus = $('#PriceRowStatus').val();
+                        var alreadyInput = validationAlreadyInput(action, $("#PriceId").val(), startdate, enddate);
+
+                        $("#jqGridCrudPrice")[0].grid.beginReq();
+
+                        switch (action) {
+                            case "Create":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Price in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active price on range start and end date, please check carefully before creating @ViewBag.Title Price.</small></div>'
+                                    $('#crudPriceListError').html(errMsg);
+
+                                    $("#jqGridCrudPrice")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    parameters =
+                                    {
+                                        rowID: $("#crud-PriceStartDate").val(),
+                                        initdata: {
+                                            RowStatus: action,
+                                            PriceId: $("#crud-PriceStartDate").val(),
+                                            CustomerId: $("#crud-PriceCustomerId").val(),
+                                            PartNumber: $("#crud-PricePartNumber").val(),
+                                            StartDate: $("#crud-PriceStartDate").val(),
+                                            EndDate: $("#crud-PriceEndDate").val(),
+                                            Price: $("#crud-PriceAmount").val(),
+                                        },
+                                        position: "last",
+                                    }
+
+                                    $("#jqGridCrudPrice").jqGrid('addRow', parameters);
+                                }
+
+                                break;
+
+                            case "Update":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Price in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active price on range start and end date, please check carefully before creating @ViewBag.Title Price.</small></div>'
+                                    $('#crudPriceListError').html(errMsg);
+
+                                    $("#jqGridCrudPrice")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    var rowid = $("#PriceId").val();
+
+                                    if (rowStatus != "New") {
+                                        rowStatus = action
+                                    } else {
+                                        rowStatus = "Create"
+                                    }
+
+                                    var sdate = moment(new Date($("#crud-PriceStartDate").val())).format("DD MMM YYYY");
+                                    var edate = $("#crud-PriceEndDate").val();
+                                    if (edate != "") {
+                                        edate = moment(new Date($("#crud-PriceEndDate").val())).format("DD MMM YYYY");
+                                    } else {
+                                        edate = null;
+                                    }
+                                    //alert(edate);
+
+                                    parameters =
+                                    {
+                                        RowStatus: rowStatus,
+                                        StartDate: sdate,
+                                        EndDate: edate,
+                                        Price: $("#crud-PriceAmount").val(),
+                                    }
+
+                                    $("#jqGridCrudPrice").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#PriceId").val();
+                                var sdate = moment(new Date($("#crud-PriceStartDate").val())).format("DD MMM YYYY");
+
+                                if (rowStatus === "New") {
+                                    $('#jqGridCrudPrice').jqGrid('delRowData', rowid);
+                                } else {
+                                    parameters =
+                                    {
+                                        StartDate: sdate,
+                                        RowStatus: action,
+                                    }
+                                    $("#jqGridCrudPrice").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+                        }
+
+                        $("#jqGridCrudPrice")[0].grid.endReq();
+                        $('#crudPriceListModal').modal('hide');
+
+                    }
+
+                }, 250);
+
+            });
+        });
+    });
+
+    //RAW MATERIAL
+    $(document).ready(function () {
+        $(function () {
+            $("#crudRelationForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+                //$(this).validate();
+                //console.log(resValid);
+
+                $("#crudRelationForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+                        var PartNumberRawMaterial = $('#crud-RelationPartNumberRawMaterial').val();
+                        var Supplier = $("#crud-RelationSupplierId").val();
+                        var action = $('#RelationAction').val();
+                        var rowStatus = $('#RelationRowStatus').val();
+
+                        $("#jqGridCrudRelation")[0].grid.beginReq();
+
+                        switch (action) {
+                            case "Create":
+
+                                var alreadyInput = validationAlreadyInputRaw(Supplier,PartNumberRawMaterial);
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Relation in ' + PartNumberRawMaterial + '!</b><br/>Already created, please check carefully before creating @ViewBag.Title Raw Material.</small></div>'
+                                    $('#crudRelationListError').html(errMsg);
+
+                                    $("#jqGridCrudRelation")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    parameters =
+                                    {
+                                        rowID: $("#crud-RelationPartNumberRawMaterial").val(),
+                                        initdata: {
+                                            RowStatus: action,
+                                            RelationId: $("#crud-RelationPartNumberRawMaterial").val(),
+                                            CustomerId: $("#crud-RelationCustomerId").val(),
+                                            PartNumber: $("#crud-RelationPartNumber").val(),
+                                            SupplierId: $("#crud-RelationSupplierId").val(),
+                                            PartNumberRawMaterial: $("#crud-RelationPartNumberRawMaterial").val(),
+                                            QtyUsage: $("#crud-RelationQtyUsage").val(),
+                                            StartDate: $("#crud-RelationStartDate").val(),
+                                            EndDate: $("#crud-RelationEndDate").val(),
+                                        },
+                                        position: "last",
+                                    }
+
+                                    $("#jqGridCrudRelation").jqGrid('addRow', parameters);
+                                }
+
+                                break;
+
+                            case "Update":
+
+                                var rowid = $("#RelationId").val();
+
+                                if (rowStatus != "New") {
+                                    rowStatus = action
+                                } else {
+                                    rowStatus = "Create"
+                                }
+
+                                var sdate = moment(new Date($("#crud-RelationStartDate").val())).format("DD MMM YYYY");
+                                var edate = $("#crud-RelationEndDate").val();
+                                if (edate != "") {
+                                    edate = moment(new Date($("#crud-RelationEndDate").val())).format("DD MMM YYYY");
+                                } else {
+                                    edate = null;
+                                }
+                                var PartNumberRawMaterial = $("#crud-RelationPartNumberRawMaterial").val();
+
+                                parameters =
+                                {
+                                    RowStatus: rowStatus,
+                                    QtyUsage: $("#crud-RelationQtyUsage").val(),
+                                    StartDate: sdate,
+                                    EndDate: edate,
+                                }
+
+                                $("#jqGridCrudRelation").jqGrid('setRowData', rowid, parameters);
+
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#RelationId").val();
+                                var sdate = moment(new Date($("#crud-RelationStartDate").val())).format("DD MMM YYYY");
+
+                                if (rowStatus === "New") {
+                                    $('#jqGridCrudRelation').jqGrid('delRowData', rowid);
+                                } else {
+                                    parameters =
+                                    {
+                                        StartDate: sdate,
+                                        RowStatus: action,
+                                    }
+                                    $("#jqGridCrudRelation").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+                        }
+
+                        $("#jqGridCrudRelation")[0].grid.endReq();
+                        $('#crudRelationListModal').modal('hide');
+
+                    }
+
+                }, 250);
+
+            });
+        });
+    });
+
+    function validationAlreadyInput(action, id, valstart, valend) {
+        var result = false;
+
+        var grid = $('#jqGridCrudPrice');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            rowStatus = rowData['RowStatus'].split('>');
+            rowStartDate = moment(new Date(rowData['StartDate'])).format('YYYY-MM-DD');
+            rowEndDate = moment(new Date(rowData['EndDate'])).format('YYYY-MM-DD');
+            valStartDate = moment(new Date(valstart)).format('YYYY-MM-DD');
+            valEndDate = moment(new Date(valend)).format('YYYY-MM-DD');
+
+            if (rowStatus != "") {
+                rowStatus = rowStatus[1].split('<');
+                rowStatus = rowStatus[0];
+            }
+
+            if (rowEndDate === 'Invalid date') {
+                rowEndDate = moment(new Date(valstart)).add(-1, "days").format('YYYY-MM-DD');
+            }
+            if (valEndDate == 'Invalid date') {
+                valEndDate = valStartDate;
+            }
+
+            switch (action) {
+                case "Create":
+                    if (rowStartDate === valStartDate || (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    } else {
+
+
+                        if (rowData['EndDate'].length <= 1) {
+
+                            if (rowStatus != "New") {
+                                rowStatus = "Update"
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                StartDate: moment(rowStartDate).format("DD MMM YYYY"),
+                                EndDate: moment(rowEndDate).format("DD MMM YYYY"),
+                                RowStatus: rowStatus,
+                            }
+                            $("#jqGridCrudPrice").jqGrid('setRowData', rows[i], parameters);
+                        }
+                    }
+
+                    break;
+                case "Update":
+                    if (rows[i] != id && (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    }
+                    break;
+            }
+
+        }
+
+        return result;
+
+    };
+
+    function validationAlreadyInputRaw(supplier,id) {
+        var result = false;
+
+        var grid = $('#jqGridCrudRelation');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            if (rowData.SupplierId === supplier && rowData.PartNumberRawMaterial === id) {
+                result = true;
+            }
+        }
+
+        return result;
+
+    };
+
+    function validationPart(action, customerid, partnumber, uniquenumber) {
+
+        var result = false;
+
+         $.ajax({
+            url: '@Url.Action("FinishGoodsListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                searchFilter: "validator",
+                FormAction: action,
+                CustomerId: customerid,
+                PartNumber: partnumber,
+                //UniqueNumber:uniquenumber request dewi 2021-02-02 bisa double unique part export & local
+            },
+            success: function (response) {
+                var numfound = 0;
+                var partresult, uniqueresult;
+                var errMsg = "";
+                $('#crudFinishGoodListError').html("");
+
+                $.each(response, function (i, part) {
+                    numfound += 1;
+                    partresult = part.PartNumber;
+                    uniqueresult = part.UniqueNumber;
+                });
+
+                if (parseInt(numfound) == 0) {
+                    result = true;
+                } else {
+
+                    if (partnumber === partresult) {
+                        errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Part Number!</b><br/>Already used part number for this customer.</small></div>'
+                        $('#crudFinishGoodListError').append(errMsg);
+
+                        $('a[href="#tabcrudFinishGood"]').click();
+                        $('#crud-FinishGoodPartNumber').focus();
+                    }
+                    if (uniquenumber === uniqueresult) {
+                        errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Unique Number!</b><br/>Already used unique number in another part number.</small></div>'
+                        $('#crudFinishGoodListError').append(errMsg);
+
+                        $('a[href="#tabcrudFinishGood"]').click();
+                        $('#crud-FinishGoodUniqueNumber').focus();
+                    }
+
+                    result = false;
+                }
+             },
+             error: function (xhr, desc, err) {
+                 result = false;
+                 alert(eval(xhr.responseText));
+             }
+         })
+
+         return result;
+
+    }
+
+    $(function () {
+        $gridPrice = $("#jqGridCrudPrice").jqGrid({
+            url: "@Url.Action("FinishGoodsPriceListJson", "Customers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {key : "*"},
+            colModel: [
+                { label: 'Price Id', name: 'PriceId', key: true, hidden: true },
+                { label: 'Customer Id', name: 'CustomerId', hidden: true },
+                { label: 'Part Number', name: 'PartNumber', hidden: true },
+                { label: 'Start Date', name: 'StartDate', align: 'center', formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                {
+                    label: 'End Date', name: 'EndDate', align: 'center', formatter: "date", formatoptions: {
+                        srcformat: "ISO8601Long", newformat: "d M Y",
+                        reformatAfterEdit: true
+                    }
+                },
+                { label: 'Price', name: 'Price', align: 'center', formatter: "number" },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 80, formatter: statusCrudFormatter },
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, formatter: actionPriceFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:245,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: false,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudPrice').jqGrid('navGrid', '#jqGridPagercrudPrice',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+    $(function () {
+        $gridRelation = $("#jqGridCrudRelation").jqGrid({
+            url: "@Url.Action("FinishGoodsRelationListJson", "Customers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {key : "*"},
+            colModel: [
+                { label: 'Raw Material Id', name: 'RawMaterialId', hidden: true },
+                { label: 'Customer Id', name: 'CustomerId', hidden: true },
+                { label: 'Part Number', name: 'PartNumber', hidden: true },
+                { label: 'Supplier', name: 'SupplierId' },
+                { label: 'Raw Material', name: 'PartNumberRawMaterial' },
+                { label: 'Qty Usage', name: 'QtyUsage', align: 'center', width: 100, formatter: "number" },
+                { label: 'Start Date', name: 'StartDate', align: 'center', formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                {
+                    label: 'End Date', name: 'EndDate', align: 'center', formatter: "date", formatoptions: {
+                        srcformat: "ISO8601Long", newformat: "d M Y",
+                        reformatAfterEdit: true
+                    }
+                },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 80, formatter: statusCrudFormatter },
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, formatter: actionRelationFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:245,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudRelation').jqGrid('navGrid', '#jqGridPagercrudRelation',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+    function reloadGridPrice(customerid, partnumber) {
+        $("#jqGridCrudPrice").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                //key: id,
+                customerid: customerid,
+                partnumber: partnumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridRelation(customerid, partnumber) {
+        $("#jqGridCrudRelation").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                //key: id,
+                customerid: customerid,
+                partnumber: partnumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionPriceFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudPriceList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Price [ " + rowObject.PriceStartDate + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudPriceList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Price [ " + rowObject.PriceStartDate + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function actionRelationFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudRelationList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Relation [ " + rowObject.PartNumberRawMaterial + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudRelationList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Relation [ " + rowObject.PartNumberRawMaterial + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    function dateFormatter(cellvalue, options, rowObject) {
+        //console.log(cellvalue);
+        if ($.isEmptyObject(cellvalue)) {
+            return "";
+        } else {
+            return moment(new Date(json.Parse(cellvalue))).format('YYYY-MM-DD'); //moment(new Date(cellvalue)).format("DD MMM YYYY");
+        }
+    }
+
+    //CrudFG
+    $(document).ready(function () {
+        $(function () {
+            $("#crudFinishGoodForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    custid = $("#crud-FinishGoodCustomerId").val();
+                    partno = $("#crud-FinishGoodPartNumber").val();
+                    unique = $("#crud-FinishGoodUniqueNumber").val();
+                    action = $("#FinishGoodAction").val();
+
+                    var validResult = validationPart(action, custid, partno, unique);
+
+                    if (validResult === true) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            FinishGood: {
+                                CustomerId: $("#crud-FinishGoodCustomerId").val(),
+                                CustomerUnitModel: $("#crud-FinishGoodCustomerUnitModel").val(),
+                                PartNumber: $("#crud-FinishGoodPartNumber").val(),
+                                PartNumberCustomer: $("#crud-FinishGoodPartNumberCustomer").val(),
+                                UniqueNumber: $("#crud-FinishGoodUniqueNumber").val(),
+                                PartName: $("#crud-FinishGoodPartName").val(),
+                                CategoryId: $("#crud-FinishGoodCategoryId").val(),
+                                PackingId: $("#crud-RawMaterialPackingId").val(),
+                                AreaId: $("#crud-FinishGoodAreaId").val(),
+                                LocationId: $("#crud-FinishGoodLocationId").val(),
+                                UnitLevel1: $("#crud-FinishGoodUnitLevel1").val(),
+                                UnitLevel2: $("#crud-FinishGoodUnitLevel2").val(),
+                                UnitQty: $("#crud-FinishGoodUnitQty").val(),
+                                PassThrough: $("#crud-FinishGoodPassThrough").prop("checked"),
+                                Actived: $("#crud-FinishGoodActived").prop("checked"),
+                                EditDate: null,
+                                UserID: null
+                            },
+                            FinishGoodPrice: $("#jqGridCrudPrice").jqGrid('getGridParam', 'data'),
+                            FinishGoodRelation: $("#jqGridCrudRelation").jqGrid('getGridParam', 'data'),
+                            formAction: $("#FinishGoodAction").val()
+                        };
+
+                        $.each(jsonData.FinishGoodPrice, function (i, js) {
+                            if (js.EndDate === "&#160;") {
+                                js.EndDate = null;
+                            }
+                        });
+
+                        $.each(jsonData.FinishGoodRelation, function (i, js) {
+                            if (js.EndDate === "&#160;") {
+                                js.EndDate = null;
+                            }
+                        });
+
+                        formData.append("jsonData", JSON.stringify(jsonData));
+                        $.ajax({
+                            url: '@Url.Action("crudFinishGoodList", "Customers")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            success: function (data) {
+                                $('#crudFinishGoodListModal').modal('hide');
+                                var act = $("#FinishGoodAction").val();
+                                act = act.toLowerCase();
+                                doSuccess(data, act);
+                            },
+                            error: function (xhr, desc, err) {
+
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#crudFinishGoodListError').html(errMsg);
+                            },
+                        });
+                    } else {
+                        event.stopPropagation();
+                    }
+                }
+            });
+        });
+    });
+
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        loadComboCustomers();
+        loadComboCategories();
+        loadComboUnits();
+        loadComboArea();
+        loadComboSupplier();
+        loadComboRawMaterial("**");
+    });
+
+    $("#crud-FinishGoodUnitLevel1").change(function () {
+        loadComboUnit("*");
+    });
+
+    $("#crud-FinishGoodAreaId").change(function () {
+        loadComboLocation("*");
+    });
+
+    function loadComboCustomers() {
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, customers) {
+                    $(id).append(
+                        $('<option></option>').val(customers.CustomerId).html(customers.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboCategories() {
+        $.ajax({
+            url: '@Url.Action("CategoriesListJson", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodCategoryId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Category")
+                );
+                $.each(response, function (i, category) {
+                    $(id).append(
+                        $('<option></option>').val(category.CategoryId).html(category.CategoryName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboUnits() {
+        $.ajax({
+            url: '@Url.Action("UnitsListJson", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodUnitLevel1";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Units")
+                );
+                $.each(response, function (i, units) {
+                    $(id).append(
+                        $('<option></option>').val(units.UnitId).html(units.UnitName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboUnit(uid) {
+
+        if (uid === "*") {
+            uid = $("#crud-FinishGoodUnitLevel1").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("UnitsListLevel2Json", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            data: { unitid: uid },
+            async: false,
+            success: function (response) {
+
+                var id = "#crud-FinishGoodUnitLevel2";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Unit")
+                );
+                $.each(response, function (i, unit) {
+                    $(id).append(
+                        $('<option></option>').val(unit.UnitId).html(unit.UnitName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    function loadComboArea() {
+
+        $.ajax({
+            url: '@Url.Action("AreaListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-FinishGoodAreaId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Area")
+                );
+                $.each(response, function (i, area) {
+                    $(id).append(
+                        $('<option></option>').val(area.AreaID).html(area.AreaName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboLocation(aid) {
+
+        if (aid === "*") {
+            aid = $("#crud-FinishGoodAreaId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("LocationListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : aid},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodLocationId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Location")
+                );
+                $.each(response, function (i, location) {
+                    $(id).append(
+                        $('<option></option>').val(location.LocationId).html(location.LocationName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    function loadComboSupplier() {
+
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            async: false,
+            success: function (response) {
+
+                var id = "#crud-RelationSupplierId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Supplier")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.SupplierId).html(sup.SupplierId + ': ' + sup.SupplierName)
+                    );
+                });
+
+                $(id).selectpicker('refresh');
+            }
+        });
+
+    }
+
+    function loadComboRawMaterial(sid) {
+
+        if (sid === "*") {
+            sid = $("#crud-RelationSupplierId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("RawMaterialsListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter: sid },
+            success: function (response) {
+
+                var id = "#crud-RelationPartNumberRawMaterial";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Raw Material")
+                );
+
+                $.each(response, function (i, raw) {
+                    $(id).append(
+                        $('<option></option>').val(raw.PartNumber).html('[' + raw.UniqueNumber + '] ' + raw.PartNumber + ' : ' + raw.PartName)
+                    );
+                });
+
+                $(id).selectpicker('refresh');
+
+            }
+        })
+    }
+
+    loadComboPacking();
+    function loadComboPacking() {
+
+        $.ajax({
+            url: '@Url.Action("PackingListJson", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : ""},
+            success: function (response) {
+
+                var id = "#crud-RawMaterialPackingId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Packing")
+                );
+                $.each(response, function (i, measures) {
+                    $(id).append(
+                        $('<option></option>').val(measures.PackingId).html(measures.PackingId + ' : ' + measures.PackingName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    function showHidePassThrough() {
+        var passthrough = $("#crud-FinishGoodPassThrough").prop("checked");
+        if (passthrough === true) {
+            $('a[href="#tabcrudRelation"]').removeClass("disabled").removeClass("text-secondary").addClass("text-primary");
+        } else {
+            $('a[href="#tabcrudRelation"]').addClass("disabled").addClass("text-secondary").removeClass("text-primary");
+        }
+    }
+</script>
+

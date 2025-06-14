@@ -1,0 +1,181 @@
+﻿<!-- Header -->
+<header>
+    <!-- Header desktop -->
+    <div class="container-menu-desktop shadow">
+        <!-- Topbar -->
+        @*<div class="top-bar bg-dark transparent">
+            <div class="content-topbar flex-sb-m h-full container">
+                <div class="left-top-bar">
+                    @Session["AppName"].ToString() @Session["CompName"].ToString()
+                </div>
+
+                <div class="right-top-bar flex-w h-full">
+                    <a href="@Session["CompWebsites"].ToString()" class="flex-c-m trans-04 p-lr-25">
+                        Official Websites
+                    </a>
+                </div>
+            </div>
+        </div>*@
+
+        <div class="wrap-menu-desktop bg-light shadow">
+            <nav class="limiter-menu-desktop container">
+
+
+                <!-- Icon header -->
+                <div class="wrap-icon-header flex-w flex-l-m">
+                    <!-- Menu desktop -->
+                    <div class="menu-desktop" style="z-index:+1">
+                        <ul class="main-menu small">
+                            <li class="ltext-202">
+                                <a href="@Url.Action("MainIndex","Index")">Home</a>
+                            </li>
+                            <li class="ltext-202">
+                                <a href="@Session["CompWebsites"].ToString()">
+                                    Official Websites
+                                </a>
+                            </li>
+                            <li class="ltext-202">
+                                @if (Session["UserID"] == null)
+                                {
+                                    <a href="@Url.Action("Login","Account")">
+                                         Login
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="#" class="js-show-cart">
+                                        <span class="icon-user p-r-11"></span> @Session["UserName"].ToString()
+                                    </a>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Logo desktop -->
+                <div class="pos-absolute content-center">
+                    <a href="@Url.Action("MainIndex","Index")" class="logo">
+                        @if (Session["CompLogo"] == null)
+                        {
+                            <img src="~/_VSSPAssets/Images/Logo/logo-vssp-title.png" width="135" alt="vssp CoreUI">
+                        }
+                        else
+                        {
+                            var base64 = Convert.ToBase64String((byte[])Session["CompLogo"]);
+                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                            <img src="@imgSrc" alt="@Session["CompName"].ToString()" width="135">
+                        }
+                    </a>
+                </div>
+
+                <div class="wrap-icon-header flex-w flex-r-m">
+                    @Session["AppName"].ToString() @*@Session["CompName"].ToString()*@
+                </div>
+
+
+            </nav>
+        </div>
+    </div>
+
+    <!-- Header Mobile -->
+    <div class="wrap-header-mobile">
+        <!-- Logo moblie -->
+        <div class="logo-mobile">
+            @if (Session["CompLogo"] == null)
+            {
+                <img src="~/_VSSPAssets/Images/Logo/logo-vssp.png" alt="vssp CoreUI">
+            }
+            else
+            {
+                var base64 = Convert.ToBase64String((byte[])Session["CompLogo"]);
+                var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                <img src="@imgSrc" alt="@Session["CompName"].ToString()">
+            }
+        </div>
+
+        <!-- Icon header -->
+        <div class="wrap-icon-header flex-w flex-r-m m-r-15">
+
+
+            @if (Session["UserID"] != null)
+            {
+                <div class="icon-header-item cl2 hov-cl1 trans-04 p-r-11 p-l-10 js-show-cart">
+                    <i class="fa fa-user-circle-o"></i>
+                </div>
+            }
+
+            </div>
+
+        <!-- Button show menu -->
+        <div class="btn-show-menu-mobile hamburger hamburger--squeeze">
+            <span class="hamburger-box">
+                <span class="hamburger-inner"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- Menu Mobile -->
+    <div class="menu-mobile">
+        <ul class="topbar-mobile">
+            <li>
+                <div class="left-top-bar">
+                    @Session["AppName"].ToString() @Session["CompName"].ToString()
+                </div>
+            </li>
+
+            <li>
+                <div class="right-top-bar flex-w h-full">
+                    <a href="@Session["CompWebsites"].ToString()" class="flex-c-m trans-04 p-lr-25">
+                        Official Websites
+                    </a>
+
+                    @{
+                        if (Session["UserID"] == null)
+                        {
+                            <a href="@Url.Action("Login","Account")" class="flex-c-m trans-04 p-lr-10">
+                                Masuk
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="flex-c-m trans-04 p-lr-10">
+                                Welcome,  @Session["UserName"].ToString()
+                            </a>
+
+                        }
+                    }
+
+                </div>
+            </li>
+        </ul>
+
+        <ul class="main-menu-m">
+            <li>
+                <a href="@Url.Action("MainIndex","Index")">Home</a>
+            </li>
+        </ul>
+    </div>
+
+</header>
+
+@Html.Partial("IndexUser")
+
+<script>
+    $(document).ready(function() {
+        changeMenu();
+    });
+    function changeMenu() {
+        var path = window.location.href;
+        var base_url = window.location.origin;
+        path = path.replace(base_url, "");
+
+        $('.main-menu a').each(function () {
+            var href = $(this).attr('href');
+            if (path === href) {
+                $(this).closest('li').addClass('active-menu');
+            }
+        }
+    )};
+</script>

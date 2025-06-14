@@ -1,0 +1,323 @@
+﻿@model IEnumerable<Core.VSSP.Models.NotificationModel>
+@{
+    string pilsid = "";
+    int loop = 0;
+    string active = "";
+}
+<style>
+    .actions .favorites :hover {
+        content: "\f005";
+        color: #ffd800 !important;
+    }
+
+    .actions .trash :hover {
+        color: #ff0000 !important;
+    }
+    /*.actions{
+            position:absolute;
+            right:28px;
+            z-index:99;
+        }*/
+    .action {
+        padding-right: 14px;
+    }
+
+    .card {
+        height: 450px !important;
+        /*padding-bottom:20px;*/
+    }
+
+    .card-body {
+        padding: 5px;
+    }
+    .box-mail {
+            /*max-height: 469px !important;
+            margin: 0 0 20px 0 !important;
+            bottom: 20px;*/
+            margin:0;
+            padding:0;
+            border: solid 0.25px #bbbbbb;
+            border-radius: 5px
+    
+    }
+    .list-mail {
+        padding: 0;
+        border-radius: 0;
+        min-height: 405px !important;
+        max-height: 405px !important;
+        overflow-y: auto;
+    }
+
+    .list-message, .tab-content {
+        top: 0px;
+        padding: 0;
+        max-height: 405px !important;
+        border: none;
+        overflow-y: auto;
+        /*border:none #ffffff !important;*/
+    }
+    /*.list-group,.list-group-item {
+            border:0;
+            border-radius:0 !important;
+            z-index:0;
+        }*/
+    .unread {
+        font-weight: bold !important;
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="~/_VSSPCore/css/simplebar.css">
+<script src="~/_VSSPCore/js/simplebar.js"></script>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-6">
+                <i class="@ViewBag.Icon"></i> @ViewBag.Title
+            </div>
+            <div class="col-md-6">
+                <div class="pull-right">
+                    <button id="btn-all" class="btn btn-sm btn-primary filter-button" data-filter="all" title="Show mailbox notification"><span class="fa fa-envelope-o"></span></button>
+                    <button class="btn btn-sm btn-outline-dark filter-button" data-filter="unread" title="Show unread notification"><span class="fa fa-eye-slash"></span></button>
+                    <button class="btn btn-sm btn-outline-dark filter-button" data-filter="readed" title="Show readed notification"><span class="fa fa-eye"></span></button>
+                    <button class="btn btn-sm btn-outline-dark filter-button" data-filter="favorites" title="Show favorites notification"><span class="fa fa-star"></span></button>
+                    <button class="btn btn-sm btn-outline-dark filter-button" data-filter="deleted" title="Show trash notification"><span class="fa fa-trash"></span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model.Count() != 0)
+        {
+            <div class="row box-mail">
+                <div class="col-md-4 list-mail border-right" data-simplebar>
+                    <div class="list-group" id="list-tab" role="tablist">
+                        @foreach (var item in Model)
+                        {
+                            string favclass = "";
+                            string delclass = "";
+                            string deltitle = "";
+                            string status = item.Status;
+                            if (item.Favorites == true)
+                            {
+                                favclass = "fa fa-star text-warning";
+                            }
+                            else
+                            {
+                                favclass = "fa fa-star-o";
+                            }
+                            if (item.Deleted == true)
+                            {
+                                favclass += " invisible";
+                                delclass = "fa fa-reply text-danger";
+                                deltitle = "Restore message";
+                            }
+                            else
+                            {
+                                delclass = "fa fa-trash-o";
+                                deltitle = "Move to trash";
+                            }
+
+                            pilsid = "list-" + item.RecordNumber;
+                            loop += 1;
+                            if (loop == 1)
+                            {
+                                active = "";
+                            }
+                            else
+                            {
+                                active = "";
+                            }
+                            <a class="list-group-item list-group-item-action filter @item.Status @active" id="@pilsid-list" data-toggle="tab" href="#@pilsid" role="tab" aria-controls="@pilsid" aria-selected="true" onclick="NotificationCRUD('@item.RecordNumber','readed')">
+                                <div class="header">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @item.Sender
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="actions pull-right row">
+                                                <div class="action favorites" title="Favorites" onclick="NotificationCRUD('@item.RecordNumber','favorites','@favclass')">
+                                                    <i id="fav-@item.RecordNumber" class="@favclass"></i>
+                                                </div>
+                                                <div class="action trash" title="@deltitle" onclick="NotificationCRUD('@item.RecordNumber','deleted','@favclass')">
+                                                    <i id="del-@item.RecordNumber" class="@delclass"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <small class="pull-left" style="max-width:70%">@item.Subject</small>
+                                            <small class="pull-right" style="max-width:30%">@item.RecordDate</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+                </div>
+                <div class="col-md-8 list-message">
+                    <div class="tab-content" id="nav-tabContent">
+                        @{loop = 0; }
+                        @foreach (var item in Model)
+                        {
+
+                            pilsid = "list-" + item.RecordNumber;
+                            loop += 1;
+                            if (loop == 1 && item.Status != "deleted")
+                            {
+                                active = "";                               
+                            }
+                            else
+                            {
+                                if (loop == 1) { loop = 0; }
+                                active = "";
+                            }
+                            <div class="tab-pane animated fade-in @active" id="@pilsid" role="tabpanel" aria-labelledby="@pilsid-list">
+                                <div class="details">
+                                    <div class="header">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                                <img src="~/_VSSPAssets/User/user.png" style="width:50px;border-radius:50%">
+                                            </div>
+                                            <div class="col-md-11">
+                                                <div class="pull-left">@item.Sender</div>
+                                                <div class="pull-right"> @item.RecordDate</div><br />
+                                                <b>@item.Subject</b>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <div class="content" onclick="NotificationCRUD('@item.RecordNumber','readed','')">
+                                        Dear @ViewBag.UserName,<br /><br />
+                                        @Html.Raw(HttpUtility.UrlDecode(@item.MessageHtml, System.Text.Encoding.Default).Replace("{urlapi}", @item.UrlLink))
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                        <div class="tab-pane fade active show" id="list-empty" role="tabpanel" aria-labelledby="list-settings-list">
+                            <p>
+                                No messages read...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+    <div class="col-md-12 text-danger text-center">
+        <br /><br /><br />
+        <h1><span class="icon-close"></span></h1>
+        <h5>No Messages.</h5>
+    </div>
+        }
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+
+        $(".filter-button").click(function(){
+            var value = $(this).attr('data-filter');
+            $(".filter-button").removeClass('btn-primary').addClass('btn-outline-dark');
+            $(this).removeClass('btn-outline-dark').addClass('btn-primary');
+
+            //alert(value);
+            if(value == "all")
+            {
+                $('.filter').show('1000');
+                $(".filter").filter('.deleted').hide();
+            }
+            else
+            {
+                $(".filter").not('.'+value).hide('3000');
+                $('.filter').filter('.'+value).show('3000');
+
+            }
+            $(".list-group-item").removeClass("active");
+            $(".tab-pane").removeClass("show").removeClass("active");
+            $("#list-empty").addClass("show").addClass("active");
+
+        });
+
+        $('.filter').show('1000');
+        $(".filter").filter('.deleted').hide();
+
+
+    })
+
+    function NotificationCRUD(id, formaction, favclass) {
+        var strid = "#list-" + id + '-list';
+        var pillid = "#list-" + id;
+        var status = "";
+        if ($(strid).hasClass('unread')) { status = 'unread'; } else
+        if ($(strid).hasClass('readed')) { status = 'readed'; } else
+        if ($(strid).hasClass('favorites')) { status = 'favorites'; } else
+        if ($(strid).hasClass('deleted')) { status = 'deleted'; }
+
+        $(".list-group-item").removeClass("show").removeClass("active");
+        $(".tab-pane").removeClass("show").removeClass("active");
+        //if (status == "readed" && formaction == "readed") {
+        //    $(strid).addClass("show").addClass("active");
+        //    return false;
+        //}
+        //alert(strid + ' = ' + status + " | " + formaction);
+        $.ajax({
+            url: '@Url.Action("NotificationCRUD", "System")',
+            type: "POST",
+            dataType: "JSON",
+            async: false,
+            data: {
+                ID: id,
+                FormAction: formaction,
+            },
+            success: function (response) {
+                //alert(formaction);
+                switch (formaction) {
+                case "readed":
+                    $(strid).removeClass('unread').addClass(response);
+                    $(strid).addClass("show").addClass("active");
+                    $(pillid).addClass("show").addClass("active");
+                    break;
+                case "favorites":
+                    if (status != "favorites")
+                    {
+                        $("#fav-"+id).removeClass('fa fa-star-o').addClass('fa fa-star text-warning');
+                        $(strid).removeClass(status).addClass(response);
+                    } else
+                    {
+                        $("#fav-"+id).removeClass('fa fa-star text-warning').addClass('fa fa-star-o');
+                        $(strid).removeClass('favorites').addClass(response);
+                        //$(".filter-button").button.click();
+                        $(strid).hide(300);
+                        $("#list-"+id).removeClass("show").removeClass("active");
+                        $("#list-empty").addClass("show").addClass("active");
+                    }
+                    break;
+                case "deleted":
+                    if (status != "deleted")
+                    {
+                        $("#fav-" + id).addClass('fade-out invisible');
+                        $("#del-" + id).removeClass('fa fa-trash-o').addClass('fa fa-reply text-danger');
+                        $("#del-" + id).attr("title","Restore message")
+                        $(strid).addClass(status).addClass(response)
+                    } else
+                    {
+                        $("#fav-" + id).removeClass('fade-out invisible');
+                        $("#del-" + id).removeClass('fa fa-reply text-danger').addClass('fa fa-trash-o');
+                        $("#del-" + id).attr("title", "Move to trash")
+                        $(strid).removeClass('deleted').addClass(response);
+                    }
+                    $(strid).hide(300);
+                    $("#list-" + id).removeClass("show").removeClass("active");
+                    $("#list-empty").addClass("show").addClass("active");
+                    break;
+                }
+                $("#user-notification").load('@Url.Action("NotificationItem", "System")');
+            }
+        });
+    }
+</script>

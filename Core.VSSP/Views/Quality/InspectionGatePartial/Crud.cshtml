@@ -1,0 +1,201 @@
+﻿
+
+<div class="modal animated fadeIn" id="crudInspectionGateModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudInspectionGateForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-InspectionGateId" class="col-sm-3 col-form-label col-form-label-sm">Gate Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-InspectionGateId" name="Id" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-InspectionGateName" class="col-sm-3 col-form-label col-form-label-sm">Gate Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-InspectionGateName" name="Name" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-InspectionType" class="col-sm-3 col-form-label col-form-label-sm">Inspection Type</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm" id="crud-InspectionType" name="InspectionType" required>
+                                        <option value="">*Choose inspection Type</option>
+                                        <option value="INCOMING">INCOMING</option>
+                                        <option value="OUTGOING">OUTGOING</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-InspectionGateActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-InspectionGateActived">
+                                            <label class="custom-control-label" for="crud-InspectionGateActived"><small> Actived</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="crudInspectionGateError"></div>
+                    <input type="hidden" id="InspectionGateAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudInspectionGate" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudInspectionGate(action, id) {
+
+        document.getElementById("crudInspectionGateForm").reset();
+        $('#crudInspectionGateForm').removeClass('was-validated');
+        $('#crudInspectionGateError').html("");
+        $('#btn-addInspectionGateDetail').removeAttr('disabled');
+        $('#btn-importInspectionGateDetail').removeAttr('disabled');
+        $('#btn-crudInspectionGate').removeAttr('disabled');
+
+        $("#btn-crudInspectionGate").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudInspectionGateForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-InspectionGateActived').attr("checked", true);
+
+        $("#InspectionGateAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                InspectionGateId = Grid.jqGrid('getCell', selectedRowId, 'GateId'),
+                InspectionGateName = Grid.jqGrid('getCell', selectedRowId, 'GateName'),
+                InspectionType = Grid.jqGrid('getCell', selectedRowId, 'InspectionType'),
+                InspectionGateActived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            InspectionGateActived = InspectionGateActived.includes("success");
+
+            $("#crud-InspectionGateId").val(InspectionGateId);
+            $("#crud-InspectionGateName").val(InspectionGateName);
+            $("#crud-InspectionType").val(InspectionType);
+            $("#crud-InspectionGateActived").attr("checked", InspectionGateActived);
+
+        }
+
+        switch (action) {
+            case "Create":
+
+                $('#crud-InspectionGateActived').attr("disabled", true);
+                $("#crudInspectionGateModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudInspectionGateModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudInspectionGateModal').modal('show');
+                $("#crud-InspectionGateId").focus();
+
+                break;
+            case "Update":
+                $("#crud-InspectionGateId").attr("disabled", true);
+                $("#crudInspectionGateModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudInspectionGateModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudInspectionGateModal').modal('show');
+                $("#crud-InspectionGateRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudInspectionGateForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-InspectionGateId").attr("disabled", true);
+                $("#crud-InspectionType").attr("disabled", true);
+                $('#btn-addInspectionGateDetail').attr('disabled', true);
+                $("#btn-crudInspectionGate").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudInspectionGateModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudInspectionGateModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudInspectionGateModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-InspectionGateId').change(function () {
+        $('#crudInspectionGateError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudInspectionGateForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formaction = $("#InspectionGateAction").val(),
+                        Id = $("#crud-InspectionGateId").val(),
+                        Name = $("#crud-InspectionGateName").val(),
+                        Type = $("#crud-InspectionType").val(),
+                        Actived = $("#crud-InspectionGateActived").prop("checked"),
+                        Uid = "@ViewBag.UserId";
+
+                    $.ajax({
+                        url: '@Url.Action("crudInspectionGate", "Quality")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            gateid: Id,
+                            gatename: Name,
+                            inspectiontype: Type,
+                            actived: Actived,
+                            uid: Uid,
+                            formAction: formaction
+                        },
+                        success: function (data) {
+                            $('#crudInspectionGateModal').modal('hide');
+                            var act = $("#InspectionGateAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudInspectionGateError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+

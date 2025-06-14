@@ -1,0 +1,168 @@
+﻿<div class="modal animated fadeIn" id="crudForecastOrderRevisionModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-history"></span> Revision History</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="jqGridCrudForecastRevision"></table>
+            </div>
+            <div class="modal-footer">
+                <div class="ml-3" style="position:absolute;left:0">
+                    <button id="btn-addForecastOrderRevision" type="button" class="btn btn-sm btn-outline-dark" onclick="crudForecastOrderRevision('Create','')"><span class="fa fa-plus"></span> New History Item</button>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+        $(function () {
+        $gridForecastRevision = $("#jqGridCrudForecastRevision").jqGrid({
+            url: "@Url.Action("ForecastOrderRevisionListJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { ordernumber: "*" },
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 70, sortable: false, formatter: actionForecastRevisionFormatter },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 50, sortable: false, formatter: statusCrudFormatter },
+                { label: 'Rev. #', name: 'RevisionNumber', key: true, align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'Description', name: 'Description', editable: true, autoResizing: { minColWidth: 120 }, sortable: false },
+                { label: 'Date', name: 'RevisionDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Sign', name: 'RevisionBy', align: 'left', fixed: true, width: 120, sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudForecastRevision',
+            loadonce: true,
+            height: 240,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            ondblClickRow: function (rowid) {
+                crudForecastOrderRevision("Update", rowid);
+            },
+        });
+        $('#jqGridCrudForecastRevision').jqGrid('navGrid', '#jqGridPagerCrudForecastRevision',
+            { search: false, edit: false, add: false, del: false },
+        );
+        });
+
+    function reloadGridForecastRevision() {
+
+        var ordernumber = $("#crud-ForecastOrderNumber").val();
+
+        $("#jqGridCrudForecastRevision").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                ordernumber: ordernumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionForecastRevisionFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.RevisionNumber;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid +"' class='text-primary' onclick=\"crudForecastOrderRevision('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-pencil-square'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid +"' class='@ViewBag.canDelete text-danger' onclick=\"crudForecastOrderRevision('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function crudForecastOrderRevision(action, id) {
+
+
+        var $grid = $("#jqGridCrudForecastRevision");
+        var dataIDs = $grid.getDataIDs();
+        var rowCount = (dataIDs.length);
+        var rowStatus = "";
+
+        if (id != "") {
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">");
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            rowStatus = RowStatus;
+        }
+
+        switch (action) {
+            case "Create":
+
+                var rowid = parseInt(rowCount) + 1;
+
+                parameters =
+                {
+                    rowID: rowid,
+                    initdata: {
+                        RowStatus: action,
+                        RevisionNumber: rowid,
+                        RevisionDate: moment(new Date).format("YYYY-MM-DD"),
+                        RevisionBy: '@ViewBag.UserId'
+                    },
+                    position: "last",
+                }
+
+                $grid.jqGrid("addRow", parameters).trigger("reloadGrid");
+                $grid.jqGrid("editRow", rowid, true);
+
+                break;
+
+            case "Update":
+
+                if (rowStatus != "New") {
+                    rowStatus = action
+                } else {
+                    rowStatus = "Create"
+                }
+
+                parameters =
+                {
+                    RowStatus: rowStatus,
+                }
+
+                $grid.jqGrid('setRowData', id, parameters);
+                $grid.jqGrid("editRow", id, true);
+
+                break;
+
+            case "Delete":
+
+                if (rowStatus === "New") {
+                    $grid.jqGrid('delRowData', id);
+                } else {
+                    parameters =
+                    {
+                        RowStatus: action,
+                    }
+                    $grid.jqGrid('setRowData', id, parameters);
+                }
+
+
+                break;
+            default:
+                $('#crudForecastOrderRevisionModal').modal('show');
+                break;
+        }
+
+        //$("#btn-crudForecastOrder").attr("disabled", true);
+    }
+</script>

@@ -1,0 +1,228 @@
+﻿<div class="modal animated fadeIn" id="crudInvoiceRecapEmailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-envelope"></span> Sent Email</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <button id="btn-EmailApproval" type="button" class="btn btn-sm btn-warning" onclick="sentInvoiceRecapEmail('Approval')"><span class="fa fa-share-square"></span> To Approval</button>
+                <button id="btn-EmailSupplier" type="button" class="btn btn-sm btn-warning" onclick="sentInvoiceRecapEmail('Supplier')"><span class="fa fa-share-square"></span> To Supplier</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+            <input type="hidden" id="InvoiceRecapNumberEmail" />
+            <input type="hidden" id="InvoiceRecapMonthEmail" />
+            <input type="hidden" id="InvoiceRecapSupplierIdEmail" />
+            <input type="hidden" id="InvoiceRecapSupplierEmail" />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("../System/EmailSender")
+
+<script>
+
+    function sentInvoiceRecapEmail(action, id, month, supplier) {
+
+        var $grid = $("#jqGridMain");
+        if (id != "") {
+            var rowData = $grid.jqGrid("getRowData", id),
+                ApprovalName = rowData.ApprovalName,
+                SupplierId = rowData.SupplierId,
+                StatusName = rowData.StatusName;
+        }
+
+        $("#btn-EmailApproval").attr("disabled", true);
+        $("#btn-EmailSupplier").attr("disabled", true);
+
+        if (ApprovalName === "Created" || ApprovalName === "Checked") {
+            $("#btn-EmailApproval").removeAttr("disabled");
+        } else {
+            if (StatusName === "Open" || StatusName === "Sent") {
+                $("#btn-EmailSupplier").removeAttr("disabled");
+            }
+        }
+
+        switch (action) {
+            case "Open":
+                $("#InvoiceRecapNumberEmail").val(id);
+                $("#InvoiceRecapMonthEmail").val(month);
+                $("#InvoiceRecapSupplierIdEmail").val(SupplierId);
+                $("#InvoiceRecapSupplierEmail").val(supplier);
+                $('#crudInvoiceRecapEmailModal').modal('show');
+                break;
+
+            case "Approval":
+
+                var Recapnumber = $("#InvoiceRecapNumberEmail").val();
+                var Recapmonth = $("#InvoiceRecapMonthEmail").val();
+                var supplier = $("#InvoiceRecapSupplierEmail").val();
+
+                var subject = action + " @ViewBag.Title " + Recapnumber;
+                var sentto = getApprovalMailList(Recapnumber);
+                var attachment1 = "@Url.Action("InvoiceRecaps", "Reports")?RecapNumber=" + Recapnumber + '&FileFormat=Pdf';
+                var attachment2 = "@Url.Action("InvoiceRecaps", "Reports")?RecapNumber=" + Recapnumber + '&FileFormat=Excel';
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + Recapnumber + " </td></tr>";
+                content += "<tr><td width='120'>Supplier</td><td> : </td><td> " + supplier + " </td></tr>";
+                content += "<tr><td width='120'>Month </td><td> : </td><td> " + Recapmonth + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' target='_blank' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboApprovalMailList(Recapnumber);
+                sentEmail("InvoiceRecapApproval" ,subject, sentto, "", content, attachment1, attachment2, '', Recapnumber);
+                $('#crudInvoiceRecapEmailModal').modal('hide');
+                break;
+
+            case "Supplier":
+
+                var Recapnumber = $("#InvoiceRecapNumberEmail").val();
+                var Recapmonth = $("#InvoiceRecapMonthEmail").val();
+                var supplierid = $("#InvoiceRecapSupplierIdEmail").val();
+                var supplier = $("#InvoiceRecapSupplierEmail").val();
+
+                var subject = action + " @ViewBag.Title " + Recapnumber;
+                var sentto = getSupplierMailList(supplierid);
+                var sentcc = "@ViewBag.EmailCC";
+                var attachment1 = "@Url.Action("InvoiceRecaps", "Reports")?RecapNumber=" + Recapnumber + '&FileFormat=Pdf';
+                var attachment2 = "@Url.Action("InvoiceRecaps", "Reports")?RecapNumber=" + Recapnumber + '&FileFormat=Excel';
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + Recapnumber + " </td></tr>";
+                content += "<tr><td width='120'>Supplier</td><td> : </td><td> " + supplier + " </td></tr>";
+                content += "<tr><td width='120'>Month </td><td> : </td><td> " + Recapmonth + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboSupplierMailList(supplierid);
+                sentEmail("InvoiceRecapSupplier", subject, sentto, sentcc, content, attachment1, attachment2, '', Recapnumber);
+                $('#crudInvoiceRecapEmailModal').modal('hide');
+                break;
+
+        }
+
+    }
+
+    function getApprovalMailList(Recapnumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("InvoiceRecapApprovalListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                Recapnumber: Recapnumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.UserId;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboApprovalMailList(recapnumber) {
+
+        $.ajax({
+            url: '@Url.Action("InvoiceRecapApprovalListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                recapnumber: recapnumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.UserId + '" selected>' + raw.UserName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+
+    function getSupplierMailList(supplierid) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("SupplierContactListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                SupplierId: supplierid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.Email;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboSupplierMailList(supplierid) {
+
+        $.ajax({
+            url: '@Url.Action("SupplierContactListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                SupplierId: supplierid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.Email + '" selected>' + raw.ContactName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+</script>

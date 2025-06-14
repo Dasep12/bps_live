@@ -1,0 +1,167 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<script type="text/javascript" src="~/_VSSPCore/lib/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="~/_VSSPCore/lib/daterangepicker/daterangepicker.css" />
+
+<section class="app-report bg-light" style="height:470px !important" id="Report-Index">
+
+    @{
+        Html.RenderAction("_FilterPartial", "Search");
+    }
+
+    <div class="container h-100">
+        <div class="row align-items-center h-100">
+            <div class="col-lg-8 col-md-12 col-sm-12 mx-auto mt-4">
+                <div class="card card-accent-secondary shadow-sm">
+                    <div class="card-header bg-white">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card-title mt-1">
+                                    <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table id="jqGridReport"></table>
+                        <small class="text-primary">Note: Press enter after typing <b>Filter Values</b> to apply, or press esc to cancel.</small>
+                        <div id="reportError"></div>
+                    </div>
+                    <div class="card-footer bg-gray-active">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-outline-dark" onclick="reloadGridReport()"><i class="icon-reload"></i> Reset</button>
+                            </div>
+                            <div class="col-md-6" style="padding-top:2px!important">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <button id="print" type="button" class="btn btn-outline-primary btn-spin" onclick="previewReport('@ViewBag.menuId','@ViewBag.Group','@ViewBag.Category')"><i class="icon-printer"></i> Print</button>
+                                    </div>
+                                    @Html.DropDownListFor(model => model.ExportOption,
+                                    new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                                    new { @id = "ExportOption", @class = "form-control border-primary" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+
+    // Data Picker Initialization
+    $('.datepicker').datepicker();
+
+    var menuId          = "@ViewBag.MenuId";
+    var formTitle       = "@ViewBag.Title";
+    var canCreate       = "@ViewBag.canCreate";
+    var canUpdate       = "@ViewBag.canUpdate";
+    var canDelete       = "@ViewBag.canDelete";
+    var canConfidential = "@ViewBag.canConfidential";
+
+    function previewReport(menuid, group, category) {
+
+        var fileFormat = $("#ExportOption").val();
+        var toprinter = fileFormat.includes("printer");
+        var fileName = "@ViewBag.Title";
+        var fileType = "";
+
+        loadblockspinner()
+
+        switch (fileFormat) {
+            case "pdf":
+                fileType = "application/pdf";
+                fileName += ".pdf";
+                break;
+            case "xls":
+                fileType = "application/vnd.ms-excel";
+                fileName += ".xlsx";
+                break;
+        }
+        //console.log(menuid + ' | ' + toprinter + '-' + fileFormat + ' | ' + group + ' | ' + category);
+        //return false;
+
+        var formData = new FormData();
+
+        var jsonData = {
+            PrintOption: {
+                MenuId: menuid,
+                GroupReport: group,
+                CategoryReport: category,
+                FileFormat: fileFormat,
+                ToPrinter: toprinter
+            },
+            FilterData: $("#jqGridReport").jqGrid('getGridParam', 'data')
+        };
+
+        $.each(jsonData.FilterData, function (i, js) {
+            js.Browse = "";
+        });
+
+        var error = 0;
+        $.each(jsonData.FilterData, function (i, js) {
+            //console.log(js);
+            if (js.Caption.includes('*')) {
+                if (js.FilterValues.length === 0) {
+                    error += 1;
+                }
+            }
+        });
+
+        setTimeout(function () {
+
+            if (error > 0) {
+                unloadblockspinner();
+                showToast("Failed", "Please complete the fields are required with mark *");
+                return false;
+            } else {
+                $.each(jsonData.FilterData, function (i, js) {
+                    js.Browse = "";
+                });
+
+                var url = "@Url.Action("PrintReport", "ReportsView")";
+                url += "?jsonData=" + JSON.stringify(jsonData);
+
+                //console.log(url);
+
+                if (toprinter === false) {
+                    var w = window.open(url, "_blank");
+                    //w.document.write("<h1>Please wait while generating reports...</h1>");
+                    $(w).ready(function () {
+                        //console.log(w.location.origin);
+                        //w.location.replace(w.location.origin);
+                    })
+                    $(w).on('blur', function () {
+                        /*w.doSomething();*/
+                        unloadblockspinner();
+                    });
+                    //unloadblockspinner();
+                } else {
+                    window.open(url, "_top");
+                    setTimeout(function () {
+                        showToast("Notification", "Printing @ViewBag.Title has been proceed");
+                    }, 500)
+                }
+            }
+
+        }, 500);
+
+        unloadblockspinner();
+
+    }
+
+    //$(document).ajaxComplete(function () {
+    //    unloadblockspinner();
+    //});
+
+
+</script>
+<script src="~/Scripts/Reports/reportIndex.js"></script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+

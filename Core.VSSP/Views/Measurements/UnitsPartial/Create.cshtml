@@ -1,0 +1,130 @@
+﻿
+<div class="modal animated fadeIn" id="createUnitsModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="createUnitsForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Create @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-UnitId">Units Id</label>
+                            <input type="text" class="form-control form-control-sm" id="create-UnitId" name="UnitId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-UnitName">Units Name</label>
+                            <input type="text" class="form-control form-control-sm" id="create-UnitName" name="UnitName" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-UnitName">Parent Id</label>
+                            <select class="custom-select custom-select-sm" id="create-ParentId" name="ParentId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-UnitLevel">Units Level</label>
+                            <input type="number" class="form-control form-control-sm" id="create-UnitLevel" name="UnitLevel" value="0" min="1" max="2" readonly required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-Unitsremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="create-Unitsremarks" name="remarks" value=""></textarea>
+                        </div>
+                    </div>
+                    <div id="createUnitsError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-create-Units" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function addUnits() {
+        document.getElementById("createUnitsForm").reset();
+        $('#createUnitsForm').removeClass('was-validated');
+        $("#createUnitsForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#createUnitsError').html("");
+        $('#create-UnitLevel').attr("readonly", true)
+        $('#createUnitsModal').modal('show');
+        $('#create-UnitId').focus();
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#createUnitsForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#create-UnitId').val();
+                    var name = $('#create-UnitName').val();
+                    var parent = $('#create-ParentId').val();
+                    var level = $('#create-UnitLevel').val();
+                    var remarks = $('#create-Unitsremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudUnits","Measurements")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            UnitId      : id,
+                            UnitName    : name,
+                            ParentId    : parent,
+                            UnitLevel   : level,
+                            remarks     : remarks,
+                            formAction  : 'create',
+                        },
+                        success: function (data) {
+                            $('#createUnitsModal').modal('hide');
+                            doSuccess(data,'create');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#createUnitsError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    $('#create-ParentId').change(function () {
+        var val = $(this).val();
+
+        if (val === "") {
+            $("#create-UnitLevel").val(0);
+            return false
+        }
+        if (val === "*") {
+            $("#create-UnitLevel").val(1);
+        } else {
+            $("#create-UnitLevel").val(2);
+        }
+    })
+
+</script>
+

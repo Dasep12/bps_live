@@ -1,0 +1,183 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Quality-InspectionGate">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudInspectionGate('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-active" onclick="reloadGridList()" checked>
+                                <label class="custom-control-label" for="sw-active"><small> Active @ViewBag.Title</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("InspectionGatePartial/Crud")
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        var isactive = $("#sw-active").prop("checked");
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("InspectionGateJson", "Quality")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                isActive: isactive
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+                { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 60, formatter: statusFormatter },
+                { label: 'Gate Id', key: true, name: 'GateId', align: 'center', fixed: true, width: 80 },
+                { label: 'Gate Name', name: 'GateName', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'Inspection Type', name: 'InspectionType', align: 'left', align: 'center', fixed: true, width: 150 },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudInspectionGate('Update','" + rowObject.GateId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.GateName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudInspectionGate('Delete','" + rowObject.GateId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.GateName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridList() {
+        var isactive = $("#sw-active").prop("checked");
+        var filterData = $('#searchFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                isActive: isactive
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update " + data + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data + " has been removed succesfully");
+                return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        $("#jqGridMain").jqGrid("hideCol", "Actived")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+        $("#jqGridMain").jqGrid("showCol", "Actived")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

@@ -1,0 +1,219 @@
+﻿<style>
+    .refreshForm {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        height: 100px;
+        width: 100%;
+        background-color: rgba(8, 8, 8, 0.3);
+        padding: 20px;
+        z-index: 1;
+    }
+
+    /* Animation */
+
+    @@keyframes fadeInUp {
+        from {
+            transform: translate3d(0,40px,0)
+        }
+
+        to {
+            transform: translate3d(0,0,0);
+            opacity: 1
+        }
+    }
+
+    @@-webkit-keyframes fadeInUp {
+        from {
+            transform: translate3d(0,40px,0)
+        }
+
+        to {
+            transform: translate3d(0,0,0);
+            opacity: 1
+        }
+    }
+
+    @@keyframes fadeOutDown {
+        from {
+            transform: translate3d(0,0,0);
+            opacity: 1
+        }
+
+        to {
+            transform: translate3d(0,40px,0)
+        }
+    }
+
+    @@-webkit-keyframes fadeOutDown {
+        from {
+            transform: translate3d(0,0,0);
+            opacity: 1
+        }
+
+        to {
+            transform: translate3d(0,40px,0)
+        }
+    }
+
+    .animated {
+        animation-duration: 1s;
+        animation-fill-mode: both;
+        -webkit-animation-duration: 1s;
+        -webkit-animation-fill-mode: both
+    }
+
+    .animatedFadeInUp {
+        opacity: 0
+    }
+
+    .fadeInUp {
+        opacity: 0;
+        animation-name: fadeInUp;
+        -webkit-animation-name: fadeInUp;
+    }
+
+    .fadeOutDown {
+        opacity: 0;
+        animation-name: fadeInUp;
+        -webkit-animation-name: fadeInUp;
+    }
+</style>
+
+<div id="mForm" class="refreshForm text-center animated animatedFadeInUp invisible">
+    <h4 id="timeCounter"></h4>
+    <div id="log"></div>
+
+    <button id="btnCounter" type="button" class="btn btn-outline-danger btn-pill btn-lg"><i class="fa fa-refresh"></i> Refresh Now</button>
+</div>
+
+<script>
+    //var countDownDate = new Date("Jan 5, 2021 15:37:25").getTime();
+    var isShow = false;
+    var isHide = true;
+
+    var docHeight = $(document).height();
+    var countDownDate = new Date();
+    var reloadTimer = $("#refreshDashboardTimer").val();
+    countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(reloadTimer));
+    var valtimer = "";
+
+    // Update the count down every 1 second
+    var x = setInterval(function () {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+
+        // Find the distance between now and the count down date
+        var distance = countDownDate - now;
+
+        // Time calculations for days, hours, minutes and seconds
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        // If the count down is over, write some text
+        if (distance < 1) {
+            //clearInterval(x);
+            //document.getElementById("timeCounter").innerHTML = "EXPIRED";
+            valtimer = "Please Wait While Refreshing Dashboard..."
+            reloadTimer = $("#refreshDashboardTimer").val();
+            countDownDate = new Date();
+            countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(reloadTimer));
+
+            setTimeout(function () {
+                refreshDashboard();
+            }, 2000);
+        //} else if (distance < 10 && distance > 1) {
+        //    Output the result in an element with id="timeCounter"
+        //    valtimer = "Refreshing in " + minutes + "m " + seconds + "s ";
+        } else {
+            // Output the result in an element with id="timeCounter"
+            valtimer = "Reload " + minutes + "m " + seconds + "s ";
+        }
+
+        document.getElementById("btnCounter").innerHTML = valtimer;
+        document.getElementById("btnRefresh").innerHTML = valtimer;
+
+    }, 1000);
+
+    function refreshDashboard() {
+        var ViewType = '@ViewBag.ViewType';
+
+        loadblockspinner();
+        showToast("Info", "Refreshing dashboard...","toast-bottom-center");
+
+        console.log(ViewType);
+        switch (ViewType)
+        {
+            case "General":
+                brandCardSummary();
+                generalTransactionChart();
+                generalStockInfo();
+                generalMlokProgress();
+                generalUpcoming();
+                break;
+            case "Delivery":
+                deliveryCardSummary();
+                deliverySummaryDetail();
+                break;
+            case "Production":
+                productionCardSummary();
+                productionSummaryDetail();
+                break;
+            case "Production Summary":
+                loadViewCards();
+                break;
+            case "Receiving":
+                ReceivingCardSummary();
+                ReceivingSummaryDetail();
+                break;
+            case "Purchases":
+                break;
+            case "Stock":
+                StockCardSummary();
+                StockSummaryDetail();
+                break;
+            case "Quality Incoming":
+                qualityCardSummary();
+                break;
+            case "Quality Outgoing":
+                qualityCardSummary();
+                break;
+            case "Summary":
+                break;
+        }
+
+        reloadTimer = $("#refreshDashboardTimer").val();
+        countDownDate = new Date();
+        countDownDate.setMinutes(countDownDate.getMinutes() + parseInt(reloadTimer));
+    }
+
+    //$(document).on("mousemove", function (event) {
+    //    //$("#log").text("pageX: " + event.pageX + ", pageY: " + event.pageY + ", screen: " + docHeight );
+    //    if (event.pageY > docHeight) {
+    //        if (isShow == false) {
+    //            //alert("show");
+    //            $("#mForm").removeClass("invisible").removeClass("FadeOutDown").addClass("FadeInUp");
+
+    //            isShow = true;
+    //            isHide = false;
+    //        }
+    //    } else {
+    //        if (isHide == false) {
+    //            //alert("hide");
+    //            $("#mForm").removeClass("FadeInUp").addClass("FadeOutDown");
+
+    //            isShow = false;
+    //            isHide = true;
+    //        }
+    //    }
+
+    //});
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

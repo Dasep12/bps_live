@@ -1,0 +1,2048 @@
+﻿
+<div class="modal animated fadeIn" id="crudSalesOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudSalesOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-2 m-0" style="min-height:435px">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active small" data-toggle="tab" href="#tabcrudSalesOrder" role="tab">
+                                <i class="fa fa-cart-plus"></i> Sales Order
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link small" data-toggle="tab" href="#tabcrudSchedule" role="tab">
+                                <i class="fa fa-truck"></i> Delivery Schedule
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane p-2 m-0 active" id="tabcrudSalesOrder" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesSONumber" class="col-sm-4 col-form-label col-form-label-sm">Number</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-SalesSONumber">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderSODate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-SalesOrderSODate" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                        <div class="col-sm-8">
+                                            <textarea rows="1" class="form-control form-control-sm bg-white" style="height:30px;" id="crud-SalesOrderRemarks" name="Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-SalesOrderCustomerId" name="CustomerId" onchange="reloadGridSalesDetail();" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderPONumber" class="col-sm-4 col-form-label col-form-label-sm">PO Number</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm bg-white" id="crud-SalesOrderPONumber" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row" hidden>
+                                        <label for="crud-SalesOrderPassThrough" class="col-sm-4 col-form-label col-form-label-sm">Passthrough</label>
+                                        <div class="col-sm-8">
+                                            <div class="mt-1">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" value="" id="crud-SalesOrderPassThrough">
+                                                    <label class="custom-control-label" for="crud-SalesOrderPassThrough"><small> [Yes/No]</small></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderPODate" class="col-sm-4 col-form-label col-form-label-sm">PO Date</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-SalesOrderPODate" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderReceiveDate" class="col-sm-4 col-form-label col-form-label-sm">Receive PO Date</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-SalesOrderReceiveDate" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderDeliveryMonth" class="col-sm-4 col-form-label col-form-label-sm">Delivery Month</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm bg-white" id="crud-SalesOrderDeliveryMonth" name="DeliveryMonth" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mt-1">
+                                    <table id="jqGridCrudSalesDetail"></table>
+                                    <div id="jqGridPagerCrudSalesDetail"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane p-2 m-0" id="tabcrudSchedule" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderStartDateDelivery" class="col-sm-4 col-form-label col-form-label-sm">Delivery Date</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-SalesOrderStartDateDelivery" disabled required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text">
+                                                        To
+                                                    </span>
+                                                </div>
+                                                <input type="date" class="form-control form-control-sm bg-white border-left-0 datepicker" id="crud-SalesOrderEndDateDelivery" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm mb-1 row">
+                                        <label for="crud-SalesOrderDeliveryPerDay" class="col-sm-4 col-form-label col-form-label-sm">Calculation</label>
+                                        <div class="col-sm-8">
+                                            <button id="btn-processSchedule" type="button" class="btn btn-sm btn-success btn-spin"><i class="fa fa-cog"></i> Generate Schedule</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 mt-auto mb-0">
+                                </div>
+
+                                <div class="col-md-12 mt-1">
+                                    <table id="jqGridCrudSchedule"></table>
+                                    <div id="jqGridPagerCrudSchedule"></div>
+                                    <small class="text-primary">Note: Press enter after finish change <b>Qty Values</b> to apply, or press esc to cancel.</small>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudSalesOrderError"></div>
+                    <input type="hidden" id="SalesOrderAction" />
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <button id="btn-addSalesOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudSalesOrderDetail('Create','')"><span class="fa fa-plus"></span> New Part Item</button>
+                        <button id="btn-importSalesOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="importSalesOrderDetail()"><span class="fa fa-cloud-upload"></span> Import</button>
+                        <input type="file" hidden id="file-import" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="loadExcel()" />
+                        <a href="~/Document/Template/14. Template Sales Order.xlsx" target="_blank" class="btn btn-link" style="text-decoration:none">
+                            <span><i class="fa fa-cloud-download"></i> Download Templates</span>
+                        </a>
+                    </div>
+                    <button id="btn-crudSalesOrder" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudSalesOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudSalesOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> SalesOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" id="btn-searchPart" class="btn btn-sm btn-outline-primary" onclick="callFilterFinishGoods()"><span class="fa fa-search"></span> Find Part Number</a>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailUniqueNumber" class="col-md-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailUniqueNumber" readonly required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailPartNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailPartName" class="col-md-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailPartName" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailPartModel" class="col-md-4 col-form-label col-form-label-sm">Model</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailPartModel" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailUnitQty" class="col-md-4 col-form-label col-form-label-sm">Qty / Kanban</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailUnitQty" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailUnit" class="col-md-4 col-form-label col-form-label-sm">Unit</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-SalesOrderDetailUnit" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailOrderQty" class="col-md-4 col-form-label col-form-label-sm">Order Qty</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text" style="width:40px"><b>N</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-SalesOrderDetailOrderQty" onchange="setMaxDeliveryPerDay()" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailOrderN1" class="col-md-4 col-form-label col-form-label-sm">Order N+1</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text" style="width:40px"><b>N+1</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-SalesOrderDetailOrderN1">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailOrderN2" class="col-md-4 col-form-label col-form-label-sm">Order N+2</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text" style="width:40px"><b>N+2</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-SalesOrderDetailOrderN2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailOrderN3" class="col-md-4 col-form-label col-form-label-sm">Order N+3</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text" style="width:40px"><b>N+3</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-SalesOrderDetailOrderN3">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SalesOrderDetailDeliveryPerDay" class="col-md-4 col-form-label col-form-label-sm">Delivery Per Day</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text" style="width:40px"><b>Qty</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-SalesOrderDetailDeliveryPerDay">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="SalesOrderDetailAction" />
+                    <input type="hidden" id="SalesOrderDetailRowStatus" />
+                    <div id="crudSalesOrderDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute;left:0">
+                        <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudSalesOrderDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                        <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudSalesOrderDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                    </div>
+                    <button id="btn-crudSalesOrderDetail" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Finish</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div id="contextMenu" class="dropdown clearfix">
+    <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(1,this)"><i class="fa fa-check text-dark"></i> Select</a>
+        <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(2,this)"><i class="fa fa-check-square-o text-dark"></i> Select All</a>
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(3,this)"><i class="fa fa-times text-dark"></i> Unselect</a>
+        <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(4,this)"><i class="fa fa-times-rectangle-o text-dark"></i> Unselect All</a>
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small text-danger" href="#" onclick="selectContextMenu(5,this)"><i class="fa fa-trash-o text-danger"></i> Delete selected</a>
+    </div>
+</div>
+
+<script>
+
+    var haschange = false;
+    var canSelect = false;
+
+    $("#crud-SalesOrderDeliveryMonth").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    });
+
+    $('#crudSalesOrderDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-SalesOrderDetailOrderN3") {
+                $("#btn-crudSalesOrderDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudSalesOrder(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartFinishGoods","Search")');
+
+        document.getElementById("crudSalesOrderForm").reset();
+        $('#crudSalesOrderForm').removeClass('was-validated');
+        $('#crudSalesOrderError').html("");
+        $('#btn-addSalesOrderDetail').removeAttr('disabled');
+        $('#btn-importSalesOrderDetail').removeAttr('disabled');
+        $('#btn-processSchedule').removeAttr('disabled');
+        $('#btn-crudSalesOrder').removeAttr('disabled');
+        $('a[href="#tabcrudSalesOrder"]').click()
+
+        $("#btn-crudSalesOrder").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudSalesOrderForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-SalesOrderPassThrough").removeAttr("checked").removeAttr("disabled");
+
+        $("#SalesOrderAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+        var approval = '@ViewBag.ApprovalLevel';
+        canSelect = false;
+
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudSalesOrderError').html(errMsg);
+            $("#crudSalesOrderForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addSalesOrderDetail").attr("disabled", true);
+            $('#btn-importSalesOrderDetail').attr("disabled", true);
+            $("#btn-crudSalesOrder").attr("disabled", true);
+            $('#btn-processSchedule').attr('disabled', true);
+
+            $('#crudSalesOrderModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId                   = id,
+                SalesOrderSODate                = Grid.jqGrid('getCell', selectedRowId, 'SODate'),
+                SalesOrderCustomerId            = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                SalesOrderPONumber              = Grid.jqGrid('getCell', selectedRowId, 'PONumber'),
+                SalesOrderPODate                = Grid.jqGrid('getCell', selectedRowId, 'PODate'),
+                SalesOrderReceiveDate           = Grid.jqGrid('getCell', selectedRowId, 'ReceiveDate'),
+                SalesOrderDeliveryMonth         = Grid.jqGrid('getCell', selectedRowId, 'DeliveryMonth'),
+                SalesOrderDeliveryYear          = Grid.jqGrid('getCell', selectedRowId, 'DeliveryYear'),
+                SalesOrderPassThrough           = Grid.jqGrid('getCell', selectedRowId, 'PassThrough'),
+                //SalesOrderStartDelivery         = Grid.jqGrid('getCell', selectedRowId, 'StartDelivery'),
+                SalesOrderStartDateDelivery     = Grid.jqGrid('getCell', selectedRowId, 'StartDateDelivery'),
+                SalesOrderEndDateDelivery       = Grid.jqGrid('getCell', selectedRowId, 'EndDateDelivery'),
+                SalesOrderRemarks               = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            SalesOrderSODate            = moment(new Date(SalesOrderSODate)).format("YYYY-MM-DD");
+            SalesOrderPODate            = moment(new Date(SalesOrderPODate)).format("YYYY-MM-DD");
+            SalesOrderReceiveDate       = moment(new Date(SalesOrderReceiveDate)).format("YYYY-MM-DD");
+            SalesOrderDeliveryMonth     = moment().month(SalesOrderDeliveryMonth).format("MM");
+            SalesOrderStartDateDelivery = moment(new Date(SalesOrderStartDateDelivery)).format("YYYY-MM-DD");
+            SalesOrderEndDateDelivery   = moment(new Date(SalesOrderEndDateDelivery)).format("YYYY-MM-DD");
+
+            var monthyear = SalesOrderDeliveryMonth + "/" + SalesOrderDeliveryYear;
+
+            $("#crud-SalesSONumber").val(id);
+            $("#crud-SalesOrderSODate").val(SalesOrderSODate);
+            $("#crud-SalesOrderRemarks").val(SalesOrderRemarks);
+            $("#crud-SalesOrderCustomerId").val(SalesOrderCustomerId);
+            $("#crud-SalesOrderPONumber").val(SalesOrderPONumber);
+            $("#crud-SalesOrderPODate").val(SalesOrderPODate);
+            $("#crud-SalesOrderReceiveDate").val(SalesOrderReceiveDate);
+            $("#crud-SalesOrderDeliveryMonth").val(monthyear);
+            $("#crud-SalesOrderStartDateDelivery").val(SalesOrderStartDateDelivery);
+            $("#crud-SalesOrderEndDateDelivery").val(SalesOrderEndDateDelivery);
+
+            if (SalesOrderPassThrough.includes("success")) {
+                $("#crud-SalesOrderPassThrough").attr("checked", true);
+            } else {
+                $("#crud-SalesOrderPassThrough").removeAttr("checked");
+            }
+
+            loadJqGridSchedule();
+
+        }
+
+        $('#crud-SalesOrderCustomerId').selectpicker('refresh')
+
+        switch (action) {
+            case "Create":
+
+                canSelect = true;
+
+                $("#crud-SalesSONumber").attr("readonly", true);
+                $("#crud-SalesOrderSODate").attr("readonly", true).val(newdate);
+                $("#crudSalesOrderModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudSalesOrderModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSalesOrderModal').modal('show');
+                $("#crud-SalesOrderCustomerId").focus();
+                loadJqGridSchedule();
+
+                break;
+            case "Update":
+
+                canSelect = true;
+
+                $('#btn-importSalesOrderDetail').attr("disabled", true);
+                $("#crud-SalesSONumber").attr("readonly", true);
+                $("#crud-SalesOrderSODate").attr("readonly", true);
+                $("#crud-SalesOrderCustomerId").attr("disabled", true);
+                $("#crudSalesOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudSalesOrderModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSalesOrderModal').modal('show');
+                $("#crud-SalesOrderRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudSalesOrderForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-SalesOrderCustomerId").attr("disabled", true);
+                $('#btn-addSalesOrderDetail').attr('disabled', true);
+                $('#btn-importSalesOrderDetail').attr("disabled", true);
+                $('#btn-processSchedule').attr('disabled', true);
+                $("#btn-crudSalesOrder").html("<span class='fa fa-trash'></span> Delete Order");
+                $("#crudSalesOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudSalesOrderModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudSalesOrderModal').modal('show');
+                break;
+            case "Canceled":
+                $("#crudSalesOrderForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-SalesOrderCustomerId").attr("disabled", true);
+                $('#btn-addSalesOrderDetail').attr('disabled', true);
+                $('#btn-importSalesOrderDetail').attr("disabled", true);
+                $('#btn-processSchedule').attr('disabled', true);
+                $("#btn-crudSalesOrder").html("<span class='fa fa-ban'></span> Cancel Order");
+                $("#crudSalesOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudSalesOrderModal .modal-title").html('<span class="fa fa-ban"></span> ' + action + ' @ViewBag.Title');
+                $('#crudSalesOrderModal').modal('show');
+                break;
+            case "Closed":
+                $("#crudSalesOrderForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-SalesOrderCustomerId").attr("disabled", true);
+                $('#btn-addSalesOrderDetail').attr('disabled', true);
+                $('#btn-importSalesOrderDetail').attr("disabled", true);
+                $('#btn-processSchedule').attr('disabled', true);
+                $("#btn-crudSalesOrder").html("<span class='fa fa-sign-out'></span> Closing Order");
+                $("#crudSalesOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudSalesOrderModal .modal-title").html('<span class="fa fa-sign-out"></span> ' + action + ' @ViewBag.Title');
+                $('#crudSalesOrderModal').modal('show');
+                break;
+        }
+
+        reloadGridSalesDetail();
+
+    }
+
+    $('#crud-SalesOrderCustomerId').change(function () {
+        $('#crudSalesOrderError').html("");
+    });
+
+    $('#crud-SalesOrderDeliveryMonth').change(function () {
+        $('#crudSalesOrderError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridSalesDetail = $("#jqGridCrudSalesDetail").jqGrid({
+            url: "@Url.Action("SalesOrderDetailListJson", "Marketing")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { SONumber: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 70, sortable: false, formatter: actionSalesDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', key: true, fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 210, sortable: false },
+                { label: 'MODEL', name: 'Model', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'QTY/ KBN', name: 'QtyByKanban', align: 'right', fixed: true, width: 45, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'Unit', align: 'center', fixed: true, width: 80, sortable: false },
+                { label: 'N', name: 'OrderQty', align: 'right', fixed: true, width: 80, formatter: 'number', sortable: false },
+                { label: 'N+1', name: 'OrderN1', align: 'right', fixed: true, width: 80, formatter: 'number', sortable: false },
+                { label: 'N+2', name: 'OrderN2', align: 'right', fixed: true, width: 80, formatter: 'number', sortable: false },
+                { label: 'N+3', name: 'OrderN3', align: 'right', fixed: true, width: 80, formatter: 'number', sortable: false },
+                { label: 'Del / Day', name: 'DeliveryPerDay', align: 'right', fixed: true, width: 80, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            loadonce: true,
+            height: 221,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            multiselect: true,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#SalesOrderAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                    var status = "";
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        status = $(this).jqGrid('getCell', ids[i], 'RowStatus')
+                        if (status.includes("Invalid")) {
+                            status = "Invalid";
+                        }
+                        if (status != "Invalid") {
+                            parameters =
+                            {
+                                RowStatus: action,
+                            }
+                            $("#jqGridCrudSalesDetail").jqGrid('setRowData', ids[i], parameters);
+                        }
+                    }
+                } else {
+                    //var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                    //var status = "";
+                    //for (i = 0; i < l; i++) {
+                    //    status = $(this).jqGrid('getCell', ids[i], 'RowStatus')
+                    //    console.log(status);
+
+                    //}
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudSalesOrderDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudSalesDetail').jqGrid('navGrid', '#jqGridPagerCrudSalesDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudSalesDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'OrderQty', numberOfColumns: 4, titleText: 'ORDER QTY' },
+            ]
+        });
+    });
+
+    function reloadGridSalesDetail() {
+
+        var SONumber = $("#crud-SalesSONumber").val();
+
+        $("#jqGridCrudSalesDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                SONumber: SONumber,
+            }
+        }).trigger('reloadGrid');
+
+
+    };
+
+    function actionSalesDetailFormatter(cellvalue, options, rowObject) {
+
+        var formaction = $("#SalesOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+        var rowid = rowObject.PartNumber;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid +"' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudSalesOrderDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid +"' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudSalesOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            case "Invalid":
+                return "<span class='badge badge-warning'>Invalid</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    function crudSalesOrderDetailMove(action) {
+        var $grid = $("#jqGridCrudSalesDetail");
+        var id = $("#crud-SalesOrderDetailPartNumber").val();
+        var rowIndex = $grid.jqGrid('getInd', id);
+        var dataIDs = $grid.getDataIDs();
+        var datalen = (dataIDs.length) - 1;
+
+        $("#btn-prev").removeClass("disabled");
+        $("#btn-next").removeClass("disabled");
+
+
+        switch (action) {
+            case "prev":
+
+                rowIndex = parseInt(rowIndex) - 2;
+
+                if (dataIDs.length >= rowIndex && rowIndex >= 0) {
+
+                    var prevID = dataIDs[rowIndex];
+                    crudSalesOrderDetail("Update", prevID)
+                    $grid.setSelection(prevID, false);
+
+                }
+
+                if (rowIndex <= 0) {
+                    $("#btn-prev").addClass("disabled");
+                }
+
+                break;
+
+            case "next":
+
+                if (dataIDs.length > rowIndex) {
+
+                    var nextID = dataIDs[rowIndex];
+                    crudSalesOrderDetail("Update", nextID)
+                    $grid.setSelection(nextID, false);
+
+                }
+
+                if (datalen <= rowIndex) {
+                    $("#btn-next").addClass("disabled");
+                }
+
+                break;
+
+        }
+
+    }
+
+    function crudSalesOrderDetail(action, id) {
+
+        document.getElementById("crudSalesOrderDetailForm").reset();
+        $('#crudSalesOrderDetailForm').removeClass('was-validated');
+        $('#crudSalesOrderError').html("");
+        $('#crudSalesOrderDetailError').html("");
+        $("#btn-crudSalesOrderDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#btn-prev").addClass("disabled");
+        $("#btn-next").addClass("disabled");
+        $("#btn-searchPart").addClass("disabled");
+
+        $("#crudSalesOrderDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-SalesOrderDetailDeliveryPerDay").attr("disabled", true);
+        $("#SalesOrderDetailAction").val(action);
+        var Customerid = $("#crud-SalesOrderCustomerId").val();
+        var DeliveryMonth = $("#crud-SalesOrderDeliveryMonth").val();
+
+        if (Customerid === "" || DeliveryMonth === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer and Delivery Month completely before add @ViewBag.Title Item.</small></div>'
+            $('#crudSalesOrderError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+            var $grid = $("#jqGridCrudSalesDetail");
+            //var columnNames = $("#jqGridCrudSalesDetail").jqGrid('getGridParam', 'colModel');
+            //console.log(columnNames);
+            //console.log(id);
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus,
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName,
+                Model = rowData.Model,
+                QtyByKanban = rowData.QtyByKanban,
+                Unit = rowData.Unit,
+                OrderQty = rowData.OrderQty,
+                N1 = rowData.OrderN1,
+                N2 = rowData.OrderN2,
+                N3 = rowData.OrderN3,
+                DeliveryPerDay = rowData.DeliveryPerDay;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus.split(">");
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#SalesOrderDetailRowStatus").val(RowStatus);
+            $("#crud-SalesOrderDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-SalesOrderDetailPartNumber").val(PartNumber);
+            $("#crud-SalesOrderDetailPartName").val(PartName);
+            $("#crud-SalesOrderDetailPartModel").val(Model);
+            $("#crud-SalesOrderDetailUnitQty").val(QtyByKanban);
+            $("#crud-SalesOrderDetailUnit").val(Unit);
+            $("#crud-SalesOrderDetailOrderQty").val(OrderQty); //.prop("min", QtyByKanban);
+            $("#crud-SalesOrderDetailOrderN1").val(N1);
+            $("#crud-SalesOrderDetailOrderN2").val(N2);
+            $("#crud-SalesOrderDetailOrderN3").val(N3);
+            $("#crud-SalesOrderDetailDeliveryPerDay").val(DeliveryPerDay);
+
+            setMaxDeliveryPerDay();
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-SalesOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartName").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartModel").attr("disabled", true);
+                $("#crud-SalesOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-SalesOrderDetailUnit").attr("disabled", true);
+                $("#crudSalesOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudSalesOrderDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudSalesOrderDetailModal').modal('show');
+                $("#btn-searchPart").removeClass("disabled");
+                $("#btn-searchPart").focus();
+                break;
+            case "Update":
+                $("#crud-SalesOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartName").attr("disabled", true);
+                $("#crud-SalesOrderDetailPartModel").attr("disabled", true);
+                $("#crud-SalesOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-SalesOrderDetailUnit").attr("disabled", true);
+                $("#crudSalesOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudSalesOrderDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudSalesOrderDetailModal').modal('show');
+                $("#crud-SalesOrderDetailOrderQty").focus().select();
+
+                var rowIndex = $grid.jqGrid('getInd', PartNumber);
+                var dataIDs = $grid.getDataIDs();
+                var datalen = (dataIDs.length);
+
+                $("#btn-prev").removeClass("disabled");
+                $("#btn-next").removeClass("disabled");
+
+                if (rowIndex === 1) {
+                    $("#btn-prev").addClass("disabled");
+                }
+                if (rowIndex === datalen) {
+                    $("#btn-next").addClass("disabled");
+                }
+                break;
+            case "Delete":
+                $("#crudSalesOrderDetailForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-searchPart").addClass("disabled");
+                $("#btn-crudSalesOrderDetail").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudSalesOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudSalesOrderDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudSalesOrderDetailModal').modal('show');
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudSalesOrderDetailForm").submit(function (event) {
+
+                event.preventDefault();
+                var resValid = true;
+
+                $("#crudSalesOrderDetailForm input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false;
+                    }
+                })
+
+                //if ($("#crud-SalesOrderDetailOrderQty").val() < $("#crud-SalesOrderDetailUnitQty").val()) {
+                //    resValid = false;
+                //    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Order Qty!</b><br/>Order Qty less than Qty / Kanban. Please check your orders.</small></div>'
+                //    $('#crudSalesOrderDetailError').html(errMsg);
+                //    unloadblockspinner();
+                //    $("#crud-SalesOrderDetailOrderQty").focus();
+                //    return false;
+                //}
+
+                setTimeout(function () {
+                    if (resValid) {
+
+                        var action = $('#SalesOrderDetailAction').val();
+                        var rowStatus = $('#SalesOrderDetailRowStatus').val();
+
+                        switch (action) {
+                            case "Create":
+
+                                parameters =
+                                {
+                                    rowID: $("#crud-SalesOrderDetailPartNumber").val(),
+                                    initdata: {
+                                        RowStatus: action,
+                                        UniqueNumber: $("#crud-SalesOrderDetailUniqueNumber").val(),
+                                        PartNumber: $("#crud-SalesOrderDetailPartNumber").val(),
+                                        PartName: $("#crud-SalesOrderDetailPartName").val(),
+                                        Model: $("#crud-SalesOrderDetailPartModel").val(),
+                                        QtyByKanban: $("#crud-SalesOrderDetailUnitQty").val(),
+                                        Unit: $("#crud-SalesOrderDetailUnit").val(),
+                                        OrderQty: $("#crud-SalesOrderDetailOrderQty").val(),
+                                        OrderN1: $("#crud-SalesOrderDetailOrderN1").val(),
+                                        OrderN2: $("#crud-SalesOrderDetailOrderN2").val(),
+                                        OrderN3: $("#crud-SalesOrderDetailOrderN3").val(),
+                                        DeliveryPerDay: $("#crud-SalesOrderDetailDeliveryPerDay").val(),
+                                    },
+                                    position: "last",
+                                }
+
+                                $("#jqGridCrudSalesDetail").jqGrid('addRow', parameters);
+                                showToast("Success", "Create @ViewBag.Title " + $("#crud-SalesOrderDetailPartName").val() + " has been saved succesfully");
+                                $('#crudSalesOrderDetailModal').modal('hide');
+
+                                break;
+
+                            case "Update":
+
+                                var rowid = $("#crud-SalesOrderDetailPartNumber").val()
+
+                                if (rowStatus != "New") {
+                                    rowStatus = action
+                                } else {
+                                    rowStatus = "Create"
+                                }
+
+                                parameters =
+                                {
+                                    RowStatus: rowStatus,
+                                    OrderQty: $("#crud-SalesOrderDetailOrderQty").val(),
+                                    OrderN1: $("#crud-SalesOrderDetailOrderN1").val(),
+                                    OrderN2: $("#crud-SalesOrderDetailOrderN2").val(),
+                                    OrderN3: $("#crud-SalesOrderDetailOrderN3").val(),
+                                    DeliveryPerDay: $("#crud-SalesOrderDetailDeliveryPerDay").val(),
+                                }
+
+                                $("#jqGridCrudSalesDetail").jqGrid('setRowData', rowid, parameters);
+                                showToast("Success", "Update @ViewBag.Title " + $("#crud-SalesOrderDetailPartName").val() + " has been saved succesfully");
+
+                                var lastrow = $("#btn-next").hasClass("disabled");
+                                if (lastrow === true) {
+                                    $('#crudSalesOrderDetailModal').modal('hide');
+                                } else {
+                                    $("#btn-next").click();
+                                }
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#crud-SalesOrderDetailPartNumber").val()
+
+                                if (rowStatus === "New" || rowStatus === "Invalid") {
+                                    $('#jqGridCrudSalesDetail').jqGrid('delRowData', rowid);
+                                } else {
+                                    parameters =
+                                    {
+                                        RowStatus: action,
+                                    }
+                                    $("#jqGridCrudSalesDetail").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                removeDeliverySchedule(rowid);
+
+                                showToast("Failed", "Delete @ViewBag.Title " + $("#crud-SalesOrderDetailPartName").val() + " has been removed succesfully");
+                                $('#crudSalesOrderDetailModal').modal('hide');
+
+                                break;
+                        }
+
+                        unloadblockspinner();
+
+                    } else {
+                        unloadblockspinner();
+                    }
+                }, 500)
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudSalesOrderForm").submit(function (event) {
+                event.preventDefault();
+                var resValid = true;
+
+                $("#crudSalesOrderForm input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false;
+                    }
+                })
+
+                loadblockspinner();
+                setTimeout(function () {
+                    if (resValid) {
+
+                        var $grid = $("#jqGridCrudSalesDetail");
+                        var dataIDs = $grid.getDataIDs();
+                        var datalen = (dataIDs.length);
+                        var formaction = $("#SalesOrderAction").val();
+
+                        if (datalen === 0 && formaction != "Delete") {
+                            alert("Please add Part Item for @ViewBag.Title before submit.");
+                            unloadblockspinner();
+                            event.stopPropagation;
+                            return false;
+                        }
+
+                        var monthyear = $("#crud-SalesOrderDeliveryMonth").val();
+                        monthyear = monthyear.split("/");
+                        var month = monthyear[0];
+                        var years = monthyear[1];
+
+                        //Delivery Schedule
+                        var jsonSchedule = $("#jqGridCrudSchedule").jqGrid('getGridParam', 'data')
+                        colD = "[{";
+                        var partnumber = "";
+                        $.each(jsonSchedule, function (i, items) {
+                            //console.log('data : ' + i)
+                            var index = 0;
+                            for (var key in items) {
+                                index += 1;
+
+                                switch (index) {
+                                    case 4:
+                                        partnumber = items[key];
+                                        break;
+                                    default:
+                                        if (key != "Total") {
+
+                                            if (index > 8) {
+
+                                                if (parseFloat(items[key]) != 0) {
+                                                    if (colD != "[{") colD += "},{"
+                                                    colD += '"SONumber":"' + $("#crud-SalesSONumber").val() + '",'
+                                                    colD += '"CustomerId":"' + $("#crud-SalesOrderCustomerId").val() + '",'
+                                                    colD += '"PartNumber":"' + partnumber + '",'
+                                                    colD += '"DeliveryDate":"' + key + '",'
+                                                    colD += '"DeliveryQty":' + items[key] + ''
+                                                }
+                                            }
+
+                                        }
+                                        break;
+                                }
+                                //    console.log(index + '. ' + key + ' - ' + items[key])
+                            }
+                        });
+                        colD += "}]";
+
+                        jsonSchedule = colD.replaceAll(",{}", "");
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            SalesOrder: {
+                                SONumber: $("#crud-SalesSONumber").val(),
+                                SODate: $("#crud-SalesOrderSODate").val(),
+                                CustomerId: $("#crud-SalesOrderCustomerId").val(),
+                                PONumber: $("#crud-SalesOrderPONumber").val(),
+                                PODate: $("#crud-SalesOrderPODate").val(),
+                                ReceiveDate: $("#crud-SalesOrderReceiveDate").val(),
+                                DeliveryMonth: month,
+                                DeliveryYear: years,
+                                PassThrough: $("#crud-SalesOrderPassThrough").prop("checked"),
+                                StartDelivery: $("#crud-SalesOrderStartDelivery").val(),
+                                StartDateDelivery: $("#crud-SalesOrderStartDateDelivery").val(),
+                                EndDateDelivery: $("#crud-SalesOrderEndDateDelivery").val(),
+                                Remarks: $("#crud-SalesOrderRemarks").val(),
+                                Status: null,
+                                EditDate: null,
+                                UserID: null
+                            },
+                            SalesOrderDetail: $("#jqGridCrudSalesDetail").jqGrid('getGridParam', 'data'),
+                            ScheduleDelivery: JSON.parse(jsonSchedule),
+                            uid: $("@ViewBag.UserId").val(),
+                            formAction: $("#SalesOrderAction").val()
+                        };
+
+                        formData.append("jsonData", JSON.stringify(jsonData));
+                        //console.log(JSON.stringify(jsonData));
+                        //return false;
+
+                        $.ajax({
+                            url: '@Url.Action("crudSalesOrderList", "Marketing")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            success: function (data) {
+                                $('#crudSalesOrderModal').modal('hide');
+                                var act = $("#SalesOrderAction").val();
+                                act = act.toLowerCase();
+                                doSuccess(data, act);
+                            },
+                            error: function (xhr, desc, err) {
+
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#crudSalesOrderError').html(errMsg);
+                            }
+                        });
+                    } else {
+                        unloadblockspinner();
+                    }
+                }, 100);
+            });
+        });
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        Customerid = $("#crud-SalesOrderCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { CustomerId:Customerid },
+            success: function (response) {
+
+                var id = "#crud-SalesOrderCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+    function callFilterFinishGoods() {
+
+        var Customerid = $("#crud-SalesOrderCustomerId").val();
+        var partexist = $("#jqGridCrudSalesDetail").getDataIDs();
+        var passthrough = $("#crud-SalesOrderPassThrough").prop("checked")
+        var status = $("#SalesOrderDetailAction").val()
+        if (status === "Update") {
+            partexist = "";
+        }
+
+        //showfilterPartFinishGoods(Customerid, partexist, passthrough); show all parts 2022-04-01
+        showfilterPartFinishGoods(Customerid, partexist, "");
+
+    }
+
+    $(document).on('hide.bs.modal', '#filterPartFinishGoodsModal', function (e) {
+
+        if ($("#search_result").val() != "") {
+            var searchresult = JSON.parse($("#search_result").val());
+            var action = $("#SalesOrderDetailAction").val();
+
+            setTimeout(function () {
+
+                if (searchresult.length != 0) {
+
+                    switch (action) {
+                        case "Create":
+                            $("#crud-SalesOrderDetailUniqueNumber").val(searchresult.UniqueNumber);
+                            $("#crud-SalesOrderDetailPartNumber").val(searchresult.PartNumber);
+                            $("#crud-SalesOrderDetailPartName").val(searchresult.PartName);
+                            $("#crud-SalesOrderDetailPartModel").val(searchresult.CustomerUnitModel);
+                            $("#crud-SalesOrderDetailUnitQty").val(searchresult.UnitQty);
+                            $("#crud-SalesOrderDetailUnit").val(searchresult.UnitLevel2);
+
+                            $("#crud-SalesOrderDetailOrderQty").focus().select(); //.prop("min", searchresult.UnitQty);
+
+                            break;
+                        case "Update":
+
+                            crudSalesOrderDetail(action, searchresult.PartNumber);
+                            $("#crud-SalesOrderDetailOrderQty").focus().select();
+
+                            break;
+                    }
+                }
+            }, 100);
+        }
+
+    });
+
+    function loadExcel() {
+
+        $('#crudSalesOrderError').html("");
+        var replace = $('#replace').prop("checked");
+
+        var gridArrayData = [];
+        $("#jqGridCrudSalesDetail")[0].grid.beginReq();
+
+        var fileUpload = $("#file-import").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+
+        $.ajax({
+            url: '@Url.Action("ImportJson", "Marketing")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#crudSalesOrderError').html(errMsg);
+                        $("#jqGridCrudSalesDetail").jqGrid("clearGridData");
+                        $("#jqGridCrudSalesDetail")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridCrudSalesDetail").jqGrid("clearGridData");
+
+                var failed = 0;
+                var status = "";
+                if (response.ImportSalesOrder.length > 0) {
+                    $.each(response.ImportSalesOrder, function (i, item) {
+
+                        if (item.Status != "") {
+                            failed += 1;
+                            status = item.Status;
+                        }
+
+                        var SalesOrderDeliveryYear = item.DeliveryYear;
+                        var SalesOrderDeliveryMonth = moment().month(item.DeliveryMonth).format("MM");
+                        var monthyear = SalesOrderDeliveryMonth + "/" + SalesOrderDeliveryYear;
+                        var podate = moment(new Date(parseInt(item.PODate.substr(6)))).format("YYYY-MM-DD");
+                        var receivedate = moment(new Date(parseInt(item.ReceiveDate.substr(6)))).format("YYYY-MM-DD");
+
+                        $("#crud-SalesOrderCustomerId").val(item.CustomerId);
+                        $("#crud-SalesOrderPONumber").val(item.PONumber);
+                        $("#crud-SalesOrderPassThrough").attr("checked", item.PassThrough);
+                        $("#crud-SalesOrderPODate").val(podate);
+                        $("#crud-SalesOrderReceiveDate").val(receivedate);
+                        $("#crud-SalesOrderDeliveryMonth").val(monthyear);
+                        $("#crud-SalesOrderRemarks").val(item.Remarks);
+
+                        $(".selectpicker").selectpicker('refresh');
+
+                    });
+
+                    $.each(response.ImportSalesOrderDetail, function (i, item) {
+
+                        if (item.RowStatus != "Create") {
+                            failed += 1;
+                            status += item.RowStatus + ' Part Number Not Register : ' + item.PartNumber + ' <br/>';
+                        }
+
+                        gridArrayData.push(
+                            {
+                                RowStatus: item.RowStatus,
+                                UniqueNumber: item.UniqueNumber,
+                                PartNumber: item.PartNumber,
+                                PartName: item.PartName,
+                                Model: item.Model,
+                                QtyByKanban: item.QtyByKanban,
+                                Unit: item.Unit,
+                                OrderQty: item.OrderQty,
+                                OrderN1: item.OrderN1,
+                                OrderN2: item.OrderN2,
+                                OrderN3: item.OrderN3,
+                                DeliveryPerDay: item.DeliveryPerDay,
+                            });
+                    });
+
+                    if (failed > 0) {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixing your excel template data with error!</br>'+ status +'</small></div>'
+                        $('#crudSalesOrderError').html(errMsg);
+                        $("#btn-crudSalesOrder").attr("disabled", true);
+                    } else {
+                        $('#btn-crudSalesOrder').removeAttr("disabled");
+                    }
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#crudSalesOrderError').html(errMsg);
+                    $("#btn-crudSalesOrder").attr("disabled", true);
+                }
+
+                $("#jqGridCrudSalesDetail").jqGrid('setGridParam', { data: gridArrayData });
+                $("#jqGridCrudSalesDetail")[0].grid.endReq();
+                $("#jqGridCrudSalesDetail").trigger('reloadGrid');
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#crudSalesOrderError').html(errMsg);
+                $("#jqGridCrudSalesDetail")[0].grid.endReq();
+
+            }
+        });
+    }
+
+    function importSalesOrderDetail() {
+        $("#file-import").trigger("click");
+    }
+
+    $(document).ready(function () {
+        $(".filter-combo").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("option").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+    function setMaxDeliveryPerDay() {
+        var MaxQty = $("#crud-SalesOrderDetailOrderQty").val();
+        //$("#crud-SalesOrderDetailDeliveryPerDay").attr({ "max": MaxQty });
+    }
+</script>
+
+<script>
+    var gridArrayData = "";
+    var orderNumber = "",
+        startVal = "",
+        endVal = "";
+    var columnsIn = "";
+    var colNV = "";
+    var colMV = "";
+    var colD = "";
+    var colL = "";
+    var colI = "";
+    var workdayjson = [];
+
+    function loadJqGridSchedule(generateSchedule = false) {
+
+        $.jgrid.gridUnload('#jqGridCrudSchedule');
+
+        orderNumber = $("#crud-SalesSONumber").val();
+        startVal = $("#crud-SalesOrderStartDateDelivery").val();
+        endVal = $("#crud-SalesOrderEndDateDelivery").val();
+
+        getWorkingDay("");
+
+        var monthyear = $("#crud-SalesOrderDeliveryMonth").val();
+        monthyear = monthyear.split("/");
+        var month = monthyear[0].replace('0','');
+        var years = monthyear[1];
+
+        if (startVal != "" || endVal != "") {
+            startVal = moment(startVal).format('YYYY-MM-DD');
+            endVal = moment(endVal).format('YYYY-MM-DD');
+        } else {
+
+            if (monthyear[0] === "") {
+                var tday = new Date();
+                years = tday.getFullYear();
+                month = tday.getMonth();
+            }
+
+            startVal = new Date(years, parseInt(month), 1);
+            endVal = new Date(years, parseInt(month) + 1, 0);
+
+        }
+
+        var colN = [];
+        var colM = [];
+        colD = "";
+        gridArrayData = "";
+
+        setTimeout(function () {
+            $.ajax({
+                url: '@Url.Action("DeliveryScheduleJson", "Marketing")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: {
+                    sonumber: orderNumber,
+                    startdate: moment(startVal).format('YYYY-MM-DD'),
+                    enddate: moment(endVal).format('YYYY-MM-DD'),
+                },
+                success: function (response) {
+
+                    var results = response;
+
+                    //console.log(response);
+                    // get the first result set, or you can loop trhrough all, assuming that each reuslt set is the same.
+                    if (results.length > 0) {
+
+                        colN = [];
+                        colM = [];
+
+                        columnsIn = results[0];
+                        colNV = "";
+                        colMV = "";
+                        colL = "";
+                        colI = "";
+                        colM.push({ label: 'Action', name: 'action', index: '' + colMV + '', align: 'center', sortable: false, width: 55, fixed: true, formatter: actionScheduleFormatter },);
+
+                        for (var keys in columnsIn) {
+                            //console.log(keys); // here is your column name you are looking for
+                            $.map(results, function (value, key) {
+                                //headers
+                                if (key === 0) {
+                                    colNV += "'" + value[keys].Key + "',";
+                                    colMV = value[keys].Key;
+
+                                    switch (keys) {
+                                        case "0": {
+                                            colM.push({ label: 'SO Number', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, hidden: true },);
+                                            break;
+                                        }
+                                        case "1": {
+                                            colM.push({ label: 'Customer', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, hidden: true },);
+                                            break;
+                                        }
+                                        case "2": {
+                                            colM.push({ label: 'UNIQUE', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 50, fixed: true, frozen: true },);
+                                            break;
+                                        }
+                                        case "3": {
+                                            colM.push({ label: 'PART NUMBER', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 100, frozen: true },);
+                                            break;
+                                        }
+                                        case "4": {
+                                            colM.push({ label: 'PART NAME', name: '' + colMV + '', index: '' + colMV + '', align: 'left', editable: false, sortable: false, width: 200, frozen: true },);
+                                            break;
+                                        }
+                                        case "5": {
+                                            colM.push({ label: 'ORDER QTY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                            break;
+                                        }
+                                        case "6": {
+                                            colM.push({ label: 'QTY / KBN', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                            break;
+                                        }
+                                        case "7": {
+                                            colM.push({ label: 'DEL. / DAY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                            break;
+                                        }
+                                        default:
+
+                                            if (colMV.toLowerCase() != "total") {
+                                                colL = moment(new Date(colMV)).format("DD MMM Y").toUpperCase();
+                                                colI = "X" + moment(new Date(colMV)).format("YMMDD");
+                                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 38, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                            } else {
+                                                colL = colMV.toUpperCase();
+                                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: false, editrules: { number: true }, align: 'center', width: 55, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                            }
+
+                                            break;
+                                    }
+
+                                }
+
+                            });
+                        }
+
+                        //data json
+                        colD = "[{";
+                        //console.log(results);
+                        for (var res in results) {
+
+                            columnsIn = results[res];
+                            //console.log('data ' + res);
+                            //console.log(columnsIn);
+
+                            var totals = 0;
+                            var i = 0;
+                            if (colD != "[{") colD += '},{';
+
+                            columnsIn.map(getData);
+
+                            var keyVal = "";
+                            var objVal = "";
+                            function getData(item) {
+                                keyVal = item.Key;
+                                objVal = item.Value === null ? 0 : item.Value;
+
+                                i += 1;
+
+                                if (keyVal != "Total") {
+
+                                    if (i > 8) {
+                                        totals += parseFloat(objVal);
+                                    }
+                                    colD += '"' + keyVal + '":"' + objVal + '",'
+
+                                } else {
+
+                                    colD += '"' + keyVal + '":"' + totals + '"'
+
+                                }
+                            }
+
+                        };
+
+                        var len = colD.length;
+                        colD = colD.substring(0, len);
+                        colN.push(colNV);
+                        colD += "}]";
+
+                        if (generateSchedule === false) {
+                            gridArrayData = JSON.parse(JSON.stringify(colD));
+                            gridArrayData = JSON.parse(gridArrayData);
+                        }
+
+                    } else {
+
+                        //console.log('null data');
+
+                        $("#crud-SalesOrderStartDateDelivery").val(moment(startVal).format("YYYY-MM-DD"))
+                        $("#crud-SalesOrderEndDateDelivery").val(moment(endVal).format("YYYY-MM-DD"))
+
+                        colM.push({ label: 'SO Number', name: 'SONumber', index: 'SONumber', align: 'center', width: 55, hidden: true, frozen: true },);
+                        colM.push({ label: 'Customer', name: 'CustomerId', index: 'CustomerId', align: 'center', width: 55, hidden: true, frozen: true },);
+                        colM.push({ label: 'UNIQUE', name: 'UniqueNumber', index: 'UniqueNumber', align: 'center', width: 50, frozen: true },);
+                        colM.push({ label: 'PART NUMBER', name: 'PartNumber', index: 'PartNumber', align: 'center', width: 100, frozen: true },);
+                        colM.push({ label: 'PART NAME', name: 'PartName', index: 'PartName', align: 'left', width: 200 },);
+                        colM.push({ label: 'ORDER QTY', name: 'OrderQty', index: 'OrderQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                        colM.push({ label: 'QTY / KBN', name: 'UnitQty', index: 'UnitQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                        colM.push({ label: 'DEL. / DAY', name: 'DeliveryPerDay', index: 'DeliveryPerDay', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+
+                        startVal = new Date(startVal);
+                        endVal = new Date(endVal);
+
+                        try {
+                            for (var d = startVal; d <= endVal; d.setDate(d.getDate() + 1)) {
+                                colMV = moment(d).format("YYYY-MM-DD");
+                                colL = moment(d).format("DD MMM Y").toUpperCase()
+                                colI = "X" + moment(d).format("YMMDD")
+                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 38, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                            }
+                        } catch {
+                            //nothing
+                        }
+
+                        colM.push({ label: 'TOTAL', name: 'Total', index: 'Total', align: 'center', width: 55, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+
+                    }
+
+                    if (generateSchedule === true) {
+
+                        //console.log('local');
+
+                        var jsonData = {
+                            SalesOrderDetail: $("#jqGridCrudSalesDetail").jqGrid('getGridParam', 'data')
+                        };
+
+                        //console.log(jsonData);
+
+                        if (jsonData.SalesOrderDetail.length === 0) {
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Generate Schedule!</b><br/>Please add Part Item before generating schedule.</small></div>'
+                            $('#crudControlPlanningError').html(errMsg);
+                            unloadblockspinner();
+                            return false;
+                        }
+
+                        //console.log(jsonData.SalesOrderDetail);
+                        var count = 0;
+                        var total = 0;
+                        var sumTotal = 0;
+                        var dqty = 0;
+                        colD = "[{";
+                        colMV = "";
+
+                        var sonumber = $("#crud-SalesSONumber").val();
+                        var customerid = $("#crud-SalesOrderCustomerId").val();
+
+                        //$("#jqGridCrudSchedule").jqGrid('clearGridData');
+                        //console.log(jsonData);
+                        let totalworkday = getWorkDay($("#crud-SalesOrderStartDateDelivery").val(), $("#crud-SalesOrderEndDateDelivery").val(), 'N');
+                        let deliveryPerDay = 0;
+                        if (totalworkday === null) {
+                            alert("Workday not found, please check your working schedule.")
+                            unloadblockspinner();
+                            return false;
+                        }
+
+                        //console.log(totalworkday);
+                        $.each(jsonData.SalesOrderDetail, function (i, order) {
+
+                            deliveryPerDay = (parseFloat(order.OrderQty) / parseFloat(totalworkday));
+                            if (deliveryPerDay < parseFloat(order.QtyByKanban)) {
+                                deliveryPerDay = parseFloat(order.QtyByKanban);
+                            }
+
+
+                            order.DeliveryPerDay = deliveryPerDay;
+
+                            parameters =
+                            {
+                                DeliveryPerDay: deliveryPerDay,
+                            }
+
+                            $("#jqGridCrudSalesDetail").jqGrid('setRowData', order.PartNumber, parameters);
+
+                            //console.log(deliveryPerDay);
+
+                            if (colD != "[{") colD += '},{';
+
+                            colD += '"SONumber":"' + sonumber + '",';
+                            colD += '"CustomerId":"' + customerid + '",';
+                            colD += '"UniqueNumber":"' + order.UniqueNumber + '",';
+                            colD += '"PartNumber":"' + order.PartNumber + '",';
+                            colD += '"PartName":"' + order.PartName + '",';
+                            colD += '"OrderQty":' + parseFloat(order.OrderQty) + ',';
+                            colD += '"UnitQty":' + parseFloat(order.QtyByKanban) + ',';
+                            colD += '"DeliveryPerDay":' + parseFloat(order.DeliveryPerDay) + ',';
+
+                            dqty = 0;
+
+                            startVal = $("#crud-SalesOrderStartDateDelivery").val();
+                            endVal = $("#crud-SalesOrderEndDateDelivery").val();
+
+                            startVal = moment(startVal).format('YYYY-MM-DD');
+                            endVal = moment(endVal).format('YYYY-MM-DD');
+
+                            startVal = new Date(startVal);
+                            endVal = new Date(endVal);
+
+                            //console.log(startVal);
+                            //console.log('data : ' + i)
+                            sumTotal = 0;
+                            total = 0;
+                            try {
+                                for (var d = startVal; d <= endVal; d.setDate(d.getDate() + 1)) {
+
+                                    var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(moment(d).format('YYYY-MM-DD'))));
+
+                                    dqty = 0;
+                                    if (dateEvt.length != 0) {
+
+                                        if (dateEvt[0].Holidays === false) {
+                                            dqty = parseFloat(order.DeliveryPerDay);
+                                        }
+
+                                    } else {
+                                        var dayname = moment(d).format("ddd");
+                                        if (dayname === "Sat" || dayname === "Sun") {
+                                            dqty = 0;
+                                        } else {
+                                            dqty = parseFloat(order.DeliveryPerDay);
+                                        }
+                                    }
+
+                                    sumTotal = total + dqty;
+
+                                    if (sumTotal > parseFloat(order.OrderQty)) {
+                                        dqty = parseFloat(order.OrderQty) - total;
+
+                                        if ((dqty / parseFloat(order.QtyByKanban)) != 0) {
+                                            dqty = Math.ceil(dqty / parseFloat(order.QtyByKanban)) * parseFloat(order.QtyByKanban)
+                                        }
+                                    }
+
+                                    total += dqty;
+
+                                    colMV = moment(d).format("YYYY-MM-DD");
+                                    colD += '"' + colMV + '":' + dqty + ',';
+                                }
+
+                            } catch {
+                                console.log('error generate ' + order.PartNumber);
+                            }
+
+                            colD += '"Total":' + total + '';
+                            count += 1;
+
+                        });
+
+                        colD += '}]'
+                        gridArrayData = JSON.parse(JSON.stringify(colD));
+                        //console.log(gridArrayData);
+                        gridArrayData = JSON.parse(gridArrayData.replace(",{}", ""));
+                        showToast("Success", "Generate Delivery Schedule [" + count + "] part items has been created succesfully");
+
+                    }
+
+                }
+            });
+            $("#jqGridCrudSchedule").jqGrid({
+                datatype: "local",
+                data: gridArrayData,
+                colModel: colM,
+                //altRows: true,
+                pager: '#jqGridPagerSchedule',
+                rowNum: 9999,
+                viewrecords: true,
+                rownumbers: true,
+                rownumWidth: 30,
+                height: 227,
+                autoresizeOnLoad: true,
+                autowidth: true,
+                shrinkToFit: false,
+                ondblClickRow: function (rowid) {
+
+                    //function reloadTable() {
+                    //    let data = $(this).jqGrid("getLocalRow", rowid);
+                    //    let total = 0;
+                    //    let loop = 0;
+                    //    $.each(data, function (i, col) {
+
+                    //        loop += 1;
+                    //        //console.log(loop + '. ' + col);
+
+                    //        if (loop > 8) {
+
+                    //            if (i != "Total") {
+                    //                total += parseInt(col);
+                    //                parameters =
+                    //                {
+                    //                    Total: total,
+                    //                }
+                    //                $(this).jqGrid('setRowData', rowid, parameters);
+                    //            }
+                    //        }
+                    //    });
+                    //}
+
+                    //$('#jqGridCrudSchedule').jqGrid("editRow", rowid, true, '', '', '', '', reloadTable);
+                    $('#jqGridCrudSchedule').jqGrid("editRow", rowid, true);
+
+                },
+                loadComplete: function () {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                    var colModel = $this.jqGrid('getGridParam', 'colModel');
+
+                    if (gridArrayData.length === 0) {
+                        $this.jqGrid('clearGridData');
+                    }
+
+                    $.each(colModel, function (i, col) {
+                        if (i > 9) {
+
+                            if (col.name != "Total") {
+                                var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(col.name)));
+
+                                if (dateEvt.length != 0) {
+
+                                    if (dateEvt[0].Holidays === true) {
+                                        $("#jqGridCrudSchedule").jqGrid('setLabel', col.name, '', { 'background': 'red', 'color': 'white', 'font-weight': 'bold' });
+                                    } else {
+                                        $("#jqGridCrudSchedule").jqGrid('setLabel', col.name, '', { 'background': 'green', 'color': 'white', 'font-weight': 'bold' });
+                                    }
+
+                                } else {
+                                    var dayname = moment(new Date(col.name)).format("ddd");
+
+                                    if (dayname === "Sat" || dayname === "Sun") {
+                                        $("#jqGridCrudSchedule").jqGrid('setLabel', col.name, '', { 'color': 'red', 'font-weight': 'bold' });
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    unloadblockspinner();
+
+                },
+            });
+        //    $("#jqGridCrudSchedule")
+        //        .jqGrid('destroyFrozenColumns')
+        //        .jqGrid('setColProp', 'DeliveryPerDay', { frozen: true })
+        //        .jqGrid('setFrozenColumns')
+        //        .trigger('reloadGrid', [{ current: true }]); // optional
+        }, 500);
+
+    };
+
+    $("button#btn-processSchedule").click(function () {
+        loadblockspinner();
+        setTimeout(function () {
+            loadJqGridSchedule(true);
+        }, 100);
+    });
+
+
+    function actionScheduleFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-EditSchedule-'" + rowid +"' class='btn btn-sm btn-primary text-white @ViewBag.canUpdate' onclick=\"crudDeliverySchedule('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit Delivery Schedule [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-CancelSchedule-'" + rowid +"' class='btn btn-sm btn-danger text-white bc-hidden' onclick=\"crudDeliverySchedule('Cancel','" + rowid + "')\" datatoogle='tooltip' title='Cancel Edit Delivery Schedule [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-ban'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-SaveSchedule-'" + rowid +"' class='btn btn-sm btn-success text-white @ViewBag.canUpdate' onclick=\"crudDeliverySchedule('Save','" + rowid + "')\" datatoogle='tooltip' title='Save Delivery Schedule [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-save'></span>";
+        btn += "</a> ";
+        btn += "</div>";
+
+        return btn
+
+    }
+
+    function reloadGridSchedule() {
+
+        $("#jqGridCrudSchedule").html();
+        unloadblockspinner();
+
+    };
+
+    function getWorkingDay(dateVal) {
+
+        var result = [];
+
+        if (dateVal === "") {
+            startVal = $("#crud-SalesOrderStartDateDelivery").val();
+            endVal = $("#crud-SalesOrderEndDateDelivery").val();
+
+            $.ajax({
+                url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                //data: { calendardate: dateVal },
+                data: {
+                    startdate: startVal,
+                    enddate: endVal,
+                },
+                success: function (response) {
+
+                    //result = response;
+                    workdayjson = response
+                }
+            });
+        }
+
+        $.each(workdayjson, function (i, items) {
+            try {
+                var date = moment(new Date(parseInt(items.CalendarDate.substr(6)))).format("YYYY-MM-DD");
+                if (dateVal === date) {
+                    result.push(items);
+                }
+            } catch {
+                result = [];
+            }
+        });
+
+        //console.log(result);
+        return result;
+
+    }
+
+    function crudDeliverySchedule(action, rowid) {
+        switch (action.toLowerCase()) {
+            case "update":
+                $('#jqGridCrudSchedule').jqGrid("editRow", rowid, true);
+                $('#btn-EditSchedule-' + rowid).addClass("bc-hidden");
+                $('#btn-CancelSchedule-' + rowid).removeClass("bc-hidden");
+                break;
+            case "save":
+                $('#jqGridCrudSchedule').saveRow(rowid, true);
+                $('#btn-EditSchedule-' + rowid).removeClass("bc-hidden");
+                $('#btn-CancelSchedule-' + rowid).addClass("bc-hidden");
+                break;
+            case "cancel":
+                $('#jqGridCrudSchedule').saveRow(rowid, false);
+                $('#btn-EditSchedule-' + rowid).removeClass("bc-hidden");
+                $('#btn-CancelSchedule-' + rowid).addClass("bc-hidden");
+                break;
+        }
+    }
+
+    function removeDeliverySchedule(partnumber) {
+        var grid = $('#jqGridCrudSchedule');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+            var rowId = grid.jqGrid('getCell', rows[i], 'PartNumber');
+
+            if (rowId === partnumber) {
+                grid.jqGrid('delRowData', rows[i]);
+            }
+        }
+    }
+
+    $("input[type=number]").blur(function () {
+        if ($(this).val() === "") {
+            $(this).val("0");
+        }
+    });
+
+    function getWorkDay(start, end, group) {
+
+        let result = 0;
+
+        $.ajax({
+            url: '@Url.Action("GetTotalWorkdayJson", "TimeManagement")',
+            type: "POST",
+            dataType: "JSON",
+            async: false,
+            data: {
+                start: start,
+                end: end,
+                groupid: group
+            },
+            success: function (response) {
+                //console.log(response);
+                result = response[0].TotalWorkday;
+            }
+        });
+
+        return result;
+    }
+
+    $("#crud-SalesOrderPONumber").blur(function () {
+        $.ajax({
+            url: '@Url.Action("SalesOrderListJson", "Marketing")',
+            type: "POST",
+            dataType: "JSON",
+            async: false,
+            data: {
+                searchFilter: $(this).val(),
+            },
+            success: function (response) {
+                if (response.length > 0) {
+                    if ($("#crud-SalesSONumber").val() != response[0].SONumber) {
+                        $("#btn-crudSalesOrder").attr("disabled", true);
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error!</b><br/>Your PO Number already create sales order on ' + response[0].SONumber + '</small></div>';
+                        $('#crudSalesOrderError').html(errMsg);
+                    }
+                } else {
+                    $("#btn-crudSalesOrder").removeAttr("disabled");
+                    $('#crudSalesOrderError').html("");
+                }
+            }
+        });
+    })
+
+</script>
+
+<script>
+    var dataSelected = [];
+
+    $(function () {
+
+        /* call selectable */
+        $("#jqGridCrudSalesDetail").selectable({
+            filter: 'tbody tr',
+            selecting: function (event, ui) {
+                dataSelected = []
+            },
+            selected: function (event, ui) {
+                //console.log(ui);
+                //console.log("SELECTED " + ui.selected["id"]);
+                dataSelected.push(ui.selected.id)
+            }
+        });
+
+
+        /* call context menu */
+        var $contextMenu = $("#contextMenu");
+
+        $("body").on("contextmenu", "#jqGridCrudSalesDetail", function (e) {
+
+            if (!canSelect) return false;
+
+            $contextMenu.css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+            });
+            //debugger;
+            return false;
+        });
+
+        $('html').click(function () {
+            $contextMenu.hide();
+        });
+
+        $("#contextMenu li a").click(function (e) {
+            var f = $(this);
+            //debugger;
+        });
+
+    });
+
+    function selectContextMenu(id, obj) {
+
+        var i, count, $grid = $("#jqGridCrudSalesDetail");
+        var selRows = $grid.jqGrid('getGridParam', 'selarrrow');
+        var dataall = $grid.getDataIDs();
+
+        switch (id) {
+            case 1:
+                var datasel = dataSelected.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], true);
+                }
+                break;
+            case 2:
+                var datasel = dataall.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 3:
+                var datasel = dataSelected.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 4:
+                var datasel = dataall.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 5:
+                var selectedRows = $grid.getGridParam('selarrrow');
+                var data = [];
+                $.each(selectedRows, function (i, sel) {
+                    var rowData = $grid.jqGrid("getRowData", sel),
+                        RowStatus = rowData.RowStatus;
+
+                    if (RowStatus != "") {
+                        RowStatus = RowStatus.split(">");
+                        RowStatus = RowStatus[1].split("<");
+                        RowStatus = RowStatus[0];
+                    }
+
+                    if (RowStatus === "New" || RowStatus === "Invalid") {
+                        $grid.jqGrid('delRowData', sel);
+                    } else {
+                        parameters =
+                        {
+                            RowStatus: "Delete",
+                        }
+                        $grid.jqGrid('setRowData', sel, parameters);
+                    }
+
+                    removeDeliverySchedule(sel);
+                    //data.push(sel);
+                });
+                //$.each(data, function (i, rowid) {
+                //    $grid.jqGrid('delRowData', rowid);
+                //});
+                break;
+        }
+    }
+</script>
+
+<style>
+    .ui-selected {
+        background-color: #b6ff00
+    }
+
+        .ui-selected:hover {
+            background-color: #00ff21
+        }
+
+    #contextMenu {
+        position: absolute;
+        display: none;
+        z-index: 2028;
+    }
+</style>

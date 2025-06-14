@@ -1,0 +1,113 @@
+﻿
+
+<div class="modal animated fadeIn" id="deleteLocationModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <form id="deleteLocationForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-trash"></span> Delete @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-Areaid">Area Id</label>
+                            <select class="custom-select custom-select-sm" id="delete-Areaid" name="Areaid" disabled></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-Locationid">Location Id</label>
+                            <input type="text" class="form-control form-control-sm" id="delete-Locationid" name="Locationid" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-Locationname">Location Name</label>
+                            <input type="text" class="form-control form-control-sm" id="delete-Locationname" name="Locationname" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-Locationremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="delete-Locationremarks" name="remarks" value="" readonly></textarea>
+                        </div>
+                    </div>
+                    <div id="deleteLocationError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-delete-Location" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-trash"></span> Delete</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function removeLocation(Areaid,Locationid, Locationname, remarks) {
+
+        document.getElementById("deleteLocationForm").reset();
+        $('#deleteLocationForm').removeClass('was-validated');
+        $("#deleteLocationForm :input").each(function () {
+            $(this).attr("readonly", true);
+        });
+
+        $("#delete-Areaid").val(Areaid).attr("disabled", true);
+        $("#delete-Locationid").val(Locationid);
+        $("#delete-Locationname").val(Locationname);
+        $("#delete-Locationremarks").val(remarks);
+        $('#deleteLocationError').html("");
+
+        $('#deleteLocationModal').modal('show');
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#deleteLocationForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var aid = $('#delete-Areaid').val();
+                    var id = $('#delete-Locationid').val();
+                    var name = $('#delete-Locationname').val();
+                    var remarks = $('#delete-Locationremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudLocation","Warehouse")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            areaid          : aid,
+                            locationId      : id,
+                            locationName    : name,
+                            remarks         : remarks,
+                            formAction      : 'delete',
+                        },
+                        success: function (data) {
+                            $('#deleteLocationModal').modal('hide');
+                            doSuccess(data,'delete');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#deleteLocationError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

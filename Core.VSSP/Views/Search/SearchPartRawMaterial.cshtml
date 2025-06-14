@@ -1,0 +1,235 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterPartRawMaterialModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterPartRawMaterialForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Part Raw Material</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterRawMaterial" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterRawMaterial" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterRaw" type="button" class="btn btn-secondary" onclick="reloadGridFilterRaw()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterSupplirId" class="control-label">Supplier:</label>
+                                    <div class="input-group input-group-sm">
+                                        <select id="searchFilterSupplirId" class="form-control form-control-sm bg-white selectpicker" data-live-search="true" data-size="8" onchange="reloadGridFilterRaw()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="jqGridSearchRaw"></table>
+                                <div id="jqGridPagerSearchRaw"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterPartRawMaterialError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterPartRawMaterial" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataRaw()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterRawMaterial").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterRaw").button().click();
+        }
+    });
+
+    var uniqueFilter = "";
+    var filterData = $('#searchFilterRawMaterial').val();
+    $gridFilterRaw = $("#jqGridSearchRaw").jqGrid({
+        url: '@Url.Action("RawMaterialsListJson", "Suppliers")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+            SupplierId: "*",
+        },
+        colModel: [
+            { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 50, formatter: statusFormatterRaw },
+            { label: 'Key', name: 'RawMaterialKey', key: true, hidden: true },
+            { label: 'Price', name: 'Price', align: 'center', fixed: true, width: 50, formatter: statusFormatterPrice },
+            { label: 'Supplier Id', name: 'SupplierId', align: 'left', fixed: true, width: 80 },
+            { label: 'Part Number', name: 'PartNumber', align: 'left', fixed: true, width: 100 },
+            { label: 'Supplier Part Number', name: 'PartNumberSupplier', align: 'left', fixed: true, width: 100 },
+            { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 60 },
+            { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 150 } },
+            { label: 'Model', name: 'PartModel', align: 'left', fixed: true, width: 80 },
+            { label: 'Area', name: 'AreaId', align: 'center', fixed: true, width: 80 },
+            { label: 'Location', name: 'LocationId', align: 'center', fixed: true, width: 80 },
+            { label: 'Category', name: 'CategoryId', align: 'center', fixed: true, width: 80 },
+            { label: 'Units', name: 'UnitLevel1', align: 'center', fixed: true, width: 80 },
+            { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 80 },
+            { label: 'Unit Qty', name: 'UnitQty', fixed: true, width: 50, align: 'center' },
+            { label: 'Min Stock', name: 'MinStock', fixed: true, width: 50, align: 'center' },
+            { label: 'Max Stock', name: 'MaxStock', fixed: true, width: 50, align: 'center' },
+            { label: 'Stock Kanban', name: 'StockKanban', fixed: true, width: 50, align: 'center' },
+            { label: 'Stock Qty', name: 'StockQty', fixed: true, width: 50, align: 'center' },
+            { label: 'Packing', name: 'PackingId', align: 'center', fixed: true, width: 80 },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchRaw',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+        ondblClickRow: function () {
+            selectFilterDataRaw();
+        },
+    });
+
+    $('#jqGridSearchRaw').jqGrid('navGrid', '#jqGridPagerSearchRaw', { search: false, edit: false, add: false, del: false });
+
+    function statusFormatterRaw(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+    function statusFormatterPrice(cellvalue, options, rowObject) {
+        if (cellvalue > 0) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridFilterRaw() {
+        var filterData = $('#searchFilterRawMaterial').val();
+        var supplierid = $("#searchFilterSupplirId").val();
+        var uniqueNotInclude = "";
+        var partNotInclude = "";
+
+        //$.each(uniqueFilter, function (key, value) {
+        //    uniqueNotInclude += '{ "UniqueNumber" : "' + value + '"},';
+        //});
+
+        //uniqueNotInclude = "[" + uniqueNotInclude.substring(0,uniqueNotInclude.length-1) + "]";
+
+        $.each(uniqueFilter, function (key, value) {
+            partNotInclude += '{ "PartNumber" : "' + value + '"},';
+        });
+
+        partNotInclude = JSON.parse("[" + partNotInclude.substring(0, partNotInclude.length - 1) + "]");
+
+        $("#jqGridSearchRaw").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+                SupplierId: supplierid,
+                PartNotInclude: JSON.stringify(partNotInclude),
+                //UniqueNotInclude: uniqueNotInclude,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterPartRawMaterial(supplierid, uniqueNotIn) {
+
+        if (supplierid != "" && supplierid != "*") {
+            $("#searchFilterSupplirId").attr("disabled", true);
+        } else {
+            $("#searchFilterSupplirId").removeAttr("disabled");
+        }
+
+        uniqueFilter = uniqueNotIn;
+        loadComboSuppliers(supplierid);
+        reloadGridFilterRaw();
+
+        $('#filterPartRawMaterialModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataRaw () {
+        var selRowId = $('#jqGridSearchRaw').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchRaw').jqGrid("getRowData", selRowId);
+            filterResult = rowData.PartNumber;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterPartRawMaterialModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+
+    }
+
+    loadComboSuppliers("*");
+    function loadComboSuppliers(supplierid) {
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async:false,
+            data: {},
+            success: function (response) {
+
+                var id = "#searchFilterSupplirId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("*").html("*Choose Supplier")
+                );
+                $.each(response, function (i, Suppliers) {
+                    $(id).append(
+                        $('<option></option>').val(Suppliers.SupplierId).html(Suppliers.SupplierName)
+                    );
+                });
+
+                $(id).val(supplierid).selectpicker('refresh');
+            }
+        })
+    }
+</script>

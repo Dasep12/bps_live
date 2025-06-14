@@ -1,0 +1,975 @@
+﻿
+<div class="modal animated fadeIn" id="crudReceivingOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudReceivingOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a id="btn-seeDetails" href="#" class="btn-minimize mb-3" data-toggle="collapse" data-target="#collapseHeader" aria-expanded="true" aria-controls="collapseHeader" onclick="showDetails()" hidden>
+                        <i class="icon-arrow-right-circle"></i> Show more details
+                    </a>
+                    <div class="row collapse show" id="collapseHeader">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ReceivingOrderNumber" class="col-sm-4 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-ReceivingOrderNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SupplierReceiveDate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-SupplierReceiveDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ReceivingOrderSupplierId" class="col-sm-4 col-form-label col-form-label-sm">Supplier</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-ReceivingOrderSupplierId" name="SupplierId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ReceivingOrderOrderNumber" class="col-sm-4 col-form-label col-form-label-sm">Order Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-ReceivingOrderOrderNumber" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ReceivingOrderRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="1" class="form-control form-control-sm bg-white" id="crud-ReceivingOrderRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ReceivingOrderReturnPart" class="col-sm-4 col-form-label col-form-label-sm">Return Part</label>
+                                <div class="col-sm-8">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-ReceivingOrderReturnPart">
+                                            <label class="custom-control-label" for="crud-ReceivingOrderReturnPart"><small> [Y/N]</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="">
+                        <table id="jqGridCrudReceivingDetail"></table>
+                        <div id="jqGridPagerCrudReceivingDetail"></div>
+                    </div>
+
+                    <div id="crudReceivingOrderError"></div>
+                    <input type="hidden" id="ReceivingOrderAction" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-scanReceivingOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="scanReceivingOrderDetail('Scan','')"><span class="fa fa-qrcode"></span> Scan Kanban</button>
+                                <button id="btn-addReceivingOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudReceivingOrderDetail('Create','')" hidden><span class="fa fa-plus"></span> New Part Item</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-crudReceivingOrder" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><i class="fa fa-dot-circle-o"></i> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><i class="fa fa-times"></i> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudReceivingOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <form id="crudReceivingOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-trash"></span> Remove Kanban</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row text-danger">
+                        <div class="col-md-1">
+                            <span class="fa fa-question-circle fa-3x mt-2"></span>
+                        </div>
+                        <div class="col-md-11">
+                            <h4>Are you sure want to delete kanban:</h4>
+                            <h4 id="ReceivingOrderDetailKanbanKeyInfo"></h4>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="ReceivingOrderDetailKanbanKey" />
+                    <input type="hidden" id="ReceivingOrderDetailAction" />
+                    <input type="hidden" id="ReceivingOrderDetailRowStatus" />
+                    <div id="crudReceivingOrderDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudReceivingOrderDetail" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-trash"></span> Delete</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="scanSupplierOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanSupplierOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-qrcode"></span> Delivery Note Number</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-SupplierOrderType" class="col-form-label">Transaction type</label>
+                                <select class="custom-select" id="scan-SupplierOrderType" onchange="$('#scan-SupplierOrderNumber').focus()" required>
+                                    <option value="DN">Delivery Note</option>
+                                    <option value="DR">Return Part</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-SupplierOrderNumber" class="col-form-label">Scan Delivery Note</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="scan-SupplierOrderNumber" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudScanOrderError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanSupplierOrder" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-sign-out"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="scanReceivingOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanReceivingOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> ReceivingOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-ReceivingOrderDetailKanbanKey" class="col-form-label">Scan Kanban</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="scan-ReceivingOrderDetailKanbanKey" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scanReceivingOrderKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanReceivingOrderDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-sign-out"></span> Finish</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function crudReceivingOrder(action, id, supplierid, ordernumber, returnpart = false) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartRawMaterial","Search")');
+
+        document.getElementById("crudReceivingOrderForm").reset();
+        $('#crudReceivingOrderForm').removeClass('was-validated');
+        $('#crudReceivingOrderError').html("");
+        $('#btn-addReceivingOrderDetail').removeAttr('disabled');
+        $('#btn-scanReceivingOrderDetail').removeAttr('disabled');
+        $("#btn-crudReceivingOrder").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudReceivingOrderForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-ReceivingOrderReturnPart").attr("checked", returnpart).attr("disabled", true);
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#ReceivingOrderAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+
+        if (action != "Create" && id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                ReceiveDate     = Grid.jqGrid('getCell', selectedRowId, 'ReceiveDate'),
+                SupplierId      = Grid.jqGrid('getCell', selectedRowId, 'SupplierId'),
+                OrderNumber     = Grid.jqGrid('getCell', selectedRowId, 'OrderNumber'),
+                ReturnPart      = Grid.jqGrid('getCell', selectedRowId, 'ReturnPart'),
+                Remarks         = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            ReceiveDate = moment(new Date(ReceiveDate)).format("YYYY-MM-DD");
+            ReturnPart = ReturnPart.toString().includes("success");
+            returnpart = ReturnPart;
+
+            if (ReturnPart) {
+                $('#scan-SupplierOrderType').val('DR');
+            } else {
+                $('#scan-SupplierOrderType').val('DN');
+            }
+
+            $("#crud-ReceivingOrderNumber").val(id);
+            $("#crud-SupplierReceiveDate").val(ReceiveDate);
+            $("#crud-ReceivingOrderSupplierId").val(SupplierId);
+            $("#crud-ReceivingOrderOrderNumber").val(OrderNumber);
+            $("#crud-ReceivingOrderReturnPart").attr("checked", ReturnPart);
+            $("#crud-ReceivingOrderRemarks").val(Remarks);
+
+        }
+
+        if (returnpart) {
+            $("#jqGridCrudReceivingDetail").jqGrid('hideCol', "Action");
+            $('#btn-scanReceivingOrderDetail').attr('hidden', true);
+        } else {
+            $("#jqGridCrudReceivingDetail").jqGrid('showCol', "Action")
+            $('#btn-scanReceivingOrderDetail').removeAttr('hidden');
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-ReceivingOrderSupplierId").val(supplierid)
+                $("#crud-ReceivingOrderOrderNumber").val(ordernumber);
+                $("#crud-ReceivingOrderReturnPart").attr("checked", returnpart);
+                $("#crud-ReceivingOrderNumber").attr("readonly", true);
+                $("#crud-SupplierReceiveDate").attr("readonly", true);
+                $("#crud-SupplierReceiveDate").val(newdate);
+                $("#crud-ReceivingOrderSupplierId").attr("disabled", true);
+                $("#crud-ReceivingOrderOrderNumber").attr("readonly", true);
+                $("#crudReceivingOrderModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudReceivingOrderModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudReceivingOrderModal').modal('show');
+                if (!returnpart) $('#btn-scanReceivingOrderDetail').click();
+                break;
+            case "Update":
+                $("#crud-ReceivingOrderNumber").attr("readonly", true);
+                $("#crud-SupplierReceiveDate").attr("readonly", true);
+                //$("#crud-ReceivingOrderSupplierId").attr("readonly", true);
+                $("#crud-ReceivingOrderOrderNumber").attr("readonly", true);
+                $("#crud-ReceivingOrderSupplierId").attr("disabled", true);
+                $("#crudReceivingOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudReceivingOrderModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudReceivingOrderModal').modal('show');
+                $("#crud-ReceivingOrderRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudReceivingOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ReceivingOrderSupplierId").attr("disabled", true);
+                $("#crud-ReceivingOrderShift").attr("disabled", true);
+                $("#crud-ReceivingOrderActived").attr("disabled", true);
+                $('#btn-addReceivingOrderDetail').attr('disabled', true);
+                $('#btn-scanReceivingOrderDetail').attr('disabled', true);
+                $("#btn-crudReceivingOrder").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudReceivingOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudReceivingOrderModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudReceivingOrderModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudReceivingOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ReceivingOrderSupplierId").attr("disabled", true);
+                $("#crud-ReceivingOrderShift").attr("disabled", true);
+                $("#crud-ReceivingOrderActived").attr("disabled", true);
+                $('#btn-addReceivingOrderDetail').attr('disabled', true);
+                $('#btn-scanReceivingOrderDetail').attr('disabled', true);
+                $("#btn-crudReceivingOrder").html("<span class='fa fa-ban'></span> Cancel @ViewBag.Title");
+                $("#crudReceivingOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudReceivingOrderModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudReceivingOrderModal').modal('show');
+                break
+            case "Closed":
+                $("#crudReceivingOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ReceivingOrderSupplierId").attr("disabled", true);
+                $("#crud-ReceivingOrderShift").attr("disabled", true);
+                $("#crud-ReceivingOrderActived").attr("disabled", true);
+                $('#btn-addReceivingOrderDetail').attr('disabled', true);
+                $('#btn-scanReceivingOrderDetail').attr('disabled', true);
+                $("#btn-crudReceivingOrder").html("<span class='fa fa-sign-out'></span> Closing @ViewBag.Title");
+                $("#crudReceivingOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudReceivingOrderModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudReceivingOrderModal').modal('show');
+                break
+        }
+
+
+        var recnumber = id;
+        if (recnumber === "*") {
+            recnumber = '@ViewBag.UserId';
+        }
+        clearReceivingKanban(recnumber, ordernumber, action);
+        reloadGridReceivingDetail();
+
+    }
+
+    $('#crud-ReceivingOrderSupplierId').change(function () {
+        $('#crudReceivingOrderError').html("");
+    });
+
+    $('#crud-ReceivingOrderShift').change(function () {
+        $('#crudReceivingOrderError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridReceivingDetail = $("#jqGridCrudReceivingDetail").jqGrid({
+            url: "@Url.Action("ReceivingOrderDetailTempJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { ordernumber: "*" },
+            colModel: [
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', hidden: true, width: 80, sortable: false, formatter: statusCrudFormatter },
+                { label: 'ORDER NUMBER', name: 'OrderNumber', align: 'left', fixed: true, width: 160, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 300, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'Unit', align: 'center', fixed: true, width: 40, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'KBN QTY', name: 'OrderQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'UNIT QTY', name: 'OrderUnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'KBN QTY', name: 'ReceiveQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'UNIT QTY', name: 'ReceiveUnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'KBN QTY', name: 'OutstandingQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'UNIT QTY', name: 'OutstandingUnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudReceivingDetail',
+            loadonce: true,
+            height: 240,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#ReceivingOrderAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        parameters =
+                        {
+                            RowStatus: action,
+                        }
+                        $("#jqGridCrudReceivingDetail").jqGrid('setRowData', ids[i], parameters);
+
+                    }
+                }
+            },
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showKanbanGrid, // javascript function that will take care of showing the child
+
+        });
+        $('#jqGridCrudReceivingDetail').jqGrid('navGrid', '#jqGridPagerCrudReceivingDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudReceivingDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'OrderQty', numberOfColumns: 2, titleText: 'ORDER' },
+                { startColumnName: 'ReceiveQty', numberOfColumns: 2, titleText: 'RECEIVED' },
+                { startColumnName: 'OutstandingQty', numberOfColumns: 2, titleText: 'OUTSTANDING' },
+            ]
+        });
+    });
+
+    function showKanbanGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+        var returnpart = $("#crud-ReceivingOrderReturnPart").prop('checked');
+
+        // send the parent row primary key to the server so that we know which grid to show
+        if (!returnpart) {
+            // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+            $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+            var receivenumber = $('#crud-ReceivingOrderNumber').val();
+            if (receivenumber === "") {
+                receivenumber = "@ViewBag.UserId"
+            }
+            var Grid = $('#jqGridCrudReceivingDetail'),
+                selectedRowId = parentRowKey,
+                partnumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber');
+
+            //console.log(receivenumber + ' | ' + partnumber);
+            $("#" + childGridID).jqGrid({
+                url: "@Url.Action("ReceivingOrderDetailTempKanbanJson", "Purchase")",
+                mtype: "GET",
+                datatype: "json",
+                postData: {
+                    ReceiveNumber: receivenumber,
+                    PartNumber: partnumber,
+                },
+                page: 1,
+                colModel: [
+                    { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, sortable: false, formatter: actionReceivingDetailFormatter },
+                    { label: 'KANBAN KEY', name: 'KanbanKey', align: 'center', key: true, fixed: true, width: 160 },
+                    { label: 'UNIQUE NUMBER', name: 'UniqueNumber', fixed: true, align: 'center', width: 100 },
+                    { label: 'PART NUMBER', name: 'PartNumber', fixed: true, width: 100 },
+                    { label: 'PART NAME', name: 'PartName', fixed: true, width: 250 },
+                    { label: 'QTY / KBN', name: 'UnitQty', align: 'center', fixed: true, width: 100 },
+                    { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 100 },
+                    { label: 'SCANNED', name: 'ScanTime', align: 'center', fixed: true, width: 120, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+                ],
+                loadonce: true,
+                rowNum: 9999,
+                rownumbers: true,
+                rownumWidth: 30,
+                width: 'auto',
+                height: 150,
+                caption: 'Details',
+                //pager: "#" + childGridPagerID
+            });
+        } else {
+            var info = '<div class="alert alert-primary mt-2" role="alert"><label class="text-primary"><b>No Kanban!</b><br/>Return part dont have kanban.</label></div>'
+            $('#' + parentRowID).append(info);
+        }
+    }
+    function reloadGridReceivingDetail() {
+
+        var formaction  = $("#ReceivingOrderAction").val();
+        var supplierid  = $("#crud-ReceivingOrderSupplierId").val();
+        var ordernumber = $("#crud-ReceivingOrderNumber").val();
+
+        $("#jqGridCrudReceivingDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                ReceiveNumber: ordernumber,
+                SupplierId: supplierid,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionReceivingDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.KanbanKey;
+        var formaction = $("#ReceivingOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-danger text-light" + candelete + "' onclick=\"crudReceivingOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Remove @ViewBag.Title Item [ " + rowid + " ]'>";
+        btn += "<span class='fa fa-trash'></span> Remove";
+        btn += "</a> ";
+        @*btn += "<a href='#' id='btn-delete" + rowid + "' class='text-danger " + candelete + "' onclick=\"crudReceivingOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";*@
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#ReceivingOrderAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                //if (action === "Create") {
+                //    return "<span class='badge badge-primary'>New</span>"
+                //} else {
+                //    return "";
+                //}
+                return "";
+                break;
+        }
+    }
+
+
+    function crudReceivingOrderDetail(action, kanbankey) {
+
+        $('#crudReceivingOrderDetailError').html("");
+
+        $("#ReceivingOrderDetailAction").val(action);
+        $("#ReceivingOrderDetailKanbanKey").val(kanbankey)
+        $("#ReceivingOrderDetailKanbanKeyInfo").html('<b>'+ kanbankey + '</b>')
+
+        $('#crudReceivingOrderDetailModal').modal('show');
+
+    }
+
+    function scanReceivingOrderDetail(action, id) {
+
+        document.getElementById("scanReceivingOrderDetailForm").reset();
+        $('#scanReceivingOrderDetailForm').removeClass('was-validated');
+        $('#scanReceivingOrderDetailError').html("");
+        $("#scanReceivingOrderDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#ReceivingOrderDetailAction").val(action);
+        var supplierid = $("#scan-ReceivingOrderSupplierId").val();
+
+        if (supplierid === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Supplier completely before add @ViewBag.Title Detail.</small></div>'
+            $('#scanReceivingOrderError').html(errMsg);
+            return false;
+        }
+
+        switch (action) {
+            case "Scan":
+                $("#scanReceivingOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-dark")
+                $("#scanReceivingOrderDetailModal .modal-title").html('<span class="fa fa-qrcode"></span> ' + action + ' @ViewBag.Title Kanban');
+                $('#scanReceivingOrderDetailModal').modal('show');
+                $("#scan-ReceivingOrderDetailKanbanKey").focus();
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#scanReceivingOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var receivenumber = $("#crud-ReceivingOrderNumber").val();
+                    var ordernumber = $("#crud-ReceivingOrderOrderNumber").val();
+                    var kanban = $("#scan-ReceivingOrderDetailKanbanKey").val();
+                    var kanbankey = kanban.split(';');
+                    var kanbankey = kanbankey[0];
+
+                    var action = $('#ReceivingOrderAction').val();
+
+                    if (action === 'Create') {
+                        receivenumber = '@ViewBag.UserId';
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("crudReceivingKanbanOrderJson", "Purchase")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            receivenumber: receivenumber,
+                            ordernumber: ordernumber,
+                            KanbanKey: kanbankey
+                        },
+                        success: function (message) {
+                            if (message.includes('Error')) {
+                                message = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger">' + message + '</div>';
+                                $('#scanReceivingOrderKanbanError').html(message);
+                            } else {
+                                showToast("Success", message);
+                                reloadGridReceivingDetail();
+                                document.getElementById("scanReceivingOrderDetailForm").reset();
+                                $('#scanReceivingOrderDetailForm').removeClass('was-validated');
+                                $('#scanReceivingOrderKanbanError').html("");
+                            }
+
+                            $("#scan-ReceivingOrderDetailKanbanKey").val("").focus();
+
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>';
+                            $('#scanReceivingOrderKanbanError').html(errMsg);
+
+                            $("#scan-ReceivingOrderDetailKanbanKey").val("").focus();
+
+                        }
+                    });
+
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudReceivingOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($("#ReceivingOrderDetailKanbanKey").val() === "") {
+                    showToast("Failed", "Please select kanban before submit.");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                if ($(this).valid()) {
+
+                    var receivenumber = $('#crud-ReceivingOrderNumber').val();
+                    var kanbankey = $('#ReceivingOrderDetailKanbanKey').val();
+
+                    $.ajax({
+                        url: '@Url.Action("deleteReceiveOrderKanban", "Purchase")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            ReceiveNumber: receivenumber,
+                            KanbanKey: kanbankey
+                        },
+                        success: function (data) {
+
+                            showToast("Error", "Kanban " + kanbankey + " already remove successfuly.");
+                            $('#crudReceivingOrderDetailModal').modal('hide');
+                            reloadGridReceivingDetail();
+
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudReceivingOrderDetailError').html(errMsg);
+                        }
+                    });
+
+                    unloadblockspinner();
+
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudReceivingOrderForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudReceivingDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#ReceivingOrderAction").val();
+                    var connStatus = checkConnection();
+
+                    if (connStatus != "Success") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error 404!</b><br/>' + connStatus + ' Please try again later after you connected to server.</small></div>'
+                        $('#crudReceivingOrderError').html(errMsg);
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        ReceivingOrder: {
+                            ReceiveNumber   : $("#crud-ReceivingOrderNumber").val(),
+                            ReceiveDate     : $("#crud-SupplierReceiveDate").val(),
+                            OrderNumber     : $("#crud-ReceivingOrderOrderNumber").val(),
+                            SupplierId      : $("#crud-ReceivingOrderSupplierId").val(),
+                            ReturnPart      : $("#crud-ReceivingOrderReturnPart").prop("checked"),
+                            Remarks         : $("#crud-ReceivingOrderRemarks").val(),
+                            Status          : null,
+                            EditDate        : null,
+                            UserID          : null
+                        },
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        uid: "@ViewBag.UserId",
+                        formAction: $("#ReceivingOrderAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudReceivingOrderList", "Purchase")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudReceivingOrderModal').modal('hide');
+                            var act = $("#ReceivingOrderAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudReceivingOrderError').html(errMsg);
+                        }
+                    });
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+    loadComboSupplier();
+
+    function loadComboSupplier() {
+
+        supplierid = $("#crud-ReceivingOrderSupplierId").val();
+
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { SupplierId:supplierid },
+            success: function (response) {
+
+                var id = "#crud-ReceivingOrderSupplierId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Supplier")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.SupplierId).html(sup.SupplierName)
+                    );
+                });
+            }
+        })
+    }
+
+    function clearReceivingKanban(receivenumber,ordernumber,action) {
+
+        var result = "",
+            type = $("#scan-SupplierOrderType").val(),
+            returnpart = false;
+
+        if (type === 'DR') returnpart = true;
+
+        $.ajax({
+            url: '@Url.Action("clearReceivingKanbanOrderJson", "Purchase")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                receivenumber: receivenumber,
+                ordernumber: ordernumber,
+                formAction: action,
+                returnpart: returnpart,
+            },
+            success: function (response) {
+                result = response;
+                if (result === 'Success') {
+                    //reloadGridReceivingDetail();
+                }
+            }
+        })
+
+        return result;
+    }
+
+    function scanOrderNumber() {
+
+        document.getElementById("scanSupplierOrderForm").reset();
+        $('#scanSupplierOrderForm').removeClass('was-validated');
+        $('#crudScanOrderError').html("");
+
+        $('#scanSupplierOrderModal').modal('show');
+        $('#scan-SupplierOrderType').val('DN');
+        $('#scan-SupplierOrderNumber').val('').removeClass('error').focus()
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#scanSupplierOrderForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var supplierid = '';
+                    var ordertype = $('#scan-SupplierOrderType').val();
+                    var ordernumber = $('#scan-SupplierOrderNumber').val();
+
+                    $.ajax({
+                        url: '@Url.Action("GetSupplierOrderJson", "Purchase")',
+                        type: "GET",
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            ordertype: ordertype,
+                            ordernumber: ordernumber
+                        },
+                        success: function (response) {
+
+                            if (response.length != 0) {
+                                $.each(response, function (i, order) {
+                                    ordernumber = order.OrderNumber;
+                                    supplierid = order.SupplierId;
+                                    returnpart = order.ReturnPart;
+                                });
+
+                                $('#scanSupplierOrderModal').modal('hide');
+                                crudReceivingOrder('Create', '*', supplierid, ordernumber, returnpart);
+
+                                LoadFormSize();
+
+                            } else {
+                                $('#scan-SupplierOrderNumber').val('').focus();
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error DN '+ ordernumber +'!</b><br/>Your Delivery Note Number is invalid, or already Closed / Canceled / Deleted</small></div>'
+                                $('#crudScanOrderError').html(errMsg);
+                            }
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudReceivingOrderError').html(errMsg);
+                        }
+                    })
+                }
+            });
+        });
+    });
+
+    function showDetails() {
+
+        //var hidden = $('#btn-seeDetails').attr('hidden');
+        //if (hidden === "hidden") {
+        //    return false;
+        //}
+
+        var ordernumber = $('#crud-ReceivingOrderOrderNumber').val();
+        var isShow = $('#collapseHeader').hasClass('show');
+        var showhideCol = "";
+
+        if (isShow === true) {
+            $('#btn-seeDetails').html('<i class="icon-arrow-right-circle"></i> Show Detail [' + ordernumber + ']')
+            showhideCol = 'hideCol';
+        } else {
+            $('#btn-seeDetails').html('<i class="icon-arrow-left-circle"></i> Hide Detail [' + ordernumber + ']')
+            showhideCol = 'showCol';
+        }
+
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "OrderNumber")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "PartNumber")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "PartName")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "UnitQty")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "PackingId")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "OrderUnitQty")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "OutstandingQty")
+        $("#jqGridCrudReceivingDetail").jqGrid(showhideCol, "OutstandingUnitQty")
+
+    }
+
+    function LoadFormSize() {
+        var width = $(window).innerWidth();
+        var hidden = $('#btn-seeDetails').attr('hidden');
+        var isShow = $('#collapseHeader').hasClass('show');
+
+        if (parseInt(width) <= 990) {
+            if (isShow == true) {
+                $('#btn-seeDetails').click();
+            }
+            if (hidden === "hidden") {
+                $('#btn-seeDetails').removeAttr('hidden');
+            }
+        } else {
+            if (isShow == false && hidden != "hidden") {
+                $('#btn-seeDetails').click();
+            }
+            $('#btn-seeDetails').attr('hidden', true);
+        }
+    }
+
+    //$(document).load(function () {
+    //    LoadFormSize();
+    //})
+
+    //$(window).on("resize", function () {
+    //    LoadFormSize();
+    //});
+
+</script>
+

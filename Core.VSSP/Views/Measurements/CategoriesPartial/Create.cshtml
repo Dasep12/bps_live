@@ -1,0 +1,98 @@
+﻿
+<div class="modal animated fadeIn" id="createCategoriesModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="createCategoriesForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Create @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-CategoryId">Categories Id</label>
+                            <input type="text" class="form-control form-control-sm" id="create-CategoryId" name="CategoryId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-CategoryName">Categories Name</label>
+                            <input type="text" class="form-control form-control-sm" id="create-CategoryName" name="CategoryName" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-Categoriesremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="create-Categoriesremarks" name="remarks" value=""></textarea>
+                        </div>
+                    </div>
+                    <div id="createCategoriesError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-create-Categories" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function addCategories() {
+        document.getElementById("createCategoriesForm").reset();
+        $('#createCategoriesForm').removeClass('was-validated');
+        $("#createCategoriesForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#createCategoriesError').html("");
+        $('#createCategoriesModal').modal('show');
+        $('#create-CategoryId').focus()
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#createCategoriesForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#create-CategoryId').val();
+                    var name = $('#create-CategoryName').val();
+                    var remarks = $('#create-Categoriesremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudCategories","Measurements")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            CategoryId      : id,
+                            CategoryName    : name,
+                            remarks     : remarks,
+                            formAction  : 'create',
+                        },
+                        success: function (data) {
+                            $('#createCategoriesModal').modal('hide');
+                            doSuccess(data,'create');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#createCategoriesError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

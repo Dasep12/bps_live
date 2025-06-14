@@ -1,0 +1,44 @@
+﻿@{ Layout = ""; }
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewBag.Title</title>
+    @Html.Partial("_VSSPLayout/_app-meta")
+
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+
+</head>
+
+
+<body class="app flex-row align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <label class="display-3 mr-4" style="font-size:120px">
+                            @TempData["ErrNumber"]
+                        </label>
+                    </div>
+                    <div class="col-md-7">
+                        <h5 class="pt-3">ERROR FOUND!</h5>
+                        @*<p class="text-muted text-justify">@Html.Encode(@TempData["ErrMessage"]).Replace("%27", "")</p>*@
+                        <p class="text-muted text-justify">@Html.Raw(@TempData["ErrMessage"])</p>
+                        <div class="float-left">
+                            <a href="#" class="btn btn-info" onClick="history.back();" style="width:100px"><span class="fa fa-arrow-left"></span> Go Back</a>
+                            <a href="@Url.Action(@TempData["ErrAction"].ToString(),@TempData["ErrController"].ToString())" class="btn btn-info" style="width:100px"><span class="fa fa-home"></span> Home</a>
+                        </div>
+                    </div>
+                    <div id="errdescription"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and necessary plugins-->
+    @Scripts.Render("~/Core/JS/Plugins")
+
+</body>
+</html>

@@ -1,0 +1,239 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterPartFinishGoodsLineModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterPartFinishGoodsLineForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Production Part Finish Goods</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterFinishGoodsLine" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterFinishGoodsLine" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterFGLine" type="button" class="btn btn-secondary" onclick="reloadGridFilterFGLine()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterFinishGoodsLine" class="control-label">Line:</label>
+                                    <div class="input-group input-group-sm">
+                                        <select id="searchFilterLineId" class="form-control custom-select custom-select-sm" onchange="reloadGridFilterFGLine()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="jqGridSearchFGLine"></table>
+                                <div id="jqGridPagerSearchFGLine"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterPartFinishGoodsLineError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterPartFinishGoodsLine" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataFGLine()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterFinishGoodsLine").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterFGLine").button().click();
+        }
+    });
+
+    var uniqueFilter = "";
+    var passThrough = null;
+    var salesNumber = "";
+    var filterData = $('#searchFilterFinishGoodsLine').val();
+    $gridFilterFGLine = $("#jqGridSearchFGLine").jqGrid({
+        url: '@Url.Action("FinishGoodsLineListJson", "Productions")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+            LineId: "*"
+        },
+        colModel: [
+            { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 50, formatter: statusFormatterFGLine },
+            { label: 'Pass Through', name: 'PassThrough', align: 'center', fixed: true, width: 50, formatter: statusFormatterFGLine },
+            { label: 'Price', name: 'Price', align: 'center', fixed: true, width: 50, formatter: statusFormatterPrice },
+            { label: 'Key', name: 'FinishGoodsLineKey', key: true, hidden: true },
+            { label: 'Cust Id', name: 'CustomerId', align: 'center', fixed: true, width: 60 },
+            { label: 'Line Id', name: 'LineId', align: 'center', fixed: true, width: 60 },
+            { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 100 },
+            { label: 'Customer Part Number', name: 'PartNumberCustomer', align: 'center', fixed: true, width: 100 },
+            { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 50 },
+            { label: 'Part Name', name: 'PartName', align: 'left', fixed: true, width: 180 },
+            { label: 'Model', name: 'CustomerUnitModel', align: 'center', fixed: true, width: 60 },
+            { label: 'Area', name: 'AreaId', align: 'center', fixed: true, width: 60 },
+            { label: 'Location', name: 'LocationId', align: 'center', fixed: true, width: 60 },
+            { label: 'Category', name: 'CategoryId', align: 'center', fixed: true, width: 60 },
+            { label: 'Packing', name: 'PackingId', align: 'center', fixed: true, width: 60 },
+            { label: 'Units', name: 'UnitLevel1', align: 'center', fixed: true, width: 60 },
+            { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 60 },
+            { label: 'Unit Qty', name: 'UnitQty', fixed: true, width: 50, align: 'center' },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchFGLine',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+        },
+        ondblClickRow: function () {
+            selectFilterDataFGLine();
+        },
+    });
+
+    $('#jqGridSearchFGLine').jqGrid('navGrid', '#jqGridPagerSearchFGLine', { search: false, edit: false, add: false, del: false });
+
+    function statusFormatterFGLine(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+    function statusFormatterPrice(cellvalue, options, rowObject) {
+        if (cellvalue > 0) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+    function reloadGridFilterFGLine() {
+        var filterData = $('#searchFilterFinishGoodsLine').val();
+        var Lineid = $("#searchFilterLineId").val();
+        var uniqueNotInclude = "";
+        var partNotInclude = "";
+
+        //change filter part 2021-02-04 dewi
+        //$.each(uniqueFilter, function (key, value) {
+        //    uniqueNotInclude += '{ "UniqueNumber" : "' + value + '"},';
+        //});
+
+        //uniqueNotInclude = "[" + uniqueNotInclude.substring(0,uniqueNotInclude.length-1) + "]";
+
+        $.each(uniqueFilter, function (key, value) {
+            partNotInclude += '{ "PartNumber" : "' + value + '"},';
+        });
+
+        partNotInclude = JSON.parse("[" + partNotInclude.substring(0, partNotInclude.length - 1) + "]");
+
+        $("#jqGridSearchFGLine").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+                LineId: Lineid,
+                PartNotInclude: JSON.stringify(partNotInclude),
+                PassThrough: passThrough,
+                SONumber: salesNumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterPartFinishGoodsLine(Lineid, uniqueNotIn, passthrough, soNumber) {
+
+        if (Lineid != "" && Lineid != "*") {
+            $("#searchFilterLineId").attr("disabled", true);
+        } else {
+            $("#searchFilterLineId").removeAttr("disabled");
+        }
+
+        uniqueFilter = uniqueNotIn;
+        passThrough = passthrough;
+        salesNumber = soNumber;
+        loadComboLines(Lineid);
+        reloadGridFilterFGLine();
+
+        $('#filterPartFinishGoodsLineModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataFGLine () {
+        var selRowId = $('#jqGridSearchFGLine').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchFGLine').jqGrid("getRowData", selRowId);
+
+            filterResult = rowData.PartNumber;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterPartFinishGoodsLineModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+
+    }
+
+    loadComboLines("*");
+    function loadComboLines(Lineid) {
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async:false,
+            data: {},
+            success: function (response) {
+
+                var id = "#searchFilterLineId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("*").html("*Choose Line")
+                );
+                $.each(response, function (i, Lines) {
+                    $(id).append(
+                        $('<option></option>').val(Lines.LineId).html(Lines.LineName)
+                    );
+                });
+
+                $(id).val(Lineid);
+            }
+        })
+    }
+</script>

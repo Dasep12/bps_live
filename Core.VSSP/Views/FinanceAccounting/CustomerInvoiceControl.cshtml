@@ -1,0 +1,283 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Invoicing-CustomerInvoiceControl">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Invoice, DO, Part Number or Customer...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control input-daterange" placeholder="Start Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control date" placeholder="End Date">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Orders">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                    <label for="invoicedFilter" class="col-form-label col-form-label-sm">Status</label>
+                                    <div class="input-group input-group-sm">
+                                        <select id="invoicedFilter" class="custom-select custom-select-sm" value="">
+                                            <option value="null">All Invoiced</option>
+                                            <option value="true">Invoiced</option>
+                                            <option value="false">No Invoice</option>
+                                        </select>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridCustomerInvoiceControl()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridCustomerInvoiceControl()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                            </div>
+                            @Html.DropDownListFor(model => model.ExportList,
+                            new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                            new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    $(document).ready(function () {
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        $("#invoicedFilter").val("null");
+    })
+
+    $(function () {
+        var filterData  = $('#searchFilter').val();
+        var startdate   = $('#startdateFilter').val();
+        var enddate     = $('#enddateFilter').val();
+        var month       = $('#monthFilter').val();
+        var invoiced    = parseBool($('#invoicedFilter').val());
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("CustomerInvoiceControlListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                invoiced: invoiced,
+            },
+            colModel: [
+                { label: 'Status', name: 'Invoiced', align: 'center', fixed: true, width: 70, formatter: statusFormatter },
+                { label: 'Payment', name: 'Paid', align: 'center', fixed: true, width: 70, formatter: paidFormatter },
+                { label: 'Customer', name: 'CustomerId', align: 'center', fixed: true, width: 60 },
+                { label: 'Customer Name', name: 'CustomerName', align: 'left', fixed: true, width: 180 },
+                { label: 'DO Number', name: 'DONumber', align: 'center', fixed: true, width: 130 },
+                { label: 'DO Date', name: 'DODate', align: 'center', fixed: true, width: 65, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 45 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 90 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 150 }  },
+                { label: 'Qty', name: 'DeliveryUnitQty', align: 'right', formatter: 'number', fixed: true, width: 50 },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 40 },
+                { label: 'Price', name: 'Price', align: 'right', formatter: 'number', fixed: true, width: 60 },
+                { label: 'Amount', name: 'Amount', align: 'right', formatter: 'number', fixed: true, width: 80 },
+                { label: 'Invoice Number', name: 'InvoiceNumber', align: 'center', fixed: true, width: 140 },
+                { label: 'Inv. Date', name: 'InvoiceDate', align: 'center', fixed: true, width: 65, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Tax Number', name: 'TaxNumber', align: 'center', fixed: true, width: 140 },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showForecastGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    rowData = $this.jqGrid('getRowData', ids[i]);
+                    //console.log(rowData);
+                    //set background style if ColValue === true\
+                    if (rowData['InvoiceNumber'] === "") {
+                        $this.jqGrid('setRowData', ids[i], false, "text-danger bg-light");
+                    }                
+                }
+                gridResize();
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case false:
+                return "<span class='badge badge-danger'>No Invoice</span>"
+                break;
+            case true:
+                return "<span class='badge badge-success text-white'>Invoiced</span>"
+                break;
+        }
+    }
+    function paidFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case false:
+                return "<span class='badge badge-danger'>Unpaid</span>"
+                break;
+            case true:
+                return "<span class='badge badge-success text-white'>Paid</span>"
+                break;
+            default:
+                return "<span class='badge badge-warning'>No Ledger</span>"
+                break;
+        }
+    }
+    function reloadGridCustomerInvoiceControl() {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var month = $('#monthFilter').val();
+        var invoiced = parseBool($('#invoicedFilter').val());
+
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                invoiced: invoiced,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "CustomerId")
+        $("#jqGridMain").jqGrid(showhideCol, "UniqueNumber")
+        $("#jqGridMain").jqGrid(showhideCol, "InvoiceNumber")
+        $("#jqGridMain").jqGrid(showhideCol, "TaxNumber")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "landscape";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Invoiced")
+        $("#jqGridMain").jqGrid("hideCol", "Paid")
+        exportGrid('#jqGridMain', 'A3', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Invoiced")
+        $("#jqGridMain").jqGrid("showCol", "Paid")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

@@ -1,0 +1,80 @@
+﻿<style>
+    body {
+        background-color: #1d2124 !important;
+    }
+</style>
+
+<section class="container-fluid bg-dark animated fadeIn">
+    <div class="jumbotron-fluid">
+        <div class="text-center">
+            <div style="padding-top:150px;padding-bottom:150px">
+                @if (@ViewBag.Result == true)
+                {
+                    <div style="font-size:100px"><i class="fa fa-check-square-o"></i></div>
+                    <h1>Reset Password Success!</h1>
+                    if (ViewBag.Action == "request")
+                    {
+                        <p>Congratulation your request already sent to your email.</p>
+                        <p>Please click the reset password link in your email and change your password immediately.</p>
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top:10px">
+                                <button class="btn btn-outline-primary" onClick="document.location.href = '@Url.Action("MainIndex","Index")';"><span class="icon-home"></span> Back to Home</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Congratulation your password already reset.</p>
+                        <p>You can login with a new password now.</p>
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top:10px">
+                                <button class="btn btn-outline-primary" onClick="document.location.href = '@Url.Action("Login","Account")';"><span class="icon-user"></span> Login</button>
+                            </div>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <div style="font-size:100px"><i class="fa fa-times-circle-o"></i></div>
+                    if (ViewBag.Action != "expired")
+                    {
+                        <h1>Reset Password Failed!</h1>
+                        <p>Your request to reset password has been failed.</p>
+                        if (TempData["Error"] != null)
+                        {
+                            <p>@TempData["Error"].ToString()</p>
+                        }
+                        else
+                        {
+                            <p>Please make sure you type a correct email, or maybe our system not validated your email.</p>
+                        }
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top:10px">
+                                <button class="btn btn-outline-primary" onClick="document.location.href = '@Url.Action("MainIndex","Index")';"><span class="icon-home"></span> Back to Home</button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>We're so sory, you're request already expired.</p>
+                        <p>Please check you're request expiration request.</p>
+                        <div class="row">
+                            <div class="col-md-12" style="margin-top:10px">
+                                <button class="btn btn-outline-primary" onClick="document.location.href = '@Url.Action("MainIndex","Index")';"><span class="icon-home"></span> Back to Home</button>
+                            </div>
+                        </div>
+                    }
+                }
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+    })
+</script>

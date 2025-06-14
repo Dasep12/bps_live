@@ -1,0 +1,578 @@
+﻿
+<div class="modal animated fadeIn" id="crudMenuListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudMenuForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabcrudmenu" role="tab">
+                                Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabcrudreport" role="tab">
+                                Report
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabcrudmenu" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuId" class="col-form-label col-form-label-sm">Menu Id</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-MenuId" name="MenuId" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuName" class="col-form-label col-form-label-sm">Menu Name</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-MenuName" name="MenuName" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuLevel" class="col-form-label col-form-label-sm">Level</label>
+                                            <select class="custom-select custom-select-sm" id="crud-MenuLevel" name="MenuLevel" value="" onchange="FillComboParent()" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuParentID" class="col-form-label col-form-label-sm">Parent</label>
+                                            <select class="custom-select custom-select-sm" id="crud-MenuParentID" name="MenuParentID" value="" required></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuIconClass" class="col-form-label col-form-label-sm">Icon</label>
+                                            <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-MenuIconClass" name="MenuIconClass" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuControllerName" class="col-form-label col-form-label-sm">MVC Controller</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-MenuControllerName" name="MenuControllerName" value="">
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-MenuActionName" class="col-form-label col-form-label-sm">MVC Action</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-MenuActionName" name="MenuActionName" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-sm-4">
+                                            <label for="crud-MenuNeedApproval" class="col-form-label col-form-label-sm">Need Approval</label>
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-MenuNeedApproval">
+                                                <label class="custom-control-label" for="crud-MenuNeedApproval"><small> [Yes/No]</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="crud-MenuConfidential" class="col-form-label col-form-label-sm">Confidential</label>
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-MenuConfidential">
+                                                <label class="custom-control-label" for="crud-MenuConfidential"><small> [Yes/No]</small></label>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="crud-MenuActive" class="col-form-label col-form-label-sm">Status</label>
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-MenuActive">
+                                                <label class="custom-control-label" for="crud-MenuActive"><small> Active</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tabcrudreport" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-row mb-2">
+                                        <label for="crud-ReportFileName" class="col-md-3 col-form-label col-form-label-sm">File Report</label>
+                                        <div class="col-md-9">
+                                            <select class="custom-select custom-select-sm" id="crud-ReportFileName" name="ReportFileName"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-2">
+                                        <label for="crud-ReportSchemaType" class="col-md-3 col-form-label col-form-label-sm">Type</label>
+                                        <div class="col-md-9">
+                                            <select class="custom-select custom-select-sm" id="crud-ReportSchemaType" name="ReportSchemaType" onchange="FillComboSchemaList()">
+                                                <option value="">Select Schema</option>
+                                                <option value="Table">Table</option>
+                                                <option value="View">View</option>
+                                                <option value="Procedure">Procedure</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-2">
+                                        <label for="crud-ReportSchemaName" class="col-md-3 col-form-label col-form-label-sm">Schema</label>
+                                        <div class="col-md-9">
+                                            <select class="custom-select custom-select-sm" id="crud-ReportSchemaName" name="ReportSchemaName" onchange="reloadGridFilter()"></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-row mb-2">
+                                        <label for="crud-ReportCustomFilter" class="col-md-3 col-form-label col-form-label-sm">Where</label>
+                                        <div class="col-md-9">
+                                            <textarea rows="2" class="form-control form-control-sm" id="crud-ReportCustomFilter" name="ReportCustomFilter"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <label for="crud-ReportSortOrder" class="col-md-3 col-form-label col-form-label-sm">Sort Order</label>
+                                        <div class="col-md-9">
+                                            <textarea rows="1" class="form-control form-control-sm" id="crud-ReportSortOrder" name="ReportSortOrder"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <table id="jqGridFilter"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                    <div id="crudMenuListError"></div>
+                    <input type="hidden" id="MenuAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudMenuList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function crudMenuList(action, id) {
+
+        document.getElementById("crudMenuForm").reset();
+        $('#crudMenuForm').removeClass('was-validated');
+        $('#crudMenuListError').html("");
+        $("#btn-crudMenuList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-MenuActive").removeAttr("checked").removeAttr("disabled");
+        $('a[href="#tabcrudmenu"]').click()
+        $("#crudMenuForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#MenuAction").val(action);
+        //$("#contactAction").val(action);
+        //$("#contactId").val(MenuName);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                MenuName = Grid.jqGrid('getCell', selectedRowId, 'MenuName'),
+                Level = Grid.jqGrid('getCell', selectedRowId, 'MenuLevel'),
+                ParentID = Grid.jqGrid('getCell', selectedRowId, 'ParrentID'),
+                IconClass = Grid.jqGrid('getCell', selectedRowId, 'IconClass'),
+                ControllerName = Grid.jqGrid('getCell', selectedRowId, 'ControllerName'),
+                ActionName = Grid.jqGrid('getCell', selectedRowId, 'ActionName'),
+                NeedApproval = Grid.jqGrid('getCell', selectedRowId, 'NeedApproval'),
+                Confidential = Grid.jqGrid('getCell', selectedRowId, 'Confidential'),
+                Active = Grid.jqGrid('getCell', selectedRowId, 'Active');
+
+            var FileName = "",
+                SchemaType = "",
+                SchemaName = "",
+                CustomFilter = "",
+                SortOrder = "";
+
+            $.ajax({
+                url: '@Url.Action("MenuReportListJson", "System")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: {
+                    menuid:id,
+                },
+                success: function (response) {
+                    $.each(response, function (i, report) {
+                        FileName = report.FileName;
+                        SchemaType = report.SchemaType;
+                        SchemaName = report.SchemaName;
+                        CustomFilter = report.CustomFilter;
+                        SortOrder = report.SortOrder;
+                    });
+
+                }
+            });
+
+            $("#crud-MenuId").val(id);
+            $("#crud-MenuName").val(MenuName);
+            $("#crud-MenuLevel").val(Level);
+
+            FillComboParent(ParentID);
+            $("#crud-MenuIconClass").val(IconClass);
+            $("#crud-MenuControllerName").val(ControllerName);
+            $("#crud-MenuActionName").val(ActionName);
+            if (NeedApproval.includes("success")) {
+                $("#crud-MenuNeedApproval").attr("checked", true);
+            } else {
+                $("#crud-MenuNeedApproval").removeAttr("checked");
+            }
+            if (Confidential.includes("success")) {
+                $("#crud-MenuConfidential").attr("checked", true);
+            } else {
+                $("#crud-MenuConfidential").removeAttr("checked");
+            }
+            if (Active.includes("success")) {
+                $("#crud-MenuActive").attr("checked", true);
+            } else {
+                $("#crud-MenuActive").removeAttr("checked");
+            }
+
+            $("#crud-ReportFileName").val(FileName);
+            $("#crud-ReportSchemaType").val(SchemaType).change();
+            $("#crud-ReportSchemaName").val(SchemaName).change();
+            $("#crud-ReportCustomFilter").val(CustomFilter.replaceAll("'","''"));
+            $("#crud-ReportSortOrder").val(SortOrder);
+
+        }
+
+        $("#crud-MenuIconClass").selectpicker("refresh");
+        reloadGridFilter();
+
+        switch (action) {
+            case "Create":
+                $("#crud-MenuActive").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudMenuListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudMenuListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudMenuListModal').modal('show');
+                $("#crud-MenuId").focus();
+                break;
+            case "Update":
+                $("#crud-MenuId").attr("readonly",true);
+                $("#crudMenuListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudMenuListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudMenuListModal').modal('show');
+                $("#crud-MenuName").focus();
+                break;
+            case "Delete":
+                $("#crudMenuForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("select").attr("disabled", true);
+                $("#crud-MenuNeedApproval").attr("disabled", true);
+                $("#crud-MenuActive").attr("disabled", true);
+                $("#btn-crudMenuList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudMenuListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudMenuListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudMenuListModal').modal('show');
+                break
+        }
+
+    }
+
+
+    $('#crud-MenuId').change(function () {
+        $('#crudMenuListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudMenuForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        MenuList: {
+                            MenuID: $("#crud-MenuId").val(),
+                            MenuName: $("#crud-MenuName").val(),
+                            MenuLevel: $("#crud-MenuLevel").val(),
+                            ParrentID: $("#crud-MenuParentID").val(),
+                            IconClass: $("#crud-MenuIconClass").val(),
+                            ControllerName: $("#crud-MenuControllerName").val(),
+                            ActionName: $("#crud-MenuActionName").val(),
+                            NeedApproval: $("#crud-MenuNeedApproval").prop("checked"),
+                            Confidential: $("#crud-MenuConfidential").prop("checked"),
+                            Active: $("#crud-MenuActive").prop("checked"),
+                            FormAction: $("#MenuAction").val()
+                        },
+                        MenuReportList: {
+                            MenuID: $("#crud-MenuId").val(),
+                            FileName: $("#crud-ReportFileName").val(),
+                            SchemaType: $("#crud-ReportSchemaType").val(),
+                            SchemaName: $("#crud-ReportSchemaName").val(),
+                            CustomFilter: $("#crud-ReportCustomFilter").val(),
+                            SortOrder: $("#crud-ReportSortOrder").val(),
+                        },
+                        MenuReportFilterLists: $("#jqGridFilter").jqGrid('getGridParam', 'data'),
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+                    //console.log(JSON.stringify(jsonData));
+                    //return false;
+
+                    $.ajax({
+                        url: '@Url.Action("crudMenuList","System")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudMenuListModal').modal('hide');
+                            var act = $("#MenuAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudMenuListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    FillComboLevel();
+    function FillComboLevel() {
+        $.ajax({
+            url: '@Url.Action("ComboMenuLevel", "System")',
+            type: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                $("#crud-MenuLevel").html(""); // clear before appending new list
+                //alert(menulevel);
+
+                $.each(response, function (i, parent) {
+                    $("#crud-MenuLevel").append(
+                        $('<option></option>').val(parent.LevelID).html(parent.LevelName));
+                });
+
+            }
+        });
+
+        //$("#crud-MenuLevel").selecpicker("refresh");
+    }
+
+    function FillComboParent(selected="") {
+        var menulevel = document.getElementById("crud-MenuLevel").value;
+        $.ajax({
+            url: '@Url.Action("ComboMenuParent", "System")',
+            type: "GET",
+            dataType: "JSON",
+            data: { MenuLevel: menulevel },
+            success: function (response) {
+                $("#crud-MenuParentID").html(""); // clear before appending new list
+                //alert(menulevel);
+
+                $.each(response, function (i, parent) {
+                    $("#crud-MenuParentID").append(
+                        $('<option></option>').val(parent.MenuID).html(parent.MenuName));
+                });
+
+                $('#crud-MenuParentID').val(selected);
+
+            }
+        });
+
+    }
+
+    FillComboIcon();
+    function FillComboIcon() {
+        $.ajax({
+            url: '@Url.Action("ComboIconClass", "System")',
+            type: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                $("#crud-MenuIconClass").html(""); // clear before appending new list
+                //alert("CLEAR");
+
+                $.each(response, function (i, iconclass) {
+                    $("#crud-MenuIconClass").append(
+                        $('<option data-icon="'+ iconclass.IconID +'"></option>').val(iconclass.IconID).html(iconclass.IconName));
+                    //alert(iconclass.IconID);
+                });
+            }
+        });
+
+        //$("#crud-MenuIconClass").selecpicker("refresh");
+
+    }
+
+    FillComboReportFile();
+    function FillComboReportFile() {
+        $.ajax({
+            url: '@Url.Action("ReportFile", "System")',
+            type: "GET",
+            dataType: "JSON",
+            async:false,
+            success: function (response) {
+                $("#crud-ReportFileName").html(""); // clear before appending new list
+                $("#crud-ReportFileName").append($('<option></option>').val("").html("Choose File Report"));
+
+                $.each(response, function (i, file) {
+                    $("#crud-ReportFileName").append($('<option></option>').val(file.FileName).html(file.FileName));
+                });
+            }
+        });
+    }
+    function FillComboSchemaList() {
+        var schematype = $("#crud-ReportSchemaType").val();
+        $("#crud-ReportCustomFilter").val("")
+        $("#crud-ReportSortOrder").val("")
+        if (schematype === 'Procedure') {
+            $("#crud-ReportCustomFilter").attr("disabled", true);
+            $("#crud-ReportSortOrder").attr("disabled", true);
+        } else {
+            $("#crud-ReportCustomFilter").removeAttr("disabled");
+            $("#crud-ReportSortOrder").removeAttr("disabled");
+        }
+
+        $.ajax({
+            url: '@Url.Action("SchemaList", "System")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                schemaType: schematype,
+            },
+            success: function (response) {
+                $("#crud-ReportSchemaName").html(""); // clear before appending new list
+                $("#crud-ReportSchemaName").append($('<option></option>').val("").html("Choose Schema"));
+
+                $.each(response, function (i, file) {
+                    $("#crud-ReportSchemaName").append($('<option></option>').val(file.SCHEMA_NAMES).html(file.SCHEMA_NAMES));
+                });
+            }
+        });
+    }
+  
+    $(function () {
+        $gridFilter = $("#jqGridFilter").jqGrid({
+            url: "@Url.Action("MenuReportFilterListJson", "System")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                menuid: "*",
+                schemaName: "*"
+            },
+            colModel: [
+                { label: 'Schema', name: 'SchemaName', align: 'left', hidden: true, width: 80 },
+                { label: 'Field', name: 'Field', align: 'left', fixed: true, width: 100 },
+                { label: 'Caption', name: 'Caption', align: 'left', fixed: true, width: 150, editable: true,  sortable: false },
+                {
+                    label: 'Filter', name: 'FilterName', align: 'left', fixed: true, width: 90, editable: true,  sortable: false, edittype: "select",
+                    editoptions: {
+                        value: "none:N/A;Customer:Customer;Supplier:Supplier;Line:Line;InspectionType:InspectionType;InspectionGate:InspectionGate;FinishGoods:FinishGoods;RawMaterial:RawMaterial;Category:Category;DateRangePicker:DateRangePicker;DateTimeRangePicker:DateTimeRangePicker;DatePicker:DatePicker;MonthPicker:MonthPicker;YearPicker:YearPicker"
+                    } },
+                { label: 'Type', name: 'FilterType', align: 'center', fixed: true, width: 60, editable: false, sortable: false },
+                { label: 'Active', name: 'Active', align: 'center', fixed: true, width: 50, editable: true, sortable: false, edittype: "checkbox", editoptions: { value: "true:false", defaultValue: "true" }, formatter: "checkbox"},
+                { label: 'Sort', name: 'Sort', align: 'right', fixed: true, width: 40, editable: false, sortable: false },
+            ],
+            gridview: true,
+            loadonce: true,
+            height: 168,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            rowNum: 9999,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            caption:"Report Filter",
+            loadComplete: function () {
+            },
+            ondblClickRow: function (rowid) {
+                crudFilter("Update", rowid);
+            },
+        });
+
+    });
+
+    function reloadGridFilter() {
+
+        var MenuId = $("#crud-MenuId").val();
+        var SchemaName = $("#crud-ReportSchemaName").val();
+
+        $("#jqGridFilter").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                menuid: MenuId,
+                schemaName: SchemaName
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function crudFilter(action, id) {
+
+        var $grid = $("#jqGridFilter");
+        var dataIDs = $grid.getDataIDs();
+        var rowCount = (dataIDs.length);
+
+        switch (action) {
+            case "Create":
+
+                var rowid = parseInt(rowCount) + 1;
+                parameters =
+                {
+                    rowID: rowid,
+                    initdata: {
+                        CustomerId: KanbanSettingCustomerId,
+                        SequenceNumber: rowid,
+                        Active: true
+                    },
+                    position: "last",
+                }
+
+                $grid.jqGrid("addRow", parameters).trigger("reloadGrid");
+                $grid.jqGrid("editRow", rowid, true);
+
+                break;
+
+            case "Update":
+
+                $grid.jqGrid("editRow", id, true);
+
+                break;
+
+            case "Delete":
+
+                $grid.jqGrid('delRowData', id);
+
+                break;
+            default:
+                $('#crudForecastOrderRevisionModal').modal('show');
+                break;
+        }
+    }
+
+</script>
+

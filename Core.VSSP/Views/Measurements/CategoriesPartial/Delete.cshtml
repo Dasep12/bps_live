@@ -1,0 +1,104 @@
+﻿
+
+<div class="modal animated fadeIn" id="deleteCategoriesModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <form id="deleteCategoriesForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-trash"></span> Delete @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-CategoryId">Categories Id</label>
+                            <input type="text" class="form-control form-control-sm" id="delete-CategoryId" name="CategoryId" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-CategoryName">Categories Name</label>
+                            <input type="text" class="form-control form-control-sm" id="delete-CategoryName" name="CategoryName" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="delete-Categoryremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="delete-Categoryremarks" name="remarks" value="" readonly></textarea>
+                        </div>
+                    </div>
+                    <div id="deleteCategoriesError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-delete-Categories" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-trash"></span> Delete</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function removeCategories(CategoryId, CategoryName, remarks) {
+
+        document.getElementById("deleteCategoriesForm").reset();
+        $('#deleteCategoriesForm').removeClass('was-validated');
+        $("#deleteCategoriesForm :input").each(function () {
+            $(this).attr("readonly",true);
+        });
+
+        $("#delete-CategoryId").val(CategoryId);
+        $("#delete-CategoryName").val(CategoryName);
+        $("#delete-Categoryremarks").val(remarks);
+        $('#deleteCategoriesError').html("");
+
+        $('#deleteCategoriesModal').modal('show');
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#deleteCategoriesForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#delete-CategoryId').val();
+                    var name = $('#delete-CategoryName').val();
+                    var remarks = $('#delete-Categoryremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudCategories","Measurements")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            CategoryId      : id,
+                            CategoryName    : name,
+                            remarks         : remarks,
+                            formAction      : 'delete',
+                        },
+                        success: function (data) {
+                            $('#deleteCategoriesModal').modal('hide');
+                            doSuccess(data,'delete');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#deleteCategoriesError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

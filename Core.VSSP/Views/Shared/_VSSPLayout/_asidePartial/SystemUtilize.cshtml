@@ -1,0 +1,96 @@
+﻿@model Core.VSSP.Models.SystemUtilizeModel
+
+<div class="tab-pane p-3" id="system" role="tabpanel">
+    <h6>System Utilization</h6>
+    @if (Model != null)
+    {
+        double dbsize = 0;
+        double dbdriveSize = 0;
+        double dbpercent = 0;
+        string dbdriveName = "";
+        string drvpercent = "";
+        string progressColor = "";
+        <div class="text-uppercase mb-1 mt-4">
+            <small>
+                <b>Processor</b>
+            </small>
+        </div>
+        <small>@Model.ProcessorName</small>
+        <small>@Model.LogicalCpu Core</small>
+
+        <div class="text-uppercase mb-1 mt-2">
+            <small>
+                <b>Memory</b>
+            </small>
+        </div>
+        <small>RAM @Model.PhysicalMemory GB</small>
+        foreach (var db in Model.DatabaseUtilize)
+        {
+            dbsize += db.DatabaseSize;
+            dbdriveName = db.PhysicalName.Substring(0, 1);
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b>Database</b>
+                </small>
+            </div>
+            var drvinfo = (from a in Model.DriveUtilize
+                           where a.DriveLetter == dbdriveName
+                           select a).First();
+            dbdriveSize = drvinfo.TotalSpace;
+            if (db.Edition.ToLower().Contains("express"))
+            {
+                dbdriveSize = 10;
+            }
+            dbpercent = (dbsize / dbdriveSize) * 100;
+            drvpercent = dbpercent.ToString() + "%";
+            switch (dbpercent)
+            {
+                case double n when n > 75:
+                    progressColor = "bg-danger";
+                    break;
+                case double n when n > 50:
+                    progressColor = "bg-warning";
+                    break;
+                case double n when n > 25:
+                    progressColor = "bg-primary";
+                    break;
+                case double n when n > 0:
+                    progressColor = "bg-success";
+                    break;
+            }
+            <small>SQL Server @db.Edition</small><br />
+            <small>Version @db.ProductVersion @db.ProductLevel</small><br />
+            @*<small>Instance Name @db.InstanceName</small>*@
+            <div class="progress progress-xs">
+                <div class="progress-bar @progressColor" role="progressbar" style="width: @drvpercent" aria-valuenow="@dbpercent" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small class="text-muted">@dbsize GB / @dbdriveSize Gb</small>
+        }
+
+        foreach (var drive in Model.DriveUtilize)
+        {
+            drvpercent = drive.PercentageUsedSpace.ToString() + "%";
+            progressColor = drive.PercentColour.ToString();
+
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b>@drive.DriveLetter @drive.Label</b>
+                </small>
+            </div>
+            <div class="progress progress-xs">
+                <div class="progress-bar @progressColor" role="progressbar" style="width: @drvpercent" aria-valuenow="@drive.PercentageUsedSpace" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <small class="text-muted">@drive.UsedSpace GB / @drive.TotalSpace GB</small>
+        }
+    }
+    else
+    {
+        <div class="text-uppercase mb-1 mt-4">
+            <small>
+                <b>No System Resource Found</b>
+            </small>
+        </div>
+    }
+
+
+</div>

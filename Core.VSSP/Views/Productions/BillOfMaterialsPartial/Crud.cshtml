@@ -1,0 +1,891 @@
+﻿
+<div class="modal animated fadeIn" id="crudBillOfMaterialsModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudBillOfMaterialsForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsCustomerId" class="col-sm-3 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-BillOfMaterialsCustomerId" onchange="loadComboPart()" required></select>
+                                </div>
+                            </div>
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsPartNumber" class="col-sm-3 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-BillOfMaterialsPartNumber" required></select>
+                                </div>
+                            </div>
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsLine" class="col-sm-3 col-form-label col-form-label-sm">Production Line</label>
+                                <div class="col-sm-9">
+                                    <select type="text" class="custom-select custom-select-sm bg-white" id="crud-BillOfMaterialsLine" value="" required></select>
+                                </div>
+                            </div>
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsRevision" class="col-sm-3 col-form-label col-form-label-sm">Revision</label>
+                                <div class="col-sm-9">
+                                    <input type="number" min="0" class="form-control form-control-sm bg-white" id="crud-BillOfMaterialsRevision" value="" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsRemarks" class="col-sm-3 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-9">
+                                    <textarea rows="2" class="form-control form-control-sm bg-white" id="crud-BillOfMaterialsRemarks" value=""></textarea>
+                                </div>
+                            </div>
+                            <div class="form-row mb-2">
+                                <label for="crud-BillOfMaterialsActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="custom-control custom-checkbox mt-1">
+                                        <input type="checkbox" class="custom-control-input" value="" id="crud-BillOfMaterialsActived">
+                                        <label class="custom-control-label" for="crud-BillOfMaterialsActived"><small> Actived</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mt-0">
+                                        <a href="#" onclick="crudpreviewImage('bom-images')">
+                                            <img id="bom-images" src="~/_VSSPAssets/Images/noimage.png" style="width:100%" class="img-thumbnail" />
+                                        </a>
+                                    </div>
+                                    <span id="btn-uploadImages" class="btn btn-sm btn-file btn-link ml-0 pl-0">
+                                        <i class="fa fa-upload"></i> Upload Drawing
+                                        <input id="BillOfMaterialsImages" name="BillOfMaterialsImages" type="file" accept="image/jpeg" class="custom-file-input" onchange="loadBomImages(event)" />
+                                    </span>
+
+                                    <script>
+                                        var loadBomImages = function (event) {
+                                            var bomimages = document.getElementById('bom-images');
+                                            bomimages.src = URL.createObjectURL(event.target.files[0]);
+                                        };
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudDetails"></table>
+                        </div>
+
+                    </div>
+
+                    <div id="crudBillOfMaterialsError"></div>
+                    <input type="hidden" id="BillOfMaterialsAction" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-crudBillOfMaterialsDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudcrudBillOfMaterialsDetail('Create','')"><span class="fa fa-plus-square-o"></span> Add Part Item</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-crudBillOfMaterials" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudDetailsListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudDetailsForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Details</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsPartNumberParent" class="col-md-4 col-form-label col-form-label-sm">BOM Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DetailsBillOfMaterialsPartNumberParent" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsPartType" class="col-md-4 col-form-label col-form-label-sm">BOM Level</label>
+                                <div class="col-md-8">
+                                    <div class="input-group">
+                                        <select class="custom-select custom-select-sm" id="crud-DetailsBillOfMaterialsPartType" onchange="loadComboBOMPart()" required></select>
+                                        <div class="input-group-append">
+                                            @*<div class="input-group-text pt-0 pb-0">
+                                                <input type="checkbox" id="crud-DetailsBillOfMaterialsPassthrough" class="p-0" onchange="loadComboBOMPart()" aria-label="Check for following passthrough parts" title="Check for following passthrough parts">
+                                                <label for="crud-DetailsBillOfMaterialsPassthrough" class="col-form-label col-form-label-sm ml-2 p-0">Passthrough</label>
+                                            </div>*@
+                                            <div class="input-group-text pt-0 pb-0">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" value="" id="crud-DetailsBillOfMaterialsPassthrough" onchange="loadComboBOMPart()">
+                                                    <label class="custom-control-label" for="crud-DetailsBillOfMaterialsPassthrough"><small> Passthrough</small></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-DetailsBillOfMaterialsPartNumber" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsRevision" class="col-md-4 col-form-label col-form-label-sm">Revision</label>
+                                <div class="col-md-8">
+                                    <input type="number" min="0" class="form-control form-control-sm" id="crud-DetailsBillOfMaterialsRevision" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsQty" class="col-md-4 col-form-label col-form-label-sm">Quantity</label>
+                                <div class="col-md-8">
+                                    <input type="number" min="0.0001" class="form-control form-control-sm" id="crud-DetailsBillOfMaterialsQty" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DetailsBillOfMaterialsRemarks" class="col-md-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-md-8">
+                                    <textarea rows="2" class="form-control form-control-sm" id="crud-DetailsBillOfMaterialsRemarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="crudDetailsListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudDetailsList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+            <input type="hidden" id="DetailsAction" />
+            <input type="hidden" id="DetailsRowStatus" />
+            <input type="hidden" id="DetailsId" />
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudBillOfMaterials(action, id) {
+
+        loadblockspinner();
+
+        document.getElementById("crudBillOfMaterialsForm").reset();
+        $("#bom-images").attr("src", "../_VSSPAssets/Images/noimage.png");
+        $('#crudBillOfMaterialsForm').removeClass('was-validated');
+        $('#crudBillOfMaterialsError').html("");
+        $('#btn-crudBillOfMaterialsDetail').removeAttr('disabled');
+        $("#btn-uploadImages").removeClass("invisible");
+        $("#btn-crudBillOfMaterials").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-BillOfMaterialsActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudBillOfMaterialsForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $('.selectpicker').selectpicker('refresh');
+        $("#BillOfMaterialsAction").val(action);
+
+        loadComboPart(id);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                CustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber'),
+                LineId = Grid.jqGrid('getCell', selectedRowId, 'LineId'),
+                Revision = Grid.jqGrid('getCell', selectedRowId, 'Revision'),
+                Remarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks'),
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            Images = $("#Images-" + PartNumber).attr("src");
+
+            $("#crud-BillOfMaterialsCustomerId").val(CustomerId).selectpicker('refresh');
+            $("#crud-BillOfMaterialsPartNumber").val(PartNumber).selectpicker('refresh');
+            $("#crud-BillOfMaterialsLine").val(LineId);
+            $("#crud-BillOfMaterialsRevision").val(Revision);
+            $("#crud-BillOfMaterialsRemarks").val(Remarks);
+            if (Actived.includes("success")) {
+                $("#crud-BillOfMaterialsActived").attr("checked", true);
+            } else {
+                $("#crud-BillOfMaterialsActived").removeAttr("checked");
+            }
+            if (Images === undefined) {
+                $("#bom-images").attr("src", "../_VSSPAssets/Images/noimage.png");
+            } else {
+                $("#bom-images").removeAttr("src").attr("src", Images);
+            }
+
+            reloadGridDetails(LineId, CustomerId, PartNumber);
+
+        } else {
+            reloadGridDetails("*", "*", "*");
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-BillOfMaterialsActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudBillOfMaterialsModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudBillOfMaterialsModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudBillOfMaterialsModal').modal('show');
+                $("#crud-BillOfMaterialsCustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-BillOfMaterialsCustomerId").attr("disabled", true);
+                $("#crud-BillOfMaterialsPartNumber").attr("disabled",true);
+                $("#crud-BillOfMaterialsLine").attr("disabled", true);
+                $("#crudBillOfMaterialsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudBillOfMaterialsModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudBillOfMaterialsModal').modal('show');
+                $("#crud-BillOfMaterialsLine").focus();
+                break;
+            case "Delete":
+                $("#crud-BillOfMaterialsCustomerId").attr("disabled", true);
+                $("#crud-BillOfMaterialsPartNumber").attr("disabled", true);
+                $("#crud-BillOfMaterialsLine").attr("disabled", true);
+                $("#crudBillOfMaterialsForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crud-BillOfMaterialsActived").attr("disabled", true);
+                $('#btn-crudBillOfMaterialsDetail').attr('disabled', true);
+                $("#btn-uploadImages").addClass("invisible");
+                $("#btn-crudBillOfMaterials").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudBillOfMaterialsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudBillOfMaterialsModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudBillOfMaterialsModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudcrudBillOfMaterialsDetail(action, partnumber) {
+        document.getElementById("crudDetailsForm").reset();
+        $('#crudDetailsForm').removeClass('was-validated');
+        $('#crudBillOfMaterialsError').html("");
+        $('#crudDetailsListError').html("");
+        $("#btn-crudDetailsList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        enableAllInput("crudDetailsForm");
+        $("#crud-DetailsBillOfMaterialsPassthrough").attr("checked", false);
+
+        $("#DetailsAction").val(action);
+        $("#DetailsId").val(partnumber);
+
+        var bomnumber = $("#crud-BillOfMaterialsPartNumber").val();
+        var line = $("#crud-BillOfMaterialsLine").val();
+
+        if (bomnumber === "" || line === "" ) {
+            var errMsg = '<div class="alert alert-warning mt-2 mb-0" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Part Number, and Production Line completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudBillOfMaterialsError').html(errMsg);
+            return false;
+        }
+
+        if (partnumber != "") {
+            var rowData = $("#jqGridCrudDetails").jqGrid("getRowData", partnumber),
+                BOMLevel = rowData.BOMLevel,
+                PartNumber = rowData.PartNumber,
+                Revision = rowData.Revision,
+                Qty = rowData.Qty,
+                Remarks = rowData.Remarks,
+                Passthrough = parseBool(rowData.Passthrough);
+
+            $("#DetailsRowStatus").val(action);
+            $("#crud-DetailsBillOfMaterialsPartNumberParent").val(bomnumber);
+            $("#crud-DetailsBillOfMaterialsPartType").val(BOMLevel).change();
+            $("#crud-DetailsBillOfMaterialsPassthrough").attr("checked", Passthrough).change();
+            $("#crud-DetailsBillOfMaterialsPartNumber").val(PartNumber).selectpicker("refresh");
+            $("#crud-DetailsBillOfMaterialsRevision").val(Revision);
+            $("#crud-DetailsBillOfMaterialsQty").val(Qty);
+            $("#crud-DetailsBillOfMaterialsRemarks").val(Remarks);
+
+        }
+
+        switch (action) {
+            case "Create":
+                if (bomnumber === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add Details.</small></div>'
+                    $('#crudBillOfMaterialsError').html(errMsg);
+                    return false;
+                }
+                $("#crud-DetailsBillOfMaterialsPartNumberParent").attr("readonly", true);
+                $("#crud-DetailsBillOfMaterialsPartNumberParent").val(bomnumber);
+                $("#crudDetailsListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudDetailsListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' Part Item @ViewBag.Title');
+                $('#crudDetailsListModal').modal('show');
+                $("#crud-DetailsBillOfMaterialsPartType").focus();
+                break;
+            case "Update":
+                $("#crud-DetailsBillOfMaterialsPartNumberParent").attr("readonly",true);
+                $("#crud-DetailsBillOfMaterialsPartType").attr("disabled", true);
+                $("#crud-DetailsBillOfMaterialsPartNumber").attr("disabled", true);
+                $("#crud-DetailsBillOfMaterialsPassthrough").attr("disabled", true);
+                $("#crudDetailsListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudDetailsListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Part Item @ViewBag.Title');
+                $('#crudDetailsListModal').modal('show');
+                $("#crud-DetailsBillOfMaterialsRevision").focus();
+                break;
+            case "Delete":
+                disableAllInput("crudDetailsForm");
+                $("#crud-DetailsBillOfMaterialsPassthrough").attr("disabled", true);
+                $("#btn-crudDetailsList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudDetailsListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudDetailsListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' Part Item @ViewBag.Title');
+                $('#crudDetailsListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('input').change(function () {
+        $('#crudBillOfMaterialsError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudDetailsForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudDetailsForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var name = $('#crud-DetailsName').val();
+                        var action = $('#DetailsAction').val();
+                        var rowStatus = $('#DetailsRowStatus').val();
+
+                        var bomdata = getBOMDetailsJson();
+                        if (bomdata === "") {
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Details!</b><br/>Please complete all fields before creating part item @ViewBag.Title.</small></div>'
+                            $('#crudDetailsListError').html(errMsg);
+                            event.stopPropagation();
+                            return false;
+                        }
+
+                        switch (action) {
+                            case "Create":
+                                var alreadyInput = validationAlreadyInput(bomdata.PartNumber);
+
+                                if (alreadyInput === true) {
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Details!</b><br/>' + bomdata.PartNumber + ' already added, please check carefully before creating part item @ViewBag.Title.</small></div>'
+                                    $('#crudDetailsListError').html(errMsg);
+                                    event.stopPropagation();
+                                    return false;
+                                }
+
+                                parameters =
+                                {
+                                    rowID: bomdata.PartNumber,
+                                    initdata: {
+                                        BOMLevel: bomdata.BOMLevel,
+                                        Level01: bomdata.Level01,
+                                        Level02: bomdata.Level02,
+                                        Level03: bomdata.Level03,
+                                        Level04: bomdata.Level04,
+                                        PartNumber: bomdata.PartNumber,
+                                        PartName: bomdata.PartName,
+                                        Revision: bomdata.Revision,
+                                        LevelName: bomdata.LevelName,
+                                        CostUnit: bomdata.CostUnit,
+                                        Qty: bomdata.Qty,
+                                        Unit: bomdata.Unit,
+                                        Cost: bomdata.Cost,
+                                        Remarks: bomdata.Remarks,
+                                        Passthrough: bomdata.Passthrough,
+                                    },
+                                    position: "last",
+                                }
+
+                                $("#jqGridCrudDetails").jqGrid('addRow', parameters);
+
+                                break;
+
+                            case "Update":
+
+                                var rowid = bomdata.PartNumber;
+
+                                if (rowStatus != "New") {
+                                    rowStatus = action
+                                } else {
+                                    rowStatus = "Create"
+                                }
+
+                                parameters =
+                                {
+                                    RowStatus: rowStatus,
+                                    BOMLevel: bomdata.BOMLevel,
+                                    Level01: bomdata.Level01,
+                                    Level02: bomdata.Level02,
+                                    Level03: bomdata.Level03,
+                                    Level04: bomdata.Level04,
+                                    PartNumber: bomdata.PartNumber,
+                                    PartName: bomdata.PartName,
+                                    Revision: bomdata.Revision,
+                                    LevelName: bomdata.LevelName,
+                                    CostUnit: bomdata.CostUnit,
+                                    Qty: bomdata.Qty,
+                                    Unit: bomdata.Unit,
+                                    Cost: bomdata.Cost,
+                                    Remarks: bomdata.Remarks,
+                                    Passthrough: bomdata.Passthrough,
+                                }
+
+                                $("#jqGridCrudDetails").jqGrid('setRowData', rowid, parameters);
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = bomdata.PartNumber;
+
+                                $('#jqGridCrudDetails').jqGrid('delRowData', rowid);
+
+                                break;
+                        }
+
+                        $('#crudDetailsListModal').modal('hide');
+                    }
+
+                }, 250);
+
+            });
+        });
+    });
+
+
+    function validationAlreadyInput(val) {
+        var result = false;
+
+        var grid = $('#jqGridCrudDetails');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+            partnumber = rowData['PartNumber'];
+            if (partnumber === val) {
+                result = true;
+            }
+        }
+
+        return result;
+
+    };
+
+    $(function () {
+        $gridDetails = $("#jqGridCrudDetails").jqGrid({
+            url: "@Url.Action("BillOfMaterialsDetailsJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                lineid: "*",
+                customerid: "*",
+                parentid: "*"
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionDetailsFormatter },
+                { label: 'Level', name: 'BOMLevel', fixed: true, width: 60, align: 'center' },
+                { label: '1', name: 'Level01', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '2', name: 'Level02', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '3', name: 'Level03', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '4', name: 'Level04', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: 'Part Number', name: 'PartNumber', key: true, fixed: true, width: 100, align: 'center' },
+                { label: 'Part Name', name: 'PartName', fixed: true, width: 200 },
+                { label: 'Rev', name: 'Revision', fixed: true, width: 50, align: 'center' },
+                { label: 'Description', name: 'LevelName', fixed: true, width: 150 },
+                { label: 'Cost Unit', name: 'CostUnit', fixed: true, width: 80, align: 'right', formatter: "number" },
+                { label: 'Qty', name: 'Qty', width: 50, fixed: true, align: 'center', formatter: "number", formatoptions: { decimalPlaces: 4} },
+                { label: 'Unit', name: 'Unit', width: 50, fixed: true, align: 'center' },
+                { label: 'Cost', name: 'Cost', width: 80, fixed: true, align: 'right', formatter: "number" },
+                { label: 'Remarks', name: 'Remarks', width: 150 },
+                { label: 'Passthrough', name: 'Passthrough', width: 30, hidden: true },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudDetails').jqGrid('navGrid', '#jqGridPagercrudDetails',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+    function reloadGridDetails(line,cust,id) {
+        $("#jqGridCrudDetails").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                lineid: line,
+                customerid: cust,
+                parentid: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function actionDetailsFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudcrudBillOfMaterialsDetail('Update','" + rowObject.PartNumber + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Details [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudcrudBillOfMaterialsDetail('Delete','" + rowObject.PartNumber + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Details [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudBillOfMaterialsForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        PartBillOfMaterials: {
+                            CustomerId  : $("#crud-BillOfMaterialsCustomerId").val(),
+                            PartNumber  : $("#crud-BillOfMaterialsPartNumber").val(),
+                            LineId      : $("#crud-BillOfMaterialsLine").val(),
+                            Revision    : $("#crud-BillOfMaterialsRevision").val(),
+                            Remarks     : $("#crud-BillOfMaterialsRemarks").val(),
+                            Actived     : $("#crud-BillOfMaterialsActived").prop("checked"),
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        BillOfMaterialsDetails: $("#jqGridCrudDetails").jqGrid('getGridParam', 'data'),
+                        formAction: $("#BillOfMaterialsAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    //upload images
+                    var fileUpload = $("#BillOfMaterialsImages").get(0);
+                    var files = fileUpload.files;
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+
+                    if (jsonData.BillOfMaterialsDetails.length === 0) {
+                        alert("Please add Part Item before submit.")
+                        event.stopPropagation();
+                        return false;
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("crudBillOfMaterials","Productions")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudBillOfMaterialsModal').modal('hide');
+                            var act = $("#BillOfMaterialsAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudBillOfMaterialsError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    $("#crud-DetailsBillOfMaterialsPartType").change(async function () {
+        var level = $("#crud-DetailsBillOfMaterialsPartType").val();
+        switch (level) {
+            case "3":
+                $("#crud-DetailsBillOfMaterialsPassthrough").removeAttr("disabled");
+                break;
+            default:
+                $("#crud-DetailsBillOfMaterialsPassthrough").prop("checked", false);
+                $("#crud-DetailsBillOfMaterialsPassthrough").attr("disabled", true);
+                break;
+        }
+    })
+    loadComboCustomer();
+    function loadComboCustomer() {
+
+        var id = "#crud-BillOfMaterialsCustomerId";
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+            },
+            async: false,
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, cust) {
+                    $(id).append(
+                        $('<option></option>').val(cust.CustomerId).html(cust.CustomerName)
+                    );
+                });
+
+            }
+        })
+
+        $('#crud-BillOfMaterialsCustomerId').selectpicker("refresh");
+
+    }
+
+    function loadComboPart(includePart) {
+
+        var id = "#crud-BillOfMaterialsPartNumber";
+        var customerid = $("#crud-BillOfMaterialsCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("FinishGoodsListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                CustomerId: customerid,
+                PassThrough: "false",
+            },
+            async: false,
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part Finish Goods")
+                );
+                $.each(response, function (i, unit) {
+                    $(id).append(
+                        $('<option></option>').val(unit.PartNumber).html(unit.PartNumber + ' : ' + unit.PartName)
+                    );
+                });
+
+            }
+        })
+
+        $('#crud-BillOfMaterialsPartNumber').selectpicker("refresh");
+        $("#crud-BillOfMaterialsPartNumber").val(includePart);
+
+    }
+
+    function loadComboBOMPart(includePart) {
+
+        var id = "#crud-DetailsBillOfMaterialsPartNumber";
+        var level = $("#crud-DetailsBillOfMaterialsPartType").val();
+        var passthrough = $("#crud-DetailsBillOfMaterialsPassthrough").prop("checked");
+
+        if (level != "") {
+            $.ajax({
+                url: '@Url.Action("PartMaterialsJson", "Productions")',
+                type: "GET",
+                dataType: "JSON",
+                data: {
+                    partLevel: level,
+                    includePart: includePart,
+                    passthrough: passthrough,
+                },
+                async: false,
+                success: function (response) {
+
+                    $(id).html("");
+                    $(id).append(
+                        $('<option></option>').val("").html("*Choose Part Number")
+                    );
+                    $.each(response, function (i, unit) {
+                        $(id).append(
+                            $('<option></option>').val(unit.PartNumber).html('[' + unit.UniqueNumber + '] ' + unit.PartNumber + ' : ' + unit.PartName)
+                        );
+                    });
+
+                }
+            })
+
+            $('#crud-DetailsBillOfMaterialsPartNumber').selectpicker("refresh");
+            $("#crud-DetailsBillOfMaterialsPartNumber").val(includePart);
+        }
+    }
+
+    loadComboLine();
+    function loadComboLine() {
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+            },
+            success: function (response) {
+
+                var id  = "#crud-BillOfMaterialsLine";
+                var id2 = "#crud-DetailsBillOfMaterialsLine";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Production Line")
+                );
+                $(id2).html("");
+                $(id2).append(
+                    $('<option></option>').val("").html("*Choose Production Line")
+                );
+
+                $.each(response, function (i, unit) {
+                    $(id).append($('<option></option>').val(unit.LineId).html(unit.LineName));
+                    $(id2).append($('<option></option>').val(unit.LineId).html(unit.LineName));
+                });
+            }
+        })
+
+    }
+
+    loadComboPartLevel();
+    function loadComboPartLevel() {
+
+        $.ajax({
+            url: '@Url.Action("PartTypeJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                exludeLevel:0,
+            },
+            success: function (response) {
+
+                var id = "#crud-DetailsBillOfMaterialsPartType";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose BOM Level")
+                );
+                $.each(response, function (i, level) {
+                    $(id).append(
+                        $('<option></option>').val(level.Id).html(level.Id + ' : ' + level.Name)
+                    );
+                });
+            }
+        })
+    }
+
+    function getBOMDetailsJson() {
+
+        var result = "";
+
+        var partNumberParent = $("#crud-DetailsBillOfMaterialsPartNumberParent").val(),
+            bomLevel = $("#crud-DetailsBillOfMaterialsPartType").val(),
+            partNumber = $("#crud-DetailsBillOfMaterialsPartNumber").val(),
+            revision = $("#crud-DetailsBillOfMaterialsRevision").val(),
+            qty = $("#crud-DetailsBillOfMaterialsQty").val(),
+            remarks = $("#crud-DetailsBillOfMaterialsRemarks").val();
+
+        if (partNumber != "" || qty != "" || qty != 0) {
+            $.ajax({
+                url: '@Url.Action("GetBOMDetailsJson", "Productions")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: {
+                    PartNumberParent: partNumberParent,
+                    BOMLevel: bomLevel,
+                    PartNumber: partNumber,
+                    Revision: revision,
+                    Qty: qty,
+                    Remarks: remarks,
+                },
+                success: function (response) {
+                    result = response;
+                }
+            })
+        }
+
+        return result;
+    }
+
+    function crudpreviewImage(imageId) {
+        var id = $('#crud-BillOfMaterialsPartNumber').val(),
+            name = $('#crud-BillOfMaterialsPartNumber option:selected').text().replace(id + ' : ', '');
+        previewImage(imageId, id, name);
+    }
+
+</script>
+

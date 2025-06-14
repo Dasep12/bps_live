@@ -1,0 +1,258 @@
+﻿@*<footer class="app-footer">
+        <div>
+            <a href="#">@Session["CompanyID"]</a>
+            <span>&copy; @Session["CopyrightYear"] @Session["CompanyName"].</span>
+        </div>
+        <div class="ml-auto">
+            <span>Powered by</span>
+            <a href="@Session["PoweredSite"]" target="_blank">@Session["PoweredBy"]</a>
+        </div>
+    </footer>*@
+
+@if (@Session["UserID"] != null)
+{
+    ViewBag.CompName = Session["CompName"].ToString();
+    ViewBag.UserType = Session["UserType"].ToString();
+    ViewBag.IpAddress = Session["IpAddress"].ToString();
+    ViewBag.ServerName = Session["ServerName"].ToString();
+    ViewBag.DatabaseName = Session["DatabaseName"].ToString();
+    ViewBag.CompWebsites = Session["CompWebsites"].ToString();
+    ViewBag.AppWebsites = Session["AppWebsite"].ToString();
+    ViewBag.AppCompany = Session["AppCompany"].ToString();
+    ViewBag.AppID = Session["AppID"].ToString();
+    ViewBag.AppVersion = Session["AppVersion"].ToString() + "." + Session["AppRevision"].ToString() + "." + Session["AppBuild"].ToString();
+    if (ViewBag.ApprovalLevel != null)
+    {
+        ViewBag.Approval = "Approval : " + ViewBag.ApprovalName + " | ";
+    }
+    else
+    {
+        ViewBag.Approval = "";
+    }
+    <footer class="app-footer">
+
+        <!-- Default to the left -->
+        <div>
+            @if (ViewBag.UserType == "DEV")
+            {
+                <label class="style-none">
+
+                    <span class="fa fa-tv"></span>  @ViewBag.ServerName |
+                    <span class="fa fa-database"></span> @ViewBag.DatabaseName |
+                    <span class="fa fa-globe"></span> @ViewBag.IpAddress |
+
+                </label>
+
+            }
+            User Role : @ViewBag.UserType | @ViewBag.Approval
+            <a href="#" data-toggle="modal" data-target="#aboutform">@ViewBag.AppID Version @ViewBag.AppVersion</a>
+            Copyright &copy;
+            <script>document.write(new Date().getFullYear());</script>
+        </div>
+
+        <!-- To the right -->
+        <div class="ml-auto app-footer-right">
+            <a href="@ViewBag.CompWebsites" target="_blank"> @ViewBag.CompName </a> Power By <a href="@ViewBag.AppWebsites" target="_blank">@ViewBag.AppCompany</a>. All rights reserved.
+            @*<a href="#" data-toggle="modal" data-target="#aboutform">About @Session["AppID"].ToString()</a>*@
+        </div>
+    </footer>
+    <!--DISCLAIMER FORM-->
+    <div id="disclaimerform" class="modal animated fadeIn" tabindex="-1" role="dialog" style="font-family: 'Segoe-UI', sans-serif;">
+        <div class="modal-dialog modal-info modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color: white"><strong>Disclaimer</strong></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="font-size: 12px">
+                    <form>
+                        <div class="form-group" align="Justify">
+                            <p>
+                                The information contained on <b>vssp Web Portal</b> is for general information purposes only. vssp Compusoft Lab's (BC-Soft) assumes no responsibility for errors or omissions in the contents on the Service.
+                            </p>
+                            <p>
+                                In no event shall vssp be liable for any special, direct, indirect, consequential,	 or incidental damages or any damages whatsoever, whether in an action of contract, negligence or other tort, arising out of or in connection with the use of the Service or the contents of the Service. vssp reserves the right to make additions, deletions, or modification to the contents on the Service at any time without prior notice. vssp does not warrant that the website is free of viruses or other harmful components.
+                            </p>
+                            <p>
+                                The presence of a disclaimer in a legally binding agreement does not necessarily guarantee that the terms of the disclaimer will be recognized and enforced in a legal dispute. There may be other legal considerations that render a disclaimer void either in whole or part.
+                            </p>
+                            <br />
+                            <label>@ViewBag.CompName</label>
+                            <div><br> 2019</div>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--END DISCLAIMER-->
+    <!--TERM & CONDITION FORM-->
+    <div id="termconditionform" class="modal animated fadeIn" tabindex="-1" role="dialog" style="font-family: 'Segoe-UI', sans-serif;">
+        <div class="modal-dialog modal-lg modal-info modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color: white"><strong>Term & Condition</strong></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="font-size: 12px">
+                    <form>
+                        <div class="form-group" align="Justify">
+                            <p>
+                                Please read these Terms and Conditions ("Terms", "Terms and Conditions") carefully before using the <b>vssp Web Portal</b> website operated by vssp Compusoft Lab's.
+                            </p>
+                            <p>
+                                Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users and others who access or use the Service.
+                            </p>
+                            <p>
+                                <b>"By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service."</b>
+                            </p>
+                            <p>
+                                <b>Content</b><br />
+                                Our Service allows you to link, download, print and otherwise make available certain information, text, graphics, videos, or other material ("Content").
+                            </p>
+                            <p>
+                                <b>Changes</b><br />
+                                We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material we will try to provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.
+                            </p>
+                            <p>
+                                <b>Contact Us</b><br />
+                                If you have any questions about these Terms, please contact us.
+                            </p>
+                            <br />
+                            <label>@ViewBag.CompName</label>
+                            <div><br> 2019</div>
+                        </div>
+                    </form>
+
+                </div>
+
+                <div class="modal-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--END TERM & CONDITION-->
+    <!--PRIVACY POLICY FORM-->
+    <div id="privacypolicyform" class="modal animated fadeIn" tabindex="-1" role="dialog" style="font-family: 'Segoe-UI', sans-serif;">
+        <div class="modal-dialog modal-primary modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" style="color: white"><strong>Privacy Policy</strong></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body" style="overflow-y: scroll; max-height:400px; font-size: 12px">
+                    <form>
+                        <div class="form-group" align="Justify">
+                            <p>
+                                This privacy notice discloses the privacy practices for (website address). This privacy notice applies solely to information collected by this website. It will notify you of the following:
+                            </p>
+                            <p>
+                                <ol type="1">
+                                    <li>
+                                        What personally identifiable information is collected from you through the website, how it is used and with whom it may be shared.
+                                    </li>
+                                    <li>What choices are available to you regarding the use of your data.</li>
+                                    <li>The security procedures in place to protect the misuse of your information.</li>
+                                    <li>How you can correct any inaccuracies in the information.</li>
+                                </ol>
+                            </p>
+                            <p>
+                                <b>Information Collection, Use, and Sharing</b><br />
+                                We are the sole owners of the information collected on this site. We only have access to/collect information that you voluntarily give us via email or other direct contact from you. We will not sell or rent this information to anyone.
+                            </p>
+                            <p>
+                                We will use your information to respond to you, regarding the reason you contacted us. We will not share your information with any third party outside of our organization, other than as necessary to fulfill your request, e.g. to ship an order.
+                            </p>
+                            <p>
+                                Unless you ask us not to, we may contact you via email in the future to tell you about specials, new products or services, or changes to this privacy policy.
+                            </p>
+                            <p>
+                                <b>Your Access to and Control Over Information</b><br />
+                                You may opt out of any future contacts from us at any time. You can do the following at any time by contacting us via the email address or phone number given on our website:
+                                <ol type="1">
+                                    <li>See what data we have about you, if any.</li>
+                                    <li>Change/correct any data we have about you.</li>
+                                    <li>Have us delete any data we have about you.</li>
+                                    <li>Express any concern you have about our use of your data.</li>
+                                </ol>
+                            </p>
+                            <p>
+                                <b>Security</b><br />
+                                We take precautions to protect your information. When you submit sensitive information via the website, your information is protected both online and offline.
+                            </p>
+                            <p>
+                                Wherever we collect sensitive information (such as credit card data), that information is encrypted and transmitted to us in a secure way. You can verify this by looking for a lock icon in the address bar and looking for "https" at the beginning of the address of the Web page.
+                            </p>
+                            <p>
+                                While we use encryption to protect sensitive information transmitted online, we also protect your information offline. Only employees who need the information to perform a specific job (for example, billing or customer service) are granted access to personally identifiable information. The computers/servers in which we store personally identifiable information are kept in a secure environment.
+                            </p>
+                            <p>
+                                <b>Contact Us</b><br />
+                                If you have any questions about these Privacy and Policy, please contact us.
+                            </p>
+                            <br />
+                            <div>
+
+                                <label>@ViewBag.CompName</label>
+
+                                <div><br> 2019</div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-right">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">Close</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> <!--END PRIVACY POLICY-->
+    {
+        Html.RenderAction("AboutApps", "System");
+    }
+}
+
+@*<script>
+
+    $(document).ready(function () {
+        RegenerateEarlyStock();
+    })
+
+    function RegenerateEarlyStock() {
+
+        $.ajax ({
+            url: "@Url.Action("RegenerateStockEarly", "Inventory")",
+            type: "JSON",
+            method: "GET",
+            data: {},
+            success: function (data) {
+                console.log(data);
+            }
+        });
+    }
+</script>*@

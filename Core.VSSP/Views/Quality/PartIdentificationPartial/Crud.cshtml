@@ -1,0 +1,491 @@
+﻿
+
+<div class="modal animated fadeIn" id="crudPartIdentificationModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudPartIdentificationForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-PartIdentificationCustomerId" onchange="loadComboPart(this)" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationPartNumber" class="col-sm-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-PartIdentificationPartNumber" onchange="loadPart(this)" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationPartName" class="col-sm-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationPartName" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationPartModel" class="col-sm-4 col-form-label col-form-label-sm">Part Model</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationPartModel" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationIdentity" class="col-sm-4 col-form-label col-form-label-sm">Area Identity</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationIdentity" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationUniqueNumber" class="col-sm-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationUniqueNumber" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationCategory" class="col-sm-4 col-form-label col-form-label-sm">Part Category</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-PartIdentificationCategory" required>
+                                        <option value="">*Choose Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationDocumentNumber" class="col-sm-4 col-form-label col-form-label-sm">Document #</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationDocumentNumber" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationDate" class="col-sm-4 col-form-label col-form-label-sm">Release Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-PartIdentificationDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationRevision" class="col-sm-4 col-form-label col-form-label-sm">Revision</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-PartIdentificationRevision" required>
+                                        <option value="">*Choose Revision</option>
+                                        <option value="New Release">New Release</option>
+                                        <option value="Revision 1">Revision 1</option>
+                                        <option value="Revision 2">Revision 2</option>
+                                        <option value="Revision 3">Revision 3</option>
+                                        <option value="Revision 4">Revision 4</option>
+                                        <option value="Revision 5">Revision 5</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationECINumber" class="col-sm-4 col-form-label col-form-label-sm">ECI Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-PartIdentificationECINumber" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationCycleTime" class="col-sm-4 col-form-label col-form-label-sm">Cycle Time Check</label>
+                                <div class="col-sm-8">
+                                    <input type="number" min="0" class="form-control form-control-sm" id="crud-PartIdentificationCycleTime" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-PartIdentificationActived" class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-8">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-PartIdentificationActived">
+                                            <label class="custom-control-label" for="crud-PartIdentificationActived"><small> Actived</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label small">Part Identification</label>
+                            <div class="mt-0">
+                                <a href="#" onclick="crudpreviewImage('pi-images')">
+                                    <img id="pi-images" src="~/_VSSPAssets/Images/noimage.png" style="width: 100%; height: 230px" class="img-thumbnail" />
+                                </a>
+                            </div>
+                            <span id="btn-uploadImages" class="btn btn-sm btn-file btn-link ml-0 pl-0">
+                                <i class="fa fa-upload"></i> Upload Images
+                                <input id="PartIdentificationImages" name="PartIdentificationImages" type="file" accept="image/jpeg" class="custom-file-input" onchange="loadPiImages(event)" />
+                            </span>
+
+                            <script>
+                                var loadPiImages = function (event) {
+                                    var pimimages = document.getElementById('pi-images');
+                                    pimimages.src = URL.createObjectURL(event.target.files[0]);
+                                };
+                            </script>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="control-label small">Drawing Part Specification</label>
+                            <div class="mt-0">
+                                <a href="#" onclick="crudpreviewImage('drawing-images')">
+                                    <img id="drawing-images" src="~/_VSSPAssets/Images/noimage.png" style="width:100%; height:230px" class="img-thumbnail" />
+                                </a>
+                            </div>
+                            <span id="btn-uploadImages" class="btn btn-sm btn-file btn-link ml-0 pl-0">
+                                <i class="fa fa-upload"></i> Upload Images
+                                <input id="PartIdentificationDrawing" name="PartIdentificationDrawing" type="file" accept="image/jpeg" class="custom-file-input" onchange="loadDrawingImages(event)" />
+                            </span>
+
+                            <script>
+                                var loadDrawingImages = function (event) {
+                                    var drawingimages = document.getElementById('drawing-images');
+                                    drawingimages.src = URL.createObjectURL(event.target.files[0]);
+                                };
+                            </script>
+                        </div>
+                    </div>
+                    <div id="crudPartIdentificationError"></div>
+                    <input type="hidden" id="PartIdentificationAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudPartIdentification" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Views/System/PreviewImage.cshtml")
+
+<script>
+
+    function crudpreviewImage(imageId) {
+        var id = $('#crud-PartIdentificationDocumentNumber').val(),
+            name = $('#crud-PartIdentificationPartName').val();
+        previewImage(imageId, id, name);
+    }
+
+    function crudPartIdentification(action, id) {
+
+        document.getElementById("crudPartIdentificationForm").reset();
+        $('#crudPartIdentificationForm').removeClass('was-validated');
+        $('#crudPartIdentificationError').html("");
+        $('#btn-addPartIdentificationDetail').removeAttr('disabled');
+        $('#btn-importPartIdentificationDetail').removeAttr('disabled');
+        $('#btn-crudPartIdentification').removeAttr('disabled');
+
+        $("#btn-crudPartIdentification").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudPartIdentificationForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-PartIdentificationActived').attr("checked", true);
+        $("#crud-PartIdentificationPartName").attr("disabled", true);
+        $("#crud-PartIdentificationPartModel").attr("disabled", true);
+        $("#pi-images").attr("src", "../_VSSPAssets/Images/noimage.png");
+        $("#drawing-images").attr("src", "../_VSSPAssets/Images/noimage.png");
+
+        $("#PartIdentificationAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                CustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber'),
+                CustomerUniqueNumber = Grid.jqGrid('getCell', selectedRowId, 'CustomerUniqueNumber'),
+                PartCategory = Grid.jqGrid('getCell', selectedRowId, 'PartCategory'),
+                PartIdentity = Grid.jqGrid('getCell', selectedRowId, 'PartIdentity'),
+                DocumentNumber = Grid.jqGrid('getCell', selectedRowId, 'DocumentNumber'),
+                ReleaseDate = Grid.jqGrid('getCell', selectedRowId, 'ReleaseDate'),
+                Revision = Grid.jqGrid('getCell', selectedRowId, 'Revision'),
+                ECINumber = Grid.jqGrid('getCell', selectedRowId, 'ECINumber'),
+                CycleTime = Grid.jqGrid('getCell', selectedRowId, 'CycleTime'),
+                PI_Images = Grid.jqGrid('getCell', selectedRowId, 'PI_Images'),
+                Drawing_Images = Grid.jqGrid('getCell', selectedRowId, 'Drawing_Images'),
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            ReleaseDate = moment(new Date(ReleaseDate)).format("YYYY-MM-DD");
+            PI_Images += "#" + new Date().getTime();
+            Drawing_Images += "#" + new Date().getTime();
+            Actived = Actived.includes("success");
+
+            $("#crud-PartIdentificationCustomerId").val(CustomerId).selectpicker("refresh").change();
+            $("#crud-PartIdentificationPartNumber").val(PartNumber).selectpicker("refresh").change();
+            $("#crud-PartIdentificationUniqueNumber").val(CustomerUniqueNumber);
+            $("#crud-PartIdentificationCategory").val(PartCategory);
+            $("#crud-PartIdentificationIdentity").val(PartIdentity);
+            $("#crud-PartIdentificationDocumentNumber").val(DocumentNumber);
+            $("#crud-PartIdentificationDate").val(ReleaseDate);
+            $("#crud-PartIdentificationRevision").val(Revision);
+            $("#crud-PartIdentificationECINumber").val(ECINumber);
+            $("#crud-PartIdentificationCycleTime").val(CycleTime);
+            $("#crud-PartIdentificationActived").attr("checked", Actived);
+            var imageId = "#Images-" + PartNumber.replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", "");
+            var drawingId = "#Drawing-" + PartNumber.replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", "");
+            var image = $(imageId).prop("src");
+            var drawing = $(drawingId).prop("src");
+
+            $("#pi-images").attr("src", image);
+            $("#drawing-images").attr("src", drawing);
+        }
+
+        //$(".selectpicker").selectpicker("refresh");
+
+        switch (action) {
+            case "Create":
+
+                $("#crud-PartIdentificationCustomerId").val("").selectpicker("refresh").change();
+
+                $('#crud-PartIdentificationActived').attr("disabled", true);
+                $("#crudPartIdentificationModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudPartIdentificationModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudPartIdentificationModal').modal('show');
+                $("#crud-PartIdentificationDocumentNumber").focus();
+
+                break;
+            case "Update":
+                $("#crud-PartIdentificationCustomerId").attr("disabled", true);
+                $("#crud-PartIdentificationPartNumber").attr("disabled", true);
+                $("#crudPartIdentificationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudPartIdentificationModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudPartIdentificationModal').modal('show');
+                $("#crud-PartIdentificationDocumentNumber").focus();
+                break;
+            case "Delete":
+                $("#crudPartIdentificationForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-PartIdentificationCustomerId").attr("disabled", true);
+                $("#crud-PartIdentificationPartNumber").attr("disabled", true);
+                $("#crud-PartIdentificationCategory").attr("disabled", true);
+                $("#crud-PartIdentificationDocumentNumber").attr("disabled", true);
+                $("#crud-PartIdentificationRevision").attr("disabled", true);
+                $('#btn-addPartIdentificationDetail').attr('disabled', true);
+                $("#btn-crudPartIdentification").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudPartIdentificationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudPartIdentificationModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudPartIdentificationModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-PartIdentificationDocumentNumber').change(function () {
+        $('#crudPartIdentificationError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudPartIdentificationForm").submit(function (event) {
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudPartIdentificationForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+                    if (resValid) {
+
+                        var formData = new FormData();
+                        var jsonData = {
+                            PartIdentification: {
+                                CustomerId : $("#crud-PartIdentificationCustomerId").val(),
+                                PartNumber: $("#crud-PartIdentificationPartNumber").val(),
+                                CustomerUniqueNumber: $("#crud-PartIdentificationUniqueNumber").val(),
+                                PartCategory: $("#crud-PartIdentificationCategory").val(),
+                                PartIdentity: $("#crud-PartIdentificationIdentity").val(),
+                                DocumentNumber : $("#crud-PartIdentificationDocumentNumber").val(),
+                                ReleaseDate : $("#crud-PartIdentificationDate").val(),
+                                Revision : $("#crud-PartIdentificationRevision").val(),
+                                ECINumber : $("#crud-PartIdentificationECINumber").val(),
+                                CycleTime : $("#crud-PartIdentificationCycleTime").val(),
+                                Actived: $("#crud-PartIdentificationActived").prop("checked"),
+                                PI_Images: null,
+                                Drawing_Images: null,
+                                EditDate: null,
+                                UserID: "@ViewBag.UserId"
+                            },
+                            formAction: $("#PartIdentificationAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+                        //upload images
+                        var fileUpload = $("#PartIdentificationImages").get(0);
+                        var files = fileUpload.files;
+
+                        for (var i = 0; i < files.length; i++) {
+                            formData.append("PartIdentificationImages", files[i]);
+                        }
+
+                        var fileUpload2 = $("#PartIdentificationDrawing").get(0);
+                        var files2 = fileUpload2.files;
+
+                        for (var i = 0; i < files2.length; i++) {
+                            formData.append("PartIdentificationDrawing", files2[i]);
+                        }
+
+                        $.ajax({
+                            url: '@Url.Action("crudPartIdentification", "Quality")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            success: function (data) {
+                                $('#crudPartIdentificationModal').modal('hide');
+                                var act = $("#PartIdentificationAction").val();
+                                act = act.toLowerCase();
+                                doSuccess(data, act);
+                            },
+                            error: function (xhr, desc, err) {
+
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#crudPartIdentificationError').html(errMsg);
+                            }
+                        });
+                    }
+                }, 250);
+
+            });
+        });
+    });
+
+    loadComboCustomer();
+    function loadComboCustomer() {
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-PartIdentificationCustomerId";
+
+                CustomerListJson = response;
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+
+                $.each(response, function (i, Customer) {
+                    $(id).append(
+                        $('<option></option>').val(Customer.CustomerId).html('[' + Customer.CustomerId + '] ' + Customer.CustomerName)
+                    );
+                });
+
+                $(id).selectpicker("refresh");
+
+            }
+        })
+    }
+
+    var PartListJson = [];
+    loadComboPart();
+    function loadComboPart() {
+
+        var customer = $("#crud-PartIdentificationCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("FinishGoodsListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                CustomerId : customer
+            },
+            success: function (response) {
+
+                var id = "#crud-PartIdentificationPartNumber";
+
+                PartListJson = response;
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part")
+                );
+
+                $.each(response, function (i, part) {
+                    $(id).append(
+                        $('<option></option>').val(part.PartNumber).html('[' + part.UniqueNumber + '] ' + part.PartNumber)
+                    );
+                });
+
+                $(id).selectpicker("refresh");
+
+            }
+        })
+    }
+
+    loadComboPartCategory();
+    function loadComboPartCategory() {
+
+        $.ajax({
+            url: '@Url.Action("CategoriesListJson", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-PartIdentificationCategory";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part Category")
+                );
+
+                $.each(response, function (i, cat) {
+                    $(id).append(
+                        $('<option></option>').val(cat.CategoryId).html(cat.CategoryName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadPart(obj) {
+
+        var id = $(obj).val(),
+            findpart = $(PartListJson).filter(function (i, n) { return n.PartNumber === id });
+
+        if (findpart.length > 0) {
+            $("#crud-PartIdentificationPartName").val(findpart[0].PartName);
+            $("#crud-PartIdentificationUniqueNumber").val(findpart[0].UniqueNumber);
+            $("#crud-PartIdentificationPartModel").val(findpart[0].CustomerUnitModel);
+        } else {
+            $("#crud-PartIdentificationPartName").val("");
+            $("#crud-PartIdentificationPartModel").val("");
+        }
+    }
+</script>
+

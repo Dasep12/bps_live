@@ -1,0 +1,83 @@
+﻿@*@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager*@
+
+
+<li class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        @*<img class="img-avatar" src="~/images/avatars/6.jpg" alt="admin@bootstrapmaster.com">*@
+        @if (@Session["Images"] == null)
+        {
+            <img src="~/_BatikAssets/User/user.png" alt="@Session["UserName"]" class="img-avatar" />
+        }
+        else
+        {
+            var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+            <img src="@imgSrc" alt="@Session["UserName"]" class="img-avatar" />
+        }
+    </a>
+    <div class="dropdown-menu dropdown-menu-right">
+
+
+        @*NOTIFICATION*@
+        @*<div class="dropdown-header text-center">
+            <strong>Notification</strong>
+        </div>
+        <a class="dropdown-item" href="#">
+            <i class="fa fa-bell-o"></i> Updates
+            <span class="badge badge-info">42</span>
+        </a>
+        <a class="dropdown-item" href="#">
+            <i class="fa fa-envelope-o"></i> Messages
+            <span class="badge badge-success">42</span>
+        </a>
+        <a class="dropdown-item" href="#">
+            <i class="fa fa-tasks"></i> Tasks
+            <span class="badge badge-danger">42</span>
+        </a>
+        <a class="dropdown-item" href="#">
+            <i class="fa fa-comments"></i> Comments
+            <span class="badge badge-warning">42</span>
+        </a>*@
+
+        @*ACCOUNT*@
+        <div class="dropdown-header text-center">
+            <strong>Account</strong>
+        </div>
+        <form>
+
+            @if (@Session["UserID"] != null)
+            {
+                <a class="dropdown-item" href="@Url.Action("UserProfile", "Account", new { id = Session["UserID"].ToString() })" title="Manage Profile">
+                    <i class="fa fa-user text-primary"></i> @Session["UserName"].ToString()
+                </a>
+            }
+
+            @*<a class="dropdown-item" href="#">
+              <i class="fa fa-wrench"></i> Settings
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="fa fa-usd"></i> Payments
+              <span class="badge badge-secondary">42</span>
+            </a>
+            <a class="dropdown-item" href="#">
+              <i class="fa fa-file"></i> Projects
+              <span class="badge badge-primary">42</span>
+            </a>
+            <div class="divider"></div>
+            <a class="dropdown-item" href="#">
+              <i class="fa fa-shield"></i> Lock Account
+            </a>*@
+            <a class="dropdown-item" href="@Url.Action("MainIndex","Index")">
+                <i class="fa fa-home text-success"></i> Home Site
+            </a>
+            <a class="dropdown-item" href="@Url.Action("SignOut","Account")">
+                <i class="fa fa-lock text-danger"></i> Logout
+            </a>
+        </form>
+
+    </div>
+</li>

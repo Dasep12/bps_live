@@ -1,0 +1,16 @@
+﻿<div id="viewcards"></div>
+<script>
+    function loadViewCards() {
+        var date = $('#dateFilter').val();
+        var line = $('#lineFilter').val();
+        var gate = $('#gateFilter').val();
+        if (date === '') date = moment(new Date()).format("Y-M-D");
+        if (line === null) line = '';
+        $("#viewcards").load('@Url.Action("GetProductionDailySummary", "Home")' + '?proddate=' + date + '&lineid=' + line + '&gateid=' + gate);
+    }
+    $(document).ready(function () {
+        setTimeout(function () {
+            loadViewCards();
+        }, 100);
+    });
+</script>

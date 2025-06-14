@@ -1,0 +1,1456 @@
+﻿
+<div class="modal animated fadeIn" id="crudLineListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudLineForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabcrudLine" role="tab">
+                                Line
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabcrudGate" role="tab">
+                                Gate
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabcrudKanbanCalculation" role="tab">
+                                Kanban Calculation
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabcrudLine" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineGroupId" class="col-sm-3 col-form-label col-form-label-sm">Line Group</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group input-group-sm">
+                                                <select class="custom-select custom-select-sm" id="crud-LineGroupId" name="LineGroupId" value="" required></select>
+                                                <div class="input-group-append">
+                                                    <button id="btn-crudGroupLine" type="button" class="btn btn-sm btn-outline-secondary" onclick="crudLineGroupList()" title="Create or Edit Group Line"><i class="fa fa-plus-square-o"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineId" class="col-sm-3 col-form-label col-form-label-sm">Line Id</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-LineId" name="LineId" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineName" class="col-sm-3 col-form-label col-form-label-sm">Line Name</label>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-LineName" name="LineName" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineAreaId" class="col-sm-3 col-form-label col-form-label-sm">Area</label>
+                                        <div class="col-md-9">
+                                            <select class="custom-select custom-select-sm" id="crud-LineAreaId" name="LineAreaId" value="" onchange="loadComboLocation('*')" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineLocationId" class="col-sm-3 col-form-label col-form-label-sm">Location</label>
+                                        <div class="col-md-9">
+                                            <select class="custom-select custom-select-sm" id="crud-LineLocationId" name="LocationId" value="" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row" hidden>
+                                        <label for="crud-LineKanbanColor" class="col-sm-3 col-form-label col-form-label-sm">Kanban Color</label>
+                                        <div class="col-md-9">
+                                            <div class="input-group input-group-sm">
+                                                <select class="custom-select custom-select-sm" id="crud-LineKanbanColor" name="LineKanbanColor" value="" required></select>
+                                                <div class="input-group-append">
+                                                    <button id="btn-crudKanbanColor" type="button" class="btn btn-sm btn-outline-secondary" onclick="crudColorList()" title="Create or Edit Color"><i class="fa fa-plus-square-o"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-LineActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                        <div class="col-md-9">
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-LineActived">
+                                                <label class="custom-control-label" for="crud-LineActived"><small> Actived</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudGate" role="tabpanel">
+                            <button id="btn-addGate" type="button" class="btn btn-sm btn-outline-dark" onclick="crudGateList('Create','')"><span class="fa fa-plus"></span> Add New Gate</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudGate"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudKanbanCalculation" role="tabpanel">
+                            <button id="btn-addKanbanCalculation" type="button" class="btn btn-sm btn-outline-dark" onclick="crudKanbanCalculationList('Create','')"><span class="fa fa-plus"></span> Add New Kanban Calculation</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudKanbanCalculation"></table>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div id="crudLineListError"></div>
+                    <input hidden type="text" id="LineAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudLineList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudLineGroupListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudLineGroupForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-row mb-2">
+                                <label for="crud-GroupId" class="control-label small">Line Group Id</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-GroupId" name="GroupId" value="" placeholder="Auto Generate">
+                            </div>
+                            <div class="form-row">
+                                <label for="crud-GroupName" class="control-label small">Line Group Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-GroupName" name="GroupName" value="" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudLineGroupListError"></div>
+                    <input type="hidden" id="LineGroupAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudLineGroupList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="crudColorListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudColorForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-row mb-2">
+                                <label for="crud-ColorName" class="control-label small">Color Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ColorName" name="ColorName" value="" >
+                            </div>
+                            <div class="form-row">
+                                <label for="crud-HexNumber" class="control-label small">Color</label>
+                                <input type="color" class="form-control form-control-sm" style="height:28px !important" id="crud-HexNumber" name="HexNumber" value="" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudColorListError"></div>
+                    <input type="hidden" id="ColorAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudColorList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudKanbanCalculationListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudKanbanCalculationForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> KanbanCalculation</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationLineId" class="col-md-5 col-form-label col-form-label-sm">Line Id</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm" id="crud-KanbanCalculationLineId" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationStartDate" class="col-md-5 col-form-label col-form-label-sm">Start Date</label>
+                                <div class="col-md-7">
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-KanbanCalculationStartDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationEndDate" class="col-md-5 col-form-label col-form-label-sm">End Date</label>
+                                <div class="col-md-7">
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-KanbanCalculationEndDate">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationInProcess" class="col-md-5 col-form-label col-form-label-sm">In Process</label>
+                                <div class="col-md-7">
+                                    <input type="number" class="form-control form-control-sm" id="crud-KanbanCalculationInProcess" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationStock" class="col-md-5 col-form-label col-form-label-sm">Stock</label>
+                                <div class="col-md-7">
+                                    <input type="number" class="form-control form-control-sm" id="crud-KanbanCalculationStock" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationPrepareHeijunka" class="col-md-5 col-form-label col-form-label-sm">Prepare Heijunka</label>
+                                <div class="col-md-7">
+                                    <input type="number" class="form-control form-control-sm" id="crud-KanbanCalculationPrepareHeijunka" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-KanbanCalculationWIP" class="col-md-5 col-form-label col-form-label-sm">WIP</label>
+                                <div class="col-md-7">
+                                    <input type="number" class="form-control form-control-sm" id="crud-KanbanCalculationWIP" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-KanbanCalculationPrepareDelivery" class="col-md-5 col-form-label col-form-label-sm">Prepare Delivery</label>
+                                <div class="col-md-7">
+                                    <input type="number" class="form-control form-control-sm" id="crud-KanbanCalculationPrepareDelivery" required>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="KanbanCalculationAction" />
+                    <input type="hidden" id="KanbanCalculationRowStatus" />
+                    <input type="hidden" id="KanbanCalculationId" />
+                    <div id="crudKanbanCalculationListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudKanbanCalculationList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="crudGateListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudGateForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Gate</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-GateLineId" class="col-md-5 col-form-label col-form-label-sm">Line Id</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm" id="crud-GateLineId" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-GateId" class="col-md-5 col-form-label col-form-label-sm">Gate Id</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm" id="crud-GateId" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="crud-GateName" class="col-md-5 col-form-label col-form-label-sm">Gate Name</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm" id="crud-GateName">
+                                </div>
+                            </div>                            
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="GateAction" />
+                    <input type="hidden" id="GateRowStatus" />
+                    <input type="hidden" id="GateId" />
+                    <div id="crudGateListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudGateList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function crudLineList(action, id) {
+
+        document.getElementById("crudLineForm").reset();
+        $('#crudLineForm').removeClass('was-validated');
+        $('#crudLineListError').html("");
+        $('#crud-LineAreaId').removeAttr('disabled');
+        $('#crud-LineLocationId').removeAttr('disabled');
+        $('#crud-LineKanbanColor').removeAttr('disabled');
+        $('#btn-addKanbanCalculation').removeAttr('disabled');
+        
+        $("#btn-crudLineList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $('#btn-crudGroupLine').html("<i class='fa fa-plus-square-o'></i>");
+        $('#btn-crudKanbanColor').html("<i class='fa fa-plus-square-o'></i>");
+        $('a[href="#tabcrudLine"]').click()
+
+        $("#crudLineForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#LineAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                GroupId = Grid.jqGrid('getCell', selectedRowId, 'GroupId'),
+                LineName = Grid.jqGrid('getCell', selectedRowId, 'LineName'),
+                AreaId = Grid.jqGrid('getCell', selectedRowId, 'AreaId'),
+                LocationId = Grid.jqGrid('getCell', selectedRowId, 'LocationId'),
+                KanbanColor = Grid.jqGrid('getCell', selectedRowId, 'KanbanColor'),
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            //Logo = $("#logo-" + id).attr("src");
+            if (KanbanColor != "") {
+                KanbanColor = KanbanColor.split('>');
+                KanbanColor = KanbanColor[1].split('<');
+                KanbanColor = KanbanColor[0];
+            }
+            $("#crud-LineGroupId").val(GroupId);
+            $("#crud-LineId").val(id);
+            $("#crud-LineName").val(LineName);
+            $("#crud-LineAreaId").val(AreaId).change();
+            $("#crud-LineLocationId").val(LocationId);
+            $("#crud-LineKanbanColor").val(KanbanColor).change();
+            if (Actived.includes("success")) {
+                $("#crud-LineActived").attr("checked", true);
+            } else {
+                $("#crud-LineActived").removeAttr("checked");
+            }
+
+        }
+
+        reloadGridKanbanCalculation(id);
+        reloadGridGate(id);
+
+        switch (action) {
+            case "Create":
+                $("#crud-LineActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudLineListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudLineListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudLineListModal').modal('show');
+                $("#crud-LineGroupId").focus();
+                break;
+            case "Update":
+                $("#btn-crudGroupLine").attr("disabled", true);
+                $("#crud-LineGroupId").attr("disabled", true);
+                $("#crud-LineId").attr("readonly",true);
+                $("#crudLineListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudLineListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudLineListModal').modal('show');
+                $("#crud-LineName").focus();
+                break;
+            case "Delete":
+                $("#crudLineForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#btn-crudGroupLine").attr("disabled", true);
+                $("#btn-crudKanbanColor").attr("disabled", true);
+                $('#btn-addKanbanCalculation').attr('disabled', true);
+                $("#crud-LineGroupId").attr("disabled", true);
+                $("#crud-LineActived").attr("disabled", true);
+                $('#crud-LineAreaId').attr('disabled', true);
+                $('#crud-LineLocationId').attr('disabled', true);
+                $('#crud-LineKanbanColor').attr('disabled', true);
+                $("#btn-crudLineList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudLineListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudLineListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudLineListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-LineId').change(function () {
+        $('#crudLineListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudLineForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        Line: {
+                            GroupId     : $("#crud-LineGroupId").val(),
+                            LineId      : $("#crud-LineId").val(),
+                            LineName    : $("#crud-LineName").val(),
+                            LocationId  : $("#crud-LineLocationId").val(),
+                            AreaId      : $("#crud-LineAreaId").val(),
+                            KanbanColor : $("#crud-LineKanbanColor").val(),
+                            Actived     : $("#crud-LineActived").prop("checked"),
+                            EditDate    : null,
+                            UserId      : null
+                        },
+                        KanbanCalculation: $("#jqGridCrudKanbanCalculation").jqGrid('getGridParam', 'data'),
+                        LineGate: $("#jqGridCrudGate").jqGrid('getGridParam', 'data'),
+                        formAction: $("#LineAction").val()
+                    };
+
+                    if (jsonData.KanbanCalculation.length === 0) {
+                        alert("Please add kanban calculation before submit.");
+                        event.stopPropagation();
+                        return false;
+                    }
+
+                    $.each(jsonData.KanbanCalculation, function (i, js) {
+                        if (js.EndDate === "&#160;") {
+                            js.EndDate = null;
+                        }
+                    });
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudLineList", "Productions")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudLineListModal').modal('hide');
+                            var act = $("#LineAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudLineListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboArea();
+
+    function loadComboArea() {
+
+        $.ajax({
+            url: '@Url.Action("AreaListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-LineAreaId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Area")
+                );
+                $.each(response, function (i, area) {
+                    $(id).append(
+                        $('<option></option>').val(area.AreaID).html(area.AreaName)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboLocation("");
+
+    function loadComboLocation(aid) {
+
+        if (aid === "*") {
+            aid = $("#crud-LineAreaId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("LocationListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : aid},
+            success: function (response) {
+
+                var id = "#crud-LineLocationId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Location")
+                );
+                $.each(response, function (i, location) {
+                    $(id).append(
+                        $('<option></option>').val(location.LocationId).html(location.LocationName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    loadComboGroupLine();
+
+    function loadComboGroupLine() {
+
+        $.ajax({
+            url: '@Url.Action("GroupLineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-LineGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Group Line")
+                );
+                $.each(response, function (i, line) {
+                    $(id).append(
+                        $('<option></option>').val(line.GroupId).html(line.GroupName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    loadComboColor();
+    function loadComboColor() {
+
+        $.ajax({
+            url: '@Url.Action("ColorListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-LineKanbanColor";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Kanban Color")
+                );
+                $.each(response, function (i, color) {
+                    if (color.ColorName.toLowerCase() != 'yellow' && color.ColorName.toLowerCase() != 'kuning') {
+                        $(id).append(
+                            $('<option></option>').val(color.ColorName).html(color.ColorName).attr("style", "color:yellow;background-color:" + color.HexNumber)
+                        );
+                    } else {
+                        $(id).append(
+                            $('<option></option>').val(color.ColorName).html(color.ColorName).attr("style", "color:red;background-color:" + color.HexNumber)
+                        );
+                    }
+                });
+            }
+        })
+
+    }
+</script>
+
+<script>
+    function crudLineGroupList() {
+
+        document.getElementById("crudLineGroupForm").reset();
+        $('#crudLineGroupForm').removeClass('was-validated');
+        $('#crudLineGroupListError').html("");
+        $("#btn-crudLineGroupList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-LineGroupActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudLineGroupForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        var action = "";
+        var id = $("#crud-LineGroupId").val();
+        if (id === "") {
+            action = "Create";
+        } else {
+            action = "Update";
+        }
+
+        $("#LineGroupAction").val(action);
+
+        if (id != "") {
+
+            var LineGroupName = $("#crud-LineGroupId option:selected").text();
+
+            $("#crud-GroupId").val(id);
+            $("#crud-GroupName").val(LineGroupName);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudLineGroupListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudLineGroupListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Group');
+                $('#crudLineGroupListModal').modal('show');
+                $("#crud-GroupId").attr("readonly", true);
+                $("#crud-GroupName").focus();
+                break;
+            case "Update":
+                $("#crudLineGroupListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudLineGroupListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Group');
+                $('#crudLineGroupListModal').modal('show');
+                $("#crud-GroupId").attr("readonly", true);
+                $("#crud-GroupName").focus();
+                break;
+            case "Delete":
+                $("#crudLineGroupForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#btn-crudLineGroupList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudLineGroupListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudLineGroupListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Group');
+                $('#crudLineGroupListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-LineGroupId').change(function () {
+        var id = $("#crud-LineGroupId").val();
+        if (id === "") {
+            $('#btn-crudGroupLine').html("<i class='fa fa-plus-square-o'></i>");
+        } else {
+            $('#btn-crudGroupLine').html("<i class='fa fa-pencil'></i>");
+        }
+    });
+
+    $('#crud-GroupName').change(function () {
+        $('#crudLineGroupListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudLineGroupForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var GroupId     = $("#crud-GroupId").val(),
+                        GroupName   = $("#crud-GroupName").val(),
+                        formAction  = $("#LineGroupAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudGroupLineList", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            groupId: GroupId,
+                            groupName: GroupName,
+                            formAction: formAction,
+                        },
+                        success: function (data) {
+                            $('#crudLineGroupListModal').modal('hide');
+                            showToast("Success", formAction + " " + data + " has been saved succesfully");
+                            loadComboGroupLine();
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudLineGroupListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function crudColorList() {
+
+        document.getElementById("crudColorForm").reset();
+        $('#crudColorForm').removeClass('was-validated');
+        $('#crudColorListError').html("");
+        $("#btn-crudColorList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-ColorActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudColorForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        var action = "";
+        var id = $("#crud-LineKanbanColor").val();
+        var hexNumber = "";
+        if (id === "") {
+            action = "Create";
+        } else {
+            action = "Update";
+        }
+
+        $("#ColorAction").val(action);
+
+        if (id != "") {
+
+            $.ajax({
+                url: '@Url.Action("ColorListJson", "Productions")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: { searchFilter: id },
+                success: function (response) {
+
+                    $.each(response, function (i, color) {
+                        HexNumber = color.HexNumber;
+                    });
+                }
+            });
+
+            $("#crud-ColorName").val(id);
+            $("#crud-HexNumber").val(HexNumber);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudColorListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudColorListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Group');
+                $('#crudColorListModal').modal('show');
+                $("#crud-ColorName").focus();
+                break;
+            case "Update":
+                $("#crudColorListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudColorListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Group');
+                $('#crudColorListModal').modal('show');
+                $("#crud-ColorName").attr("readonly", true);
+                $("#crud-HexNumber").focus();
+                break;
+            case "Delete":
+                $("#crudColorForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#btn-crudColorList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudColorListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudColorListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Group');
+                $('#crudColorListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-LineKanbanColor').change(function () {
+        var id = $("#crud-LineKanbanColor").val();
+        if (id === "") {
+            $('#btn-crudKanbanColor').html("<i class='fa fa-plus-square-o'></i>");
+        } else {
+            $('#btn-crudKanbanColor').html("<i class='fa fa-pencil'></i>");
+        }
+    });
+
+    $('#crud-HexNumber').change(function () {
+        $('#crudColorListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudColorForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var ColorName   = $("#crud-ColorName").val(),
+                        HexNumber   = $("#crud-HexNumber").val(),
+                        formAction  = $("#ColorAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudColorList", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            colorName: ColorName,
+                            hexNumber: HexNumber,
+                            formAction: formAction,
+                        },
+                        success: function (data) {
+                            $('#crudColorListModal').modal('hide');
+                            showToast("Success", formAction + " " + data + " has been saved succesfully");
+                            loadComboColor();
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudColorListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+<script>
+    function crudGateList(action, id) {
+        document.getElementById("crudGateForm").reset();
+        $('#crudGateForm').removeClass('was-validated');
+        $('#crudLineListError').html("");
+        $('#crudGateListError').html("");
+        $("#btn-crudGateList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudGateForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#GateAction").val(action);
+        $("#GateId").val(id);
+        var lineId = $("#crud-LineId").val();
+
+        if (id != "") {
+            var rowData = $("#jqGridCrudGate").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                GateId = rowData.GateId,
+                GateName = rowData.GateName;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#GateRowStatus").val(RowStatus);
+            $("#crud-GateLineId").val(lineId);
+            $("#crud-GateId").val(GateId);
+            $("#crud-GateName").val(GateName);
+        }
+
+        switch (action) {
+            case "Create":
+                if (lineId === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add Gate.</small></div>'
+                    $('#crudLineListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-GateLineId").attr("readonly", true);
+                $("#crud-GateLineId").val(lineId);
+                $("#crudGateListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudGateListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Gate');
+                $('#crudGateListModal').modal('show');
+                $("#crud-GateId").focus();
+                break;
+            case "Update":
+                $("#crud-GateLineId").attr("readonly",true);
+                $("#crud-GateId").attr("readonly", true);
+                $("#crudGateListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudGateListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Gate');
+                $('#crudGateListModal').modal('show');
+                $("#crud-GateName").focus();
+                break;
+            case "Delete":
+                $("#crudGateForm :input").not(':input[type=button], :input[type=submit], :input[type=reset]').each(function () {
+                    $(this).attr("readonly", true).attr("disabled", true);
+                });
+                $("#btn-crudGateList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudGateListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudGateListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Gate');
+                $('#crudGateListModal').modal('show');
+                break
+        }
+
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudGateForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var id = $('#crud-GateId').val();
+                    var action = $('#GateAction').val();
+                    var rowStatus = $('#GateRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+                            var alreadyInput = validationAlreadyInputGate(action,id);
+
+                            if (alreadyInput === true) {
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Gate!</b><br/>' + id + ' already created, please check carefully before creating @ViewBag.Title Gate.</small></div>'
+                                $('#crudGateListError').html(errMsg);
+                                event.stopPropagation();
+                                return false;
+                            }
+
+                            var newrowid = $("#jqGridCrudGate").jqGrid('getGridParam', 'records');
+                            newrowid = parseInt(newrowid) + 1;
+
+                            parameters =
+                            {
+                                rowID: newrowid,
+                                initdata: {
+                                    RowStatus: action,
+                                    LineId: $("#crud-GateLineId").val(),
+                                    GateId: $("#crud-GateId").val(),
+                                    GateName: $("#crud-GateName").val(),
+                                },
+                                InProcess: "last",
+                            }
+
+                            $("#jqGridCrudGate").jqGrid('addRow', parameters);
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#GateId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                LineId: $("#crud-GateLineId").val(),
+                                GateId: $("#crud-GateId").val(),
+                                GateName: $("#crud-GateName").val(),
+                            }
+
+                            $("#jqGridCrudGate").jqGrid('setRowData', rowid, parameters);
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#GateId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudGate').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudGate").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            break;
+                    }
+
+                    $('#crudGateListModal').modal('hide');
+                }
+            });
+        });
+    });
+    function validationAlreadyInputGate(action, id) {
+        var result = false;
+
+        var grid = $('#jqGridCrudGate');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            rowStatus = rowData['RowStatus'].split('>');
+            rowGateId = rowData['GateId'];
+
+            if (rowStatus != "") {
+                rowStatus = rowStatus[1].split('<');
+                rowStatus = rowStatus[0];
+            }
+
+            switch (action) {
+                case "Create":
+                    if (rowGateId === id) {
+                        result = true;
+                    }
+                    break;
+                case "Update":
+                    if (rows[i] != id) {
+                        result = true;
+                    }
+                    break;
+            }
+
+        }
+
+        return result;
+
+    };
+    $(function () {
+        $gridGate = $("#jqGridCrudGate").jqGrid({
+            url: "@Url.Action("LineGateJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {LineId : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionGateFormatter },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, formatter: statusCrudGateFormatter },
+                { label: 'Line Id', name: 'LineId', hidden: true },
+                { label: 'Gate Id', name: 'GateId', key: true, align: 'center', fixed: true, width: 100 },
+                { label: 'Gate Name', name: 'GateName', align: 'left', fixed: true, width: 470 },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudGate').jqGrid('navGrid', '#jqGridPagercrudGate',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+    function reloadGridGate(id) {
+        $("#jqGridCrudGate").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                LineId: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionGateFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudGateList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Kanban Calculation [ " + rowObject.StartDate + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudGateList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Kanban Calculation [ " + rowObject.StartDate + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudGateFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+</script>
+<script>
+    function crudKanbanCalculationList(action, id) {
+        document.getElementById("crudKanbanCalculationForm").reset();
+        $('#crudKanbanCalculationForm').removeClass('was-validated');
+        $('#crudLineListError').html("");
+        $('#crudKanbanCalculationListError').html("");
+        $("#btn-crudKanbanCalculationList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudKanbanCalculationForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-KanbanCalculationReceiveOrder").removeAttr("disabled");
+        $("#crud-KanbanCalculationReceiveInvoice").removeAttr("disabled");
+
+        $("#KanbanCalculationAction").val(action);
+        $("#KanbanCalculationId").val(id);
+        var lineId = $("#crud-LineId").val();
+
+        if (id != "") {
+            var rowData = $("#jqGridCrudKanbanCalculation").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                StartDate = moment(new Date(rowData.StartDate)).format('YYYY-MM-DD'),
+                EndDate = moment(new Date(rowData.EndDate)).format('YYYY-MM-DD'),
+                InProcess = rowData.InProcess,
+                PrepareHeijunka = rowData.PrepareHeijunka,
+                WIP = rowData.WIP,
+                Stock = rowData.Stock,
+                PrepareDelivery = rowData.PrepareDelivery;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#KanbanCalculationRowStatus").val(RowStatus);
+            $("#crud-KanbanCalculationLineId").val(lineId);
+            $("#crud-KanbanCalculationStartDate").val(StartDate);
+            $("#crud-KanbanCalculationEndDate").val(EndDate);
+            $("#crud-KanbanCalculationInProcess").val(InProcess);
+            $("#crud-KanbanCalculationStock").val(Stock);
+            $("#crud-KanbanCalculationPrepareHeijunka").val(PrepareHeijunka);
+            $("#crud-KanbanCalculationWIP").val(WIP);
+            $("#crud-KanbanCalculationPrepareDelivery").val(PrepareDelivery);
+        }
+
+        switch (action) {
+            case "Create":
+                if (lineId === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add KanbanCalculation.</small></div>'
+                    $('#crudLineListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-KanbanCalculationLineId").attr("readonly", true);
+                $("#crud-KanbanCalculationLineId").val(lineId);
+                $("#crudKanbanCalculationListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudKanbanCalculationListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title Kanban Calculation');
+                $('#crudKanbanCalculationListModal').modal('show');
+                $("#crud-KanbanCalculationStartDate").focus();
+                break;
+            case "Update":
+                $("#crud-KanbanCalculationLineId").attr("readonly",true);
+                $("#crud-KanbanCalculationStartDate").attr("readonly", true);
+                $("#crudKanbanCalculationListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudKanbanCalculationListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Kanban Calculation');
+                $('#crudKanbanCalculationListModal').modal('show');
+                $("#crud-KanbanCalculationEndDate").focus();
+                break;
+            case "Delete":
+                $("#crudKanbanCalculationForm :input").not(':input[type=button], :input[type=submit], :input[type=reset]').each(function () {
+                    $(this).attr("readonly", true).attr("disabled", true);
+                });
+                $("#btn-crudKanbanCalculationList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudKanbanCalculationListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudKanbanCalculationListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Kanban Calculation');
+                $('#crudKanbanCalculationListModal').modal('show');
+                break
+        }
+
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudKanbanCalculationForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var id = $('#crud-KanbanCalculationId').val();
+                    var valstart = $("#crud-KanbanCalculationStartDate").val(),
+                        valend = $("#crud-KanbanCalculationEndDate").val();
+
+                    var action = $('#KanbanCalculationAction').val();
+                    var rowStatus = $('#KanbanCalculationRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+                            var alreadyInput = validationAlreadyInputKanban(action,id,valstart,valend);
+
+                            if (alreadyInput === true) {
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Kanban Calculation!</b><br/>' + valstart + ' already created, please check carefully before creating @ViewBag.Title Kanban Calculation.</small></div>'
+                                $('#crudKanbanCalculationListError').html(errMsg);
+                                event.stopPropagation();
+                                return false;
+                            }
+
+                            var newrowid = $("#jqGridCrudKanbanCalculation").jqGrid('getGridParam', 'records');
+                            newrowid = parseInt(newrowid) + 1;
+
+                            parameters =
+                            {
+                                rowID: newrowid,
+                                initdata: {
+                                    RowStatus: action,
+                                    LineId: $("#crud-KanbanCalculationLineId").val(),
+                                    StartDate: $("#crud-KanbanCalculationStartDate").val(),
+                                    EndDate: $("#crud-KanbanCalculationEndDate").val(),
+                                    InProcess: $("#crud-KanbanCalculationInProcess").val(),
+                                    Stock: $("#crud-KanbanCalculationStock").val(),
+                                    PrepareHeijunka: $("#crud-KanbanCalculationPrepareHeijunka").val(),
+                                    WIP: $("#crud-KanbanCalculationWIP").val(),
+                                    PrepareDelivery: $("#crud-KanbanCalculationPrepareDelivery").val()
+                                },
+                                InProcess: "last",
+                            }
+
+                            $("#jqGridCrudKanbanCalculation").jqGrid('addRow', parameters);
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#KanbanCalculationId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            var sdate = moment(new Date($("#crud-KanbanCalculationStartDate").val())).format("DD MMM YYYY");
+                            var edate = $("#crud-KanbanCalculationEndDate").val();
+                            if (edate != "") {
+                                edate = moment(new Date($("#crud-KanbanCalculationEndDate").val())).format("DD MMM YYYY");
+                            } else {
+                                edate = null;
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                LineId: $("#crud-KanbanCalculationLineId").val(),
+                                StartDate: sdate,
+                                EndDate: edate,
+                                InProcess: $("#crud-KanbanCalculationInProcess").val(),
+                                PrepareHeijunka: $("#crud-KanbanCalculationPrepareHeijunka").val(),
+                                WIP: $("#crud-KanbanCalculationWIP").val(),
+                                Stock: $("#crud-KanbanCalculationStock").val(),
+                                PrepareDelivery: $("#crud-KanbanCalculationPrepareDelivery").val(),
+                            }
+
+                            $("#jqGridCrudKanbanCalculation").jqGrid('setRowData', rowid, parameters);
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#KanbanCalculationId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudKanbanCalculation').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudKanbanCalculation").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            break;
+                    }
+
+                    $('#crudKanbanCalculationListModal').modal('hide');
+                }
+            });
+        });
+    });
+    function validationAlreadyInputKanban(action, id, valstart, valend) {
+        var result = false;
+
+        var grid = $('#jqGridCrudKanbanCalculation');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            rowStatus = rowData['RowStatus'].split('>');
+            rowStartDate = moment(new Date(rowData['StartDate'])).format('YYYY-MM-DD');
+            rowEndDate = moment(new Date(rowData['EndDate'])).format('YYYY-MM-DD');
+            valStartDate = moment(new Date(valstart)).format('YYYY-MM-DD');
+            valEndDate = moment(new Date(valend)).format('YYYY-MM-DD');
+
+            if (rowStatus != "") {
+                rowStatus = rowStatus[1].split('<');
+                rowStatus = rowStatus[0];
+            }
+
+            if (rowEndDate === 'Invalid date') {
+                rowEndDate = moment(new Date(valstart)).add(-1, "days").format('YYYY-MM-DD');
+            }
+            if (valEndDate == 'Invalid date') {
+                valEndDate = valStartDate;
+            }
+
+            switch (action) {
+                case "Create":
+                    if (rowStartDate === valStartDate || (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    } else {
+
+
+                        if (rowData['EndDate'].length <= 1) {
+
+                            if (rowStatus != "New") {
+                                rowStatus = "Update"
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                StartDate: moment(rowStartDate).format("DD MMM YYYY"),
+                                EndDate: moment(rowEndDate).format("DD MMM YYYY"),
+                                RowStatus: rowStatus,
+                            }
+                            $("#jqGridCrudKanbanCalculation").jqGrid('setRowData', rows[i], parameters);
+                        }
+                    }
+
+                    break;
+                case "Update":
+                    if (rows[i] != id && (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    }
+                    break;
+            }
+
+        }
+
+        return result;
+
+    };
+    $(function () {
+        $gridKanbanCalculation = $("#jqGridCrudKanbanCalculation").jqGrid({
+            url: "@Url.Action("LineKanbanCalculationJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {LineId : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionKanbanCalculationFormatter },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, formatter: statusCrudFormatter },
+                { label: 'Line Id', name: 'LineId', hidden: true },
+                { label: 'Start Date', name: 'StartDate', editable: false, align: 'center', fixed: true, width: 90, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'End Date', name: 'EndDate', editable: false, align: 'center', fixed: true, width: 90, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'In Process', name: 'InProcess', align: 'center', fixed: true, width: 80 },
+                { label: 'Stock', name: 'Stock', align: 'center', fixed: true, width: 80 },
+                { label: 'Prepare Heijunka', name: 'PrepareHeijunka', align: 'center', fixed: true, width: 80 },
+                { label: 'WIP', name: 'WIP', align: 'center', fixed: true, width: 80 },
+                { label: 'Prepare Delivery', name: 'PrepareDelivery', align: 'center', fixed: true, width: 80 },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:184,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudKanbanCalculation').jqGrid('navGrid', '#jqGridPagercrudKanbanCalculation',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+    function reloadGridKanbanCalculation(id) {
+        $("#jqGridCrudKanbanCalculation").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                LineId: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionKanbanCalculationFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudKanbanCalculationList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Kanban Calculation [ " + rowObject.StartDate + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudKanbanCalculationList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Kanban Calculation [ " + rowObject.StartDate + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+</script>

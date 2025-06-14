@@ -1,0 +1,48 @@
+﻿<aside class="aside-menu shadow">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#company" title="Company Profile" role="tab">
+                <i class="icon-home"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#manualbook" title="Manual Book" role="tab">
+                <i class="icon-book-open"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#messages" title="Email Configuration" role="tab">
+                <i class="icon-envelope-letter"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#system" title="System Utilization" role="tab">
+                <i class="icon-speedometer"></i>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="tab" href="#database" title="Database Management" role="tab">
+                <i class="icon-pie-chart"></i>
+            </a>
+        </li>
+    </ul>    
+  <!-- Tab panes-->
+    <div class="tab-content">
+        @Html.Partial("_VSSPLayout/_asidePartial/CompanyProfile")
+        @*@Html.Partial("_VSSPLayout/_asidePartial/ManualBook")*@
+        @{
+            Html.RenderAction("ManualBook", "System");
+        }
+        @{
+            Html.RenderAction("EmailSetting", "System");
+        }
+
+        @{
+            Html.RenderAction("SystemUtilize", "System");
+        }
+
+        @{
+            Html.RenderAction("DatabaseBackupList", "System");
+        }
+    </div>
+</aside>

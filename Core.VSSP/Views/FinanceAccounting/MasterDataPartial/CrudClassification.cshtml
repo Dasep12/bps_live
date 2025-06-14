@@ -1,0 +1,235 @@
+﻿
+<div class="modal animated fadeIn" id="crudClassificationModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudClassificationForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-ClassificationId" class="col-form-label col-form-label-sm">Classification Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-ClassificationId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-ClassificationName" class="col-form-label col-form-label-sm">Classification Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-ClassificationName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-ClassificationPPN" class="col-form-label col-form-label-sm">PPN %</label>
+                            <input type="number" class="form-control form-control-sm" id="crud-ClassificationPPN" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-ClassificationPPH23" class="col-form-label col-form-label-sm">PPH23 %</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-ClassificationPPH23" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-ClassificationRemarks" class="col-form-label col-form-label-sm">Remarks</label>
+                            <textarea rows="2" class="form-control form-control-sm" id="crud-ClassificationRemarks"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="crudClassificationError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudClassification" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="ClassificationAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationClassificationModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationClassification" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteClassification()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudClassification(action){
+
+        document.getElementById("crudClassificationForm").reset();
+        $('#crudClassificationForm').removeClass('was-validated');
+        $('#crudClassificationError').html("");
+        $("#btn-crudClassification").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-ClassificationId").removeAttr("disabled");
+        $("#crudClassificationForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#ClassificationAction").val(action);
+
+        var Id = $("#ClassificationSelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridClassification'),
+                selectedRowId = Id,
+                ClassificationId = Grid.jqGrid('getCell', selectedRowId, 'ClassificationId'),
+                ClassificationName = Grid.jqGrid('getCell', selectedRowId, 'ClassificationName'),
+                PPN = Grid.jqGrid('getCell', selectedRowId, 'PPN'),
+                PPH23 = Grid.jqGrid('getCell', selectedRowId, 'PPH23'),
+                Remarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            if (ClassificationId === false || ClassificationId === "") {
+                alert("Please select Classification Master");
+                return false
+            };
+
+            $("#crud-ClassificationId").val(ClassificationId);
+            $("#crud-ClassificationName").val(ClassificationName);
+            $("#crud-ClassificationPPN").val(PPN);
+            $("#crud-ClassificationPPH23").val(PPH23);
+            $("#crud-ClassificationRemarks").val(Remarks);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudClassificationModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudClassificationModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Classification Master');
+                $('#crudClassificationModal').modal('show');
+                $("#crud-ClassificationId").focus();
+                break;
+            case "Update":
+                $("#crud-ClassificationId").attr("readonly", true);
+                $("#crudClassificationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudClassificationModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Classification Master');
+                $('#crudClassificationModal').modal('show');
+                $("#crud-ClassificationName").focus();
+                break;
+            case "Delete":
+                $("#crudClassificationForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#btn-crudClassification").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudClassificationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudClassificationModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Classification Master');
+                $('#crudClassificationModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-ClassificationName').change(function () {
+        $('#crudClassificationError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudClassificationForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudClassificationForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            Classification: {
+                                ClassificationId: $("#crud-ClassificationId").val(),
+                                Classificationname: $("#crud-ClassificationName").val(),
+                                PPN: $("#crud-ClassificationPPN").val(),
+                                PPH23: $("#crud-ClassificationPPH23").val(),
+                                Remarks: $("#crud-ClassificationRemarks").val(),
+                                UserID: "",
+                                EditDate: null
+                            },
+                            formAction: $("#ClassificationAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudClassificationList", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudClassificationModal').modal('hide');
+                                var act = $("#ClassificationAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.ClassificationName + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.ClassificationName + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.ClassificationName + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGrid();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudClassificationError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+</script>
+

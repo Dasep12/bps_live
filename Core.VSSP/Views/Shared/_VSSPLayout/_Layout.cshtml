@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+
+    @Html.Partial("_VSSPLayout/_app-meta")
+
+    @*<title>@ViewBag.Title</title>*@
+
+    <!-- CSS MANUALY -->
+    <!-- CSS-->
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+    @Styles.Render("~/Core/CSS/jqGrid")
+    @Styles.Render("~/Core/CSS/dataTables")
+    @Styles.Render("~/google/fonts")
+
+
+    @*<script src="~/_VSSPCore/_Index/js/vendor/jquery-1.12.4.min.js"></script>*@
+
+    @Scripts.Render("~/Core/JS/Plugins")
+    @Scripts.Render("~/Core/JS/Validation")
+    @Scripts.Render("~/google/geotag")
+    @Scripts.Render("~/Core/JS/jqGrid")
+    @Scripts.Render("~/Core/JS/Chart")
+    @Scripts.Render("~/Core/JS/Main")
+
+
+</head>
+
+@Html.Partial("_VSSPLayout/Spinner/BlocksSpinner")
+
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show bg-gray-200">
+    <!--COOKIES-->
+    @*    @Html.Partial("_VSSPLayout/_CookieConsentPartial")*@
+    @Html.Partial("_VSSPLayout/_app-header")
+    <div class="sidebar">
+
+        @*@Html.Partial("_VSSPLayout/_sidebar-nav")*@
+        @{
+            if (Session["UserID"] != null)
+            {
+                Html.RenderAction("Menu", "System");
+            }
+        }
+
+    </div>
+    <div class="app-body">
+
+
+        <main class="main">
+
+            <!-- VIEW-BREADCRUMBS -->
+            @RenderSection("Breadcrumbs", required: false)
+            <!-- /VIEW-BREADCRUMBS -->
+
+            <div class="container-fluid">
+
+                <section class="animated fadeIn">
+
+                    @RenderBody()
+                    <input type="text" id="search_result" hidden />
+                    <div id="search_content"></div>
+
+                </section>
+
+                @RenderSection("Modals", required: false)
+
+            </div>
+        </main>
+        @Html.Partial("_VSSPLayout/_aside-menu")
+
+    </div>
+
+    @Html.Partial("_VSSPLayout/_app-footer")
+    @Html.Partial("_VSSPLayout/_app-print")
+
+    @Scripts.Render("~/Core/JS/MainBottom")
+    @Scripts.Render("~/Core/JS/dataTables")
+
+</body>
+
+
+
+</html>
+
+<script>
+    $(document).on("load",function () {
+        $("body").removeClass("breadcrumb-fixed");
+    })
+
+</script>

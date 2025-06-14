@@ -1,0 +1,32 @@
+﻿@{
+    string LayoutType;
+
+    if (Session["UserID"] != null)
+    {
+        if (Session["Layout"] != null)
+        {
+            LayoutType = Session["Layout"].ToString();
+        }
+        else
+        {
+            LayoutType = "portal";
+        }
+
+    }
+    else
+    {
+        LayoutType = "mainindex";
+    }
+
+    if (LayoutType == "mainindex")
+    {
+        //Layout = "~/Views/Index/IndexLayout.cshtml";
+        Layout = "~/Views/Index/CozaLayout.cshtml";
+
+    }
+    else
+    {
+        Layout = "~/Views/Shared/_VSSPLayout/_Layout.cshtml";
+    }
+
+}

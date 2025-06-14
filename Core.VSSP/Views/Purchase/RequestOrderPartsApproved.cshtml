@@ -1,0 +1,94 @@
+﻿<style>
+    #approval {
+        min-height: 650px !important;
+    }
+</style>
+<section class="padding-100-70 white-gray-bg" id="approval">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12">
+                <div class="area-title text-center wow fadeIn">
+                    <h2>@ViewBag.Title</h2>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12 text-justify">
+                @{
+                    if (@ViewBag.UserName != null)
+                    {
+                        string attachment = @ViewBag.OrderTitle + ".pdf";
+
+                        <p class="font-weight-bold font-lg">
+                            Hello @ViewBag.UserName,
+                        </p>
+                        <p>
+                            @ViewBag.Title is already delivered.
+                        </p>
+                        <p>
+                            The documents are :
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Title</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.OrderTitle</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Order Number</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.OrderNumber</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Line</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.LineName</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Request Date</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.OrderDate</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Document</td>
+                                        <td> : </td>
+                                        <td>
+                                            <a href="@Url.Action("RequestOrderParts","Reports",new { ordernumber = ViewBag.OrderNumber})" target="_blank"><i class="fa fa-file-pdf-o text-danger"></i> @attachment</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Delivered</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.ApprovedDate</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </p>
+                        <p>
+                            Thank you for the good cooperation.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="font-weight-bold font-lg">
+                            Hello Annonymous,
+                        </p>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="mt-auto">
+                                    <span class="fa fa-coffee fa-4x"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-10 ml-3">
+                                <p>
+                                    We're so sorry you don't have access to this page. Please leave page now.
+                                </p>
+                                <p>
+                                    Thank you for the good cooperation.
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

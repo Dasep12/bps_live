@@ -1,0 +1,84 @@
+﻿
+
+@if (Session["UserID"] != null)
+{
+    if (@Session["InventoryStatus"].ToString() != "")
+    {
+        <script>
+
+            var countDown = new Date("@Session["InventoryCountTime"].ToString()");
+            var valtimers = "";
+
+            // Update the count down every 1 second
+            var counter = setInterval(function () {
+
+                // Get today's date and time
+                var now = new Date().getTime();
+
+                // Find the distance between now and the count down date
+                var distance = countDown - now;
+
+                // Time calculations for days, hours, minutes and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                // If the count down is over, write some text
+                if (distance < 1) {
+                    //clearInterval(x);
+                    //document.getElementById("timeCounter").innerHTML = "EXPIRED";
+                    //valtimer = "Please Wait While Refreshing Dashboard..."
+                    //countDownDate = new Date();
+                    //countDownDate.setMinutes(countDownDate.getMinutes() + 5);
+
+                    valtimers = "Stock takings already finish...";
+                    setTimeout(function () {
+                        valtimers = "";
+                        document.getElementById("stockTakingEventInfo").innerHTML = valtimers;
+                        clearInterval(counter);
+                        return false;
+                    }, 60000);
+                }
+                else {
+                    // Output the result in an element with id="timeCounter"
+                    valtimers = "<b>@Session["InventoryStatus"].ToString() " + days + "day " + hours + "h " + minutes + "m " + seconds + "s </b>";
+                }
+
+                document.getElementById("stockTakingEventInfo").innerHTML = valtimers;
+
+            }, 1000);
+
+        </script>
+    }
+}
+
+<ul class="nav navbar-nav d-md-down-none">
+    <li class="nav-item px-3">
+        @if (Session["UserID"] != null)
+        {
+            <a id="stockTakingEventInfo" href="#" class="label text-danger"><b>@Session["InventoryStatus"].ToString()</b> </a>
+        }
+    </li>
+    @*<li class="nav-item px-3">
+            <a href="@Url.Action("Dashboard","Home")" class="label">Home</a>
+        </li>
+        <li class="nav-item px-3">
+            <a href="@Url.Action("About","Home")" class="label">About</a>
+        </li>
+        <li class="nav-item px-3">
+            <a href="@Url.Action("Contact","Home")" class="label">Contact</a>
+        </li>*@
+    @*<li class="nav-item px-0">
+        <div class="" style="font-size:25px">
+                @{
+                    string appname = "vssp CoreUI";
+                    if (Session["AppID"] != null)
+                    {
+                        appname = Session["AppID"].ToString();
+                    }
+                    <span>@appname</span>
+                }
+            </div>
+    </li>*@
+</ul>

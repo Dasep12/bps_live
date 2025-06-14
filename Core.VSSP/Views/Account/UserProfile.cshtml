@@ -1,0 +1,233 @@
+﻿@model Core.VSSP.Models.UserEditModel
+
+@*@{
+    ViewBag.Title = @Session["AppID"].ToString() + " | " + ViewBag.ActiveMenu;
+}*@
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+
+@using (Html.BeginForm("UpdateUser", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="row">
+            <div class="col-md-4" style="height:100% !important">
+
+                <div class="card" style="height:100% !important">
+                    <div class="card-header">
+                        <i class="fa fa-user"></i> @ViewBag.Title
+                    </div>
+
+                    <div class="card-body" style="height:100% !important">
+
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                        <div class="text-center">
+                            @if (Model.Image != null)
+                            {
+                                var base64 = Convert.ToBase64String((byte[])Model.Image);
+                                var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                <img id="img-avatar" src="@imgSrc" class="img-thumbnail" alt="Photo" width="160" height="140" />
+
+                            }
+                            else
+                            {
+                                <img id="img-avatar" src="~/_VSSPAssets/Images/avatars/blank-user.jpg" class="img-thumbnail" alt="Photo" width="160" height="140" />
+                            }
+                            <br /><br />
+                            <span id="btn-upload" class="btn btn-file btn-outline-dark btn-sm btn-block">
+                                <i class="fa fa-upload"></i> Upload Photo
+                                <input type="file" id="output" name="ImageData" accept="image/*" onchange="loadFile(event,'img-avatar')" />
+                            </span>
+                            <script>
+                                var loadFile = function (event, obj) {
+                                    var Foto = document.getElementById(obj);
+                                    Foto.src = URL.createObjectURL(event.target.files[0]);
+                                };
+                            </script>
+                            <br />
+                        </div>
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item">
+                                <b>User</b> @*<a class="pull-right">@Model.UserID</a>*@
+                                @Html.EditorFor(model => model.UserID, new { htmlAttributes = new { @class = "pull-right text-right border-0", @Required = true, @readonly = true } })
+
+                            </li>
+                            <li class="list-group-item">
+                                <b>Type</b> <a class="pull-right">@Model.UserTypeID</a>
+                            </li>
+                            <li class="list-group-item">
+                                <b>Area</b>
+                                @if (@Model.Area == "")
+                                {
+                                    <a class="pull-right">N/A</a>
+                                }
+                                else
+                                {
+                                    @*<a class="pull-right">@Model.Area</a>*@
+                                    @Html.EditorFor(model => model.Area, new { htmlAttributes = new { @class = "pull-right text-right border-0", @Required = true, @readonly = true } })
+                                }
+                            </li>
+                        </ul>
+                        <br />
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fa fa-search"></i> More Information
+                    </div>
+                    <div class="card-body">
+                        @*@Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", @type = "hidden", @Required = true } })*@
+                        @Html.LabelFor(model => model.UserName, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-hashtag"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                        </div>
+                        @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                        </div>
+                        @Html.LabelFor(model => model.Password, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-lock"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @type = "password", @class = "form-control", @Required = true } })
+                        </div>
+                        @Html.LabelFor(model => model.Phone, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                        </div>
+                        @Html.LabelFor(model => model.Sign, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="row col-md-4">
+                                @if (Model.Sign != null)
+                                {
+                                    var base64 = Convert.ToBase64String((byte[])Model.Sign);
+                                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                    <img id="img-sign" src="@imgSrc" class="img-thumbnail" alt="Photo" width="100%" height="120" />
+
+                                }
+                                else
+                                {
+                                    <img id="img-sign" src="~/_VSSPAssets/Images/noimage.png" class="img-thumbnail" alt="Sign" width="100%" height="120" />
+                                }
+                                <span id="btn-upload" class="btn btn-file btn-outline-dark btn-sm btn-block mt-1">
+                                    <i class="fa fa-upload"></i> Upload Sign
+                                    <input type="file" id="Sign" name="ImageSign" accept="image/*" onchange="loadFile(event,'img-sign')" />
+                                </span>
+                            </div>
+                        </div>
+                        <br />
+                    </div>
+                    <div class="card-footer bg-gray-active">
+                        <button type="submit" class="btn btn-sm btn-primary pull-right" style="width:80px">
+                            <span class="fa fa-save"></span> Submit
+                        </button>
+                        @Html.EditorFor(model => model.ReturnAction, new { htmlAttributes = new { @class = "invisible" } })
+
+                        @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.UserTypeID, "", new { @class = "text-danger" })
+                        @Html.ValidationMessageFor(model => model.Phone, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+        </div>
+        @Html.DropDownListFor(model => model.UserTypeID,
+             new SelectList(Model.UserTypeList, "ID", "UserType"),
+             new { @class = "invisible", @Required = true })
+    </form>
+
+}
+
+@{
+    Html.RenderAction("LogActivities", "System", new { FormAction = "partial" });
+}
+
+<script>
+    $('#type').val($('#UserTypeID').val());
+</script>
+
+@*<script>
+    /* Grid Menu */
+    $(function () {
+        var usertype = document.getElementById("UserTypeID").value;
+
+            $grid = $("#jqGridMenu").jqGrid({
+                url: '@Url.Action("UserMenuListJson", "Account")',
+                datatype: 'json',
+                mtype: 'GET',
+                postData: {
+                    userCategoryID: usertype,
+                },
+                colModel: [
+                    { label: 'ID', name: 'MenuID', editable: false, edittype: 'text', width: 100, fixed: true, align: 'left' },
+                    { label: 'Menu Name', name: 'MenuName', editable: false, edittype: 'text', width: 220, fixed: true, align: 'left' },
+                    { label: 'Active', name: 'IsActive', editable: false, edittype: 'checkbox', formatter: "checkbox", formatoptions: { disabled: true }, editoptions: { value: "true:false" }, saverow: true, width: 70, fixed: true, align: 'center' },
+                ],
+                gridview: true,
+                loadonce: true,
+                //multiselect: true,
+                pager: '#jqGridPagerDN',
+                rowNum: 100,
+                rowList: [100],
+                viewrecords: true,
+                height: 300,
+                width: '110%',
+                rownumbers: true,
+                rownumWidth: 40,
+                shrinkToFit: false,
+                fromServer: true,
+                loadComplete: function () {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                    for (i = 0; i < l; i++) {
+                        $this.jqGrid('editRow', ids[i], true);
+                    }
+                },
+            }),
+
+            $('#jqGridMenu').jqGrid('navGrid', '#jqGridPagerDSeq', { search: false, edit: false, add: false, del: false });
+            $("select", "#jqGridMenu").change(function () {
+                alert(this.id);
+            });
+
+    });
+
+</script>
+
+<script>
+    function ReloadGrid() {
+
+        var usertype = document.getElementById("UserTypeID").value;
+
+        //recal grid
+        $("#jqGridMenu").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID: usertype,
+            }
+        }).trigger('reloadGrid');
+
+    }
+
+    $(document).ready(function () {
+        return ReloadGrid();
+    })
+</script>*@

@@ -1,0 +1,147 @@
+﻿@model IEnumerable<Core.VSSP.Models.SidebarListModel>
+@{
+    ViewBag.Title = @Session["AppID"].ToString() + " | Menu Settings";
+}
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <i class="fa fa-align-justify"></i> Menu Settings
+            </div>
+            <div id="searchFilter" class="col-md-4"></div>
+
+        </div>
+    </div>
+    <div class="card-body" style="padding:2px">
+        <div class="table-responsive">
+            <table id="GridData1" class="table table-bordered table-hover table-sm">
+                <thead class="bg-secondary">
+                    <tr>
+                        <th>No.</th>
+                        <th>Menu ID</th>
+                        <th>Menu Name</th>
+                        <th>Menu Level</th>
+                        <th>Parrent ID</th>
+                        <th>Icon</th>
+                        <th>MVC Controller</th>
+                        <th>MVC Action</th>
+                        <th>Need Approval</th>
+                        <th>Active</th>
+                        <th class="excludeColumn">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td style="width:50px; text-align:center">@Html.DisplayFor(m => item.No)</td>
+                            <td>@Html.DisplayFor(m => item.MenuID)</td>
+                            <td>@Html.DisplayFor(m => item.MenuName)</td>
+                            <td>@Html.DisplayFor(m => item.MenuLevel)</td>
+                            <td>@Html.DisplayFor(m => item.ParrentID)</td>
+                            <td class="text-center"><span class="@item.IconClass"></span></td>
+                            <td>@Html.DisplayFor(m => item.ControllerName)</td>
+                            <td>@Html.DisplayFor(m => item.ActionName)</td>
+                            <td style="text-align:center">
+                                @if (item.NeedApproval == true)
+                                {
+                                    <span class="badge badge-success"><i class="fa fa-check"></i></span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger"><i class="fa fa-ban"></i></span>
+                                }
+
+                            </td>
+                            <td style="text-align:center">
+                                @if (item.Active == true)
+                                {
+                                    <span class="badge badge-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger">Archived</span>
+                                }
+
+                            </td>
+
+                            <td class="td-action" style="width:50px; text-align:center">
+                                @*@Html.ActionLink(" ", "SidebarEdit", "Master", new { id = item.MenuID }, new { FormMethod.Post, @class = "fa fa-edit", @datatoogle = "tooltip", @title = "Edit " + @ViewBag.Title + " [ " + @item.MenuName + " ]" })*@
+                                @if (@item.MenuID != "*")
+                                {
+                                    <div>
+                                        <a href="@Url.Action("SidebarEdit","System", new { id = item.MenuID })" title="Edit @ViewBag.Title [ @item.MenuID ]"><b><i class="fa fa-edit"></i></b></a>
+                                        |
+                                        <a href="#" data-target="#@item.MenuID" data-toggle="modal" style="color:red" title="Delete @ViewBag.Title [ @item.MenuID ]"><b><i class="fa fa-trash-o"></i></b></a>
+                                    </div>
+                                }
+
+                                <!-- Remove Sidebar Modal -->
+                                <div class="modal animated fadeIn" data-keyboard="false" data-backdrop="static" id="@item.MenuID" tabindex="-1" role="dialog" aria-hidden="true">
+                                    <div class="modal-dialog modal-danger" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title"> Delete @ViewBag.Title</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            @using (Html.BeginForm("SidebarDelete", null, FormMethod.Post, new { @class = "smart-form client-form", role = "form", id = "smart-form-register" }))
+                                            {
+                                                <div class="modal-body">
+                                                    Are you sure you want to remove the @ViewBag.Title <strong> @Html.DisplayFor(m => item.MenuName) </strong>?
+
+                                                    <input type="hidden" class="form-control" name="MenuID" value="@Html.DisplayFor(m => item.MenuID)" />
+                                                </div>
+                                                <div class="modal-footer clearfix">
+                                                    <button id="myAllert" type="submit" class="btn btn-success btn-flat" dismiss="modal"> Yes</button>
+                                                    <button type="button" class="btn btn-danger btn-flat" data-dismiss="modal"> Cancel</button>
+                                                </div>
+                                            }
+                                        </div><!-- /.modal-content -->
+                                    </div><!-- /.modal-dialog -->
+                                </div>
+                                <!-- /.Remove Sidebar modal -->
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <div id="pageInfo" class="row"></div>
+        </div>
+    </div>
+    <div class="card-footer bg-gray-active">
+        <form>
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="btn btn-success btn-sm" type="button" style="width:80px" onclick="location.href='@Url.Action("SidebarAdd", "System" )'"><i class="fa fa-pencil-square-o"></i> Add</button>
+                    <button class="btn btn-success btn-sm" type="submit" style="width:80px"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="row">
+                        <label class="font-small">Show : </label>
+                        <div id="pageLength"></div>
+                        <label class="font-small"> Rows</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+            @*<div class="col-md-2">
+                    <a id="dlink" style="display:none;"></a>
+                    <input type="button" class="btn btn-sm btn-facebook btn-block" onclick="tableToExcel('GridData1', 'Type Master', 'Type Master.xlsx')" value="Export to Excel">
+                </div>*@
+            <div id="pagination" class="pull-right"></div>
+        </form>
+    </div>
+</div>
+
+@Html.Partial("_VSSPLayout/VSSPScript/DataTableScript")

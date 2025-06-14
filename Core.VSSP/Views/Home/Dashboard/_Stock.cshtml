@@ -1,0 +1,472 @@
+﻿<style>
+    .table-responsive {
+        height: 575px;
+        overflow: auto;
+    }
+
+    thead tr:nth-child(1) th {
+        position: sticky;
+        background-color: aliceblue;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+<div class="row">
+    <div class="col-6 col-bc-20">
+        <div class="card shadow-sm">
+            <a href="#" id="btn-stockrawmaterial" onclick="changeStockFilter('rawmaterial')">
+                <div class="card-body p-0 d-flex align-items-center bc-hover-primary">
+                    <i class="fa fa-dropbox bg-blue-gradient p-4 font-4xl mr-2"></i>
+                    <div class="w-100 mr-2">
+                        <div id="stock-rawmaterial" class="text-value-sm text-primary font-3xl counter">0</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Raw Materials</div>
+                        <div>
+                            <div class="progress progress-xs my-2 mb-0 pb-0">
+                                <div id="prog-rawmaterial" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!--/.col-->
+    <div class="col-6 col-bc-20">
+        <div class="card shadow-sm">
+            <a href="#" id="btn-stockssp" onclick="changeStockFilter('ssp')">
+                <div class="card-body p-0 d-flex align-items-center bc-hover-danger">
+                    <i class="fa fa-cog bg-danger p-4 font-4xl mr-2"></i>
+                    <div class="w-100 mr-2">
+                        <div id="stock-ssp" class="text-value-sm text-danger font-3xl counter">0</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">SSP</div>
+                        <div>
+                            <div class="progress progress-xs my-2">
+                                <div id="prog-ssp" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!--/.col-->
+    <div class="col-6 col-bc-20">
+        <div class="card shadow-sm">
+            <a href="#" id="btn-stockwipprod" onclick="changeStockFilter('wipprod')">
+                <div class="card-body p-0 d-flex align-items-center bc-hover-warning">
+                    <i class="fa fa-industry bg-warning p-4 font-4xl mr-2"></i>
+                    <div class="w-100 mr-2">
+                        <div id="stock-wipprod" class="text-value-sm text-warning font-3xl counter">0</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">WIP Production</div>
+                        <div>
+                            <div class="progress progress-xs my-2">
+                                <div id="prog-wipprod" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!--/.col-->
+    <div class="col-6 col-bc-20">
+        <div class="card shadow-sm">
+            <a href="#" id="btn-stockpassthrough" onclick="changeStockFilter('passthrough')">
+                <div class="card-body p-0 d-flex align-items-center bc-hover-primary">
+                    <i class="fa fa-truck bg-primary p-4 font-4xl mr-2"></i>
+                    <div class="w-100 mr-2">
+                        <div id="stock-passthrough" class="text-value-sm text-primary font-3xl counter">0</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Passthrough</div>
+                        <div>
+                            <div class="progress progress-xs my-2">
+                                <div id="prog-passthrough" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!--/.col-->
+    <div class="col-6 col-bc-20">
+        <div class="card shadow-sm">
+            <a href="#" id="btn-stockfinishgoods" onclick="changeStockFilter('finishgoods')">
+                <div class="card-body p-0 d-flex align-items-center bc-hover-success">
+                    <i class="fa fa-cube bg-success p-4 font-4xl mr-2"></i>
+                    <div class="w-100 mr-2">
+                        <div id="stock-finishgoods" class="text-value-sm text-success font-3xl counter">0</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Finish Goods</div>
+                        <div>
+                            <div class="progress progress-xs my-2">
+                                <div id="prog-finishgoods" class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!--/.col-->
+</div>
+<!--/.row-->
+
+<div class="row mb-0 pb-0">
+    <div class="col-md-12 mb-0 pb-0">
+        <div class="card shadow-sm mb-3 pb-0">
+            <div class="card-header">
+                <div id="total-warning-stock">
+                    <i class="fa fa-cubes"></i> Stock List
+                    <div class="card-header-actions">
+                        <a href="#stock-info" class="card-header-action btn-setting" onclick="stockSummaryDetail()">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body collapse show" id="stock-info" style="padding:2px; height:580px">
+                <div id="tableGeneralstock" class="table-responsive">
+                    <table class="table table-hover table-bordered">
+                        <thead class="font-weight-bold">
+                            <tr>
+                                <th>NO.</th>
+                                <th>CAT</th>
+                                <th class="text-left">OWNER</th>
+                                <th>UNQ</th>
+                                <th>PART #</th>
+                                <th class="text-left">PART NAME</th>
+                                <th>MIN KBN</th>
+                                <th>MAX KBN</th>
+                                <th style="min-width:80px;max-width:80px">STOCK EARLY</th>
+                                <th style="min-width:80px;max-width:80px">STOCK KBN</th>
+                                <th style="min-width:80px;max-width:80px">STOCK QTY</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        StockCardSummary();
+    })
+
+    function StockCardSummary() {
+
+        $.ajax ({
+            url: "@Url.Action("StockListSummaryJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async: false,
+            data: {
+            },
+            success: function (data) {
+                //console.log (data);
+                transactions = data;
+
+                $.each(transactions, function (index, data) {
+                    var totalNG = parseFloat(data.PercentOver) + parseFloat(data.PercentMinus);
+                    switch (data.StockType) {
+                        case "RAW":
+                            $("#stock-rawmaterial").html(parseFloat(data.TotalItem).toLocaleString());
+                            $("#btn-stockrawmaterial").attr("title", "NG Part Item : " + totalNG + "% NG");
+                            $("#prog-rawmaterial").attr("style", "width:" + totalNG + "%").attr("aria-valuenow", totalNG);
+                            break;
+                        case "WIP-SSP":
+                            $("#stock-ssp").html(parseFloat(data.TotalItem).toLocaleString());
+                            $("#btn-stockssp").attr("title", "NG Part Item : " + totalNG + "% NG");
+                            $("#prog-ssp").attr("style", "width:" + totalNG + "%").attr("aria-valuenow", totalNG);
+                            break;
+                        case "WIP-PROD":
+                            $("#stock-wipprod").html(parseFloat(data.TotalItem).toLocaleString());
+                            $("#btn-stockwipprod").attr("title", "NG Part Item : " + totalNG + "% NG");
+                            $("#prog-wipprod").attr("style", "width:" + totalNG + "%").attr("aria-valuenow", totalNG);
+                            break;
+                        case "PASSTHROUGH":
+                            $("#stock-passthrough").html(parseFloat(data.TotalItem).toLocaleString());
+                            $("#btn-stockpassthrough").attr("title", "NG Part Item : " + totalNG + "% NG");
+                            $("#prog-passthrough").attr("style", "width:" + totalNG + "%").attr("aria-valuenow", totalNG);
+                            break;
+                        case "FINISHGOODS":
+                            $("#stock-finishgoods").html(parseFloat(data.TotalItem).toLocaleString());
+                            $("#btn-stockfinishgoods").attr("title", "NG Part Item : " + totalNG + "% NG");
+                            $("#prog-finishgoods").attr("style", "width:" + totalNG + "%").attr("aria-valuenow", totalNG);
+                            break;
+                    }
+                });
+
+                $('.counter').counterUp();
+
+            }
+        });
+    }
+
+    function changeStockFilter(action) {
+        var values = 0;
+        switch (action) {
+            case "rawmaterial":
+                values = parseFloat($("#stock-rawmaterial").html());
+                if (values != 0) {
+                    $("#stockTypeFilter").val("RAW");
+                    refreshDashboard();
+                } else {
+                    alert("No data can show.")
+                }
+                break;
+            case "ssp":
+                values = parseFloat($("#stock-ssp").html());
+                if (values != 0) {
+                    $("#stockTypeFilter").val("WIP-SSP");
+                    refreshDashboard();
+                } else {
+                    alert("No data can show.")
+                }
+                break;
+            case "wipprod":
+                values = parseFloat($("#stock-wipprod").html());
+                if (values != 0) {
+                    $("#stockTypeFilter").val("WIP-PROD");
+                    refreshDashboard();
+                } else {
+                    alert("No data can show.")
+                }
+                break;
+            case "passthrough":
+                values = parseFloat($("#stock-passthrough").html());
+                if (values != 0) {
+                    $("#stockTypeFilter").val("PASSTHROUGH");
+                    refreshDashboard();
+                } else {
+                    alert("No data can show.")
+                }
+                break;
+            case "finishgoods":
+                values = parseFloat($("#stock-finishgoods").html());
+                if (values != 0) {
+                    $("#stockTypeFilter").val("FINISHGOODS");
+                    refreshDashboard();
+                } else {
+                    alert("No data can show.")
+                }
+                break;
+        }
+    }
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        StockSummaryDetail();
+    });
+
+    var nextPageTimer = parseInt($("#refreshRowTimer").val());
+
+    var totalPage = 0;
+    var countPage = 0;
+    var pageId = "";
+
+    function StockSummaryDetail() {
+
+        $("#totalwarning").html(0);
+        $("#totalcompleted").html(0);
+        stockType= $("#stockTypeFilter").val(),
+
+        $.ajax ({
+            url: "@Url.Action("StockListDetailJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            data: {
+                stocktype: stockType,
+                owner: $("#ownerFilter").val(),
+                part: $("#partnumberFilter").val(),
+            },
+            success: function (data) {
+
+                var rowstock = '';
+                var status = '';
+                var totMinus = 0;
+                var totOver = 0;
+                var totWarning = 0;
+                var totCompleted = 0;
+                var nom = 0;
+                var paging = 0;
+                var row = 0;
+                $('#stockStatus').remove();
+
+                var hdr = "";
+                hdr += '<i class="fa fa - cubes"></i> Stock List [' + (stockType === "" ? "ALL" : stockType) + ']';
+                hdr += '<div class="card-header-actions">';
+                hdr += '<a id="btnPageStock" href="#" class="card-header-action btn-setting">';
+                hdr += '</a>';
+                hdr += '</div>';
+
+                $("#total-warning-stock").html(hdr);
+
+                if (data.length > 0) {
+
+                    totalPage = Math.ceil(parseInt(data.length) / 12);
+
+                    $.each(data, function (index, stock) {
+
+                        row += 1;
+                        pageId = "";
+                        if (row % 12 === 0) {
+                            paging += 1
+                            pageId = "page-" + paging;
+                        }
+                        if (row === 1) {
+                            paging += 1
+                            pageId = "page-" + paging;
+                        }
+
+                        if (parseFloat(stock.StockKanban) < parseFloat(stock.MinStock)) {
+                            totMinus += 1;
+                            status = '<span class="badge badge-danger font-weight-normal" style="top:-2px !important; font-size: 11px"><i class="fa fa-minus-circle"></i> Minus</span>'
+                        } else
+                        if (parseFloat(stock.StockKanban) > parseFloat(stock.MaxStock)) {
+                            totOver += 1;
+                            status = '<span class="badge badge-warning"><i class="fa fa-exclamation-circle"></i> Over</span>'
+                        }
+
+                        nom = parseInt(index) + 1;
+                        var owner = "";
+                        var icons = "";
+                        switch (stock.StockType) {
+                            case "RAW":
+                                owner = stock.SupplierName;
+                                icons = "fa fa-dropbox text-primary"
+                                break;
+                            case "WIP-SSP":
+                                owner = stock.SupplierName;
+                                icons = "fa fa-cog text-danger"
+                                break;
+                            case "WIP-PROD":
+                                owner = stock.LineName;
+                                icons = "fa fa-industry text-warning"
+                                break;
+                            case "PASSTHROUGH":
+                                owner = stock.SupplierName;
+                                icons = "fa fa-truck text-info"
+                                break;
+                            case "FINISHGOODS":
+                                owner = stock.CustomerName;
+                                icons = "fa fa-cube text-success"
+                                break;
+                        }
+                        rowstock += '<tr id="' + pageId + '">';
+                        rowstock += '<td class="text-center">' + nom + '</td>';
+                        rowstock += '<td class="text-center"><span class="' + icons + '"></span></td>';
+                        rowstock += '<td>' + owner + '</td>';
+                        rowstock += '<td class="text-center">' + stock.UniqueNumber + '</td>';
+                        rowstock += '<td class="text-center">' + stock.PartNumber + '</td>';
+                        rowstock += '<td>' + stock.PartName + '</td>';
+                        rowstock += '<td class="text-center">' + parseFloat(stock.MinStock).toLocaleString() + '</td>';
+                        rowstock += '<td class="text-center">' + parseFloat(stock.MaxStock).toLocaleString() + '</td>';
+                        rowstock += '<td class="text-center" style="min-width:80px;max-width:80px">' + parseFloat(stock.EarlyStockQty).toLocaleString() + '</td>';
+                        rowstock += '<td class="text-center" style="min-width:80px;max-width:80px">' + parseFloat(stock.StockKanban.toFixed(0)).toLocaleString() + '</td>';
+                        rowstock += '<td class="text-center" style="min-width:80px;max-width:80px">' + parseFloat(stock.StockQty).toLocaleString() + '</td>';
+                        rowstock += '<td class="text-center">' + status + '</td>';
+                        rowstock += '</tr>';
+                    });
+
+                    $('#tableGeneralstock').removeAttr('hidden');
+                    $('#tableGeneralstock tbody').html(rowstock);
+
+                    $("#total-warning-stock").find('span').remove();
+                    if (nom != 0) {
+                        var badge = " <span class='badge badge-primary'>" + nom + " Rows</span>";
+                        $("#total-warning-stock").append(badge);
+                    }
+
+                    totWarning = totMinus + totOver;
+                    $("#totalwarning").html(parseFloat(totWarning).toLocaleString());
+                    $("#totalcompleted").html(parseFloat(totCompleted).toLocaleString());
+
+                    timerNextPage();
+
+                } else {
+                    $('#tableGeneralstock').attr('hidden', true);
+
+                    var rowstock = '';
+                    status = '<div id="stockStatus" class="col-md-12 text-center text-success mt-auto mb-auto" style="top:150px"><h1><i class="icon-check"></i></h1> <h4>No Stock List Over or Minus</h4></div>';
+                    $('#stock-info').append(status);
+                }
+            }
+        });
+    }
+
+    var counter = 0;
+    var x = null;
+    function timerNextPage() {
+
+        clearInterval(x);
+        if (totalPage === 1) return false;
+
+        var valtimerStock = "";
+        nextPageTimer = parseInt($("#refreshRowTimer").val());
+        countPage = 1;
+        counter = -1;
+        //$("#btnPageStock").attr("href", "#page-" + countPage);
+        $("#btnPageStock").attr("onclick", "scrollToRow('#page-" + (countPage) + "')");
+        // Update the count down every 1 second
+        x = setInterval(function () {
+
+            // Get today's date and time
+            //var now = new Date().getTime();
+
+            // Find the distance between now and the count down date
+            counter += 1;
+            var distancePage = parseInt(nextPageTimer) - parseInt(counter);
+
+            // Time calculations for days, hours, minutes and seconds
+            //var sdays = Math.floor(distancePage / (1000 * 60 * 60 * 24));
+            //var shours = Math.floor((distancePage % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            //var sminutes = Math.floor((distancePage % (1000 * 60 * 60)) / (1000 * 60));
+            //var sseconds = Math.floor((distancePage % (1000 * 60)) / 1000);
+
+            // If the count down is over, write some text
+            if (distancePage < 1) {
+                //clearInterval(x);
+                //document.getElementById("timeCounter").innerHTML = "EXPIRED";
+                valtimerStock = "Next paging..."
+                nextPageTimer = parseInt($("#refreshRowTimer").val());
+                counter = -1;
+                countPage += 1;
+                if (countPage > totalPage) countPage = 1;
+
+                $("#btnPageStock").attr("onclick", "scrollToRow('#page-" + (countPage) + "')");
+                setTimeout(function () {
+                    scrollToRow("#page-" + countPage);
+                }, 500);
+
+            } else {
+                // Output the result in an element with id="timeCounter"
+                valtimerStock = "Next page in " + distancePage + "s ";
+            }
+
+            document.getElementById("btnPageStock").innerHTML = valtimerStock;
+
+        }, 1000);
+    }
+
+    function scrollToRow(id) {
+        var container = $('.table-responsive'),
+            scrollTo = $(id);
+
+        if (id != "#page-1") {
+            container.animate({
+                scrollTop: scrollTo.offset().top - container.offset().top + container.scrollTop()
+            });
+        } else {
+            container.animate({
+                scrollTop: 0
+            });
+        }
+    }
+</script>
+

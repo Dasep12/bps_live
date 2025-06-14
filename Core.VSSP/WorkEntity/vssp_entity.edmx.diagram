@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="730a151873f24bcd81244c6a047a65f9" Name="TableDiagramVSSP" ZoomLevel="77" DisplayType="false">
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_CustomerContact" Width="1.5" PointX="9" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartFinishGoodsPrice" Width="1.5" PointX="11.25" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartFinishGoodsRelation" Width="1.5" PointX="11.25" PointY="23.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartRawMaterialsPrice" Width="1.5" PointX="8.25" PointY="35.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_Supplier" Width="1.5" PointX="0.75" PointY="22.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_SupplierContact" Width="1.5" PointX="3" PointY="49" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_WarehouseArea" Width="1.5" PointX="6.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_WarehouseLocation" Width="1.5" PointX="9" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_DeliveryOrderImport" Width="1.5" PointX="27.75" PointY="0.875" IsExpanded="true" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_SupplierContact_Tbl_MST_Supplier" ManuallyRouted="false" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_WarehouseLocation_Tbl_MST_WarehouseArea" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_MeasurementsCategories" Width="1.5" PointX="3.75" PointY="27.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_MeasurementsUnits" Width="1.5" PointX="3.75" PointY="30.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingCalendar" Width="1.5" PointX="33" PointY="10.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingCalendarDay" Width="1.5" PointX="30.75" PointY="10.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingCalendar_Tbl_TMS_WorkingCalendarDay" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingDay" Width="1.5" PointX="3" PointY="5.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingDayType" Width="1.5" PointX="0.75" PointY="5.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftGroup" Width="1.5" PointX="0.75" PointY="1.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftMaster" Width="1.5" PointX="3" PointY="1.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftMaster_Tbl_TMS_WorkingDayType" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftMaster_Tbl_TMS_WorkingShiftGroup" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftHour" Width="1.5" PointX="5.25" PointY="1.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftHour_Tbl_TMS_WorkingDay" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftHour_Tbl_TMS_WorkingShiftMaster" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftPatternGroup" Width="1.5" PointX="27.75" PointY="14.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftPatternMaster" Width="1.5" PointX="30" PointY="14.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftPatternMaster_Tbl_TMS_WorkingShiftPatternGroup" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TMS_WorkingShiftSchedule" Width="1.5" PointX="32.25" PointY="14.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TMS_WorkingShiftSchedule_Tbl_TMS_WorkingShiftPatternMaster" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanCycle" Width="1.5" PointX="3" PointY="45" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanCycleTime" Width="1.5" PointX="5.25" PointY="45.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_KanbanCycle_Tbl_MST_Supplier" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_KanbanCycleTime_Tbl_MST_KanbanCycle" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartRawMaterialsCostCenter" Width="1.5" PointX="8.25" PointY="30.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_SupplierCostCenter" Width="1.5" PointX="3" PointY="42" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsCostCenter_Tbl_MST_SupplierCostCenter" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_SupplierCostCenter_Tbl_MST_Supplier" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_MeasurementsPacking" Width="1.5" PointX="3.75" PointY="20" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ForecastOrder" Width="1.5" PointX="16.75" PointY="30.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ForecastOrderApproval" Width="1.5" PointX="19" PointY="32.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ForecastOrderRevision" Width="1.5" PointX="19" PointY="29.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_PurchaseRequirementListApproval_Tbl_TRS_PurchaseRequirementList" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_PurchaseRequirementListRevision_Tbl_TRS_PurchaseRequirementList" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_SupplierOrderDetail" Width="1.5" PointX="30.25" PointY="19.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_Stock" Width="1.5" PointX="8.25" PointY="20.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_SupplierOrderKanban" Width="1.5" PointX="32.5" PointY="19.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SupplierOrderKanban_Tbl_TRS_SupplierOrderDetail" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockTakingApproval" Width="1.5" PointX="28" PointY="6.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockAdjustment" Width="1.5" PointX="30.75" PointY="3.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockAdjustmentApproval" Width="1.5" PointX="33" PointY="5.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockAdjustmentDetail" Width="1.5" PointX="33" PointY="1.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockAdjustmentApproval_Tbl_TRS_StockAdjustment" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockAdjustmentDetail_Tbl_TRS_StockAdjustment" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_Bank" Width="1.5" PointX="0.75" PointY="18.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_SupplierBankAccount" Width="1.5" PointX="3" PointY="23.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_SupplierBankAccount_Tbl_MST_Bank" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_SupplierBankAccount_Tbl_MST_Supplier" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_InvoiceRecapApproval" Width="1.5" PointX="28" PointY="28.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_InvoiceRecapDetail" Width="1.5" PointX="28" PointY="32.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_AccountingCategory" Width="1.5" PointX="6" PointY="32.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_AccountingClassification" Width="1.5" PointX="6" PointY="35.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_AccountingPayment" Width="1.5" PointX="6" PointY="29.625" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsCostCenter_Tbl_MST_AccountingCategory" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsCostCenter_Tbl_MST_AccountingClassification" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsCostCenter_Tbl_MST_AccountingPayment" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_MasterListKanbanSupplier" Width="1.5" PointX="19" PointY="36.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_MasterListKanbanSupplier_Tbl_TRS_ForecastOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_SalesOrder" Width="1.5" PointX="9" PointY="42.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_SalesOrderDetail" Width="1.5" PointX="14.25" PointY="26.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SalesOrderDetail_Tbl_TRS_SalesOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartFinishGoods" Width="1.5" PointX="9" PointY="8.5" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoods_Tbl_MST_MeasurementsCategories" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoods_Tbl_MST_MeasurementsUnits" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoods_Tbl_MST_WarehouseArea" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoodsPrice_Tbl_MST_PartFinishGoods" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoodsRelation_Tbl_MST_PartFinishGoods" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SalesOrderDetail_Tbl_MST_PartFinishGoods" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_SupplierOrder" Width="1.5" PointX="28" PointY="21.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SupplierOrderDetail_Tbl_TRS_SupplierOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockSSP" Width="1.5" PointX="8.25" PointY="27.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_SpecialSupplyPart" Width="1.5" PointX="25.75" PointY="21.625" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SupplierOrder_Tbl_MST_SpecialSupplyPart" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartRawMaterials" Width="1.5" PointX="6" PointY="21.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterials_Tbl_MST_MeasurementsCategories" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterials_Tbl_MST_MeasurementsPacking" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterials_Tbl_MST_MeasurementsUnits" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoodsRelation_Tbl_MST_PartRawMaterials" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterials_Tbl_MST_Supplier1" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsCostCenter_Tbl_MST_PartRawMaterials" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartRawMaterialsPrice_Tbl_MST_PartRawMaterials" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_Stock_Tbl_MST_PartRawMaterials" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockSSP_Tbl_MST_PartRawMaterials" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_DeliveryOrderDetail" Width="1.5" PointX="19.25" PointY="3.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockFG" Width="1.5" PointX="11.25" PointY="15.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_DeliveryOrderDetail_Tbl_MST_PartFinishGoods" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockFG_Tbl_MST_PartFinishGoods" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_DeliveryOrderKanban" Width="1.5" PointX="21.5" PointY="19.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_DeliveryOrderKanban_Tbl_TRS_DeliveryOrderDetail" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_Customer" Width="1.5" PointX="6.75" PointY="10.875" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_CustomerContact_Tbl_MST_Customer" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartFinishGoods_Tbl_MST_Customer" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_SalesOrder_Tbl_MST_Customer" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockTakingDetail" Width="1.5" PointX="28" PointY="10.25" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_CustomerInvoiceApproval" Width="1.5" PointX="25.5" PointY="35.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_CustomerInvoiceDetail" Width="1.5" PointX="25.5" PointY="14.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_CustomerInvoiceDetail_Tbl_TRS_DeliveryOrderDetail" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_CustomerInvoiceDetail_Tbl_TRS_SalesOrderDetail" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_InvoiceRecap" Width="1.5" PointX="25.75" PointY="29.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_InvoiceRecapApproval_Tbl_ACC_InvoiceRecap" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_InvoiceRecapDetail_Tbl_ACC_InvoiceRecap" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_AccountingBankAccount" Width="1.5" PointX="3" PointY="34.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_AccountingBankAccount_Tbl_MST_Bank" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_CustomerInvoice" Width="1.5" PointX="23.25" PointY="23.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_CustomerInvoiceApproval_Tbl_ACC_InvoiceInvoice" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_CustomerInvoiceDetail_Tbl_ACC_CustomerInvoice" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartProductionMaterialsPrice" Width="1.5" PointX="18.5" PointY="18.625" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartProductionMaterials" Width="1.5" PointX="16.25" PointY="17.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartProduction_Tbl_MST_MeasurementsCategories" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartProduction_Tbl_MST_MeasurementsPacking" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartProduction_Tbl_MST_MeasurementsUnits" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartProductionMaterialsPrice_Tbl_MST_PartProductionMaterials" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartType" Width="1.5" PointX="16.25" PointY="4.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_Color" Width="1.5" PointX="11.75" PointY="4.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_LineGroup" Width="1.5" PointX="11.75" PointY="7.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartBillOfMaterialsDetails" Width="1.5" PointX="18.5" PointY="11.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartBillOfMaterialsDetails_Tbl_MST_PartType" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ControlPlanningApproval" Width="1.5" PointX="23" PointY="9" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ControlPlanningDetail" Width="1.5" PointX="23" PointY="1.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ControlPlanningRevision" Width="1.5" PointX="23" PointY="6.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_MasterListKanbanProduction" Width="1.5" PointX="23" PointY="12.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ScheduleProduction" Width="1.5" PointX="25.25" PointY="2.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ScheduleProduction_Tbl_TRS_ControlPlanningDetail1" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ControlPlanning" Width="1.5" PointX="20.75" PointY="8" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ControlPlanningApproval_Tbl_TRS_ControlPlanning" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ControlPlanningDetail_Tbl_TRS_ControlPlanning1" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ControlPlanningRevision_Tbl_TRS_ControlPlanning" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_MasterListKanbanProduction_Tbl_TRS_ControlPlanning" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_Line" Width="1.5" PointX="14" PointY="6.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_Line_Tbl_MST_Color" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_Line_Tbl_MST_LineGroup" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartProductionMaterials_Tbl_MST_Line" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanProduction" Width="1.5" PointX="16.25" PointY="6.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_KanbanProduction_Tbl_MST_Line" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_KanbanProduction_Tbl_MST_PartFinishGoods" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockWIP" Width="1.5" PointX="8.25" PointY="16.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StokWIP_Tbl_MST_PartRawMaterials" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_RequestOrderPartsDetail" Width="1.5" PointX="3" PointY="9.375" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_RequestOrderPartsApproval" Width="1.5" PointX="3" PointY="13" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_DeliveryOrder" Width="1.5" PointX="14.25" PointY="31.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_DeliveryOrder_Tbl_MST_Customer" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_DeliveryOrder_Tbl_TRS_SalesOrder" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_DeliveryOrderDetail_Tbl_TRS_DeliveryOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockTaking" Width="1.5" PointX="25.75" PointY="8.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockTakingApproval_Tbl_TRS_StockTaking" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockTakingDetail_Tbl_TRS_StockTaking" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ForecastOrderDetail" Width="1.5" PointX="19" PointY="24.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ForecastOrderDetail_Tbl_TRS_ForecastOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartBillOfMaterials" Width="1.5" PointX="16.25" PointY="11.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartBillOfMaterials_Tbl_MST_Line" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_PartBillOfMaterialsDetails_Tbl_MST_PartBillOfMaterials" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_RequestOrderParts" Width="1.5" PointX="0.75" PointY="11.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_RequestOrderPartsApproval_Tbl_TRS_RequestOrderParts" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_RequestOrderPartsDetail_Tbl_TRS_RequestOrderParts" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_CustomerInvoiceReceivable" Width="1.5" PointX="25.5" PointY="39.875" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_ACC_CustomerInvoiceReceivable_Tbl_ACC_CustomerInvoice" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ProductionNGProcess" Width="1.5" PointX="0.75" PointY="27.875" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_StockRawReturn" Width="1.5" PointX="8.25" PointY="39.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_StockRawReturn_Tbl_MST_PartRawMaterials" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReturnPart" Width="1.5" PointX="3" PointY="38" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReturnPartDetail" Width="1.5" PointX="11.25" PointY="30" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReturnPartDetail_Tbl_MST_PartRawMaterials" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReturnPart_Tbl_MST_Supplier" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReturnPartDetail_Tbl_TRS_ReturnPart" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReceivingOrder" Width="1.5" PointX="30.25" PointY="24.5" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReceivingOrder_Tbl_TRS_SupplierOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReceivingOrderDetailKanban" Width="1.5" PointX="32.5" PointY="24.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReceivingOrderDetailKanban_Tbl_TRS_ReceivingOrder1" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ProductionLineProcess" Width="1.5" PointX="18.5" PointY="6.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ProductionLineProcess_Tbl_MST_KanbanProduction" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_LineGate" Width="1.5" PointX="16.25" PointY="0.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_LineGate_Tbl_MST_Line" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReceivingOrderDetail" Width="1.5" PointX="32.5" PointY="29" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_TRS_ReceivingOrderDetail_Tbl_TRS_ReceivingOrder" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_ApprovedCustom" Width="1.5" PointX="5.375" PointY="4.75" />
+        </Diagram>
+      <Diagram DiagramId="93a83e8299294fceaf33127cf8b4eb84" Name="ViewDiagramVSSP" ZoomLevel="59" >
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_Status" Width="1.5" PointX="0.75" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ForecastOrder" Width="1.5" PointX="2.75" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SalesOrder" Width="1.5" PointX="4.75" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TMS_ShiftGroup" Width="1.5" PointX="5.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanCalculation" Width="1.5" PointX="6.75" PointY="3.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_InvoiceRecap" PointX="10.75" PointY="0.75" Width="1.5" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SupplierOrderDetail" Width="1.5" PointX="0.75" PointY="10.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_DeliveryOrderRelation" Width="1.5" PointX="2.75" PointY="10.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_QrCodePath" Width="1.5" PointX="10.75" PointY="7.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SupplierOrder" Width="1.5" PointX="10.75" PointY="10.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ScheduleDelivery" Width="1.5" PointX="12.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_DeliveryOrderDetail" Width="1.5" PointX="12.75" PointY="3.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanSetting" Width="1.5" PointX="0.75" PointY="1" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_KanbanSettingSequence" Width="1.5" PointX="3" PointY="1.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_KanbanSettingSequence_Tbl_MST_KanbanSetting" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_DeliveryOrderKanbanTemp" Width="1.5" PointX="12.75" PointY="9.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_DeliveryOrderKanbanSumTemp" Width="1.5" PointX="4.75" PointY="13.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockTakingDetail" Width="1.5" PointX="12.75" PointY="13.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockAdjustmentDetail" Width="1.5" PointX="14.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_SYS_SchemaColumnList" Width="1.5" PointX="6.75" PointY="14.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_SYS_SchemaList" Width="1.5" PointX="14.75" PointY="12.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_CustomerInvoiceDetailTemp" Width="1.5" PointX="14.75" PointY="15.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoiceDetail" Width="1.5" PointX="16.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoiceDetailList" Width="1.5" PointX="0.75" PointY="16.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SalesDeliveryStatus" Width="1.5" PointX="16.75" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoiceReceivable" Width="1.5" PointX="16.75" PointY="8.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoiceReceivableYearly" Width="1.5" PointX="8.75" PointY="16.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ControlPlanning" Width="1.5" PointX="16.75" PointY="14.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ScheduleProduction" Width="1.5" PointX="18.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_AreaLine" Width="1.5" PointX="2.75" PointY="18.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_KanbanProductionList" Width="1.5" PointX="4.75" PointY="18.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_RequestOrderPartsDetail" Width="1.5" PointX="18.75" PointY="14.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_BillOfMaterials" Width="1.5" PointX="20.75" PointY="6.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_IDX_StockTakingEvent" Width="1.5" PointX="14.75" PointY="20.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_IDX_StockListSummary" Width="1.5" PointX="20.75" PointY="18.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoiceDeliveryRecap" Width="1.5" PointX="20.75" PointY="21.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartMaterials" Width="1.5" PointX="22.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_BillOfMaterialsDetails" Width="1.5" PointX="22.75" PointY="5.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartFinishGoodsPrice" Width="1.5" PointX="6.75" PointY="22.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_ACC_InvoiceRecapDetailTemp" Width="1.5" PointX="22.75" PointY="11.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartRawMaterialsPrice" Width="1.5" PointX="22.75" PointY="16.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SupplierOrderShortage" Width="1.5" PointX="22.75" PointY="21.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_RequestOrderPartCreateList" Width="1.5" PointX="14.75" PointY="23.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_RequestOrderParts" Width="1.5" PointX="24.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartFinishGoods" Width="1.5" PointX="2.75" PointY="24.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_CustomerInvoice" Width="1.5" PointX="24.75" PointY="5.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_Customer" Width="1.5" PointX="24.75" PointY="12.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_Supplier" Width="1.5" PointX="24.75" PointY="18.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartRawMaterials" Width="1.5" PointX="24.75" PointY="24.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartRawMaterialsByLine" Width="1.5" PointX="8.75" PointY="25.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartFinishGoodsRelation" Width="1.5" PointX="10.75" PointY="25.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SalesOrderOutstanding" Width="1.5" PointX="26.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_InvoiceRecapDetail" Width="1.5" PointX="26.75" PointY="6.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_ACC_InvoiceRecapDetailTemp" Width="1.5" PointX="26.75" PointY="12.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockRawReturn" Width="1.5" PointX="26.75" PointY="18.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReturnPart" Width="1.5" PointX="4.75" PointY="27.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReturnPartDetail" Width="1.5" PointX="18.75" PointY="27.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReceivingOrder" Width="1.5" PointX="21.375" PointY="27.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_TRS_ReceivingOrderDetailKanbanTemp" Width="1.5" PointX="29.375" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReceivingOrderDetail" Width="1.5" PointX="13.375" PointY="29.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReceivingOrderDetailTemp" Width="1.5" PointX="29.375" PointY="15.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReceivingOrderDetailKanban" Width="1.5" PointX="29.375" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReceivingOrderDetailKanbanTemp" Width="1.5" PointX="29.375" PointY="9.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ProductionLineProcess" Width="1.5" PointX="29.375" PointY="26.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ProductionLineProcessList" Width="1.5" PointX="0.75" PointY="30.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockTaking" Width="1.5" PointX="29.375" PointY="20.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockAdjustment" Width="1.5" PointX="7.375" PointY="7.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_Stock" Width="1.5" PointX="31.375" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockFG" Width="1.5" PointX="31.375" PointY="9.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockList" Width="1.5" PointX="15.375" PointY="31.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockWIP" Width="1.5" PointX="31.375" PointY="16.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ProductionNGProcessList" Width="1.5" PointX="17.375" PointY="20.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_DeliveryOrder" Width="1.5" PointX="11.375" PointY="19.75" />
+        </Diagram>
+      <Diagram DiagramId="9d1e410d4c374e51a9e2fb45f5a2868c" Name="ViewReportVSSP" ZoomLevel="65" >
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReportDeliveryOrder" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReportSalesOrder" Width="1.5" PointX="4.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReportSalesOrderSummary" Width="1.5" PointX="6.5" PointY="0.875" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ReportDeliveryOrderSummary" Width="1.5" PointX="2.625" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_ForecastAchievement" Width="1.5" PointX="0.75" PointY="6.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockControlDaily" Width="1.5" PointX="3.375" PointY="6.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_SalesOrderAchievements" Width="1.5" PointX="5.375" PointY="6.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_MST_PartRawMaterialsPriceMonthly" Width="1.5" PointX="7.375" PointY="4.75" />
+        <EntityTypeShape EntityType="vssp_model.Vw_TRS_StockFinanceReport" Width="1.5" PointX="9.375" PointY="0.75" />
+      </Diagram>
+      <Diagram DiagramId="9674db8609af41c38dd9030f5fe973eb" Name="QualityDiagram" ZoomLevel="64" >
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_DefectList" Width="1.5" PointX="6" PointY="2.125" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_DefectCategory" Width="1.5" PointX="3.75" PointY="2.5" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_MST_DefectList_Tbl_MST_DefectCategory" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_Inspection" Width="1.5" PointX="3" PointY="6.375" />
+        <EntityTypeShape EntityType="vssp_model.Vw_QC_Inspection" Width="1.5" PointX="7.75" PointY="11.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_InspectionDefects" Width="1.5" PointX="8.25" PointY="7.125" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionDefects_Tbl_MST_DefectList" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionDefects_Tbl_QC_Inspection" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_InspectionGate" Width="1.5" PointX="0.75" PointY="7.25" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_Inspection_Tbl_MST_InspectionGate" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_InspectionIncoming" Width="1.5" PointX="6" PointY="6.375" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionIncoming_Tbl_MST_InspectionGate" />
+        <EntityTypeShape EntityType="vssp_model.Vw_QC_InspectionIncoming" Width="1.5" PointX="9.75" PointY="11.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_InspectionIncomingDefects" Width="1.5" PointX="11.25" PointY="7" />
+        <EntityTypeShape EntityType="vssp_model.Vw_QC_InspectionIncomingDefects" Width="1.5" PointX="8.75" PointY="0.75" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionIncomingDefects_Tbl_MST_DefectList" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionIncomingDefects_Tbl_QC_InspectionIncoming" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartIdentificationSupplier" Width="1.5" PointX="3.75" PointY="22.625" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_InspectionIncoming_Tbl_MST_PartIdentification" />
+        <EntityTypeShape EntityType="vssp_model.Vw_QC_InspectionDefects" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_ProblemInformationApproval" Width="1.5" PointX="5.25" PointY="17.5" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_QC_ProblemInformation" Width="1.5" PointX="3" PointY="11.875" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_ProblemInformation_Tbl_MST_InspectionGate" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_ProblemInformationApproval_Tbl_QC_ProblemInformation" />
+        <EntityTypeShape EntityType="vssp_model.Vw_QC_ProblemInformation" Width="1.5" PointX="12.375" PointY="11.75" />
+        <EntityTypeShape EntityType="vssp_model.Tbl_MST_PartIdentification" Width="1.5" PointX="0.75" PointY="1" />
+        <AssociationConnector Association="vssp_model.FK_Tbl_QC_Inspection_Tbl_MST_PartIdentification" />
+        </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

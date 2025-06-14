@@ -1,0 +1,327 @@
+﻿
+
+<div class="modal animated fadeIn" id="crudProblemInformationModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudProblemInformationForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationNumber" class="col-sm-3 col-form-label col-form-label-sm">Problem #</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-ProblemInformationNumber" name="ProblemNumber" placeholder="Auto Generate" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationDate" class="col-sm-3 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm date w-50" id="datetimepickerDate" data-date-format="MM/DD/YYYY" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                                        <input type="text" id="crud-ProblemInformationDate" class="form-control form-control-sm datetimepicker-input" data-target="#datetimepickerDate" readonly required />
+                                        <div class="input-group-append" data-target="#datetimepickerDate" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*<div class="col-sm-9">
+                <div class="input-group input-group-sm">
+                    <input type="date" class="form-control form-control-sm datepicker w-50" id="crud-ProblemInformationDate" name="ProblemDate" required>
+                    <div class="input-group-append">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>*@
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationTime" class="col-sm-3 col-form-label col-form-label-sm">Time</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm date w-50" id="datetimepickerStart" data-date-format="HH:mm" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                                        <input type="text" id="crud-ProblemInformationTime" class="form-control form-control-sm datetimepicker-input" data-target="#datetimepickerStart" readonly required />
+                                        <div class="input-group-append" data-target="#datetimepickerStart" data-toggle="datetimepicker">
+                                            <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationGate" class="col-sm-3 col-form-label col-form-label-sm">Q Gate</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm inspection-gate" id="crud-ProblemInformationGate" name="InspectionGate" required>
+                                        <option value="">Choose Gate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationRemarks" class="col-sm-3 col-form-label col-form-label-sm">Problem Information</label>
+                                <div class="col-sm-9">
+                                    <textarea rows="2" class="form-control form-control-sm" id="crud-ProblemInformationRemarks" name="ProblemInformation" required></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationFollowUp" class="col-sm-3 col-form-label col-form-label-sm">Follow Up</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-ProblemInformationFollowUp" name="Follow Up" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-ProblemInformationNotificationTo" class="col-sm-3 col-form-label col-form-label-sm">Notification To</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker" id="crud-ProblemInformationNotificationTo" name="NotificationTo" required multiple>
+                                        <option value="">Sent Notification</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div id="crudProblemInformationError"></div>
+                    <input type="hidden" id="ProblemInformationAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudProblemInformation" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var approvalSelected = "";
+
+    function crudProblemInformation(action, id) {
+
+        document.getElementById("crudProblemInformationForm").reset();
+        $('#crudProblemInformationForm').removeClass('was-validated');
+        $('#crudProblemInformationError').html("");
+        $('#btn-importProblemInformationDetail').removeAttr('disabled');
+        $('#btn-crudProblemInformation').removeAttr('disabled');
+
+        $("#btn-crudProblemInformation").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudProblemInformationForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-ProblemInformationNumber').attr("disabled", true);
+        $("#crud-ProblemInformationNotificationTo").val("").selectpicker("refresh");
+
+        $("#ProblemInformationAction").val(action);
+
+        var approval = '@ViewBag.ApprovalLevel';
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudProblemInformationError').html(errMsg);
+            $("#crudProblemInformationForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-crudProblemInformation").attr("disabled", true);
+            $('#crudProblemInformationModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                ProblemNumber = Grid.jqGrid('getCell', selectedRowId, 'ProblemNumber'),
+                ProblemDate = Grid.jqGrid('getCell', selectedRowId, 'ProblemDate'),
+                ProblemTime = Grid.jqGrid('getCell', selectedRowId, 'ProblemTime'),
+                InspectionGate = Grid.jqGrid('getCell', selectedRowId, 'InspectionGate'),
+                ProblemInformation = Grid.jqGrid('getCell', selectedRowId, 'ProblemInformation'),
+                FollowUp = Grid.jqGrid('getCell', selectedRowId, 'FollowUp'),
+                NotificationTo = Grid.jqGrid('getCell', selectedRowId, 'NotificationTo');
+
+            ProblemDate = moment(new Date(ProblemDate)).format("YYYY-MM-DD");
+            ProblemTime = moment(new Date(ProblemDate + ' ' + ProblemTime)).format("HH:mm");
+
+            $("#crud-ProblemInformationNumber").val(ProblemNumber);
+            $("#crud-ProblemInformationDate").val(ProblemDate);
+            $("#crud-ProblemInformationTime").val(ProblemTime);
+            $("#crud-ProblemInformationGate").val(InspectionGate);
+            $("#crud-ProblemInformationRemarks").val(ProblemInformation);
+            $("#crud-ProblemInformationFollowUp").val(FollowUp);
+            $("#crud-ProblemInformationNotificationTo").selectpicker('val', NotificationTo.split(','));
+        }
+
+        switch (action) {
+            case "Create":
+
+                $("#crud-ProblemInformationNotificationTo").selectpicker('val', approvalSelected.split(','));
+                $("#crud-ProblemInformationDate").val(moment(new Date()).format("YYYY-MM-DD"))
+                $("#crud-ProblemInformationTime").val(moment(new Date()).format("HH:mm"))
+                $("#crudProblemInformationModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudProblemInformationModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudProblemInformationModal').modal('show');
+                $("#crud-ProblemInformationGate").focus();
+
+                break;
+            case "Update":
+
+                $("#crudProblemInformationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudProblemInformationModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudProblemInformationModal').modal('show');
+                $("#crud-ProblemInformationRemarks").focus();
+                break;
+
+            case "Closing":
+                $("#crudProblemInformationForm input,select,textarea").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-ProblemInformationNumber").attr("disabled", true);
+                $("#btn-crudProblemInformation").html("<span class='fa fa-sign-out'></span> Closing @ViewBag.Title");
+                $("#crudProblemInformationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-danger").addClass("modal-info")
+                $("#crudProblemInformationModal .modal-title").html('<span class="fa fa-sign-out"></span> ' + action + ' @ViewBag.Title');
+                $('#crudProblemInformationModal').modal('show');
+                break;
+
+            case "Delete":
+                $("#crudProblemInformationForm input,select,textarea").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-ProblemInformationNumber").attr("disabled", true);
+                $("#btn-crudProblemInformation").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudProblemInformationModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudProblemInformationModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudProblemInformationModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crudProblemInformationForm input,select').change(function () {
+        $('#crudProblemInformationError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudProblemInformationForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formaction = $("#ProblemInformationAction").val(),
+                        ProblemNumber = $("#crud-ProblemInformationNumber").val(),
+                        ProblemDate = $("#crud-ProblemInformationDate").val(),
+                        ProblemTime = $("#crud-ProblemInformationTime").val(),
+                        InspectionGate = $("#crud-ProblemInformationGate").val(),
+                        ProblemInformation = $("#crud-ProblemInformationRemarks").val(),
+                        FollowUp = $("#crud-ProblemInformationFollowUp").val(),
+                        NotificationTo = $("#crud-ProblemInformationNotificationTo option:selected").toArray().map(item => item.value).join(),
+                        Uid = "@ViewBag.UserId",
+                        CompId = "@ViewBag.CompId";
+
+                    $.ajax({
+                        url: '@Url.Action("crudProblemInformation", "Quality")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            problemNumber: ProblemNumber,
+                            problemDate: ProblemDate,
+                            problemTime: ProblemTime,
+                            inspectionGate: InspectionGate,
+                            problemInformation: ProblemInformation,
+                            followUp: FollowUp,
+                            notificationTo: NotificationTo,
+                            uid: Uid,
+                            compId: CompId,
+                            formAction: formaction
+                        },
+                        success: function (data) {
+                            $('#crudProblemInformationModal').modal('hide');
+                            var act = $("#ProblemInformationAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudProblemInformationError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadUserList();
+    function loadUserList() {
+
+        $.ajax({
+            url: '@Url.Action("ProblemInformationApprovalUserList", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                userid: '@ViewBag.UserId',
+                menuid: '@ViewBag.ApprovalId',
+            },
+            success: function (response) {
+
+                var id = "#crud-ProblemInformationNotificationTo";
+
+                $(id).html("");
+                $.each(response, function (i, usr) {
+                    $(id).append('<option value="' + usr.UserID + '">' + usr.UserName + '</option>');
+
+                    if (approvalSelected != "") approvalSelected += ",";
+                    approvalSelected += usr.UserID;
+
+                });
+
+                $(id).selectpicker("refresh")
+
+            }
+        })
+    }
+
+    function loadApprovalMailList(ProblemNumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("ProblemInformationApprovalListJson", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                ProblemNumber: ProblemNumber,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, usr) {
+                    if (result != "") result += ",";
+                    result += usr.UserId;
+                });
+
+            }
+        })
+
+    }
+</script>
+

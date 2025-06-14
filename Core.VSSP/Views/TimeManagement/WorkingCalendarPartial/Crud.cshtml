@@ -1,0 +1,207 @@
+﻿
+<div class="modal animated fadeIn" id="crudWorkingCalendarListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudWorkingCalendarForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingCalendarDate" class="col-form-label col-form-label-sm">Date</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-WorkingCalendarDate" name="CalendarDate" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingCalendarDayId" class="col-form-label col-form-label-sm">Type</label>
+                            <select class="custom-select custom-select-sm" id="crud-WorkingCalendarDayId" name="DayId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingCalendarRemarks" class="col-form-label col-form-label-sm">Remarks</label>
+                            <textarea rows="3" class="form-control form-control-sm" id="crud-WorkingCalendarRemarks" name="Remarks" required></textarea>
+                        </div>
+                    </div>
+                    <div id="crudWorkingCalendarListError"></div>
+                    <input type="hidden" id="WorkingCalendarAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudWorkingCalendarList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function crudWorkingCalendar(action, calendardate){
+
+        document.getElementById("crudWorkingCalendarForm").reset();
+        $('#crudWorkingCalendarForm').removeClass('was-validated');
+        $('#crudWorkingCalendarListError').html("");
+        $("#btn-crudWorkingCalendarList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-WorkingCalendarActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudWorkingCalendarForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#WorkingCalendarAction").val(action);
+
+        if (calendardate != "*") {
+
+            $.ajax({
+                url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+                type: 'POST',
+                dataType: "JSON",
+                async: false,
+                data: {
+                    calendardate: calendardate,
+                },
+                success: function (data) {
+
+                    var date = moment(new Date(parseInt(data[0].CalendarDate.substr(6)))).format("M/D/Y");
+
+                    $("#crud-WorkingCalendarDayId").val(data[0].DayId);
+                    $("#crud-WorkingCalendarDate").val(date);
+                    $("#crud-WorkingCalendarRemarks").val(data[0].Remarks);
+                },
+                error: function (xhr, desc, err) {
+                    var respText = "";
+                    try {
+                        respText = eval(xhr.responseText);
+                    } catch {
+                        respText = xhr.responseText;
+                    }
+
+                    respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                    $('#crudWorkingCalendarListError').html(errMsg);
+                }
+            });
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudWorkingCalendarListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudWorkingCalendarListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudWorkingCalendarListModal').modal('show');
+                //$("#crud-WorkingCalendarDate").focus();
+                break;
+            case "Update":
+                $("#crud-WorkingCalendarDate").attr("readonly", true).attr("disabled", true);
+                $("#crudWorkingCalendarListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudWorkingCalendarListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudWorkingCalendarListModal').modal('show');
+                $("#crud-WorkingCalendarDayId").focus();
+                break;
+            case "Delete":
+                $("#crudWorkingCalendarForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#btn-crudWorkingCalendarList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudWorkingCalendarListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudWorkingCalendarListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudWorkingCalendarListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-WorkingCalendarDayId').change(function () {
+        $('#crudWorkingCalendarListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudWorkingCalendarForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var dayid           = $("#crud-WorkingCalendarDayId").val();
+                    var calendardate    = $("#crud-WorkingCalendarDate").val();
+                    var remarks         = $("#crud-WorkingCalendarRemarks").val();
+                    var formaction      = $("#WorkingCalendarAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudWorkingCalendar", "TimeManagement")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            DayId: dayid,
+                            CalendarDate: calendardate,
+                            Remarks: remarks,
+                            formAction: formaction
+                        },
+                        success: function (data) {
+                            $('#crudWorkingCalendarListModal').modal('hide');
+                            var act = $("#WorkingCalendarAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var errMsg = "";
+                            try {
+                                errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            } catch {
+                                var acc = []
+                                $.each(xhr, function (index, value) {
+                                    acc.push(index + ': ' + value);
+                                });
+                                errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                            }
+                            $('#crudWorkingCalendarListError').html(errMsg);
+                        },
+                    });
+                }
+            });
+        });
+
+    });
+
+    $("#crud-WorkingCalendarDate").datepicker({
+        autoclose: true,
+    });
+
+    loadWorkingDay();
+
+    function loadWorkingDay() {
+
+        $.ajax({
+            url: '@Url.Action("WorkingCalendarDayJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-WorkingCalendarDayId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Day Type")
+                );
+                $.each(response, function (i, day) {
+                    var dayid = day.DayId;
+                    $(id).append(
+                        $('<option></option>').val(dayid).html(day.DayName)
+                    );
+                });
+            }
+        })
+    }
+
+</script>
+

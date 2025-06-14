@@ -1,0 +1,148 @@
+﻿@model Core.VSSP.Models.AppVersionModel
+
+<div class="modal animated fadeIn" id="aboutform" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-primary" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("UpdateAppsVersion", "System", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-cogs"></span> About Application</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="align-content-center bg-dark h-100 rounded">
+                                <div class="container d-flex h-100">
+                                    <div class="justify-content-center align-self-center">
+                                        @if (Model.AppLogo != null)
+                                        {
+                                            var base64 = Convert.ToBase64String((byte[])Model.AppLogo);
+                                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                            <img id="image-logo" src="@imgSrc" style="width:100%" />
+                                        }
+                                        else
+                                        {
+                                            <img id="image-logo" src="~/_VSSPAssets/Images/noimage.png" style="width:100%" />
+                                        }
+                                        @if (Session["UserType"].ToString() == "DEV")
+                                        {
+                                            <br /><br /><br />
+                                            <span class="btn btn-file btn-outline-primary btn-sm btn-block">
+                                                <i class="fa fa-upload"></i> Upload Logo
+                                                <input id="AppsLogo" name="AppsLogo" type="file" accept="image/*" class="custom-file-input" onchange="loadFilesm(event)" />
+                                            </span>
+                                        }
+                                        <script>
+                                            var loadFilesm = function (event) {
+                                                var Foto = document.getElementById('image-logo');
+                                                Foto.src = URL.createObjectURL(event.target.files[0]);
+                                            };
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="app-title">Title</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="app-title" name="AppID" value="@Model.AppID" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="app-name">Application Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="app-name" name="AppName" value="@Model.AppName" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="App-Versionremarks">Version</label>
+                                <div class="col-md-8">
+                                    <div class="row">
+                                        <input type="text" id="app-version" name="AppVersion" class="form-control form-control-sm ml-3" style="width:20px" value="@Model.AppVersion" required>
+                                        <input type="text" class="form-control-plaintext" value="." style="width:5px">
+                                        <input type="text" id="app-revision" name="AppRevision" class="form-control form-control-sm" style="width:20px" value="@Model.AppRevision" required>
+                                        <input type="text" class="form-control-plaintext" value="." style="width:5px">
+                                        <input type="text" id="app-build" name="AppBuild" class="form-control form-control-sm" style="width:20px" value="@Model.AppBuild" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="App-Versionname">Description</label>
+                                <div class="col-md-8">
+                                    <textarea rows="2" class="form-control form-control-sm" id="app-description" name="AppDescription" required>@Model.AppDescription</textarea>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="app-company">Development</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="app-company" name="AppCompany" value="@Model.AppCompany" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="app-website">Websites</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm" id="app-website" name="AppWebsite" value="@Model.AppWebsite" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label class="col-sm-4 col-form-label" for="app-company-license">Licensed to</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext" id="app-company-license" value="@Session["CompName"].ToString()" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    @if (@Session["UserType"].ToString() == "DEV")
+                    {
+                        <button id="btn-App-Version" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    }
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Close</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+
+        var cname = "@Session["CompName"].ToString()";
+        $("#compname").prop("text", cname);
+
+        var utype = "@Session["UserType"].ToString()";
+
+        if (utype != "DEV") {
+            $("#app-title").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-name").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-description").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-version").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-revision").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-build").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-company").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+            $("#app-website").removeClass("form-control form-control-sm").addClass("form-control-plaintext");
+
+            $("#app-version").prop("style", "width:10px");
+            $("#app-revision").prop("style", "width:10px");
+            $("#app-build").prop("style", "width:50px");
+
+        } else {
+
+            $("#app-version").prop("style", "width:30px");
+            $("#app-revision").prop("style", "width:30px");
+            $("#app-build").prop("style", "width:50px");
+        }
+    })
+
+</script>
+

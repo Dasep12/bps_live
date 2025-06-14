@@ -1,0 +1,44 @@
+﻿@{ Layout = ""; }
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@ViewBag.Title</title>
+    @Html.Partial("_VSSPLayout/_app-meta")
+
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+
+</head>
+<body class="app flex-row align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-md-5 text-center">
+                        <span class="fa fa-check-circle-o fa-5x"></span>
+                    </div>
+                    <div class="col-md-7">
+                        <h5 class="pt-3">SUCCESS!</h5>
+                        <p class="text-muted text-justify">@TempData["SuccessMessage"]</p>
+                        <div class="float-left">
+                            <a href="@Url.Action("MainIndex","Index")" class="btn btn-info" style="width:100px"><span class="fa fa-home"></span> Home</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and necessary plugins-->
+    @Scripts.Render("~/Core/JS/Plugins")
+
+</body>
+</html>
+
+<script>
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+    })
+</script>

@@ -1,0 +1,189 @@
+﻿@model Core.VSSP.Models.UserTypeEditModel
+
+@{
+    ViewBag.Title = @Session["AppID"].ToString() + " | Edit User Type";
+}
+
+@using (Html.BeginForm("UpdateUserType", null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-pencil"></i> @ViewBag.Title
+        </div>
+
+        <div class="card-body">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+
+            <form id="dlvForm">
+                <div class="row">
+                    <div class="col-md-6">
+                        @Html.LabelFor(model => model.CategoryID, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.CategoryID, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                        </div>
+                        @Html.LabelFor(model => model.UserType, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-check-square-o"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.UserType, new { htmlAttributes = new { @class = "form-control", @required = "true" } })
+                        </div>
+                        @Html.LabelFor(model => model.Remark, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fa fa-comments-o"></i></span>
+                            </div>
+                            @Html.EditorFor(model => model.Remark, new { htmlAttributes = new { @class = "form-control", @required = "true" } })
+                        </div>
+                        @Html.EditorFor(model => model.MenuList, new { htmlAttributes = new { @class = "form-control", @type = "hidden" } })
+                    </div>
+                    <div class="col-md-6">
+                        <br />
+                        <table id="jqGridMenu"></table>
+                        <div id="jqGridPagerMenu"></div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-footer bg-gray-active">
+            <div class="col-lg-5">
+
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <span class="fa fa-save"></span> Save
+                </button>
+                <a href="@Url.Action("UserTypeList","Account")" class="btn btn-danger btn-sm">
+                    <span class="fa fa-remove" aria-hidden="true"></span>
+                    Cancel
+                </a>
+            </div>
+            @Html.ValidationMessageFor(model => model.CategoryID, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.UserType, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.Remark, "", new { @class = "text-danger" })
+            @Html.ValidationMessageFor(model => model.MenuList, "", new { @class = "text-danger" })
+        </div>
+
+    </div>
+
+}
+
+<script>
+    /* Grid Menu */
+
+    $(function () {
+
+        var CategoryID = document.getElementById("CategoryID").value;
+
+        $grid = $("#jqGridMenu").jqGrid({
+            url: '@Url.Action("UserMenuListJson", "Account")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                userCategoryID: CategoryID
+            },
+            colModel: [
+                { label: 'ID', name: 'MenuID', key: true, editable: false, edittype: 'text', width: 100, fixed: true, align: 'left' },
+                { label: 'Menu Name', name: 'MenuName', editable: false, edittype: 'text', width: 318, fixed: true, align: 'left' },
+                { label: 'Active', name: 'IsActive', hidden: true, editable: false, edittype: 'checkbox', formatter: "checkbox", formatoptions: { disabled: true }, editoptions: { value: "true:false" }, width: 70, fixed: true, align: 'center' },
+            ],
+            gridview: true,
+            loadonce: true,
+            multiselect: true,
+            pager: '#jqGridPagerMenu',
+            rowNum: 100,
+            rowList: [100],
+            viewrecords: true,
+            height: 300,
+            width: '110%',
+            rownumbers: true,
+            rownumWidth: 40,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+                CheckedActive();
+            },
+            onSelectRow: function () {
+                var myGrid = $('#jqGridMenu');
+                var i,
+                    selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"),
+                    n,
+                    rowData;
+                var menuselected = JSON.stringify(selRowIds);
+                //alert(menuselected);
+                document.getElementById("MenuList").value = menuselected;
+                if (menuselected === "[]") {
+                    $("#btnSave").attr('disabled', 'disabled');
+                } else {
+                    $("#btnSave").removeAttr("disabled");
+                }
+            },
+            onSelectAll: function () {
+                var myGrid = $('#jqGridMenu');
+                var i,
+                    selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"),
+                    n,
+                    rowData;
+                var menuselected = JSON.stringify(selRowIds);
+                //alert(menuselected);
+                document.getElementById("MenuList").value = menuselected;
+                if (menuselected === "[]") {
+                    $("#btnSave").attr('disabled', 'disabled');
+                } else {
+                    $("#btnSave").removeAttr("disabled");
+                }
+            },
+        })
+
+        $('#jqGridMenu').jqGrid('navGrid', '#jqGridPagerMenu', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function reloadGridMenu() {
+        var CategoryID = document.getElementById("CategoryID").value;
+        $("#jqGridMenu").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            data: {
+                userCategoryID: CategoryID
+            },
+        }).trigger('reloadGrid');
+    };
+
+    $(document).ready(function () {
+        reloadGridMenu();
+    });
+
+</script>
+
+<script>
+
+    function CheckedActive() {
+        var datafromgrid = $('#jqGridMenu').jqGrid('getRowData');
+        //alert(datafromgrid);
+        $.each(datafromgrid, function (x, y) {
+            //alert(x + '. ' + y.IsActive);
+            var _val = y.IsActive;
+            var _scode = _val;
+            if (_scode == "true") {
+                //alert(y.MenuID + _scode);
+                selectRow(y.MenuID);
+            }
+        });
+    };
+
+    function selectRow(id) {
+        jQuery('#jqGridMenu').jqGrid('setSelection', id);
+    };
+
+</script>

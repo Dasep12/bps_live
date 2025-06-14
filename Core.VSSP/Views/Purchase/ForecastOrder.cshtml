@@ -1,0 +1,470 @@
+﻿@model Core.VSSP.Models.ForecastOrderListModel
+
+<section class="app-section" id="Purchase-ForecastOrder">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Order Number or Supplier...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control input-daterange" placeholder="Start Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control date" placeholder="End Date">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Orders">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="statusFilter" class="col-form-label col-form-label-sm">Status</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.StatusList,
+                                    new SelectList(Model.StatusList, "Id", "Name"),
+                                    new { @id = "statusFilter", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridForecastOrder()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudForecastOrder('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridForecastOrder()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportList,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("ForecastOrderPartial/Crud")
+    @Html.Partial("ForecastOrderPartial/Revision")
+    @Html.Partial("ForecastOrderPartial/Email")
+
+</section>
+
+<script>
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    $(document).ready(function () {
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        $("#statusFilter").val("99");
+    })
+
+    $(function () {
+        var filterData  = $('#searchFilter').val();
+        var startdate   = $('#startdateFilter').val();
+        var enddate     = $('#enddateFilter').val();
+        var month       = $('#monthFilter').val();
+        var status      = $('#statusFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("ForecastOrderListJson", "Purchase")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 70, formatter: actionFormatter },
+                { label: 'Document', name: 'Document', align: 'center', fixed: true, width: 110, formatter: documentFormatter },
+                { label: 'Status', name: 'Status', align: 'center', fixed: true, width: 70, formatter: statusFormatter },
+                { label: 'Number', name: 'OrderNumber', key: true, align: 'left', fixed: true, width: 110 },
+                { label: 'Date', name: 'OrderDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Year', name: 'OrderYear', align: 'center', fixed: true, width: 40 },
+                { label: 'Month', name: 'OrderMonth', align: 'left', fixed: true, width: 60, formatter: monthFormatter },
+                { label: 'Shift', name: 'Shift', align: 'center', fixed: true, width: 40},
+                { label: 'Supplier', name: 'SupplierId', align: 'left', autoResizing: { minColWidth: 80 } },
+                { label: 'Supplier Name', name: 'SupplierName', align: 'left', fixed: true, width: 120 },
+                { label: 'Cycle', name: 'KanbanCycle', align: 'center', fixed: true, width: 50 },
+                { label: 'Time', name: 'KanbanTime', align: 'center', fixed: true, width: 80 },
+                { label: 'Materials', name: 'TotalPart', align: 'right', formatter: 'number', fixed: true, width: 60 },
+                { label: 'Orders', name: 'TotalOrder', align: 'right', formatter: 'number', fixed: true, width: 60 },
+                { label: 'Remarks', name: 'Remarks', align: 'left', fixed: true, width: 120 },
+                { label: 'Rev', name: 'Revision', align: 'center', fixed: true, width: 40 },
+                { label: 'Approval', name: 'ApprovalLevel', align: 'center', fixed: true, width: 80, formatter: approvalFormatter },
+                { label: 'Approval Name', name: 'ApprovalName', align: 'left', hidden: true, width: 80 },
+                { label: 'Approval', name: 'Approval', align: 'left', fixed: true, width: 200 },
+                { label: 'Status Name', name: 'StatusName', align: 'center', hidden: true, width: 60 },
+                { label: 'User', name: 'UserId', align: 'center', fixed: true, width: 60 },
+                { label: 'Edited', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showForecastGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    var newid = ids[i].replaceAll("/", "");
+                    var btnid = 'btn-' + newid;
+                    showButton(ids[i], btnid);
+                    //$("#" + ids[i]).attr("id", newid )
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showForecastGrid(parentRowID, parentRowKey) {
+
+        //Approval
+        console.log(parentRowID);
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("ForecastOrderApprovalListJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {ordernumber : parentRowKey},
+            page: 1,
+            colModel: [
+                { label: 'UserId', name: 'UserId', key: true, hidden: true, width: 100 },
+                { label: 'User Name', name: 'UserName', width: 100 },
+                { label: 'Approval', name: 'ApprovalName', width: 100 },
+                { label: 'Email', name: 'ApprovalEmail', width: 100 },
+                { label: 'Sent', name: 'SentEmail', width: 100 },
+                { label: 'Sent Date', name: 'SentEmailDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+                { label: 'Approved', name: 'Approved', width: 100 },
+                { label: 'Approved Date', name: 'ApprovedDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Approval',
+            //pager: "#" + childGridPagerID
+        });
+
+        //Kanban
+        childGridID = parentRowID + "_tableKanban";
+        childGridPagerID = parentRowID + "_pagerKanban";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("ForecastOrderRevisionListJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { ordernumber: parentRowKey },
+            page: 1,
+            colModel: [
+                { label: 'Revision Number', name: 'RevisionNumber', key: true, align: 'center', fixed: true, width: 80 },
+                { label: 'Description', name: 'Description', align: 'left', autoResizing: { minColWidth: 150 } },
+                { label: 'Revision Date', name: 'RevisionDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+                { label: 'Revision By', name: 'RevisionBy', align: 'left', fixed: true, width: 80 },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Revision History',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var canemail = "";
+        var canupdate = "";
+        var candelete = "";
+        var btnid = rowObject.OrderNumber.replaceAll("/", "");
+
+        if (rowObject.StatusName === "Open" || rowObject.StatusName === "Sent") {
+            canemail = '@ViewBag.canCreate';
+            canupdate = '@ViewBag.canUpdate';
+            candelete = '@ViewBag.canDelete';
+        } else {
+            canemail = 'disabled';
+            canupdate = 'disabled';
+            candelete = 'disabled';
+        }
+
+        var month = getMonthName(rowObject.OrderMonth);
+        month += ", " + rowObject.OrderYear;
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-primary text-white " + canemail + "' onclick=\"sentForecastOrderEmail('Open','" + rowObject.OrderNumber + "','" + month + "','" + rowObject.SupplierName + "')\" datatoogle='tooltip' title='Sent Email @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-envelope'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-success text-white " + canupdate + "' onclick=\"crudForecastOrder('Update','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span> ";
+        btn += "</a> ";
+        btn += "<a id='btn-" + btnid + "' tabindex='0' class='btn btn-sm btn-info text-white " + candelete + "' role='button' data-toggle='popover' ";
+        btn += "data-timeout='2000' data-html='true' title='PRL " + rowObject.OrderNumber + "' data-content='-'>";
+        btn += "<span class='fa fa-sign-out'></span>";
+        btn += "</a>";
+        btn += "</div>";
+
+
+        return btn;
+    }
+    function documentFormatter(cellvalue, options, rowObject) {
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewForecastOrder('PRL','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Preview @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span></span><small> PRL</small>";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewForecastOrder('MLOK','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Preview Master List Of Kanban [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span><small> MLOK</small>";
+        btn += "</a> ";
+        btn += "</div>";
+
+        return btn;
+    }
+    function showButton(OrderNumber,id) {
+
+        var dataContent = "<div>";
+        dataContent += "<ul class='nav'><li>";
+        dataContent += "<a href='#' class='btn btn-sm btn-info @ViewBag.canUpdate' onclick=\"crudForecastOrder('Closed','" + OrderNumber + "')\" ><i class='fa fa-sign-out'></i> Closing</a>";
+        dataContent += "<a href='#' class='btn btn-sm btn-warning ml-2 @ViewBag.canDelete' onclick=\"crudForecastOrder('Canceled','" + OrderNumber + "')\" ><i class='fa fa-ban'></i> Canceled</a>";
+        dataContent += "<a href='#' class='btn btn-sm btn-danger ml-2 @ViewBag.canDelete' onclick=\"crudForecastOrder('Delete','" + OrderNumber + "')\" ><i class='fa fa-trash'></i> Delete</a>";
+        dataContent += "</li></ul></div>";
+
+        $('#' + id).attr('data-content', dataContent).popover();
+
+    }
+
+    function previewForecastOrder(action, ordernumber) {
+
+        if (action == "PRL") {
+            var url = "@Url.Action("ForecastOrders", "Reports", new { ordernumber = "_ordernumber_" })";
+            url = url.replace('_ordernumber_', encodeURIComponent(ordernumber));
+            window.open(url, "_blank");
+        } else {
+            var url = "@Url.Action("MasterListKanban", "Reports", new { ordernumber = "_ordernumber_" })";
+            url = url.replace('_ordernumber_', encodeURIComponent(ordernumber));
+            window.open(url, "_blank");
+        }
+    }
+
+    function monthFormatter(cellvalue, options, rowObject) {
+        var monthname = getMonthName(cellvalue)
+        return monthname;
+    }
+
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 0:
+                return "<span class='badge badge-primary'>" + rowObject.StatusName + "</span>"
+                break;
+            case 1:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-success text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-warning'>" + rowObject.StatusName + "</span>"
+                break;
+            case 5:
+                return "<span class='badge badge-danger'>" + rowObject.StatusName + "</span>"
+                break;
+        }
+    }
+
+    function approvalFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 1:
+                return "<span class='badge badge-warning'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-primary'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-success'>" + rowObject.ApprovalName + "</span>"
+                break;
+        }
+    }
+    function reloadGridForecastOrder() {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var month = $('#monthFilter').val();
+        var status = $('#statusFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.OrderNumber + " has been saved succesfully");
+                return reloadGridForecastOrder();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.OrderNumber + " has been saved succesfully");
+                return reloadGridForecastOrder();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.OrderNumber + " has been removed succesfully");
+                return reloadGridForecastOrder();
+                break;
+            case "canceled":
+                showToast("Failed", "Cancel order " + data.OrderNumber + " has been canceled succesfully");
+                return reloadGridForecastOrder();
+                break;
+            case "closed":
+                showToast("success", "Closing order " + data.OrderNumber + " has been closed succesfully");
+                return reloadGridForecastOrder();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridForecastOrder();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "SupplierName")
+        $("#jqGridMain").jqGrid(showhideCol, "Remarks")
+        $("#jqGridMain").jqGrid(showhideCol, "KanbanCycle")
+        $("#jqGridMain").jqGrid(showhideCol, "KanbanTime")
+        $("#jqGridMain").jqGrid(showhideCol, "Approval")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

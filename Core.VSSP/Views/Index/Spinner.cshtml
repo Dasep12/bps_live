@@ -1,0 +1,44 @@
+﻿
+
+
+<!-- Modal -->
+    <div id="loadspinner" class="modal mobile-only" tabindex="-1" role="document" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="col-md-12 text-center" role="status">
+                @*<i class="fa fa-circle-o-notch fa-spin text-primary" style="font-size:34px"></i>*@
+                <img src="~/_VSSPAssets/Images/preloader/blocks.gif" />
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    var idListener = new Array(".btn-spin");
+
+    for (var i in idListener) {
+        //alert(idListener[i]);
+        $(idListener[i]).on("click", function (e) {
+            loadSpinner();
+        });
+    }
+
+    function loadSpinner() {
+        var scrWidth = 0;
+        scrWidth = document.documentElement.clientWidth;
+        if (scrWidth < 768) {
+            $("#loadspinner").modal({
+                backdrop: "static", //remove ability to close modal with click
+                keyboard: false, //remove option to close with keyboard
+                show: true //Display loader!
+            });
+            //setTimeout(function () {
+            //    $("#loadspinner").modal("hide");
+            //}, 3500);
+        }
+    }
+
+    $(window).on("unload", function() {
+        $("#loadspinner").modal("hide");
+     });
+
+</script>

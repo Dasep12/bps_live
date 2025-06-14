@@ -1,0 +1,273 @@
+﻿
+<div class="modal animated fadeIn" id="crudBankAccountModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudBankAccountForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountBankId" class="col-form-label col-form-label-sm">Bank</label>
+                            <select class="custom-select custom-select-sm" id="crud-BankAccountBankId" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountBranch" class="col-form-label col-form-label-sm">Branch</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-BankAccountBranch" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountName" class="col-form-label col-form-label-sm">Account Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-BankAccountName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountNumber" class="col-form-label col-form-label-sm">Account Number</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-BankAccountNumber" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountStartDate" class="col-form-label col-form-label-sm">Start Date</label>
+                            <input type="date" class="form-control form-control-sm datepicker" id="crud-BankAccountStartDate" required/>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankAccountEndDate" class="col-form-label col-form-label-sm">EndDate</label>
+                            <input type="date" class="form-control form-control-sm datepicker" id="crud-BankAccountEndDate" />
+                        </div>
+                    </div>
+                    <div id="crudBankAccountError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudBankAccount" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="BankAccountAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationBankAccountModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationBankAccount" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteBankAccount()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudBankAccount(action){
+
+        document.getElementById("crudBankAccountForm").reset();
+        $('#crudBankAccountForm').removeClass('was-validated');
+        $('#crudBankAccountError').html("");
+        $("#btn-crudBankAccount").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-BankAccountBankId").removeAttr("disabled");
+        $("#crudBankAccountForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#BankAccountAction").val(action);
+
+        var Id = $("#BankAccountSelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridBankAccount'),
+                selectedRowId   = Id,
+                BankId          = Grid.jqGrid('getCell', selectedRowId, 'BankId'),
+                Branch          = Grid.jqGrid('getCell', selectedRowId, 'Branch'),
+                AccountName     = Grid.jqGrid('getCell', selectedRowId, 'AccountName'),
+                AccountNumber   = Grid.jqGrid('getCell', selectedRowId, 'AccountNumber'),
+                StartDate       = Grid.jqGrid('getCell', selectedRowId, 'StartDate'),
+                EndDate         = Grid.jqGrid('getCell', selectedRowId, 'EndDate');
+
+            StartDate = moment(StartDate).format("YYYY-MM-DD");
+            EndDate = moment(EndDate).format("YYYY-MM-DD");
+
+            if (BankId === false) {
+                alert("Please select Bank Account");
+                return false
+            };
+
+            $("#crud-BankAccountBankId").val(BankId);
+            $("#crud-BankAccountBranch").val(Branch);
+            $("#crud-BankAccountName").val(AccountName);
+            $("#crud-BankAccountNumber").val(AccountNumber);
+            $("#crud-BankAccountStartDate").val(StartDate);
+            $("#crud-BankEndDate").val(EndDate);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudBankAccountModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudBankAccountModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Bank Account');
+                $('#crudBankAccountModal').modal('show');
+                $("#crud-BankAccountBankId").focus();
+                break;
+            case "Update":
+                $("#crud-BankAccountBankId").attr("disabled", true);
+                $("#crud-BankAccountStartDate").attr("readonly", true);
+                $("#crudBankAccountModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudBankAccountModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Bank Account');
+                $('#crudBankAccountModal').modal('show');
+                $("#crud-BankAccountBranch").focus();
+                break;
+            case "Delete":
+                $("#crudBankAccountForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-BankAccountBankId").attr("disabled", true);
+                $("#btn-crudBankAccount").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudBankAccountModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudBankAccountModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Bank Account');
+                $('#crudBankAccountModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-BankAccountBranch').change(function () {
+        $('#crudBankAccountError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudBankAccountForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudBankAccountForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            BankAccount: {
+                                BankId          : $("#crud-BankAccountBankId").val(),
+                                Branch          : $("#crud-BankAccountBranch").val(),
+                                AccountName     : $("#crud-BankAccountName").val(),
+                                AccountNumber   : $("#crud-BankAccountNumber").val(),
+                                StartDate       : $("#crud-BankAccountStartDate").val(),
+                                EndDate         : $("#crud-BankAccountEndDate").val(),
+                                UserID          : "",
+                                EditDate        : null
+                            },
+                            formAction: $("#BankAccountAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudBankAccountList", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudBankAccountModal').modal('hide');
+                                var act = $("#BankAccountAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.BankId + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.BankId + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.BankId + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGrid();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudBankAccountError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+    loadComboBank();
+    function loadComboBank() {
+
+        $.ajax({
+            url: '@Url.Action("BankListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-BankAccountBankId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Bank")
+                );
+                $.each(response, function (i, bank) {
+                    $(id).append(
+                        $('<option></option>').val(bank.BankId).html(bank.BankName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+

@@ -1,0 +1,260 @@
+﻿<style>
+    .table-responsive {
+        height: 465px;
+        overflow: auto;
+    }
+
+    thead tr:nth-child(1) th {
+        position: sticky;
+        background-color:aliceblue;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+<div class="row mb-0 pb-0">
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-facebook">
+                <i class="fa fa-calendar-o"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Monthly Summary</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="totalorder" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Order</div>
+                </div>
+                <div>
+                    <div id="totaldelivery" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Delivery</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-light-blue-gradient">
+                <i class="fa fa-calendar"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Daily Summary</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="dailyorder" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Order</div>
+                </div>
+                <div>
+                    <div id="dailyDelivery" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Delivery</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-primary">
+                <i class="fa fa-truck"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Daily Status</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="totalwarning" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Warning</div>
+                </div>
+                <div>
+                    <div id="totalcompleted" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div class="row mb-0 pb-0">
+    <div class="col-md-12 mb-0 pb-0">
+        <div class="card shadow-sm mb-3 pb-0">
+            <div class="card-header">
+                <div id="total-warning-delivery">
+                    <i class="fa fa-cubes"></i> Delivery Schedule
+                    <div class="card-header-actions">
+                        <a href="#delivery-info" class="card-header-action btn-setting" onclick="deliverySummaryDetail()">
+                            <i class="icon-refresh"></i>
+                        </a>
+                    </div>
+                </div>                
+            </div>
+            <div class="card-body collapse show" id="delivery-info" style="padding:2px; height:470px">
+                <div id="tableGeneraldelivery" class="table-responsive">
+                    <table class="table table-hover table-bordered auto-scroll-row" >
+                        <thead class="font-weight-bold">
+                            <tr>
+                                <th>NO.</th>
+                                <th class="text-left">CUSTOMER</th>
+                                <th>UNIQUE</th>
+                                <th>PART #</th>
+                                <th class="text-left">PART NAME</th>
+                                <th>SCHEDULE</th>
+                                <th>DELIVERY</th>
+                                <th>+/-</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        deliveryCardSummary();
+    })
+
+    function deliveryCardSummary() {
+
+        $.ajax ({
+            url: "@Url.Action("DeliverySummaryJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async: false,
+            data: {
+                today: $("#dateFilter").val(),
+                customerFilter: $("#customerFilter").val(),
+                partnumberFilter: $("#partnumberFilter").val(),
+            },
+            success: function (data) {
+                //console.log (data);
+                transactions = data;
+
+                $.each(transactions, function (index, data) {
+                    $("#totalorder").html(parseFloat(data.TotalOrder).toLocaleString());
+                    $("#totaldelivery").html(parseFloat(data.TotalDelivery).toLocaleString());
+                    $("#dailyorder").html(parseFloat(data.DailyOrder).toLocaleString());
+                    $("#dailyDelivery").html(parseFloat(data.DailyDelivery).toLocaleString());
+                });
+
+                $('.counter').counterUp()
+
+            }
+        });
+    }
+</script>
+
+<script>
+
+    $(document).ready(function () {
+        deliverySummaryDetail();
+    });
+
+    
+    function deliverySummaryDetail() {
+
+        $("#totalwarning").html(0);
+        $("#totalcompleted").html(0);
+
+        $.ajax ({
+            url: "@Url.Action("DeliverySummaryDetailJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            data: {
+                today: $("#dateFilter").val(),
+                customerFilter: $("#customerFilter").val(),
+                partnumberFilter: $("#partnumberFilter").val(),
+            },
+            success: function (data) {
+
+                var rowdelivery = '';
+                var status = '';
+                var totMinus = 0;
+                var totOver = 0;
+                var totWarning = 0;
+                var totCompleted = 0;
+                var nom = 0;
+                var todayDate = $("#dateFilter").val();
+                todayDate = moment(todayDate).format("dddd, DD MMMM YYYY");
+
+                $('#deliveryStatus').remove();
+                $("#total-warning-delivery").html("<i class='fa fa-cubes'></i> Delivery Schedule " + todayDate);
+
+                if (data.length > 0) {
+
+                    $.each(data, function (index, delivery) {
+                        
+                        if (parseFloat(delivery.OutstandingQty) < 0) {
+                            totMinus += 1;
+                            status = '<span class="badge badge-danger font-weight-normal" style="top:-2px !important; font-size: 11px"><i class="fa fa-minus-circle"></i> Minus</span>'
+                        } else
+                        if (parseFloat(delivery.OutstandingQty) > 0) {
+                            totOver += 1;
+                            status = '<span class="badge badge-warning"><i class="fa fa-exclamation-circle"></i> Over</span>'
+                        } else
+                        if (parseFloat(delivery.OutstandingQty) === 0) {
+                            totCompleted += 1;
+                            status = '<span class="badge badge-success"><i class="fa fa-check"></i> Completed</span>'
+                        }
+
+                        nom = parseInt(index) + 1;
+
+                        rowdelivery += '<tr id="delr'+ nom +'">';
+                        rowdelivery += '<td class="text-center">' + nom + '</td>';
+                        rowdelivery += '<td>' + delivery.CustomerName + '</td>';
+                        rowdelivery += '<td class="text-center">' + delivery.UniqueNumber + '</td>';
+                        rowdelivery += '<td class="text-center">' + delivery.PartNumber + '</td>';
+                        rowdelivery += '<td>' + delivery.PartName + '</td>';
+                        rowdelivery += '<td class="text-center">' + parseFloat(delivery.ScheduleQty).toLocaleString() + '</td>';
+                        rowdelivery += '<td class="text-center">' + parseFloat(delivery.DeliveryQty).toLocaleString() + '</td>';
+                        rowdelivery += '<td class="text-center">' + parseFloat(delivery.OutstandingQty).toLocaleString() + '</td>';
+                        rowdelivery += '<td class="text-center">' + status + '</td>';
+                        rowdelivery += '</tr>';
+                    });
+
+                    $('#tableGeneraldelivery').removeAttr('hidden');
+                    $('#tableGeneraldelivery tbody').html(rowdelivery);
+
+                    $("#total-warning-delivery").find('span').remove();
+                    if (nom != 0) {
+                        var badge = " <span class='badge badge-primary'>" + nom + " Rows</span>";
+                        $("#total-warning-delivery").append(badge);
+                    }
+
+                    totWarning = totMinus + totOver;
+                    $("#totalwarning").html(parseFloat(totWarning).toLocaleString());
+                    $("#totalcompleted").html(parseFloat(totCompleted).toLocaleString());
+                    autoscrollrows();
+
+                } else {
+                    $('#tableGeneraldelivery').attr('hidden', true);
+
+                    var rowdelivery = '';
+                    status = '<div id="deliveryStatus" class="col-md-12 text-center text-success mt-auto mb-auto" style="top:150px"><h1><i class="icon-check"></i></h1> <h4>No Delivery Schedule</h4></div>';
+                    $('#delivery-info').append(status);
+                }
+            }
+        });
+    }
+</script>
+

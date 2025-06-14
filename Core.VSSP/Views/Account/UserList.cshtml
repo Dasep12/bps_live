@@ -1,0 +1,201 @@
+﻿@model IEnumerable<Core.VSSP.Models.UserListModel>
+@{
+    string formArchive = "";
+    string formActivate = "";
+    string formDelete = "";
+
+}
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+            </div>
+            <div id="searchFilter" class="col-md-4"></div>
+        </div>
+    </div>
+
+    <div class="card-body" style="padding:2px">
+        <div class="table-responsive">
+            <table id="GridData1" class="table table-bordered table-hover table-sm">
+                <thead class="bg-secondary">
+                    <tr>
+                        <th>No.</th>
+                        <th>User ID</th>
+                        <th>User Name</th>
+                        <th>Email</th>
+                        <th>User Type</th>
+                        <th>Phone</th>
+                        <th>Area</th>
+                        <th>Confidential Access</th>
+                        <th>Date Created</th>
+                        <th>Status</th>
+                        <th class="excludeColumn">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                    <tr>
+                        <td width="30" class="text-md-center">@Html.DisplayFor(m => item.No)</td>
+                        <td>@Html.DisplayFor(m => item.UserID)</td>
+                        <td>@Html.DisplayFor(m => item.UserName)</td>
+                        <td>@Html.DisplayFor(m => item.Email)</td>
+                        <td>@Html.DisplayFor(m => item.UserTypeID)</td>
+                        <td>@Html.DisplayFor(m => item.Phone)</td>
+                        <td>@Html.DisplayFor(m => item.Area)</td>
+                        <td width="50" class="text-md-center">@Html.DisplayFor(m => item.ConfidentialAccess)</td>
+                        <td>@Html.DisplayFor(m => item.DateCreated)</td>
+                        <td style="text-align:center">
+                            @if (item.IsActive == true)
+                            {
+                                <span class="badge badge-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge badge-danger">Locked</span>
+                            }
+
+                        </td>
+                        <td class="excludeColumn text-center">
+                            <div class="table-link">
+                                <a href="@Url.Action("UserEdit", "Account", new { ID = item.UserID })" class="@ViewBag.canUpdate text-primary" datatoogle="tooltip" title="Edit @ViewBag.Title [ @item.UserName ]">
+                                    <span class="fa fa-pencil-square"></span>
+                                </a>
+                                @{
+                                    if (item.IsActive == true)
+                                    {
+                                        formArchive = @item.UserID.Replace(" ","") + "archive";
+                                        <a href="#" data-target="#@formArchive" class="text-success" data-toggle="modal" title="Lock @ViewBag.Title [ @item.UserName ]"><b><i class="fa fa-unlock-alt"></i></b></a>
+                                    }
+                                    else
+                                    {
+                                        formActivate = @item.UserID.Replace(" ", "") + "activate";
+                                        <a href="#" data-target="#@formActivate" class="text-dark" data-toggle="modal" title="Unlock @ViewBag.Title [ @item.UserName ]"><b><i class="fa fa-lock"></i></b></a>
+                                    }
+                                    formDelete = @item.UserID.Replace(" ", "") + "delete";
+                                    <a href="#" data-target="#@formDelete" data-toggle="modal" class="@ViewBag.canDelete text-danger" title="Delete @ViewBag.Title [ @item.UserName ]">
+                                        <span class="fa fa-trash"></span>
+                                    </a>
+                                }
+                            </div>
+
+                            <!-- Archive User Modal -->
+                            <div class="modal animated fadeIn" id="@formArchive" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-dark" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title"> Locked @ViewBag.Title</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        @using (Html.BeginForm("UserArchive", null, FormMethod.Post, new { @class = "smart-form client-form", role = "form", id = "smart-form-register" }))
+                                        {
+                                            <div class="modal-body">
+                                                Are you sure you want to lock down the @ViewBag.Title <strong> @Html.DisplayFor(m => item.UserName) </strong>?
+
+                                                <input type="hidden" class="form-control" name="UserID" value="@Html.DisplayFor(m => item.UserID)" />
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button id="myAllert" type="submit" class="btn btn-primary" dismiss="modal"> Yes</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"> Cancel</button>
+                                            </div>
+                                        }
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.Archive User modal -->
+                            <!-- Activate User Modal -->
+                            <div class="modal animated fadeIn" id="@formActivate" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-success" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title"> Activate @ViewBag.Title</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        @using (Html.BeginForm("UserActivate", null, FormMethod.Post, new { @class = "smart-form client-form", role = "form", id = "smart-form-register" }))
+                                        {
+                                            <div class="modal-body">
+                                                Are you sure you want to activate the @ViewBag.Title <strong> @Html.DisplayFor(m => item.UserName) </strong>?
+
+                                                <input type="hidden" class="form-control" name="UserID" value="@Html.DisplayFor(m => item.UserID)" />
+                                            </div>
+                                            <div class="modal-footer clearfix">
+                                                <button id="myAllert" type="submit" class="btn btn-primary" dismiss="modal"> Yes</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"> Cancel</button>
+                                            </div>
+                                        }
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.Activate User modal -->
+                            <!-- Delete User Modal -->
+                            <div class="modal animated fadeIn" id="@formDelete" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title"> Delete @ViewBag.Title</h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        @using (Html.BeginForm("UserDelete", null, FormMethod.Post, new { @class = "smart-form client-form", role = "form", id = "smart-form-register" }))
+                                        {
+                                            <div class="modal-body">
+                                                Are you sure you want to Delete the @ViewBag.Title <strong> @Html.DisplayFor(m => item.UserName) </strong>?
+
+                                                <input type="hidden" class="form-control" name="UserID" value="@Html.DisplayFor(m => item.UserID)" />
+                                            </div>
+                                            <div class="modal-footer clearfix">
+                                                <button id="myAllert" type="submit" class="btn btn-primary" dismiss="modal"> Yes</button>
+                                                <button type="button" class="btn btn-danger" data-dismiss="modal"> Cancel</button>
+                                            </div>
+                                        }
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.Delete User modal -->
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <div id="pageInfo" class="row"></div>
+        </div>
+    </div>
+    <div class="card-footer bg-gray-active">
+        <form>
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="btn btn-sm btn-success" type="button" style="width:80px" onclick="location.href='@Url.Action("UserAdd", "Account" )'" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Add</button>
+                    <button class="btn btn-sm btn-success" type="submit" style="width:80px"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="row">
+                        <label class="font-small">Show : </label>
+                        <div id="pageLength"></div>
+                        <label class="font-small"> Rows</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+            @*<div class="col-md-2">
+                    <a id="dlink" style="display:none;"></a>
+                    <input type="button" class="btn btn-sm btn-facebook btn-block" onclick="tableToExcel('GridData1', 'User Type', 'User Type.xlsx')" value="Export to Excel">
+                </div>*@
+        </form>
+    </div>
+</div>
+
+@Html.Partial("_VSSPLayout/VSSPScript/DataTableScript")

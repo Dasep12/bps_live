@@ -1,0 +1,108 @@
+﻿@{
+    string disabled = "";
+    if(Session["UserType"] != null) {
+        if (Session["UserType"].ToString() == "DEV" || Session["UserType"].ToString() == "ADM")
+        {
+            disabled = "";
+        }
+        else
+        {
+            disabled = "disabled";
+        }
+    }
+}
+
+<div class="tab-pane p-3 active" id="company" role="tabpanel">
+    <h6>Company Profile</h6>
+    @if (Session["CompID"] != null)
+    {
+        <div class="mt-4">
+            <div class="row">
+                <div class="col-sm-3" style="padding-right:0 !important; margin-right:0 !important">
+                    @if (Session["CompLogoSmall"] == null)
+                    {
+                        <img src="~/_VSSPAssets/Images/Logo/logo-vssp.png" width="40" height="40" alt="vssp CoreUI">
+                    }
+                    else
+                    {
+                        var base64 = Convert.ToBase64String((byte[])Session["CompLogoSmall"]);
+                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                        <img src="@imgSrc" width="40" height="40" alt="@Session["CompName"].ToString()">
+                    }
+                </div>
+                <div class="col-sm-9">
+                    <b>@Session["CompName"].ToString()</b>
+                    <br />
+                    <small>@Session["CompTitle"].ToString()</small>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="text-uppercase mb-1 mt-4">
+                <small>
+                    <b><span class="fa fa-map-marker"></span> Adrress</b>
+                </small>
+            </div>
+            <small>@Session["CompAddress"].ToString()</small><br />
+            <small>@Session["CompCity"].ToString(), @Session["CompProvience"].ToString(),</small><br />
+            <small>@Session["CompCountry"].ToString(), @Session["CompZipcode"].ToString()</small>
+
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b><span class="fa fa-phone-square"></span> Phone</b>
+                </small>
+            </div>
+            <small>
+                <a href="tel:@Session["CompPhone1"].ToString()" target="_top">
+                    @Session["CompPhone1"].ToString()
+                </a> /
+                <a href="tel:@Session["CompPhone2"].ToString()" target="_top">
+                    @Session["CompPhone2"].ToString()
+                </a>
+            </small>
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b><span class="fa fa-envelope-square"></span> Email</b>
+                </small>
+            </div>
+            <small>
+                <a href="mailto:@Session["CompEmail1"].ToString()" target="_top">
+                    @Session["CompEmail1"].ToString()
+                </a>                                <br />
+                <a href="mailto:@Session["CompEmail2"].ToString()" target="_top">
+                    @Session["CompEmail2"].ToString()
+                </a>
+            </small>
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b><span class="fa fa-globe"></span> Official Website</b>
+                </small>
+            </div>
+            <small>
+                <a href="@Session["CompWebsites"].ToString()" target="_blank">
+                    @Session["CompWebsites"].ToString()
+                </a>
+            </small>
+
+        </div>
+    }
+    else
+    {
+        <div class="aside-options">
+            <div class="clearfix mt-4">
+                <small>
+                    <b>No licensed</b>
+                </small>
+            </div>
+        </div>
+
+    }
+
+    <hr>
+    <a class="btn btn-success btn-sm @disabled" href="@Url.Action("CompanyLicenseEdit","System")">
+        <i class="icon-pencil"></i> Edit
+    </a>
+
+</div>

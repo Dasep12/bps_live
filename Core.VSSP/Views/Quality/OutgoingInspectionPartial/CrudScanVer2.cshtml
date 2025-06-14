@@ -1,0 +1,277 @@
+﻿<div class="modal animated fadeIn" id="scanKanbanModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanKanbanForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-qrcode"></span> Scan QR / Barcode</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" name="optradiokanban" value="customer" checked />Customer Kanban
+                                    </label>
+                                </div>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="radio" class="form-check-input" name="optradiokanban" value="production" />Production Kanban
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 customer">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-CustomerId" class="col-form-label">Customer</label>
+                                @*<select class="custom-select" id="scan-CustomerId" onchange="$('#scan-ProductionKanban').focus()"></select>*@
+                                <select class="form-control selectpicker" data-live-search="true" data-size="8" id="scan-CustomerId" name="SupplierId" onchange="$('#scan-ProductionKanban').focus()" ></select>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-ProductionKanban" class="col-form-label">Scan Customer Kanban</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="scan-ProductionKanban" required>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-QrCodes" class="col-form-label">Scan Quality Label</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="scan-QrCodes" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scanKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanKanban" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function startScan() {
+        document.getElementById("scanKanbanForm").reset();
+        $('#scanKanbanForm').removeClass('was-validated');
+        $('#scanKanbanError').html("");
+
+        $('#scanKanbanModal').modal('show');
+        $("#scan-ProductionKanban").focus();
+        $("#scan-CustomerId").val("TBINA").selectpicker('refresh');
+
+    };
+
+    $('input[type=radio][name=optradiokanban]').change(function () {
+        if (this.value === 'customer') {
+            $(".customer").removeAttr("hidden");
+            if ($('#scan-CustomerId').val() === '') {
+                $('#scan-CustomerId').focus();
+            } else {
+                $('#scan-ProductionKanban').focus();
+            }
+            $('label[for=scan-ProductionKanban]').text("Scan Customer Kanban");
+        } else {
+            $(".customer").attr("hidden", true);
+            $('#scan-ProductionKanban').focus();
+            $('label[for=scan-ProductionKanban]').text("Scan Production Kanban");
+        }
+    });
+
+
+    $('#scan-ProductionKanban').change(function () {
+
+        var optvalues = $('input[type=radio][name=optradiokanban]:checked').val();
+
+        if (optvalues === 'customer') {
+
+            loadblockspinner();
+
+            var customerid = $("#scan-CustomerId").val(),
+                kanbandata = $('#scan-ProductionKanban').val();
+
+            $.ajax({
+                url: '@Url.Action("kanbanCustomerReader", "Quality")',
+                type: "GET",
+                dataType: "JSON",
+                async: false,
+                data: {
+                    CustomerId: customerid,
+                    KanbanData: kanbandata
+                },
+                success: function (response) {
+
+                    unloadblockspinner();
+
+                    var res = response;
+                    var message = res.ErrMessages;
+
+                    setTimeout(function () {
+                        if (message.includes('Error')) {
+                            message = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger">' + message + '</div>';
+                            //showToast("Warning", message);
+                            $('#scanKanbanError').html(message);
+                            $('#scan-ProductionKanban').focus().select();
+                        } else {
+                            $('#scan-QrCodes').focus().select();
+                        }
+                    }, 500);
+
+                },
+                error: function (xhr, desc, err) {
+                    var responsetext = "";
+                    try {
+                        responsetext = eval(xhr.responseText);
+                    } catch {
+                        responsetext = xhr.responseText;
+                    }
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                    $('#scanKanbanError').html(errMsg);
+                }
+            });
+        } else {
+            $('#scan-QrCodes').focus().select();
+        }
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#scanKanbanForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+
+                    var customerId = "";
+                    var customerKanban = false;
+                    var scanProdKanban = $("#scan-ProductionKanban").val();
+                    var scanQrCodes = $("#scan-QrCodes").val();
+
+                    var optvalues = $('input[type=radio][name=optradiokanban]:checked').val();
+                    if (optvalues === 'customer') {
+                        var customerId = $("#scan-CustomerId").val();
+                        var customerKanban = true;
+                    }
+
+                    if (scanProdKanban != "" && scanQrCodes != "") {
+                        $.ajax({
+                            url: '@Url.Action("PartIdentificationJson", "Quality")',
+                            type: 'POST',
+                            dataType: "JSON",
+                            data: {
+                                scanProdKanban: scanProdKanban,
+                                scanQrCodes: scanQrCodes,
+                                customerId: customerId,
+                                customerKanban: customerKanban,
+                            },
+                            success: function (data) {
+
+                                if (data.length > 0) {
+
+                                    $('#scanKanbanModal').modal('hide');
+                                    $.each(data, function (i, part) {
+
+                                        categoryid = part.PartCategory;
+                                        loadComboDefect(categoryid);
+
+                                        $("#label-inspectionCustomer").text(part.CustomerId);
+
+                                        $("#UniqueNumber").val(part.CustomerUniqueNumber);
+                                        $("#PartModel").val(part.CustomerUnitModel);
+                                        $("#PartNumber").val(part.PartNumber);
+                                        $("#PartName").val(part.PartName);
+                                        $("#QtyKanban").val(part.UnitQty);
+                                        $("#totalCheck").val(part.UnitQty);
+                                        $("#totalDefectUnit").val(0);
+                                        $("#totalDefectQty").val(0);
+                                        $("#CycleTime").val(part.CycleTime);
+                                        $("#img-piimages").attr("src", part.PI_Images + "#" + new Date().getTime());
+                                        $("#img-piimages").removeAttr("hidden");
+                                        $("#scanGroup").attr("hidden", true);
+                                        $("#btn-defectlist").removeAttr("disabled");
+                                        $("#btn-checkout").removeAttr("disabled");
+                                        $("#btn-cancelcheck").removeAttr("disabled");
+
+                                        maxcycle = (part.CycleTime * part.UnitQty);
+                                        return startTicking();
+
+                                    });
+                                } else {
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Scan!</b><br/>Part Identification not found, please check kanban carefully and make sure master of Part Identification already create.</small></div>'
+                                    $('#scanKanbanError').html(errMsg);
+                                }
+                            },
+                            error: function (xhr, desc, err) {
+
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#scanKanbanError').html(errMsg);
+                            }
+                        });
+                    }
+                } else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error!</b><br/>Please scan Kanban and QC Labels before continue.</small></div>'
+                    $('#scanKanbanError').html(errMsg);
+                }
+                unloadblockspinner();
+                //setTimeout(function () {
+                //    if (scanProdKanban === "") {
+                //        $("#scan-ProductionKanban").focus().select();
+                //    } else {
+                //        $("#scan-QrCodes").focus().select();
+                //    }
+                //}, 600);
+
+            });
+        });
+    });
+
+    $("#scanKanbanForm").keypress(function () {
+        $('#scanKanbanError').html("");
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        var id = "#scan-CustomerId";
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerId + " : " + sup.CustomerName)
+                    );
+                });
+                $(id).val("TBINA");
+            }
+        })
+    }
+</script>

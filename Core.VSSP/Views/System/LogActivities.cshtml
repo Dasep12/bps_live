@@ -1,0 +1,81 @@
+﻿@model IEnumerable<Core.VSSP.Models.LogActivitiesModel>
+
+@{
+    int nom = 0;
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-8">
+                <i class="fa fa-align-justify"></i> @ViewBag.Title
+            </div>
+            <div id="searchFilter" class="col-md-4"></div>
+
+        </div>
+    </div>
+    <div class="card-body" style="padding:2px">
+        <div class="table-responsive">
+            <table id="GridData1" class="table table-bordered table-hover table-sm">
+                <thead class="bg-secondary">
+                    <tr>
+                        <th>No.</th>
+                        <th>Log Date</th>
+                        <th>User ID</th>
+                        <th>IP Address</th>
+                        <th>Country</th>
+                        <th>City</th>
+                        <th>Module</th>
+                        <th>Activity</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        nom += 1;
+
+                        <tr>
+                            <td width="40" class="text-center">@nom</td>
+                            <td width="100">@Html.DisplayFor(m => item.LogDate)</td>
+                            <td>@Html.DisplayFor(m => item.UserID)</td>
+                            <td width="60">@Html.DisplayFor(m => item.IpAddress)</td>
+                            <td>@Html.DisplayFor(m => item.Country)</td>
+                            <td>@Html.DisplayFor(m => item.City)</td>
+                            <td>@Html.DisplayFor(m => item.Module)</td>
+                            <td>@Html.DisplayFor(m => item.Activity)</td>
+                            <td>@Html.DisplayFor(m => item.Remarks)</td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-12">
+            <div id="pageInfo" class="row"></div>
+        </div>
+    </div>
+    <div class="card-footer bg-gray-active">
+        <form>
+            <div class="row">
+                <div class="col-md-4">
+                    <button class="btn btn-sm btn-success" type="button" style="width:80px" onclick="location.reload()"><i class="fa fa-refresh"></i> Refresh</button>
+                    <button class="btn btn-sm btn-success" type="button" style="width:80px" onclick="exportExcel()"><i class="fa fa-file-excel-o"></i> Export</button>
+                </div>
+                <div class="col-md-4 d-flex justify-content-center">
+                    <div class="row">
+                        <label class="font-small">Show : </label>
+                        <div id="pageLength"></div>
+                        <label class="font-small"> Rows</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@Html.Partial("_VSSPLayout/VSSPScript/DataTableScript")
+

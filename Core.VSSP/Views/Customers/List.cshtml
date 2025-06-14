@@ -1,0 +1,283 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Customers-List">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudCustomerList('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="importCustomer()" @ViewBag.canCreate><i class="fa fa-cloud-upload"></i> Import</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-active" onclick="reloadGridList()" checked>
+                                <label class="custom-control-label" for="sw-active"><small> Active Customers</small></label>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("ListPartial/Import")
+    @Html.Partial("ListPartial/Crud")
+    @*@Html.Partial("ListPartial/Update")
+    @Html.Partial("ListPartial/Delete")*@
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+                { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 60, formatter: statusFormatter },
+                { label: 'Logo', name: 'Logo', editable: false, align: 'center', fixed: true, width: 60, formatter: imagesFormatter },
+                { label: 'Id', key: true, name: 'CustomerId', editable: false, align: 'center', fixed: true, width: 60 },
+                { label: 'Code', name: 'CustomerCode', editable: false, align: 'center', fixed: true, width: 60 },
+                { label: 'Account', name: 'AccountCode', editable: false, align: 'center', fixed: true, width: 60 },
+                { label: 'Customer Name', name: 'CustomerName', editable: false, align: 'left', autoResizing: { minColWidth: 250 }  },
+                { label: 'Address', name: 'Address', editable: false, align: 'left', fixed: true, width: 350 },
+                { label: 'City', name: 'City', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Provience', name: 'Provience', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Country', name: 'Country', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Postal Code', name: 'PostalCode', editable: false, align: 'center', fixed: true, width: 60 },
+                { label: 'Websites', name: 'Websites', editable: false, align: 'left', fixed: true, width: 120 },
+                { label: 'NPWP', name: 'TaxId', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Contact Name', name: 'ContactName', align: 'left', fixed: true, width: 150 },
+                { label: 'Phone', name: 'Phone', align: 'left', hidden: true, width: 120 },
+                { label: 'Email', name: 'Email', align: 'left', hidden: true, width: 150 },
+                { label: 'User Id', name: 'UserID', editable: false, fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', editable: false, align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showContactGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showContactGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("CustomerContactListJson", "Customers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {customerid : parentRowKey},
+            page: 1,
+            colModel: [
+                { label: 'Contact Name', name: 'ContactName', key: true, width: 100 },
+                { label: 'Organization', name: 'Organization', width: 100 },
+                { label: 'Position', name: 'Position', width: 100 },
+                { label: 'Phone #1', name: 'Phone1', width: 100 },
+                { label: 'Phone #2', name: 'Phone2', width: 100 },
+                { label: 'Fax', name: 'Fax', width: 100 },
+                { label: 'Email', name: 'Email', width: 100 },
+                { label: 'Receive Order', name: 'ReceiveOrder', align: 'center', fixed: true, width: 80, formatter: statusFormatter }
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Contacts',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudCustomerList('Update','" + rowObject.CustomerId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.CustomerName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudCustomerList('Delete','" + rowObject.CustomerId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.CustomerName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function imagesFormatter(cellvalue, options, rowObject) {
+        if (cellvalue != null) {
+            var byteArray = cellvalue;
+            var base64 = base64js.fromByteArray(byteArray);
+            var images = "<img id='logo-" + rowObject.CustomerId + "' src='" + 'data:image/jpeg;base64,' + base64 + "' style='width:40px'>"
+
+            return images;
+        } else {
+            return "";
+        }
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridList() {
+        var filterData = $('#searchFilter').val();
+        var isactive = $("#sw-active").prop("checked");
+
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                isActive: isactive
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.CustomerName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.CustomerName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.CustomerName + " has been removed succesfully");
+                return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridList();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "Address")
+        $("#jqGridMain").jqGrid(showhideCol, "Provience")
+        $("#jqGridMain").jqGrid(showhideCol, "Country")
+        $("#jqGridMain").jqGrid(showhideCol, "PostalCode")
+        $("#jqGridMain").jqGrid(showhideCol, "Websites")
+        $("#jqGridMain").jqGrid(showhideCol, "TaxId")
+        $("#jqGridMain").jqGrid(showhideCol, "ContactName")
+        $("#jqGridMain").jqGrid(showhideCol, "Phone")
+        $("#jqGridMain").jqGrid(showhideCol, "Email")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

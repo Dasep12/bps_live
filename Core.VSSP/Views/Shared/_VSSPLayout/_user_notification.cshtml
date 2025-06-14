@@ -1,0 +1,62 @@
+﻿@model Core.VSSP.Models.NotificationTotalModel
+@{
+    int loop = 0;
+    string textcolor = "";
+    string badgecolor = "";
+}
+@*NOTIFICATION*@
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+
+@if (@Model != null)
+{
+
+    if (@Model.CountCategory != null)
+    {
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="cui-speech icons font-lg text-primary"></i>
+            @if (Model.CountCategory != 0)
+            {
+                <span id="count-category" class="badge badge-pill badge-danger font-weight-normal" onchange="countNotifChange()">@Model.CountCategory</span>
+            }
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right show-menu-arrow show-tick rounded-0">
+
+            @*<div class="dropdown-header text-center">
+                <strong>Notification</strong>
+            </div>*@
+
+            @foreach (var subtotal in Model.NotificationSubTotalList)
+            {
+                loop += 1;
+                if (loop == 1) { textcolor = "text-dark"; badgecolor = "badge-dark"; }
+                if (loop == 2) { textcolor = "text-success"; badgecolor = "badge-success"; }
+                if (loop == 3) { textcolor = "text-primary"; badgecolor = "badge-primary"; }
+                if (loop == 4) { textcolor = "text-danger"; badgecolor = "badge-danger"; loop = 0; }
+                <a class="dropdown-item border-0" href="@Url.Action("Notification","System",new { Category = subtotal.Category, Icon = subtotal.Icon})">
+                    <i class="@subtotal.Icon @textcolor"></i> @subtotal.Category
+                    @if (@subtotal.CountCategory != 0)
+                    {
+                        <span class="badge @badgecolor">@subtotal.CountCategory</span>
+                    }
+                </a>
+            }
+        </div>
+
+    }
+    else
+    {
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+            <i class="icon-bell"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+            <div class="dropdown-header text-center">
+                <strong>Notification</strong>
+            </div>
+            <a class="dropdown-item" href="#">
+                <i class="fa fa-envelope-o"></i> No Messages...
+            </a>
+        </div>
+    }
+}

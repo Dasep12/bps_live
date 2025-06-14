@@ -1,0 +1,417 @@
+﻿<div class="modal animated fadeIn" id="importOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <form id="importOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-cloud-upload"></span> Import @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body" style="padding:2px">
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input form-control-sm" id="file-upload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="loadExcel()">
+                                <label class="custom-file-label" for="file-upload">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:2px 4px 2px 2px">
+                        <table id="jqGridImport"></table>
+                        @*<div id="jqGridPagerImport"></div>*@
+                    </div>
+                    <div id="importOrderError"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left invisible">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" value="false" id="replace">
+                            <label class="custom-control-label" for="replace"><small> Replace Existing</small></label>
+                        </div>
+                    </div>
+                    <button id="btnSubmitImportOrder" type="button" class="btn btn-sm btn-primary" onclick="submitImport()"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function importOrder() {
+        $('.custom-file-input').siblings(".custom-file-label").addClass("selected").html("Upload template file here...");
+        $("#jqGridImport").jqGrid("clearGridData");
+        $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+        $('#importOrderError').html("");
+        $('#errorOrder').html("");
+        $('#errorDetails').html("");
+        $('a[href="#Order"]').click();
+
+        $('#replace').prop("checked",false);
+
+        $('#importOrderModal').modal('show');
+    }
+
+    $(function () {
+        $grid = $("#jqGridImport").jqGrid({
+            url: '@Url.Action("ImportJson", "Shipping")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Order",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 100, fixed: true },
+                { label: 'Delivery Number', name: 'DONumber', align: 'left', fixed: true, width: 150 },
+                { label: 'Date', name: 'DODate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Customer', name: 'CustomerId', align: 'center', fixed: true, width: 70 },
+                { label: 'Ref Number', name: 'RefNumber', align: 'center', fixed: true, width: 80 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 100 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 45 },
+                { label: 'Qty', name: 'Qty', width: 60, align: 'right', formatter: "number" },
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerImport',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 167,
+            width: 'auto',
+            rowNum: 9999999,
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: false,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+        //$('#jqGridImport').jqGrid('navGrid', '#jqGridPagerImport', { search: false, edit: false, add: false, del: false });
+        //$("#jqGridImport").jqGrid('setFrozenColumns');
+
+    });
+
+    function reloadGridImport() {
+
+        $("#jqGridImport").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+    };
+
+    function statusImportFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            var btn = "<div class='table-link'>";
+            btn += "<a href='#' class='btn btn-sm btn-danger' title='Delete item' onclick=\"deleteRow('" + options.rowId +"')\"><span class='fa fa-trash-o text-white'></span></a>"
+            btn += "</div>";
+            return btn;
+        }
+    }
+
+    function loadExcel() {
+        $('#importOrderError').html("");
+        $('#errorOrder').html("");
+        $('#errorDetails').html("");
+
+        var replace = $('#replace').prop("checked");
+
+        var gridArrayOrder = [];
+
+        $("#jqGridImport")[0].grid.beginReq();
+
+        var fileUpload = $("#file-upload").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+        fileData.append('formaction', 'Order-validation');
+
+        $.ajax({
+            url: '@Url.Action("ImportJson", "Shipping")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importOrderError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedOrder = 0;
+
+                if (response.ImportDeliveryOrder.length > 0 ) {
+
+                    $.each(response.ImportDeliveryOrder, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedOrder += 1;
+                        }
+
+                        gridArrayOrder.push(
+                            {
+                                Status: item.Status,
+                                DONumber: item.DONumber,
+                                DODate: item.DODate,
+                                CustomerId: item.CustomerId,
+                                RefNumber: item.RefNumber,
+                                PartNumber: item.PartNumber,
+                                UniqueNumber: item.UniqueNumber,
+                                Qty: item.Qty,
+                                Result: item.Result
+                            });
+                    });
+
+
+                    if (failed > 0) {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixing your excel template data with error!</small></div>'
+                        $('#importOrderError').html(errMsg);
+                        $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+
+                        //if (replace == false) {
+                        //    $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+                        //    $('#btnClearDuplicate').removeAttr('disabled');
+                        //} else {
+                        //    $('#btnSubmitImportOrder').removeAttr('disabled');
+                        //}
+                        //if (failedOrder > 0) {
+                        //    var errOrder = '<span class="badge badge-pill badge-danger">' + failedOrder + '</span>'
+                        //    $('#errorOrder').html(errOrder);
+                        //}
+                    } else {
+                        $('#btnSubmitImportOrder').removeAttr('disabled');
+                    }
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importOrderError').html(errMsg);
+                    $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+                    $("#jqGridImport")[0].grid.endReq();
+               }
+
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArrayOrder });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importOrderError').html(errMsg);
+                $("#jqGridImport")[0].grid.endReq();
+            }
+        });
+    }
+
+    function submitImport() {
+
+        var replace = $('#replace').prop("checked");
+        $('#importOrderError').html("");
+        $('#errorOrder').html("");
+        $('#errorDetails').html("");
+
+        $('#btnSubmitImportOrder').blur();
+        var gridArrayOrder = [];
+
+
+        //var fileUpload = $("#file-upload").get(0);
+        //var files = fileUpload.files;
+
+        //var fileData = new FormData();
+        //for (var i = 0; i < files.length; i++) {
+        //    fileData.append(files[i].name, files[i]);
+        //}
+
+        //fileData.append('replace', replace);
+        //fileData.append('formaction', 'Order');
+
+        var formData = new FormData();
+
+        var jsonData = {
+            deliveryOrder: $("#jqGridImport").jqGrid('getGridParam', 'data'),
+            replace: replace,
+            formAction: 'Order'
+        };
+
+        $.each(jsonData.deliveryOrder, function (i, data) {
+            data.DODate = moment(new Date(parseInt(data.DODate.substr(6)))).format("YYYY-MM-DD");
+        });
+
+        formData.append("jsonData", JSON.stringify(jsonData));
+
+        $("#jqGridImport")[0].grid.beginReq();
+
+        $.ajax({
+            url: '@Url.Action("crudImportJson", "Shipping")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: formData,
+            success: function (response) {
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importOrderError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedOrder = 0;
+                var icount = 0;
+
+                if (response.ImportDeliveryOrder.length > 0) {
+                    if (response.ImportDeliveryOrder.length > 0) {
+                        $.each(response.ImportDeliveryOrder, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedOrder += 1;
+                            }
+
+                            gridArrayOrder.push(
+                                {
+                                    Status: item.Status,
+                                    DONumber: item.DONumber,
+                                    DODate: item.DODate,
+                                    CustomerId: item.CustomerId,
+                                    RefNumber: item.RefNumber,
+                                    PartNumber: item.PartNumber,
+                                    UniqueNumber: item.UniqueNumber,
+                                    Qty: item.Qty,
+                                    Result: item.Result
+                                });
+                        });
+
+                        if (failed > 0) {
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixed first your excel data with error!</small></div>'
+                            $('#importOrderError').html(errMsg);
+                            $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+                            if (failedOrder > 0) {
+                                var errOrder = '<span class="badge badge-pill badge-danger">' + failedOrder + '</span>'
+                                $('#errorOrder').html(errOrder);
+                            }
+                        }
+                    } else {
+                        $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+                    }
+
+                    showToast("Success", "Import " + icount + " records has been processed succesfully");
+                    reloadGridList();
+
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importOrderError').html(errMsg);
+                    $("#btnSubmitImportOrder").attr({ 'disabled': "disabled" });
+                    $("#jqGridImport")[0].grid.endReq();
+                };
+
+                // set the new data
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArrayOrder });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importOrderError').html(errMsg);
+                $("#jqGridImport")[0].grid.endReq();
+           }
+        });
+    }
+
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $('#replace').change(function () {
+        if (this.checked)
+            $('#replace').val(true);
+        else
+            $('#replace').val(false);
+    });
+
+    async function checkDuplicate() {
+        var grid = $('#jqGridImport');
+        var rows = grid.jqGrid('getDataIDs');
+        var countremoved = 0;
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+            var status = rowData.Result;
+            if (status != "") {
+                countremoved += 1;
+            }
+        }
+
+        if (countremoved != 0) {
+            var msg = '<div class="alert alert-danger mt-2" role="alert"><small class="text-danger"><b> Removed Errors!</b><br/>' + countremoved + ' errors data already exist.</small></div>'
+            $('#importOrderError').html(msg);
+        } else {
+            $('#btnSubmitImportOrder').removeAttr('disabled');
+            var msg = '<div class="alert alert-success mt-2" role="alert"><small class="text-success"><b> Clear Errors!</b><br/>All errors data already removed. You can submit now.</small></div>'
+            $('#importOrderError').html(msg);
+        }
+
+    }
+
+    function deleteRow(id) {
+        $('#jqGridImport').jqGrid('delRowData', id);
+        reloadGridImport();
+        checkDuplicate();
+    }
+</script>

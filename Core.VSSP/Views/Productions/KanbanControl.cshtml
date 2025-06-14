@@ -1,0 +1,298 @@
+﻿
+<section class="app-section" id="Productions-KanbanControl">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridKanbanControl()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" onclick="OutStorageKanbanControl()"><i class="fa fa-tag"></i> Set Kanban Out Storage</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridKanbanControl()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("KanbanControlPartial/Crud")
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData  = $('#searchFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("KanbanControlListJson", "Productions")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+            },
+            colModel: [
+                { label: 'Print', name: 'Document', align: 'center', fixed: true, width: 60, formatter: documentFormatter },
+                { label: 'LineId', name: 'LineId', align: 'center', fixed: true, width: 60 },
+                { label: 'LineName', name: 'LineName', align: 'left', fixed: true, width: 80 },
+                { label: 'Customer', name: 'CustomerId', align: 'center', fixed: true, width: 60 },
+                { label: 'Customer Name', name: 'CustomerName', align: 'left', fixed: true, width: 140 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 60 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 110 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'Qty / Kanban', name: 'UnitQty', align: 'center', formatter: 'number', fixed: true, width: 80 },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 60 },
+                { label: 'Total Kanban', name: 'TotalKanban', align: 'center', fixed: true, width: 80, formatter: totalFormatter },
+                { label: 'Actived', name: 'ActivedKanban', align: 'center', fixed: true, width: 60, formatter: activedFormatter },
+                { label: 'In Storage', name: 'StorageKanban', align: 'center', fixed: true, width: 70, formatter: storageFormatter },
+                { label: 'Suspend', name: 'SuspendKanban', align: 'center', fixed: true, width: 60, formatter: suspendFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showKanbanList, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showKanbanList(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+        var Grid = $('#jqGridMain'),
+            selectedRowId = parentRowKey,
+            CustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+            PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber');
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("KanbanProductionListJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                customerid: CustomerId,
+                partnumber: PartNumber,
+            },
+            page: 1,
+            colModel: [
+                { label: 'Print', name: 'Document', align: 'center', fixed: true, width: 60, formatter: documentFormatter },
+                { label: 'Actived', name: 'Actived', align: 'center', width: 60, formatter: statusFormatter },
+                { label: 'In Storage', name: 'Storage', align: 'center', width: 60, formatter: statusFormatter },
+                { label: 'Kanban Key', name: 'KanbanKey', align: 'center', width: 80 },
+                { label: 'Kanban Run', name: 'KanbanRun', align: 'center', width: 60 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', width: 60 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', width: 100 },
+                { label: 'Part Name', name: 'PartName', align: 'left', width: 250 },
+                { label: 'Qty / KBN', name: 'UnitQty', align: 'center', width: 60 },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', width: 50 },
+            ],
+            loadonce: true,
+            rowNum: 9999,
+            width: 'auto',
+            height: 150,
+            caption: 'Kanban Card',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function totalFormatter(cellvalue, options, rowObject) {
+        return "<span class='badge badge-primary pl-1 pr-1'>" + cellvalue + "</span>"
+    }
+
+    function activedFormatter(cellvalue, options, rowObject) {
+        return "<span class='badge badge-success pl-1 pr-1'>" + cellvalue + "</span>"
+    }
+
+    function storageFormatter(cellvalue, options, rowObject) {
+        return "<span class='badge badge-warning pl-1 pr-1'>" + cellvalue + "</span>"
+    }
+
+    function suspendFormatter(cellvalue, options, rowObject) {
+        return "<span class='badge badge-danger pl-1 pr-1'>" + cellvalue + "</span>"
+    }
+
+    function documentFormatter(cellvalue, options, rowObject) {
+
+        var cansee = '@ViewBag.canSee';
+        if (rowObject.Actived === false) {
+            cansee = 'disabled';
+        }
+        var kanbankey = "";
+        if (rowObject.KanbanKey) {
+            kanbankey = rowObject.KanbanKey;
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-primary text-white " + cansee + "' onclick=\"previewKanbanCard('kanban','" + rowObject.CustomerId + "','" + rowObject.PartNumber + "','" + kanbankey + "')\" datatoogle='tooltip' title='Print Kanban Card [ " + rowObject.CustomerId + " : " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-tag'></span> ";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-success text-white " + cansee + "' onclick=\"previewKanbanCard('qrcode','" + rowObject.CustomerId + "','" + rowObject.PartNumber + "','" + kanbankey + "')\" datatoogle='tooltip' title='Print Kanban QR-Code [ " + rowObject.CustomerId + " : " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-qrcode'></span> ";
+        btn += "</a>";
+        btn += "</div>";
+
+        return btn;
+    }
+
+    function previewKanbanCard(action, CustomerId, PartNumber, KanbanKey) {
+        switch (action) {
+            case "kanban":
+                var url = "@Url.Action("KanbanProduction", "Reports", new { CustomerId = "_CustomerId_", PartNumber = "_PartNumber_", KanbanKey = "_KanbanKey_", formAction = "kanbancard" })";
+                url = url.replace('_CustomerId_', encodeURIComponent(CustomerId)).replace('_PartNumber_', encodeURIComponent(PartNumber)).replace('_KanbanKey_', encodeURIComponent(KanbanKey));
+                break;
+            case "qrcode":
+                var url = "@Url.Action("KanbanProduction", "Reports", new { CustomerId = "_CustomerId_", PartNumber = "_PartNumber_", KanbanKey = "_KanbanKey_", formAction = "kanbanqrcode" })";
+                url = url.replace('_CustomerId_', encodeURIComponent(CustomerId)).replace('_PartNumber_', encodeURIComponent(PartNumber)).replace('_KanbanKey_', encodeURIComponent(KanbanKey));
+                break;
+        }
+
+        url = url.replaceAll("amp;", "");
+        window.open(url, "_blank");
+
+    }
+
+    function reloadGridKanbanControl() {
+        var filterData = $('#searchFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.KanbanKey + " has been saved succesfully");
+                reloadGridKanbanControl();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.KanbanKey + " has been saved succesfully");
+                reloadGridKanbanControl();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.KanbanKey + " has been removed succesfully");
+                return reloadGridKanbanControl();
+                break;
+            case "canceled":
+                showToast("Failed", "Cancel order " + data.KanbanKey + " has been canceled succesfully");
+                return reloadGridKanbanControl();
+                break;
+            case "closed":
+                showToast("success", "Closing order " + data.KanbanKey + " has been closed succesfully");
+                return reloadGridKanbanControl();
+                break;
+            case "outstorage":
+                showToast("Success", "Update " + data.length + " kanban set out storage has been saved succesfully");
+                reloadGridKanbanControl();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "CustomerName")
+        $("#jqGridMain").jqGrid(showhideCol, "LineName")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

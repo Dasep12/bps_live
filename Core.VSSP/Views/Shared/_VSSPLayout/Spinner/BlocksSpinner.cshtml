@@ -1,0 +1,73 @@
+﻿<style>
+    .bg-layer {
+        background: url(../_VSSPAssets/Images/Background/dotted.png);
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        /*z-index: 1;*/
+        opacity: 0.8;
+    }
+
+    #loadblockspinner{
+        z-index: 999999 !important;
+    }
+</style>
+
+<div class="modal" id="loadblockspinner" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog-centered modal-spinner" role="document">
+        <div class="modal-content border-0 rounded-0 bg-dark transparent" style="opacity:0.7;">
+            <div class="modal-body transparent">
+                <div class="bg-layer"></div>
+                <div class="row">
+                    <div class="col-md-12 mt-1 text-center">
+                        <h5 class="text-primary text-shadow"><span class='fa fa-spinner fa-pulse'></span> Please wait while processing...</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var idListener = new Array(".btn-spin");
+
+    for (var i in idListener) {
+        //alert(idListener[i]);
+        $(idListener[i]).on("click", function (e) {
+            loadblockspinner();
+        });
+    }
+
+    //$(document).ready(function () {
+    //    loadblockspinner();
+    //})
+
+    function loadblockspinner() {
+        //var scrWidth = 0;
+        //scrWidth = document.documentElement.clientWidth;
+        //$("#loadblockspinner").modal({
+        //    backdrop: "static", //remove ability to close modal with click
+        //    keyboard: false, //remove option to close with keyboard
+        //    show: true //Display loader!
+        //});
+        $("#loadblockspinner").modal("show");
+
+    }
+
+    $(window).on("unload", function () {
+        unloadblockspinner();
+    });
+
+    $(document).ajaxStop(function () {
+        unloadblockspinner();
+    });
+
+    function unloadblockspinner() {
+        setTimeout(function () {
+            $("#loadblockspinner").modal("hide");
+        }, 500)
+    }
+
+</script>

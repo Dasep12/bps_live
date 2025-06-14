@@ -1,0 +1,841 @@
+﻿<style>
+    .maximize .modal-body{
+        min-height: 100vh;
+    }
+    .card-progress{
+        position: absolute;
+        width:96%;
+        bottom:0;
+        /*margin-right:80px;*/
+    }
+    @@media only screen and (max-width: 600px) {
+        .modal-title {
+            font-size:15px !important;
+            padding-top:6px;
+        }
+        h1{
+            font-size:18px !important;
+        }
+        h3{
+            font-size:15px !important;
+        }
+        h5{
+            font-size:13px !important
+        }
+    }
+</style>
+<div class="modal animated fadeIn" id="crudLineProcessListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <form id="crudLineProcessForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h4 class="modal-title"><span class="fa fa-qrcode"></span> crud @ViewBag.Title</h4>
+                    <div class="ml-auto mr-0">
+                        <button id="btn-maximize" type="button" class="btn btn-link text-secondary text-sm-center" title="Full Screen" onclick="screenEvent()">
+                            <span class="icon-size-fullscreen"></span>
+                        </button>
+                        <button id="btn-close" type="button" class="btn btn-link text-secondary" data-dismiss="modal" aria-label="Close" title="Close">
+                            <span aria-hidden="true" class="fa fa-times"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-body bg-dark">
+
+                    <div class="row mb-1">
+                        <div class="col-md-12 mb-1">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 pb-1 d-md-down-none">
+                                    <div class="card" style="min-height: 50vh">
+                                        <div class="card-body bg-dark">
+
+                                            <h6 class="text-secondary font-weight-bold">PERSON IN CHARGE</h6>
+                                            <br />
+                                            <h5 class="text-white font-weight-bold">@ViewBag.UserName</h5>
+
+                                            @if (@Session["Images"] == null)
+                                            {
+                                                <img src="~/_VSSPAssets/User/user.png" alt="@Session["UserName"]" class="img-avatar" />
+                                            }
+                                            else
+                                            {
+                                                var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+                                                var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                                                <img src="@imgSrc" alt="@Session["UserName"]" class="img-avatar" />
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-10 col-sm-10 pb-1 d-md-down-none">
+                                    <div class="card" style="min-height: 93.7%">
+                                        <div class="card-body bg-dark">
+
+                                            <h6 class="text-secondary font-weight-bold">LINE STATUS</h6>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div id="scan-status" hidden>
+                                                        <h3 class="text-danger font-weight-bold">NOT READY SCAN</h3>
+                                                        <h6 class="text-warning font-weight-bold">PLEASE CLICK START SCAN</h6>
+                                                    </div>
+                                                    <div id="scan-result-lg" hidden>
+                                                        <h3 class="font-weight-bold">SCAN RESULT</h3>
+                                                        <h6 class="text-warning font-weight-bold"></h6>
+                                                    </div>
+                                                    @*<div id="success-result" hidden>
+                                                        <h3 class="text-success font-weight-bold">SCAN SUCCESSED</h3>
+                                                    </div>
+                                                    <div id="failed-result" hidden>
+                                                        <h3 class="text-danger font-weight-bold">SCAN FAILED</h3>
+                                                        <h6 class="text-warning font-weight-bold">Please check your kanban card!</h6>
+                                                    </div>*@
+                                                    <div id="crudLineProcessListError"></div>
+
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group mb-0 pb-0 text-right">
+                                                        <h3 class="text-primary font-weight-bold">PRODUCTION TIME</h3>
+                                                    </div>
+                                                    <div class="form-group text-right">
+                                                        <h4 id="crud-ProductionDate" class="text-info font-weight-bold">00-000-0000</h4>
+                                                    </div>
+                                                    <div class="form-group text-right">
+                                                        <h1 id="crud-ProductionTime" class="text-success font-weight-bold">00:00:00</h1>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="card bg-dark border-0 card-progress">
+                                                <div class="row">
+                                                    <div class="w-50 pl-3">
+                                                        <table>
+                                                            <tr>
+                                                                <td><h6 class="text-secondary font-weight-bold">ACTUAL QTY</h6></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td><h3 id="crud-ProductionSumActual" class="text-secondary font-weight-bold">0</h3></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                    @*<div class="w-50"></div>*@
+                                                    <div class="w-50 pr-3">
+                                                        <table class="pull-right">
+                                                            <tr>
+                                                                <td class="text-right"><h6 class="text-secondary font-weight-bold">DAILY LINE TARGET QTY [ALL PARTS]</h6></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="text-right"><h3 id="crud-ProductionSumTarget" class="text-secondary font-weight-bold">0</h3></td>
+                                                            </tr>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="progress">
+                                                    <div id="crud-ProductionSumPercent" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-12 pb-1 ">
+
+                                    <div class="card mt-auto mb-0">
+                                        <div class="card-body bg-dark">
+                                            <h6 class="text-secondary font-weight-bold">LATEST OUTPUT</h6>
+                                            <div class="d-lg-none">
+                                                <div class="form-group mb-0 pb-0">
+                                                    <h6 class="text-primary font-weight-bold">PRODUCTION TIME</h6>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h6 id="crud-ProductionDateMobile" class="text-info font-weight-bold">00-000-0000</h6>
+                                                </div>
+                                                <div class="form-group">
+                                                    <h5 id="crud-ProductionTimeMobile" class="text-success font-weight-bold">00:00:00</h5>
+                                                </div>
+                                                <hr />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12 p-0">
+                                                        <div class="row p-0">
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-secondary font-weight-bold">SUMMARY</h6>
+                                                                <h3 id="crud-ProductionSumKanban" class="text-white font-weight-bold">0 <small>Kanban</small></h3>
+                                                                <h3 id="crud-ProductionSumQty" class="text-white font-weight-bold">0 <small>PCS</small></h3>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h6 class="text-secondary font-weight-bold mt-0 pt-0 mb-0">
+                                                                    N/G PART
+                                                                    <button type="button" class="btn btn-sm btn-link text-danger mt-0 pt-0 mb-0" title="Add N/G part" onclick="crudLineNG('Create','*')"><i class="fa fa-plus"></i></button>
+                                                                </h6>
+                                                                <h3 id="crud-ProductionSumNG" class="text-white font-weight-bold">0 <small>Unit</small></h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="form-group">
+                                                        <input type="text" id="kanban-qrcode" class="form-control text-center" placeholder="Scan here..." />
+                                                        <label id="scan-result" class="control-label font-weight-bold text-success m-0 d-lg-none">SUCCESS</label>
+                                                        <label id="scan-ready" class="control-label font-weight-bold text-success m-0">READY</label>
+                                                        <button type="button" id="btn-scan" hidden class="btn btn-block btn-outline-success"><i class="fa fa-qrcode"></i> Start Scan</button>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-7">
+                                                    <h1 id="crud-ProductionCustomerId" class="text-success font-weight-bold">N/A</h1>
+                                                    <h5 id="crud-ProductionPartName" class="text-white font-weight-bold"></h5>
+                                                    <h3 id="crud-ProductionPartNumber" class="text-secondary font-weight-bold"> </h3>
+                                                    <h3 id="crud-ProductionQty" class="text-warning font-weight-bold"></h3>
+                                                </div>
+
+                                                <div class="col-md-2 text-center">
+                                                    <img id="crud-ProductionQrCode" src="~/_VSSPAssets/Images/empty.png" width="130" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <input hidden type="text" id="LineProcessAction" />
+
+                    </div>
+                    <div class="modal-footer bg-dark" hidden>
+                        <button id="btn-crudLineProcessList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>
+<div class="modal animated fadeIn" id="crudProdInitializeListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudProdInitializeForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-cog"></span> Production Initialize</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row mb-2">
+                        <label for="crud-InitializeProductionDate" class="control-label small">Production Date</label>
+                        <input type="date" class="form-control form-control-sm datepicker" id="crud-InitializeProductionDate" name="InitializeProductionDate" value="@ViewBag.DateTime" readonly required>
+                    </div>
+                    @*<div class="form-row mb-2" hidden>
+                        <label for="crud-InitializeLineId" class="control-label small">Line Id</label>
+                        <input type="text" class="form-control form-control-sm" id="crud-InitializeLineId" name="InitializeLineId" value="@ViewBag.AreaId" readonly required>
+                    </div>
+                    <div class="form-row mb-2">
+                        <label for="crud-InitializeLineName" class="control-label small">Line</label>
+                        <input type="text" class="form-control form-control-sm" id="crud-InitializeLineName" name="InitializeLineName" value="@ViewBag.AreaId" readonly>
+                    </div>*@
+                    <div class="form-row mb-2">
+                        <label for="crud-InitializeLineId" class="control-label small">Line</label>
+                        <select class="custom-select custom-select-sm bg-white" id="crud-InitializeLineId" name="LineId" required></select>
+                    </div>
+                    <div class="form-row mb-2">
+                        <label for="crud-InitializeShiftId" class="control-label small">Shift</label>
+                        <select class="custom-select custom-select-sm" id="crud-InitializeShiftId" name="InitializeShiftId" value="" required></select>
+                    </div>
+                    <div class="form-row mb-2">
+                        <div id="crudProdInitializeListError"></div>
+                        <input type="hidden" id="ProdInitializeAction" />
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudProdInitializeList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var proddate = "";
+    var shiftid = "";
+    var kanbanlineid = "";
+
+    function crudLineProcess(action, id, sumdata = '') {
+
+        document.getElementById("crudLineProcessForm").reset();
+        $('#crudLineProcessForm').removeClass('was-validated');
+        $('#crudLineProcessListError').html("");
+        $("#btn-crudLineProcessList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-ProductionQrCode").attr("src","../_VSSPAssets/Images/empty.png")
+        $("#crudLineProcessForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#LineProcessAction").val(action);
+
+        if (id != "*") {
+            var Grid = $('#' + sumdata),
+                selectedRowId = id,
+                ProductionNumber = Grid.jqGrid('getCell', selectedRowId, 'ProductionNumber'),
+                ProductionDate = Grid.jqGrid('getCell', selectedRowId, 'ProductionDate'),
+                LineId = Grid.jqGrid('getCell', selectedRowId, 'LineId'),
+                KanbanKey = Grid.jqGrid('getCell', selectedRowId, 'KanbanKey');
+
+            ProductionDate = moment(new Date(ProductionDate)).format("YYYY-MM-DD");
+
+        }
+
+        switch (action) {
+            case "Initialize":
+
+                document.getElementById("crudProdInitializeForm").reset();
+                $('#crudProdInitializeForm').removeClass('was-validated');
+                $('#crudProdInitializeListError').html("");
+
+                var pdate = new Date();
+                var ptime = pdate.getHours() + ":" + pdate.getMinutes();
+                if (pdate.getHours() >= 0 && pdate.getHours() < 7) {
+                    pdate.setDate(pdate.getDate() - 1)
+                }
+
+                proddate = pdate;
+                proddate = moment(proddate).format('YYYY-MM-DD');
+                var lineid = '@ViewBag.AreaId';
+
+                if (lineid === '') {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Not Valid User!</b><br/>Your account not register for production process.</small></div>'
+                    $('#crudProdInitializeListError').html(errMsg);
+                    $("#btn-crudProdInitializeList").attr("disabled", true);
+                } else {
+                    lineid = lineid.toLowerCase() == "all" ? "" : lineid;
+                    $("#btn-crudProdInitializeList").removeAttr("disabled");
+                }
+
+                $("#crud-InitializeProductionDate").val(proddate);
+                $("#crud-InitializeLineId").val(lineid);
+                //$("#crud-InitializeLineName").val("@ViewBag.AreaName");
+                $("#crud-InitializeShiftId").val("");
+
+                loadComboShift();
+
+                $('#crudProdInitializeListModal').modal('show');
+                $("#crud-InitializeShiftId").focus();
+                break;
+            case "Create":
+
+                //console.log(sumdata);
+                proddate = new Date(parseInt(sumdata[0].ProductionDate.substr(6)))
+                proddate = moment(proddate).format('DD-MMM-YYYY').toUpperCase();
+                let linename = name = $("#crud-InitializeLineId option:selected").text();
+                var prodtime = "";
+
+                setInterval(function () {
+                    prodtime = (new Date);
+                    prodtime = moment(prodtime).format('HH:mm:ss');
+
+                    $('#crud-ProductionTime').text(prodtime);
+                    $('#crud-ProductionTimeMobile').text(prodtime);
+
+                }, 1000);
+
+                $("#scan-result").text("");
+                $("#crud-ProductionDate").text(proddate);
+                $("#crud-ProductionDateMobile").text(proddate);
+                //$("#crud-ProductionTime").text();
+                $("#crud-ProductionSumActual").text(parseFloat(sumdata[0].DailyShiftActual).toLocaleString());
+                $("#crud-ProductionSumTarget").text(parseFloat(sumdata[0].DailyShiftTarget).toLocaleString());
+                $("#crud-ProductionSumPercent").attr("aria-valuenow", sumdata[0].DailyShiftPercent).attr("style", "width: " + sumdata[0].DailyShiftPercent + "%");
+
+                GetProdLatestSummary();
+
+                $("#crud-LineProcessActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudLineProcessListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudLineProcessListModal .modal-title").html('<span class="fa fa-qrcode"></span> LINE ' + linename + ' [SHIFT : ' + shiftid + ']');
+                $('#crudLineProcessListModal').modal('show');
+                $("#kanban-qrcode").focus();
+                if (document.fullscreenElement) {
+                    /* nothing */
+                } else {
+                    $("#btn-maximize").click();
+                }
+                break;
+            case "Update":
+                $("#btn-crudGroupLineProcess").attr("disabled", true);
+                $("#crud-LineProcessGroupId").attr("disabled", true);
+                $("#crud-LineProcessId").attr("readonly",true);
+                $("#crudLineProcessListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudLineProcessListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudLineProcessListModal').modal('show');
+                $("#crud-LineProcessName").focus();
+                break;
+            case "Delete":
+                $("#deleteKanbanForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+
+                $("#ProductionNumber").val(ProductionNumber);
+                $("#ProductionDate").val(ProductionDate);
+                $("#LineId").val(LineId);
+                $("#KanbanKey").val(KanbanKey);
+
+                $("#btn-submitDelete").html("<span class='fa fa-trash'></span> Delete");
+                $("#deleteProdKanbanModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#deleteProdKanbanModal .modal-title").html('<span class="fa fa-trash"></span> Delete Production Kanban');
+                $('#deleteProdKanbanModal').modal('show');
+                break;
+            case "DeleteNG":
+                $("#deleteKanbanForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+
+                $("#ProductionNGNumber").val(ProductionNumber);
+                $("#ProductionNGDate").val(ProductionDate);
+                $("#LineIdNG").val(LineId);
+
+                $("#btn-submitDeleteNG").html("<span class='fa fa-trash'></span> Delete");
+                $("#deleteProdPartNGModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#deleteProdPartNGModal .modal-title").html('<span class="fa fa-trash"></span> Delete NG Part');
+                $('#deleteProdPartNGModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-LineProcessId').change(function () {
+        $('#crudLineProcessListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudProdInitializeForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var ProdDate    = $("#crud-InitializeProductionDate").val(),
+                        LineId      = $("#crud-InitializeLineId").val(),
+                        ShiftId     = $("#crud-InitializeShiftId").val();
+
+                    shiftid = ShiftId;
+                    kanbanlineid = LineId;
+
+                    var data = GetProdDailySummary(LineId, ShiftId, ProdDate, 'crudProdInitializeListError');
+                    if (data.length != 0) {
+                        $('#crudProdInitializeListModal').modal('hide');
+                        crudLineProcess('Create', '*', data);
+                    } else {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> No Production!</b><br/>No Schedule production for today. Contact your administrator!</small></div>'
+                        $('#crudProdInitializeListError').html(errMsg);
+                        //$("#btn-crudProdInitializeList").attr("disabled", true);
+                    }
+
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudLineProcessForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var shiftId = shiftid;
+                    var lineId = kanbanlineid;
+                    var prodDate = proddate;
+                    var userId = "@ViewBag.UserId";
+                    var kanbanQrcode = $("#kanban-qrcode").val();
+
+                    $.ajax({
+                        url: '@Url.Action("kanbanReader", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            ShiftId: shiftId,
+                            LineId: lineId,
+                            ProdDate: prodDate,
+                            KanbanData: kanbanQrcode,
+                            UserId: userId
+                        },
+                        success: function (data) {
+                            //var successObj = $("#success-result");
+                            //var failedObj = $("#failed-result");
+                            var scanResultObj = $("#scan-result-lg");
+                            var scanResultTitle = $("#scan-result-lg h3");
+                            var scanResultMsg = $("#scan-result-lg h6");
+                            var failedMsg = $("#failed-result h6");
+
+                            scanResultObj.removeAttr('hidden');
+
+                            if (data.length != 0) {
+
+                                if (data.KanbanStatus == 'Success') {
+                                    $("#kanban-qrcode").attr('disabled', true);
+                                    $("#scan-ready").removeClass("text-success").addClass("text-warning").text("SCAN WAIT");
+
+                                    //failedObj.attr('hidden', true);
+                                    scanResultTitle.text("SUCCESS").addClass('text-success').removeClass('text-danger');
+                                    scanResultMsg.text("");
+                                    scanResultObj.fadeIn(500).fadeOut(3000);
+                                    $("#scan-result").addClass("text-success").removeClass("text-danger small").text("SUCCESS").fadeIn(500).fadeOut(3000);
+
+                                    setTimeout(function () {
+                                        $("#kanban-qrcode").removeAttr('disabled').val('');
+                                        $("#scan-ready").addClass("text-success").removeClass("text-warning").text("READY");
+
+                                    }, 3000);
+
+                                    var data = GetProdDailySummary(lineId, shiftId, prodDate, 'crudLineProcessListError');
+                                    if (data.length != 0) {
+                                        crudLineProcess('Create', '*', data);
+                                    } else {
+                                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Not Production!</b><br/>No Schedule production for today. Contact your administrator!</small></div>'
+                                        $('#crudLineProcessListError').html(errMsg);
+                                    }
+
+                                } else {
+                                    $("#kanban-qrcode").attr('disabled', true);
+                                    $("#scan-ready").removeClass("text-success").addClass("text-warning").text("SCAN WAIT");
+                                    $("#scan-result").removeClass("text-success").addClass("text-danger small").text(data.ErrMessages).fadeIn(500).fadeOut(5000);
+
+                                    failedMsg.text(data.ErrMessages);
+                                    scanResultTitle.text(data.ErrMessages).removeClass('text-success').addClass('text-danger');
+                                    scanResultMsg.text("Please check your kanban card!");
+                                    scanResultObj.fadeIn(500).fadeOut(3000);
+                                    //failedObj.removeAttr('hidden').fadeIn(500).fadeOut(5000);
+                                    setTimeout(function () {
+                                        $("#kanban-qrcode").removeAttr('disabled').val('');
+                                        $("#scan-ready").addClass("text-success").removeClass("text-warning").text("READY");
+                                    }, 5000);
+                                }
+
+                            } else {
+                                $("#kanban-qrcode").attr('disabled', true);
+                                $("#scan-ready").removeClass("text-success").addClass("text-warning").text("SCAN WAIT");
+                                $("#scan-result").removeClass("text-success").addClass("text-danger small").text('KANBAN INVALID').fadeIn(500).fadeOut(5000);
+
+                                failedMsg.text('KANBAN INVALID');
+                                scanResultTitle.text('SCAN FAILED').removeClass('text-success').addClass('text-danger');
+                                scanResultMsg.text("Please check your kanban card!");
+                                scanResultObj.fadeIn(500).fadeOut(3000);
+                                setTimeout(function () {
+                                    $("#kanban-qrcode").removeAttr('disabled').val('');
+                                    $("#scan-ready").addClass("text-success").removeClass("text-warning").text("READY");
+                                }, 5000);
+                            }
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudLineProcessListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    $("#kanban-qrcode").on("blur", function () {
+        $(this).attr("hidden", true);
+        $("#scan-status").removeAttr("hidden");
+        $("#scan-ready").attr("hidden",true);
+        $("#btn-scan").removeAttr("hidden").focus();
+    });
+    $("#kanban-qrcode").on("focus", function () {
+        $("#scan-ready").removeAttr("hidden").addClass("text-success").removeClass("text-warning").text("READY");
+    })
+    $("#btn-scan").on("click", function () {
+        $(this).attr("hidden", true);
+        $("#scan-status").attr("hidden", true);
+        $("#kanban-qrcode").removeAttr("hidden").focus();
+    });
+
+    var fs_status = false;
+    var elem = document.getElementById("crudLineProcessForm");
+
+    function screenEvent() {
+        if (fs_status === false) {
+            openFullscreen();
+        } else {
+            closeFullscreen();
+        }
+        $("#btn-scan").click();
+    }
+
+    /* View Full Screen */
+    function openFullscreen() {
+
+        toggleFullScreen();
+
+    }
+
+    /* Close fullscreen */
+    function closeFullscreen() {
+
+        toggleFullScreen();
+
+    }
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    document.addEventListener('fullscreenchange', (event) => {
+        if (document.fullscreenElement) {
+            fs_status = true;
+            var h = $(window).height();
+
+            $("#btn-maximize span").removeClass("icon-size-fullscreen").addClass("icon-size-actual ");
+            $("#btn-close").attr("hidden", true);
+            $("#crudLineProcessListModal .modal-dialog").removeClass("modal-xl").addClass("modal-fs");
+        } else {
+            fs_status = false;
+            $("#btn-maximize span").addClass("icon-size-fullscreen").removeClass("icon-size-actual ")
+            $("#btn-close").removeAttr("hidden");
+            $("#crudLineProcessListModal .modal-dialog").addClass("modal-xl").removeClass("modal-fs");
+        }
+    });
+
+
+    function loadComboShift() {
+
+        var prodDate = $("#crud-InitializeProductionDate").val();
+
+        $.ajax({
+            url: '@Url.Action("GetProductionShift", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                proddate: prodDate
+            },
+            success: function (response) {
+
+                var id = "#crud-InitializeShiftId";
+
+                $(id).html("");
+
+                if (response.length != 0) {
+                    $(id).append(
+                        $('<option></option>').val("").html("*Choose Production Shift")
+                    );
+
+                    $.each(response, function (i, unit) {
+                        $(id).append($('<option></option>').val(unit.ShiftId).html(unit.ShiftName));
+                    });
+                } else {
+                    $(id).append(
+                        $('<option></option>').val("").html("No Production Schedule")
+                    );
+                }
+            }
+        })
+
+    }
+
+    function getStartTime() {
+
+        var starttime = "";
+
+        $.ajax({
+            url: '@Url.Action("GetStartTime", "Productions")',
+            type: 'POST',
+            dataType: "JSON",
+            data: formData,
+            success: function (data) {
+                starttime = data[0].StartTime;
+                setInterval(function () {
+
+                    console.log(startTime);
+
+                    var today = new (Date);
+                    var diff = new Date("Aug 08 2012 9:30") - new Date("Aug 08 2012 5:30");
+                    diff_time = diff / (60 * 60 * 1000);
+                }, 1000);
+
+            },
+            error: function (xhr, desc, err) {
+                alert('Shift not found');
+            }
+        });
+    }
+
+    function GetProdDailySummary(LineId, ShiftId, ProdDate, objError) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("GetProductionDailySummary", "Productions")',
+            type: 'POST',
+            dataType: "JSON",
+            async: false,
+            data: {
+                lineid: LineId,
+                shiftid: ShiftId,
+                proddate: ProdDate,
+            },
+            success: function (data) {
+
+                result = data;
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#' + objError).html(errMsg);
+            }
+        });
+
+        return result;
+    }
+
+    function GetProdLatestSummary() {
+
+        var ProdDate = $("#crud-InitializeProductionDate").val(),
+            LineId = $("#crud-InitializeLineId").val(),
+            ShiftId = $("#crud-InitializeShiftId").val();
+
+        $.ajax({
+            url: '@Url.Action("GetLatestOutput", "Productions")',
+            type: 'POST',
+            dataType: "JSON",
+            data: {
+                lineid: LineId,
+                shiftid: ShiftId,
+                proddate: ProdDate,
+                userid: '@ViewBag.UserId',
+            },
+            success: function (data) {
+
+                if (data.length != 0) {
+
+                    $('#crud-ProductionCustomerId').text(data[0].CustomerId);
+                    $('#crud-ProductionPartName').text(data[0].PartName);
+                    $('#crud-ProductionPartNumber').text(data[0].UniqueNumber + ' ' + data[0].PartNumber);
+                    $('#crud-ProductionQty').text(parseFloat(data[0].Qty_OK).toLocaleString() + ' ' + data[0].UnitLevel2);
+                    $('#crud-ProductionSumKanban').html(parseFloat(data[0].SumKanban).toLocaleString() + '<small> Kanban</small>');
+                    $('#crud-ProductionSumQty').html(parseFloat(data[0].SumQty).toLocaleString() + '<small> ' + data[0].UnitLevel2 + '</small>');
+                    $('#crud-ProductionSumNG').html(parseFloat(data[0].SumNG).toLocaleString() + '<small> ' + data[0].UnitLevel2 + '</small>');
+                    $('#crud-ProductionQrCode').attr("src", data[0].QrcodePath.replace('~/', '../'));
+
+                    ClearKanbanQrImages(data[0].CustomerId, data[0].PartNumber, data[0].KanbanKey)
+
+                } else {
+                    $('#crud-ProductionCustomerId').text("N/A");
+                    $('#crud-ProductionPartName').text('');
+                    $('#crud-ProductionPartNumber').text('');
+                    $('#crud-ProductionQty').text('');
+                    $('#crud-ProductionSumKanban').html('0<small> Kanban</small>');
+                    $('#crud-ProductionSumQty').html('0<small> Unit</small>');
+                    $("#crud-ProductionQrCode").attr("src", "../_VSSPAssets/Images/empty.png")
+                }
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#crudLineProcessListError').html(errMsg);
+            }
+        });
+
+    }
+
+    function ClearKanbanQrImages(custid, partnumber, kanbankey) {
+
+        $.ajax({
+            url: '@Url.Action("ClearKanbanQrImages", "Productions")',
+            type: 'POST',
+            dataType: "JSON",
+            data: {
+                CustomerId: custid,
+                PartNumber: partnumber,
+                KanbanKey: kanbankey,
+            },
+            success: function (data) {
+                //nothing
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#crudLineProcessListError').html(errMsg);
+            }
+        });
+    }
+
+    loadComboLineProd();
+
+    function loadComboLineProd() {
+
+        let id = "#crud-InitializeLineId";
+        let lineid = "@ViewBag.AreaId";
+        lineid = lineid == "ALL" ? "" : lineid;
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter: lineid },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Line")
+                );
+                $.each(response, function (i, line) {
+                    $(id).append(
+                        $('<option></option>').val(line.LineId).html(line.LineName)
+                    );
+                });
+            }
+        });
+    }
+
+    $("#crud-InitializeLineId").change(function () {
+        $('#crudProdInitializeListError').html("");
+        $("#btn-crudProdInitializeList").removeAttr("disabled");
+    })
+
+</script>
+

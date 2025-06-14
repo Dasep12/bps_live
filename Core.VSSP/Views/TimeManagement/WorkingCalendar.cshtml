@@ -1,0 +1,311 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="WorkingCalendar-WorkingCalendar">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="input-group input-group-sm">
+                        <input id="yearpicker" type="text" class="form-control border-secondary" onchange="reloadGridWorkingCalendar()" placeholder="Select years...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridWorkingCalendar()"><i class="fa fa-calendar"></i> Year</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group input-group-sm">
+                        <input id="monthpicker" type="text" class="form-control border-secondary" onchange="reloadGridWorkingCalendar()" placeholder="Select month...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridWorkingCalendar()"><i class="fa fa-calendar"></i> Month</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px!important">
+            <table id="jqGridCalendar"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudWorkingCalendar('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridWorkingCalendar()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("WorkingCalendarPartial/Crud")
+</section>
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        font-weight: normal;
+        font-size: x-large;
+        overflow: hidden;
+        white-space: nowrap;
+        height: 63px;
+        padding: 0 2px 0 2px;
+        border-bottom-width: 1px;
+        border-bottom-color: inherit;
+        border-bottom-style: solid;
+    }
+
+    .ui-jqgrid .ui-jqgrid-labels th.ui-th-column {
+        font-size: large;
+    }
+</style>
+<script>
+
+    $(function () {
+        var yearVal     = $('#yearpicker').val();
+        var monthVal    = $('#monthpicker').val();
+        $grid = $("#jqGridCalendar").jqGrid({
+            url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                year: yearVal,
+                month: monthVal,
+            },
+            colModel: [
+                { label: 'Year', name: 'TheYear', hidden: true, align: 'center' },
+                { label: 'Month', name: 'TheMonth', hidden: true, align: 'center' },
+                { label: 'Mon', name: 'Mon', align: 'center', formatter: actionFormatter },
+                { label: 'Tue', name: 'Tue', align: 'center', formatter: actionFormatter },
+                { label: 'Wed', name: 'Wed', align: 'center', formatter: actionFormatter },
+                { label: 'Thu', name: 'Thu', align: 'center', formatter: actionFormatter },
+                { label: 'Fri', name: 'Fri', align: 'center', formatter: actionFormatter },
+                { label: 'Sat', name: 'Sat', align: 'center', formatter: actionFormatter },
+                { label: 'Sun', name: 'Sun', align: 'center', formatter: actionFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowWorkingCalendar: [20,50,100],
+            viewrecords: true,
+            //rownumbers: true,
+            //rownumWidth: 40,
+            height: '100%',
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            hoverrows: false,
+            beforeSelectRow: function (rowid, e) {
+                return false;
+            },
+            loadComplete: function () {
+                $('[data-toggle="popover"]').popover();
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCalendar').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    $(document).ready(function () {
+        $('[data-toggle="popover"]').popover();
+        if ($("#yearpicker").val() === "") {
+            $("#yearpicker").val(moment(new Date()).format("Y"))
+        }
+        if ($("#monthpicker").val() === "") {
+            $("#monthpicker").val(moment(new Date()).format("MMMM"))
+        }
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var dateVal = moment(new Date(rowObject.TheYear + '/' + rowObject.TheMonth + '/' + cellvalue )).format('Y-M-D');
+        var dateNow = moment(new Date()).format('Y-M-D');
+        var btn = "";
+        if (cellvalue === null) {
+            return "";
+        } else {
+
+            var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(dateVal)));
+
+            if (dateEvt.length != 0) {
+
+                if (dateEvt[0].Holidays === true) {
+
+                    var ddate = moment(new Date(dateVal)).format("DD-MMMM-Y");
+                    //console.log(escape(dateEvt[0].Remarks));
+
+                    btn += "<a id='btn-" + cellvalue + "' onmousedown=\"getContent('" + dateVal + "','" + dateEvt[0].DayName + "','" + escape(dateEvt[0].Remarks) + "',this)\" tabindex='0' class='btn btn-lg btn-danger text-white' role='button' data-toggle='popover' ";
+                    btn += "data-timeout='2000' data-html='true' title='" + ddate + "' data-content='' style='width:60px' >";
+                    btn += cellvalue;
+                    btn += "</a>";
+
+                    return btn
+
+                } else {
+
+                    var ddate = moment(new Date(dateVal)).format("DD-MMMM-Y");
+
+                    btn += "<a id='btn-" + cellvalue + "' onmousedown=\"getContent('" + dateVal + "','" + dateEvt[0].DayName + "','" + escape(dateEvt[0].Remarks) + "',this)\" tabindex='0' class='btn btn-lg btn-success text-white' role='button' data-toggle='popover' ";
+                    btn += "data-timeout='2000' data-html='true' title='" + ddate + "' data-content='' style='width:60px' >";
+                    btn += cellvalue;
+                    btn += "</a>";
+
+                    return btn
+                }
+            }
+            if (dateNow === dateVal) {
+                var ddate = moment(new Date(dateVal)).format("DD-MMMM-Y");
+
+                btn += "<a tabindex='0' class='btn btn-lg btn-secondary' role='button' data-toggle='popover' ";
+                btn += "data-timeout='2000' data-html='true' title='" + ddate + "' data-content='Today' style='width:60px' >";
+                btn += cellvalue;
+                btn += "</a>";
+
+                return btn
+
+            } else {
+
+                if (options.colModel.name === "Sat" || options.colModel.name === "Sun") {
+                    return "<div class='text-danger'>" + cellvalue + "</div>"
+                } else {
+                    return cellvalue;
+                }
+
+            }
+
+        }
+    }
+
+
+    $('[data-toggle="popover"][data-timeout]').on('shown.bs.popover', function () {
+        console.log($(this).data("data-timeout"));
+        this_popover = $(this);
+        setTimeout(function () {
+            this_popover.popover('hide');
+        }, $(this).data("data-timeout"));
+    });
+
+    function getContent(dateval,event,remarks,obj) {
+
+        var dataContent = "<div><b>" + event + " Events :</b><br/> " + unescape(remarks) + "<br/><hr/>";
+        dataContent += "<ul class='nav'><li>";
+        dataContent += "<a href='#' class='btn btn-sm btn-success @ViewBag.canUpdate' onclick=\"crudWorkingCalendar('Update','" + dateval + "')\" ><i class='fa fa-pencil'></i> Edit</a>";
+        dataContent += "<a href='#' class='btn btn-sm btn-danger ml-2 @ViewBag.canDelete' onclick=\"crudWorkingCalendar('Delete','" + dateval + "')\" ><i class='fa fa-trash'></i> Delete</a>";
+        dataContent += "</li></ul></div>";
+
+        $('#'+obj.id).attr('data-content', dataContent).popover();
+
+    }
+
+    function reloadGridWorkingCalendar() {
+        var yearVal = $('#yearpicker').val();
+        var monthVal = $('#monthpicker').val();
+        $("#jqGridCalendar").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                year: yearVal,
+                month: monthVal,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + moment(new Date(parseInt(data.CalendarDate.substr(6)))).format("DD MMM Y") + " has been saved succesfully");
+                return reloadGridWorkingCalendar();
+                break;
+            case "update":
+                showToast("Success", "Update " + moment(new Date(parseInt(data.CalendarDate.substr(6)))).format("DD MMM Y") + " has been saved succesfully");
+                return reloadGridWorkingCalendar();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + new moment(new Date(parseInt(data.CalendarDate.substr(6)))).format("DD MMM Y") + " has been removed succesfully");
+                return reloadGridWorkingCalendar();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridCalendar").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridCalendar', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridCalendar").jqGrid("showCol", "Logo")
+
+    })
+
+    $("#yearpicker").datepicker({
+        format: "yyyy",
+        viewMode: "years",
+        minViewMode: "years"
+    });
+
+    $("#monthpicker").datepicker({
+        format: "MM",
+        viewMode: "months",
+        minViewMode: "months"
+    });
+
+    function getWorkingDay(dateVal) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { calendardate: dateVal },
+            success: function (response) {
+
+                result = response;
+                //$.each(response, function (i, day) {
+                //    result = day.CalendarDate + ',' + day.DayId + ',' + day.Remarks;
+                //});
+            }
+        })
+
+        return result;
+
+    }
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

@@ -1,0 +1,232 @@
+﻿
+@if (ViewBag.ViewType != "Home")
+{
+    <script>
+        $("body").addClass("breadcrumb-fixed");
+    </script>
+
+    <script type="text/javascript" src="~/_VSSPCore/lib/chart.js/dist/loader.js"></script>
+    <script type="text/javascript" src="~/_VSSPCore/lib/jqgrid/js/pdfmake_v0.2.0.min.js"></script>
+
+    @Html.Partial("Dashboard/breadcrumb_menu")
+    @Html.Partial("Dashboard/RefreshDashboardForm")
+}
+<div id="dashboardForm" class="pb-0 mb-0">
+    <form class=" mb-0 pb-0">
+
+        @switch (ViewBag.ViewType)
+        {
+            case "General":
+                @Html.Partial("Dashboard/_General")
+                break;
+            case "Delivery":
+                @Html.Partial("Dashboard/_Delivery")
+                break;
+            case "Production":
+                @Html.Partial("Dashboard/_Production")
+                break;
+            case "Production Summary":
+                @Html.Partial("Dashboard/_ProductionSummary")
+                break;
+            case "Receiving":
+                @Html.Partial("Dashboard/_Receiving")
+                break;
+            case "Sales":
+                break;
+            case "Purchases":
+                break;
+            case "Stock":
+                @Html.Partial("Dashboard/_Stock")
+                break;
+            case "Quality Incoming":
+                @Html.Partial("Dashboard/_QualityIncoming")
+                break;
+            case "Quality Outgoing":
+                @Html.Partial("Dashboard/_QualityOutgoing")
+                break;
+            case "Summary":
+                break;
+            default:
+                @Html.Partial("Dashboard/_Home")
+                break;
+
+        }
+
+        <div id="editor"></div>
+
+    </form>
+
+
+</div>
+
+
+<script>
+
+    function closeWindow() {
+            window.close();
+        }
+
+        /* View Full Screen */
+        var elem = document.getElementById("dashboardForm");
+
+        function openFullscreen() {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.mozRequestFullScreen) { /* Firefox */
+                elem.mozRequestFullScreen();
+            } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE/Edge */
+                elem.msRequestFullscreen();
+            }
+        }
+
+
+        //$('#pdf-convert').click(function () {
+        //    $("#dashboardForm").dialog({
+        //        autoOpen: false,
+        //        modal: true,
+        //        minHeight: 275,
+        //        maxHeight: 420,
+        //        height: "auto",
+        //        autoOpen: false,
+        //        draggable: false,
+        //        closeOnEscape: true,
+        //        width: 600,
+        //    });
+        //});
+
+        //function printData(divid) {
+        //    var divToPrint = document.getElementById("#" + divid);
+        //    newWin = window.open("");
+        //    newWin.document.write(divToPrint.outerHTML);
+        //    newWin.print();
+        //}
+
+        function PrintElem(elem) {
+            //Popup($(elem).html());
+
+            window.print(elem);
+
+            //var docDefinition = { content: $(elem).html() };
+            ////// open the PDF in a new window
+            //pdfMake.createPdf(docDefinition).open();
+
+            //// print the PDF
+            //pdfMake.createPdf(docDefinition).print();
+
+            //// download the PDF
+            //pdfMake.createPdf(docDefinition).download('optionalName.pdf');
+        }
+
+        function Popup(data)
+        {
+
+            var mywindow = window.open('', 'new div', 'height=600,width=950,top=40,left=200');
+            mywindow.document.write('<html><head><title>@ViewBag.Title</title>');
+            mywindow.document.write('<link rel="stylesheet" type="text/css" href="/_VSSPCore/lib/font-awesome/css/font-awesome.min.css">');
+            mywindow.document.write('<link rel="stylesheet" type="text/css" href="/_VSSPCore/lib/@@coreui/icons/css/coreui-icons.min.css">');
+            mywindow.document.write('<link rel="stylesheet" type="text/css" href="/_VSSPCore/lib/simple-line-icons/css/simple-line-icons.css">');
+            mywindow.document.write('<link rel="stylesheet" type="text/css" href="/_VSSPCore/css/style.css" type="text/css">');
+            //mywindow.document.write('&lt;script src="/_VSSPCore/lib/chart.js/dist/Chart.js" &gt;&lt;/script&gt;');
+            mywindow.document.write('</head><body><div class="container-fluid bg-white"><div class="col-md-12"><br/><br/>');
+            mywindow.document.write(data);
+            mywindow.document.write('</div></div></body></html>');
+
+            return true;
+        }
+
+        function resizeJqGridWidth(grid_id, div_id, width) {
+
+        $('#' + grid_id).jqGrid("setGridWidth", width, true);
+
+        }
+
+    $(window).resize(function () {
+            var swdark = $("#sw-dark").prop("checked");
+
+            if (swdark) {
+                setTimeout(function () {
+                    var docHeight = $(window).height();
+                    var scrHeight = screen.height;
+                    if (docHeight === scrHeight) {
+                    $("#dashboardForm").addClass('bg-dark');
+                    $(".card-header").addClass('bg-dark');
+                    $(".card-body").addClass('bg-dark');
+                    $(".brand-card-body").addClass('bg-dark');
+                    $(".brand-card-body .text-uppercase").addClass('text-primary').removeClass('text-muted');
+                    $("table").addClass('table-dark');
+                    $("thead").addClass('thead-dark');
+                    $(".text-value.counter").addClass('text-success font-weight-bold');
+                    } else {
+                    $("#dashboardForm").removeClass('bg-dark');
+                    $(".card-header").removeClass('bg-dark');
+                    $(".card-body").removeClass('bg-dark');
+                    $(".brand-card-body").removeClass('bg-dark');
+                    $(".brand-card-body .text-uppercase").removeClass('text-primary').addClass('text-muted');
+                    $("table").removeClass('table-dark');
+                    $("thead").removeClass('thead-dark');
+                    $(".text-value.counter").removeClass('text-success font-weight-bold');
+                    }
+                }, 100);
+            }
+        });
+
+
+</script>
+
+<style>
+    /* Chrome, Safari and Opera syntax */
+    :-webkit-full-screen {
+        margin: 0;
+        padding: 15px;
+            background-color: white;
+            max-width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+    /* Firefox syntax */
+    :-moz-full-screen {
+        margin: 0;
+        padding: 15px;
+            background-color: white;
+            max-width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+    /* IE/Edge syntax */
+    :-ms-fullscreen {
+        margin: 0;
+        padding: 15px;
+            background-color: white;
+            max-width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+    /* Standard syntax */
+    :fullscreen {
+        margin: 0;
+        padding: 15px;
+            background-color: white;
+            max-width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        body, .app-body, .main {
+            background-color: white !important;
+        }
+        thead{
+        background: none !important;
+        }
+    .container-fluid {
+        padding: 2px !important;
+            padding-right: 15px !important;
+            padding-left: 15px !important;
+        margin: 0px !important;
+            background-color: white !important;
+        }
+</style>

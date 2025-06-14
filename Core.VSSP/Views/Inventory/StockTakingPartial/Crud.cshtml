@@ -1,0 +1,881 @@
+﻿<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
+
+<div class="modal animated fadeIn" id="crudStockTakingModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudStockTakingForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingNumber" class="col-sm-4 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-StockTakingNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingType" class="col-sm-4 col-form-label col-form-label-sm">Stock Type</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-StockTakingType" onchange="loadComboStockOwner()"></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingDate" class="col-sm-4 col-form-label col-form-label-sm">Plan Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-StockTakingDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingStartTime" class="col-md-4 col-form-label col-form-label-sm">Plan Time</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm date">
+                                        <input type="text" id="crud-StockTakingStartTime" class="form-control form-control-sm bg-white timepicker" data-provide="timepicker" readonly required />
+                                        <div class="input-group-append" for="crud-StockTakingStartTime">
+                                            <span class="input-group-text">to</span>
+                                        </div>
+                                        <input type="text" id="crud-StockTakingEndTime" class="form-control form-control-sm bg-white timepicker" data-provide="timepicker" readonly required />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text fa fa-clock-o"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingRemarks" class="col-sm-2 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-6">
+                                    <textarea rows="2" class="form-control form-control-sm bg-white" id="crud-StockTakingRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudStockList"></table>
+                        </div>
+                    </div>
+
+                    <div id="crudStockTakingError"></div>
+                    <input type="hidden" id="StockTakingAction" />
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-2" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <div id="stock-filter" class="ml-2">
+                                    <div class="form-group form-group-sm row">
+                                        <button id="#btn-addStockTakingDetail" type="button" class="btn btn-sm btn-outline-dark ml-3" onclick="crudStockTakingDetail('Create','')"><span class="fa fa-refresh"></span> Get Latest Stock List</button>
+                                        <label for="crud-StockTakingFilter" class="col-form-label col-form-label-sm ml-2">Filter</label>
+                                        <div class="col" style="min-width:300px !important">
+                                            <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-StockTakingFilter"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ml-3 mt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="sw-showhideowner" onclick="showhideOwner()">
+                                    <label class="custom-control-label" for="sw-showhideowner"><small> Show Owner</small></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-crudStockTaking" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudStockTakingDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudStockTakingDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> StockTakingDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-danger">Are you sure want to remove from @ViewBag.Title item?</h5>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockTakingDetailCustomerId" class="col-md-3 col-form-label col-form-label-sm">Customer</label>
+                                <label for="crud-StockTakingDetailCustomerId" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailCustomerId" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockTakingDetailLineId" class="col-md-3 col-form-label col-form-label-sm">Line</label>
+                                <label for="crud-StockTakingDetailLineId" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailLineId" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockTakingDetailSupplierId" class="col-md-3 col-form-label col-form-label-sm">Supplier</label>
+                                <label for="crud-StockTakingDetailSupplierId" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailSupplierId" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingDetailStockType" class="col-md-3 col-form-label col-form-label-sm">Stock Type</label>
+                                <label for="crud-StockTakingDetailStockType" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailStockType" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingDetailUniqueNumber" class="col-md-3 col-form-label col-form-label-sm">Unique Number</label>
+                                <label for="crud-StockTakingDetailUniqueNumber" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailUniqueNumber" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingDetailPartNumber" class="col-md-3 col-form-label col-form-label-sm">Part Number</label>
+                                <label for="crud-StockTakingDetailPartNumber" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailPartNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockTakingDetailPartName" class="col-md-3 col-form-label col-form-label-sm">Part Name</label>
+                                <label for="crud-StockTakingDetailPartName" class="col-md-1 col-form-label col-form-label-sm">:</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control-plaintext form-control-sm" id="crud-StockTakingDetailPartName">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="StockTakingDetailId" />
+                    <input type="hidden" id="StockTakingDetailAction" />
+                    <input type="hidden" id="StockTakingDetailRowStatus" />
+                    <div id="crudStockTakingDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<div class="ml-3" style="position:absolute;left:0">
+                            <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudStockTakingDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                            <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudStockTakingDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                        </div>*@
+                    <button id="btn-crudStockTakingDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div id="contextMenu" class="dropdown clearfix">
+    <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(1,this)"><i class="fa fa-check text-dark"></i> Select</a>
+        <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(2,this)"><i class="fa fa-check-square-o text-dark"></i> Select All</a>
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(3,this)"><i class="fa fa-times text-dark"></i> Unselect</a>
+        <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(4,this)"><i class="fa fa-times-rectangle-o text-dark"></i> Unselect All</a>
+        <a class="dropdown-item pt-1 pb-1 border-bottom-0 small text-danger" href="#" onclick="selectContextMenu(5,this)"><i class="fa fa-trash-o text-danger"></i> Delete selected</a>
+    </div>
+</div>
+
+<script>
+
+
+    //$('.timepicker').timepicker({
+    //    showInputs: false,
+    //    showMeridian: false
+    //})
+    $('.timepicker').timepicker({
+        defaultTime: 'value',
+        showInputs: false,
+        showMeridian: false
+    });
+
+    $(".input-group-text.fa.fa-clock-o").click(function () {
+        $('.timepicker').timepicker('hideWidget');
+    })
+    var arrSelected = [];
+
+    $('#crudStockTakingDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-StockTakingDetailN3") {
+                $("#btn-crudStockTakingDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudStockTaking(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartRawMaterial","Search")');
+
+        document.getElementById("crudStockTakingForm").reset();
+        $('#crudStockTakingForm').removeClass('was-validated');
+        $('#crudStockTakingError').html("");
+        $('#btn-addStockTakingDetail').removeAttr('disabled');
+        $("#btn-crudStockTaking").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudStockTakingForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#stock-filter").attr("hidden", true);
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#StockTakingAction").val(action);
+        loadComboStockOwner();
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+        var newtime = moment(new Date()).format("HH:mm");
+
+        $('.timepicker').timepicker({
+            defaultTime: newtime,
+            showInputs: false,
+            showMeridian: false
+        });
+
+        var approval = '@ViewBag.ApprovalLevel';
+
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudStockTakingError').html(errMsg);
+            $("#crudStockTakingForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addStockTakingDetail").attr("disabled", true);
+            $("#btn-crudStockTaking").attr("disabled", true);
+
+            $('#crudStockTakingModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                InventoryNumber         = Grid.jqGrid('getCell', selectedRowId, 'InventoryNumber'),
+                StockTakingType         = Grid.jqGrid('getCell', selectedRowId, 'StockType'),
+                StockTakingDate         = Grid.jqGrid('getCell', selectedRowId, 'InventoryDate'),
+                StockTakingStartTime    = Grid.jqGrid('getCell', selectedRowId, 'InventoryStartTime'),
+                StockTakingEndTime      = Grid.jqGrid('getCell', selectedRowId, 'InventoryEndTime'),
+                StockTakingRemarks      = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            StockTakingDate         = moment(new Date(StockTakingDate)).format("YYYY-MM-DD");
+            //StockTakingStartTime    = moment(new Date(StockTakingStartTime)).format("H:i");
+            //StockTakingEndTime      = moment(new Date(StockTakingEndTime)).format("H:i");
+
+            $("#crud-StockTakingNumber").val(InventoryNumber);
+            $("#crud-StockTakingType").val(StockTakingType);
+            $("#crud-StockTakingDate").val(StockTakingDate);
+            $("#crud-StockTakingStartTime").val(StockTakingStartTime);
+            $("#crud-StockTakingEndTime").val(StockTakingEndTime);
+            $("#crud-StockTakingRemarks").val(StockTakingRemarks);
+
+            reloadGridStockTakingDetail();
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#stock-filter").removeAttr("hidden");
+                $("#crud-StockTakingNumber").attr("readonly", true);
+                $("#crud-StockTakingDate").val(newdate);
+                $("#crud-StockTaking").val(newdate);
+                $("#crud-StockTakingStartTime").val(newtime);
+                $("#crud-StockTakingEndTime").val(newtime);
+                $("#crudStockTakingModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudStockTakingModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title');
+                jQuery('#jqGridCrudStockList').jqGrid('clearGridData')
+                    .trigger('reloadGrid');
+                $('#crudStockTakingModal').modal('show');
+                break;
+            case "Update":
+                $("#crud-StockTakingNumber").attr("readonly", true);
+                $("#crud-StockTakingDate").attr("readonly", true);
+                $("#crud-StockTakingType").attr("disabled", true);
+                $("#crudStockTakingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudStockTakingModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockTakingModal').modal('show');
+                $("#crud-StockTakingRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudStockTakingForm input, textarea, select").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#btn-addStockTakingDetail").attr("disabled", true);
+                $("#btn-crudStockTaking").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudStockTakingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudStockTakingModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockTakingModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudStockTakingForm input, textarea, select").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-StockTakingSupplierId").attr("disabled", true);
+                $("#crud-StockTakingActived").attr("disabled", true);
+                $("#btn-addStockTakingDetail").attr("disabled", true);
+                $("#btn-crudStockTaking").html("<span class='fa fa-ban'></span> Cancel @ViewBag.Title");
+                $("#crudStockTakingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudStockTakingModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockTakingModal').modal('show');
+                break
+            case "Closed":
+                $("#crudStockTakingForm input, textarea, select").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-StockTakingSupplierId").attr("disabled", true);
+                $("#crud-StockTakingActived").attr("disabled", true);
+                $("#btn-addStockTakingDetail").attr("disabled", true);
+                $("#btn-crudStockTaking").html("<span class='fa fa-sign-out'></span> Closing @ViewBag.Title");
+                $("#crudStockTakingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudStockTakingModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockTakingModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-StockTakingSupplierId').change(function () {
+        $('#crudStockTakingError').html("");
+    });
+
+    $('#crud-StockTakingMonth').change(function () {
+        $('#crudStockTakingError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridStockTakingDetail = $("#jqGridCrudStockList").jqGrid({
+            url: "@Url.Action("StockTakingDetailListJson", "Inventory")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { InventoryNumber: "*" },
+            colModel: [
+                { label: 'ACT', name: 'Action', editable: false, align: 'center', hidden: true, width: 40, sortable: false, formatter: actionStockTakingDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', hidden: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'CUSTOMER', name: 'CustomerId', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'LINE', name: 'LineId', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'SUPPLIER', name: 'SupplierId', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'STOCK TYPE', name: 'StockType', align: 'center', fixed: true, width: 85, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 110, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width:210, sortable: false },
+                { label: 'MODEL', name: 'PartModel', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 45, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 40, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', hidden: true, width: 80, sortable: false },
+                { label: 'KANBAN', name: 'StockKanban', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'StockQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'ACTUAL', name: 'ActualQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'BALANCE', name: 'BalanceQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudStockTakingDetail',
+            loadonce: true,
+            height: 220,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            multiselect: true,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#StockTakingAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        parameters =
+                        {
+                            RowStatus: action,
+                        }
+                        $("#jqGridCrudStockList").jqGrid('setRowData', ids[i], parameters);
+
+                    }
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudStockTakingDetail("Update", rowid);
+            },
+            onSelectRow: function (aRowids, status) {
+                var myGrid = $("#jqGridCrudStockList");
+                var i, selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"), n, rowData;
+                arrSelected = selRowIds;
+                if (arrSelected.length != 0) {
+                    $('#btn-deleteSelected').removeAttr('disabled');
+                } else {
+                    $('#btn-deleteSelected').attr('disabled', true);
+                }
+            },
+            onSelectAll: function (aRowids, status) {
+                arrSelected = aRowids;
+                if (arrSelected.length != 0) {
+                    $('#btn-deleteSelected').removeAttr('disabled');
+                } else {
+                    $('#btn-deleteSelected').attr('disabled', true);
+                }
+            },
+        });
+
+        $('#jqGridCrudStockList').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 4, titleText: 'STOCK' },
+            ]
+        });
+    });
+
+    function reloadGridStockTakingDetail() {
+
+        var formaction  = $("#StockTakingAction").val();
+        var inventorynumber = $("#crud-StockTakingNumber").val();
+        var stockType = $("#crud-StockTakingType").val();
+        var ownerFilter = $("#crud-StockTakingFilter").val();
+
+        $("#jqGridCrudStockList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                InventoryNumber: inventorynumber,
+                formAction: formaction,
+                stocktype: stockType,
+                owner: ownerFilter,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionStockTakingDetailFormatter(cellvalue, options, rowObject) {
+        //console.log(options);
+        var rowid = options.rowId;
+        var formaction = $("#StockTakingAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudStockTakingDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.SupplierId + ' - ' + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#StockTakingAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    function crudStockTakingDetail(action, id) {
+
+        document.getElementById("crudStockTakingDetailForm").reset();
+        $('#crudStockTakingDetailForm').removeClass('was-validated');
+        $('#crudStockTakingError').html("");
+        $('#crudStockTakingDetailError').html("");
+        $("#btn-crudStockTakingDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudStockTakingDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#StockTakingDetailAction").val(action);
+        var inventorydate = $("#crud-StockTakingDate").val();
+        var inventorystarttime = $("#crud-StockTakingStartTime").val();
+        var inventoryendtime = $("#crud-StockTakingEndTime").val();
+
+        if (inventorydate === "" || inventorystarttime === "" || inventoryendtime === "" ) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Inventory Date / Start Time / End Time completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudStockTakingError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+            var $grid = $("#jqGridCrudStockList");
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                CustomerId = rowData.CustomerId,
+                LineId = rowData.LineId,
+                SupplierId = rowData.SupplierId,
+                StockType = rowData.StockType,
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#StockTakingDetailRowStatus").val(RowStatus);
+            $("#StockTakingDetailId").val(id);
+            $("#crud-StockTakingDetailCustomerId").val(CustomerId);
+            $("#crud-StockTakingDetailLineId").val(LineId);
+            $("#crud-StockTakingDetailSupplierId").val(SupplierId);
+            $("#crud-StockTakingDetailStockType").val(StockType);
+            $("#crud-StockTakingDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-StockTakingDetailPartNumber").val(PartNumber);
+            $("#crud-StockTakingDetailPartName").val(PartName);
+
+        }
+
+        switch (action) {
+            case "Create":
+                reloadGridStockTakingDetail();
+                break;
+
+            case "Delete":
+                $("#crudStockTakingDetailForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-crudStockTakingDetail").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudStockTakingDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudStockTakingDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudStockTakingDetailModal').modal('show');
+                $('#btn-crudStockTakingDetail').focus();
+                break
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudStockTakingDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var action = $('#StockTakingDetailAction').val();
+                    var rowStatus = $('#StockTakingDetailRowStatus').val();
+
+                    switch (action) {
+                        case "Delete":
+
+                            var rowid = $("#StockTakingDetailId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudStockList').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudStockList").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            showToast("Failed", "Delete @ViewBag.Title " + $("#crud-StockTakingDetailPartName").val() + " has been removed succesfully");
+                            $('#crudStockTakingDetailModal').modal('hide');
+
+                            break;
+                    }
+
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudStockTakingForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudStockList");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#StockTakingAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        StockTaking: {
+                            InventoryNumber     : $("#crud-StockTakingNumber").val(),
+                            InventoryDate       : $("#crud-StockTakingDate").val(),
+                            InventoryStartTime  : $("#crud-StockTakingStartTime").val(),
+                            InventoryEndTime    : $("#crud-StockTakingEndTime").val(),
+                            StockType           : $("#crud-StockTakingType").val(),
+                            Remarks             : $("#crud-StockTakingRemarks").val(),
+                            Update              : null,
+                            Status              : null,
+                            EditDate            : null,
+                            UserID              : null
+                        },
+                        StockTakingDetail: $("#jqGridCrudStockList").jqGrid('getGridParam', 'data'),
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        formAction: $("#StockTakingAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudStockTakingList", "Inventory")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudStockTakingModal').modal('hide');
+                            var act = $("#StockTakingAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch{
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudStockTakingError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboStockType();
+    function loadComboStockType() {
+
+        $.ajax({
+            url: '@Url.Action("StockTypeList", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-StockTakingType";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Stock Type")
+                );
+                $.each(response, function (i, area) {
+                    $(id).append(
+                        $('<option></option>').val(area.StockType).html(area.StockType)
+                    );
+                });
+            }
+        })
+    }
+    function loadComboStockOwner() {
+
+        var stocktype = $("#crud-StockTakingType").val();
+
+        $.ajax({
+            url: '@Url.Action("StockOwnerList", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { stocktype: stocktype },
+            success: function (response) {
+
+                var id = "#crud-StockTakingFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Owner")
+                );
+
+                if (response != 'ALL') {
+                    $.each(response, function (i, own) {
+                        $(id).append(
+                            $('<option></option>').val(own.OwnerId).html(own.OwnerName)
+                        );
+                    });
+                }
+
+                $(id).selectpicker("refresh");
+
+            }
+        })
+    }
+
+    function showhideOwner() {
+
+        var res = $("#sw-showhideowner").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+        $("#jqGridCrudStockList").jqGrid(showhideCol, "CustomerId")
+        $("#jqGridCrudStockList").jqGrid(showhideCol, "LineId")
+        $("#jqGridCrudStockList").jqGrid(showhideCol, "SupplierId")
+
+        $(window).trigger("resize");
+    };
+</script>
+<script>
+    var dataSelected = [];
+
+    $(function () {
+
+        /* call selectable */
+        $("#jqGridCrudStockList").selectable({
+            filter: 'tbody tr',
+            selecting: function (event, ui) {
+                dataSelected = []
+            },
+            selected: function (event, ui) {
+                //console.log(ui);
+                //console.log("SELECTED " + ui.selected["id"]);
+                dataSelected.push(ui.selected.id)
+            }
+        });
+
+
+        /* call context menu */
+        var $contextMenu = $("#contextMenu");
+
+        $("body").on("contextmenu", "#jqGridCrudStockList", function (e) {
+
+            $contextMenu.css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+            });
+            //debugger;
+            return false;
+        });
+
+        $('html').click(function () {
+            $contextMenu.hide();
+        });
+
+        $("#contextMenu li a").click(function (e) {
+            var f = $(this);
+            //debugger;
+        });
+
+    });
+
+    function selectContextMenu(id, obj) {
+
+        var i, count, $grid = $("#jqGridCrudStockList");
+        var selRows = $grid.jqGrid('getGridParam', 'selarrrow');
+        var dataall = $grid.getDataIDs();
+
+        switch (id) {
+                       case 1:
+                var datasel = dataSelected.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], true);
+                }
+                break;
+            case 2:
+                var datasel = dataall.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 3:
+                var datasel = dataSelected.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 4:
+                var datasel = dataall.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 5:
+                var selectedRows = $grid.getGridParam('selarrrow');
+                var data = [];
+                $.each(selectedRows, function (i, sel) {
+                    data.push(sel);
+                });
+                $.each(data, function (i, rowid) {
+                    $grid.jqGrid('delRowData', rowid);
+
+                });
+                break;
+        }
+    }
+</script>
+
+<style>
+    .ui-selected {
+        background-color: #b6ff00
+    }
+
+        .ui-selected:hover {
+            background-color: #00ff21
+        }
+
+    #contextMenu {
+        position: absolute;
+        display: none;
+        z-index: 2028;
+    }
+</style>

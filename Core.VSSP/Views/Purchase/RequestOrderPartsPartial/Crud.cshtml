@@ -1,0 +1,1156 @@
+﻿<div class="modal animated fadeIn" id="crudRequestOrderPartsModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudRequestOrderPartsForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 pl-0 pr-1">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-RequestOrderPartsNumber" class="col-sm-3 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-RequestOrderPartsNumber">
+                                </div>
+                            </div>                            
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-RequestOrderPartsLineId" class="col-sm-3 col-form-label col-form-label-sm">Line / Shift</label>
+                                <div class="col-sm-5 pr-1">
+                                    <select class="form-control form-control-sm bg-white selectpicker" data-live-search="true" data-size="8" id="crud-RequestOrderPartsLineId" name="LineId" onchange="reloadGridLineDetail()" required></select>
+                                </div>
+                                <div class="col-sm-4 pl-1">
+                                    <select class="custom-select custom-select-sm" id="crud-RequestOrderPartsShiftId" name="ShiftId" onchange="reloadGridLineDetail()" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pl-1 pr-1">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-RequestOrderPartsDate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-RequestOrderPartsDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-RequestOrderPartsDeliveryDate" class="col-sm-4 col-form-label col-form-label-sm">Delivery Req.</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" onchange="reloadGridLineDetail()" id="crud-RequestOrderPartsDeliveryDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pl-1 pr-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-RequestOrderPartsRemarks" class="col-sm-3 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-md-9">
+                                    <textarea rows="2" class="form-control form-control-sm bg-white" id="crud-RequestOrderPartsRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 pt-2">
+                            <table id="jqGridCrudLineDetail"></table>
+                            <div id="jqGridPagerCrudLineDetail"></div>
+                        </div>
+                    </div>
+
+                    <div id="crudRequestOrderPartsError"></div>
+                    <input type="hidden" id="RequestOrderPartsAction" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-scanRequestOrderPartsDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudRequestOrderPartsDetail('Scan','')" hidden><span class="fa fa-qrcode"></span> Scan QRCode</button>
+                                <button id="btn-addRequestOrderPartsDetail" type="button" class="btn btn-sm btn-outline-dark" style="margin-top: 0 !important" onclick="crudRequestOrderPartsDetail('Create','')"><span class="fa fa-plus"></span> New Part Item</button>
+                                <h4 class="mx-auto" style="margin:0;padding:0" hidden><span id="approvalInfo" class="badge badge-warning shadow-sm">APPROVAL</span></h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-crudRequestOrderParts" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudRequestOrderPartsDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudRequestOrderPartsDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> RequestOrderPartsDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" id="btn-searchPart" class="btn btn-sm btn-outline-primary" onclick="callFilterRawLineMaterial()"><span class="fa fa-search"></span> Find Part Number</a>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailSupplierId" class="col-md-4 col-form-label col-form-label-sm">Supplier</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailSupplierId" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailUniqueNumber" class="col-md-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailUniqueNumber" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailPartNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailPartName" class="col-md-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailPartName" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailPartModel" class="col-md-4 col-form-label col-form-label-sm">Model</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailPartModel" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailPackingId" class="col-md-4 col-form-label col-form-label-sm">Type Packing</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailPackingId" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailUnitQty" class="col-md-4 col-form-label col-form-label-sm">Qty / Kanban</label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailUnitQty" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailUnit" class="col-md-4 col-form-label col-form-label-sm">Unit</label>
+                                <div class="col-md-5">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-RequestOrderPartsDetailUnit" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailStockKanban" class="col-md-4 col-form-label col-form-label-sm">Stock Logistic</label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm" title="Kanban Stock On Hand">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">KBN</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="crud-RequestOrderPartsDetailStockKanban" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailStockQty" class="col-md-4 col-form-label col-form-label-sm"></label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm" title="Quantity Stock On Hand">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm" id="crud-RequestOrderPartsDetailStockQty" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailOrderQty" class="col-md-4 col-form-label col-form-label-sm">Kanban Order</label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm" title="Kanban Order Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">KBN</span>
+                                        </div>
+                                        <input type="number" min="1" class="form-control form-control-sm" id="crud-RequestOrderPartsDetailOrderQty" onchange="calculateOrderUnitQty()" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailOrderUnitQty" class="col-md-4 col-form-label col-form-label-sm"></label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm" title="Order Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="number" min="1" class="form-control form-control-sm" id="crud-RequestOrderPartsDetailOrderUnitQty" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="input-delivery" class="form-group form-group-sm row">
+                                <label for="crud-RequestOrderPartsDetailDeliveryQty" class="col-md-4 col-form-label col-form-label-sm">Delivery</label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm" title="Delivery Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="number" min="1" class="form-control form-control-sm" id="crud-RequestOrderPartsDetailDeliveryQty" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="RequestOrderPartsDetailAction" />
+                    <input type="hidden" id="RequestOrderPartsDetailRowStatus" />
+                    <div id="crudRequestOrderPartsDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute;left:0">
+                        <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudRequestOrderPartsDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                        <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudRequestOrderPartsDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                    </div>
+                    <button id="btn-crudRequestOrderPartsDetail" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#crudRequestOrderPartsDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-RequestOrderPartsDetailOrderQty") {
+                $("#btn-crudRequestOrderPartsDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudRequestOrderParts(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartRawLineMaterial","Search")');
+
+        document.getElementById("crudRequestOrderPartsForm").reset();
+        $('#crudRequestOrderPartsForm').removeClass('was-validated');
+        $('#crudRequestOrderPartsError').html("");
+        $('#btn-addRequestOrderPartsDetail').removeAttr('disabled');
+        $('#btn-scanRequestOrderPartsDetail').removeAttr('disabled');
+        $("#btn-crudRequestOrderParts").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudRequestOrderPartsForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#RequestOrderPartsAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+        var approval = '@ViewBag.ApprovalLevel';
+
+        if (approval != 1 && action != "Delivery") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudRequestOrderPartsError').html(errMsg);
+            $("#crudRequestOrderPartsForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addRequestOrderPartsDetail").attr("disabled", true);
+            $("#btn-crudRequestOrderParts").attr("disabled", true);
+
+            $('#crudRequestOrderPartsModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                RequestOrderPartsStatus         = Grid.jqGrid('getCell', selectedRowId, 'Status').split('>'),
+                RequestOrderPartsLineId         = Grid.jqGrid('getCell', selectedRowId, 'LineId'),
+                RequestOrderPartsShiftId        = Grid.jqGrid('getCell', selectedRowId, 'ShiftId'),
+                RequestOrderPartsDate           = Grid.jqGrid('getCell', selectedRowId, 'OrderDate'),
+                RequestOrderPartsDeliveryDate   = Grid.jqGrid('getCell', selectedRowId, 'DeliveryDate'),
+                RequestOrderPartsApproval       = Grid.jqGrid('getCell', selectedRowId, 'Approval'),
+                RequestOrderPartsRemarks        = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            RequestOrderPartsDate = moment(new Date(RequestOrderPartsDate)).format("YYYY-MM-DD");
+            RequestOrderPartsDeliveryDate = moment(new Date(RequestOrderPartsDeliveryDate)).format("YYYY-MM-DD");
+            RequestOrderPartsStatus = RequestOrderPartsStatus[1].split('<')
+            //RequestOrderPartsIncomingTime = moment(new Date(RequestOrderPartsIncomingTime)).format("H:i");
+
+            $("#crud-RequestOrderPartsNumber").val(id);
+            $("#crud-RequestOrderPartsLineId").val(RequestOrderPartsLineId);
+            $("#crud-RequestOrderPartsShiftId").val(RequestOrderPartsShiftId);
+            $("#crud-RequestOrderPartsDate").val(RequestOrderPartsDate);
+            $("#crud-RequestOrderPartsDeliveryDate").val(RequestOrderPartsDeliveryDate);
+            $("#crud-RequestOrderPartsRemarks").val(RequestOrderPartsRemarks);
+            $("#approvalInfo").text(RequestOrderPartsApproval);
+
+            var showhide=''
+            if (RequestOrderPartsStatus[0] === 'Open') {
+                showhide = 'showCol';
+            } else {
+                showhide = 'hideCol';
+            }
+            //$("#jqGridCrudLineDetail").jqGrid(showhide, "Action")
+            //$("#jqGridCrudLineDetail").jqGrid(showhide, "RowStatus")
+            //$("#jqGridCrudLineDetail").jqGrid(showhide, "StockKanban")
+            //$("#jqGridCrudLineDetail").jqGrid(showhide, "StockQty")
+
+        }
+
+        $(".selectpicker").selectpicker('refresh');
+        reloadGridLineDetail();
+
+        switch (action) {
+            case "Create":
+
+                //$("#jqGridCrudLineDetail").jqGrid('showCol', "Action")
+                //$("#jqGridCrudLineDetail").jqGrid('showCol', "RowStatus")
+                //$("#jqGridCrudLineDetail").jqGrid('showCol', "StockKanban")
+                //$("#jqGridCrudLineDetail").jqGrid('showCol', "StockQty")
+                $("#jqGridCrudLineDetail").jqGrid('hideCol', "ReceiveQty")
+
+                $("#crud-RequestOrderPartsNumber").attr("readonly", true);
+                $("#crud-RequestOrderPartsDate").attr("readonly", true);
+                $("#crud-RequestOrderPartsDate").val(newdate);
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudRequestOrderPartsModal').modal('show');
+                $("#crud-RequestOrderPartsLineId").focus();
+                break;
+            case "Update":
+                $("#jqGridCrudLineDetail").jqGrid('hideCol', "ReceiveQty")
+                $("#crud-RequestOrderPartsNumber").attr("readonly", true);
+                $("#crud-RequestOrderPartsDate").attr("readonly", true);
+                $("#crud-RequestOrderPartsLineId").attr("disabled", true);
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudRequestOrderPartsModal').modal('show');
+                $("#crud-RequestOrderPartsRemarks").focus();
+                break;
+            case "Delivery":
+                $("#jqGridCrudLineDetail").jqGrid("showCol", "ReceiveQty")
+                $("#jqGridCrudLineDetail").jqGrid("hideCol", "StockKanban")
+                $("#jqGridCrudLineDetail").jqGrid("hideCol", "StockQty")
+                $('#btn-addRequestOrderPartsDetail').attr('disabled', true);
+                $('#btn-scanRequestOrderPartsDetail').attr('disabled', true);
+                $("#crud-RequestOrderPartsNumber").attr("readonly", true);
+                $("#crud-RequestOrderPartsDate").attr("readonly", true);
+                $("#crud-RequestOrderPartsLineId").attr("disabled", true);
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-success").removeClass("modal-info").addClass("modal-warning")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-truck"></span> '+ action + ' @ViewBag.Title').addClass("text-dark");
+                $('#crudRequestOrderPartsModal').modal('show');
+                $("#crud-RequestOrderPartsRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudRequestOrderPartsForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-RequestOrderPartsLineId").attr("disabled", true);
+                $('#btn-addRequestOrderPartsDetail').attr('disabled', true);
+                $('#btn-scanRequestOrderPartsDetail').attr('disabled', true);
+                $("#btn-crudRequestOrderParts").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudRequestOrderPartsModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudRequestOrderPartsForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-RequestOrderPartsLineId").attr("disabled", true);
+                $("#crud-RequestOrderPartsShift").attr("disabled", true);
+                $('#btn-addRequestOrderPartsDetail').attr('disabled', true);
+                $('#btn-scanRequestOrderPartsDetail').attr('disabled', true);
+                $("#btn-crudRequestOrderParts").html("<span class='fa fa-ban'></span> Cancel Order");
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudRequestOrderPartsModal').modal('show');
+                break
+            case "Closed":
+                $("#crudRequestOrderPartsForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-RequestOrderPartsLineId").attr("disabled", true);
+                $("#crud-RequestOrderPartsShift").attr("disabled", true);
+                $('#btn-addRequestOrderPartsDetail').attr('disabled', true);
+                $('#btn-scanRequestOrderPartsDetail').attr('disabled', true);
+                $("#btn-crudRequestOrderParts").html("<span class='fa fa-sign-out'></span> Closing Order");
+                $("#crudRequestOrderPartsModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudRequestOrderPartsModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudRequestOrderPartsModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-RequestOrderPartsLineId').change(function () {
+        $('#crudRequestOrderPartsError').html("");
+    });
+
+    $('#crud-RequestOrderPartsShift').change(function () {
+        $('#crudRequestOrderPartsError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridLineDetail = $("#jqGridCrudLineDetail").jqGrid({
+            url: "@Url.Action("RequestOrderPartsDetailListJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { ordernumber: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: actionLineDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'SUPPLIER', name: 'SupplierId', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 55, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', key: true, align: 'center', fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 320, sortable: false },
+                { label: 'MODEL', name: 'PartModel', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'right', fixed: true, width: 40, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', hidden: true, width: 80, sortable: false },
+                //{ label: 'MAXIMUM', name: 'MaxStock', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'KANBAN', name: 'StockKanban', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'StockQty', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                //{ label: 'UNIT QTY', name: 'OutstandingQty', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'KANBAN QTY', name: 'OrderQty', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'UNIT QTY', name: 'OrderUnitQty', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'DELIVERY QTY', name: 'ReceiveQty', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudLineDetail',
+            loadonce: true,
+            height: 220,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#RequestOrderPartsAction").val();
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                switch (action) {
+                    case "Create":
+
+                        for (i = 0; i < l; i++) {
+                            //$this.jqGrid('editRow', ids[i], true);
+                            parameters =
+                            {
+                                RowStatus: action,
+                            }
+                            $this.jqGrid('setRowData', ids[i], parameters);
+
+                        }
+                        break;
+                    case "Delivery":
+
+                        for (i = 0; i < l; i++) {
+                            var orderValues = $this.jqGrid('getCell', ids[i], 'OrderUnitQty');
+                            var receiveValues = $this.jqGrid('getCell', ids[i], 'ReceiveQty');
+
+                            if (parseFloat(receiveValues) === 0) {
+                                receiveValues = parseFloat(orderValues)
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: "Update",
+                                ReceiveQty: receiveValues,
+                            }
+
+                            $this.jqGrid('setRowData', ids[i], parameters);
+                            $this.jqGrid('getLocalRow', ids[i]).RowStatus = "Update";
+                            $this.jqGrid('getLocalRow', ids[i]).ReceiveQty = receiveValues;
+                        }
+
+                        break;
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudRequestOrderPartsDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudLineDetail').jqGrid('navGrid', '#jqGridPagerCrudLineDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudLineDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 2, titleText: 'STOCK LOGISTIC' },
+                //{ startColumnName: 'OutstandingKanban', numberOfColumns: 2, titleText: 'OUTSTANDING' },
+                { startColumnName: 'OrderQty', numberOfColumns: 2, titleText: 'ORDER' },
+            ]
+        });
+    });
+
+    function reloadGridLineDetail() {
+
+        var formaction  = $("#RequestOrderPartsAction").val();
+        var Lineid  = $("#crud-RequestOrderPartsLineId").val();
+        var shiftid = $("#crud-RequestOrderPartsShiftId").val();
+        var ordernumber = $("#crud-RequestOrderPartsNumber").val();
+        var orderdate = $("#crud-RequestOrderPartsDeliveryDate").val();
+
+        $("#jqGridCrudLineDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                ordernumber: ordernumber,
+                lineid: Lineid,
+                shiftid: shiftid,
+                orderdate: orderdate,
+                formAction: formaction,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionLineDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.PartNumber;
+        var formaction = $("#RequestOrderPartsAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudRequestOrderPartsDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudRequestOrderPartsDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.PartueNumber + " ]'>";
+        btn += "<span class='fa fa-trash-o'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#RequestOrderPartsAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                //if (action === "Create") {
+                //    return "<span class='badge badge-primary'>New</span>"
+                //} else {
+                //    return "";
+                //}
+                return "";
+                break;
+        }
+    }
+
+    function crudRequestOrderPartsDetailMove(action) {
+        var $grid = $("#jqGridCrudLineDetail");
+        var id = $("#crud-RequestOrderPartsDetailPartNumber").val();
+        var rowIndex = $grid.jqGrid('getInd', id);
+        var dataIDs = $grid.getDataIDs();
+        var datalen = (dataIDs.length) - 1;
+
+        $("#btn-prev").removeClass("disabled");
+        $("#btn-next").removeClass("disabled");
+
+
+        switch (action) {
+            case "prev":
+
+                rowIndex = parseInt(rowIndex) - 2;
+
+                if (dataIDs.length >= rowIndex && rowIndex >= 0) {
+
+                    var prevID = dataIDs[rowIndex];
+                    crudRequestOrderPartsDetail("Update", prevID)
+                    $grid.setSelection(prevID, false);
+
+                }
+
+                if (rowIndex <= 0) {
+                    $("#btn-prev").addClass("disabled");
+                }
+
+                break;
+
+            case "next":
+
+                if (dataIDs.length > rowIndex) {
+
+                    var nextID = dataIDs[rowIndex];
+                    crudRequestOrderPartsDetail("Update", nextID)
+                    $grid.setSelection(nextID, false);
+
+                }
+
+                if (datalen <= rowIndex) {
+                    $("#btn-next").addClass("disabled");
+                }
+
+                break;
+
+        }
+
+    }
+
+    function crudRequestOrderPartsDetail(action, id) {
+
+        document.getElementById("crudRequestOrderPartsDetailForm").reset();
+        $('#crudRequestOrderPartsDetailForm').removeClass('was-validated');
+        $('#crudRequestOrderPartsError').html("");
+        $('#crudRequestOrderPartsDetailError').html("");
+        $("#btn-crudRequestOrderPartsDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#btn-prev").addClass("disabled");
+        $("#btn-next").addClass("disabled");
+        $("#btn-searchPart").removeClass("disabled");
+        $("#input-delivery").attr("hidden", true);
+
+        $("#crudRequestOrderPartsDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#RequestOrderPartsDetailAction").val(action);
+        var Lineid = $("#crud-RequestOrderPartsLineId").val();
+        var requestAction = $("#RequestOrderPartsAction").val();
+
+        if (Lineid === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Line before add @ViewBag.Title Detail.</small></div>'
+            $('#crudRequestOrderPartsError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+            var $grid = $("#jqGridCrudLineDetail");
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                SupplierId = rowData.SupplierId,
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName,
+                Model = rowData.PartModel,
+                QtyByKanban = rowData.UnitQty,
+                Unit = rowData.UnitLevel2,
+                PackingId = rowData.PackingId,
+                StockKanban = rowData.StockKanban,
+                StockQty = rowData.StockQty,
+                OrderQty = rowData.OrderQty,
+                OrderUnitQty = rowData.OrderUnitQty,
+                DeliveryQty = rowData.ReceiveQty;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+            if (parseFloat(DeliveryQty) === 0) {
+                DeliveryQty = OrderUnitQty;
+            }
+            //var OnOrder = GetOnOrderStock($("#crud-RequestOrderPartsNumber").val(), $("#crud-RequestOrderPartsLineId").val(), PartNumber);
+            //if (OnOrder === null || OnOrder === "") {
+            //    OnOrder = 0;
+            //}
+            //var MaxOrder = parseInt(MaxStock) - parseInt(StockKanban) - parseInt(OnOrder);
+            //var MinOrder = 1;
+            //if (parseInt(MaxOrder) < 1) {
+            //    MinOrder = 1;
+            //    MaxOrder = 0;
+            //}
+
+
+            $("#RequestOrderPartsDetailRowStatus").val(RowStatus);
+            $("#crud-RequestOrderPartsDetailSupplierId").val(SupplierId);
+            $("#crud-RequestOrderPartsDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-RequestOrderPartsDetailPartNumber").val(PartNumber);
+            $("#crud-RequestOrderPartsDetailPartName").val(PartName);
+            $("#crud-RequestOrderPartsDetailPartModel").val(Model);
+            $("#crud-RequestOrderPartsDetailUnitQty").val(QtyByKanban);
+            $("#crud-RequestOrderPartsDetailUnit").val(Unit);
+            $("#crud-RequestOrderPartsDetailPackingId").val(PackingId);
+            $("#crud-RequestOrderPartsDetailStockKanban").val(StockKanban);
+            $("#crud-RequestOrderPartsDetailStockQty").val(StockQty);
+            $("#crud-RequestOrderPartsDetailOrderQty").val(OrderQty); //.attr("min", MinOrder).attr("max", MaxOrder);
+            $("#crud-RequestOrderPartsDetailOrderUnitQty").val(OrderUnitQty);
+            $("#crud-RequestOrderPartsDetailDeliveryQty").val(DeliveryQty).attr("min",1).attr("max",OrderUnitQty);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-RequestOrderPartsDetailSupplierId").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUniqueNumber").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartNumber").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartName").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartModel").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUnitQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUnit").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPackingId").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailMaxStock").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailStockKanban").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailStockQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailOnOrderQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailOrderUnitQty").attr("disabled", true);
+                $("#crudRequestOrderPartsDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary");
+                $("#crudRequestOrderPartsDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudRequestOrderPartsDetailModal').modal('show');
+                $("#btn-searchPart").focus();
+                break;
+
+            case "Update":
+
+                $("#crudRequestOrderPartsDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success");
+                $("#crudRequestOrderPartsDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Item');
+
+                $("#crud-RequestOrderPartsDetailSupplierId").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUniqueNumber").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartNumber").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartName").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPartModel").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUnitQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailUnit").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailPackingId").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailMaxStock").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailStockKanban").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailStockQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailOnOrderQty").attr("disabled", true);
+                $("#crud-RequestOrderPartsDetailOrderUnitQty").attr("disabled", true);
+
+                $('#crudRequestOrderPartsDetailModal').modal('show');
+
+                if (requestAction == "Delivery") {
+                    $("#input-delivery").removeAttr("hidden");
+                    $("#crud-RequestOrderPartsDetailOrderQty").attr("disabled", true);
+                    $("#crud-RequestOrderPartsDetailDeliveryQty").focus().select();
+                } else {
+                    $("#crud-RequestOrderPartsDetailOrderQty").focus().select();
+                }
+
+                var rowIndex = $grid.jqGrid('getInd', PartNumber);
+                var dataIDs = $grid.getDataIDs();
+                var datalen = (dataIDs.length);
+
+                $("#btn-prev").removeClass("disabled");
+                $("#btn-next").removeClass("disabled");
+
+                if (rowIndex === 1) {
+                    $("#btn-prev").addClass("disabled");
+                }
+                if (rowIndex === datalen) {
+                    $("#btn-next").addClass("disabled");
+                }
+                break;
+            case "Delete":
+
+                if (requestAction != "Delivery") {
+                    $("#crudRequestOrderPartsDetailForm input").each(function () {
+                        $(this).attr("disabled", true);
+                    });
+                    $("#btn-searchPart").addClass("disabled");
+                    $("#btn-crudRequestOrderPartsDetail").html("<span class='fa fa-trash'></span> Delete");
+                    $("#crudRequestOrderPartsDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                    $("#crudRequestOrderPartsDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                    $('#crudRequestOrderPartsDetailModal').modal('show');
+                } else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot delete!</b><br/>Not allowed to deleting @ViewBag.Title Detail.</small></div>';
+                    $('#crudRequestOrderPartsError').html(errMsg);
+                    return false;
+
+                }
+                break
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudRequestOrderPartsDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($("#crud-RequestOrderPartsDetailPartNumber").val() === "") {
+                    showToast("Failed", "Please select part before submit.");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                if ($(this).valid()) {
+
+                    var action = $('#RequestOrderPartsDetailAction').val();
+                    var rowStatus = $('#RequestOrderPartsDetailRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+
+                            parameters =
+                            {
+                                rowID: $("#crud-RequestOrderPartsDetailPartNumber").val(),
+                                initdata: {
+                                    RowStatus: action,
+                                    SupplierId: $("#crud-RequestOrderPartsDetailSupplierId").val(),
+                                    UniqueNumber: $("#crud-RequestOrderPartsDetailUniqueNumber").val(),
+                                    PartNumber: $("#crud-RequestOrderPartsDetailPartNumber").val(),
+                                    PartName: $("#crud-RequestOrderPartsDetailPartName").val(),
+                                    PartModel: $("#crud-RequestOrderPartsDetailPartModel").val(),
+                                    UnitQty: $("#crud-RequestOrderPartsDetailUnitQty").val(),
+                                    UnitLevel2: $("#crud-RequestOrderPartsDetailUnit").val(),
+                                    PackingId: $("#crud-RequestOrderPartsDetailPackingId").val(),
+                                    StockKanban: $("#crud-RequestOrderPartsDetailStockKanban").val(),
+                                    StockQty: $("#crud-RequestOrderPartsDetailStockQty").val(),
+                                    OrderQty: $("#crud-RequestOrderPartsDetailOrderQty").val(),
+                                    OrderUnitQty: $("#crud-RequestOrderPartsDetailOrderUnitQty").val(),
+                                    ReceiveQty: $("#crud-RequestOrderPartsDetailDeliveryQty").val(),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudLineDetail").jqGrid('addRow', parameters);
+                            showToast("Success", "Create @ViewBag.Title " + $("#crud-RequestOrderPartsDetailPartName").val() + " has been saved succesfully");
+                            $('#crudRequestOrderPartsDetailModal').modal('hide');
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#crud-RequestOrderPartsDetailPartNumber").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                OrderQty: $("#crud-RequestOrderPartsDetailOrderQty").val(),
+                                OrderUnitQty: $("#crud-RequestOrderPartsDetailOrderUnitQty").val(),
+                                ReceiveQty: $("#crud-RequestOrderPartsDetailDeliveryQty").val(),
+                            }
+
+                            $("#jqGridCrudLineDetail").jqGrid('setRowData', rowid, parameters);
+                            showToast("Success", "Update @ViewBag.Title " + $("#crud-RequestOrderPartsDetailPartName").val() + " has been saved succesfully");
+
+                            var lastrow = $("#btn-next").hasClass("disabled");
+                            if (lastrow === true) {
+                                $('#crudRequestOrderPartsDetailModal').modal('hide');
+                            } else {
+                                $("#btn-next").click();
+                            }
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#crud-RequestOrderPartsDetailPartNumber").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudLineDetail').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudLineDetail").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            showToast("Failed", "Delete @ViewBag.Title " + $("#crud-RequestOrderPartsDetailPartName").val() + " has been removed succesfully");
+                            $('#crudRequestOrderPartsDetailModal').modal('hide');
+
+                            break;
+                    }
+                    unloadblockspinner();
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudRequestOrderPartsForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudLineDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#RequestOrderPartsAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        RequestOrderParts: {
+                            OrderNumber: $("#crud-RequestOrderPartsNumber").val(),
+                            LineId: $("#crud-RequestOrderPartsLineId").val(),
+                            ShiftId: $("#crud-RequestOrderPartsShiftId").val(),
+                            OrderDate: $("#crud-RequestOrderPartsDate").val(),
+                            DeliveryDate: $("#crud-RequestOrderPartsDeliveryDate").val(),
+                            Remarks: $("#crud-RequestOrderPartsRemarks").val(),
+                            Status: null,
+                            EditDate: null,
+                            UserID: null
+                        },
+                        RequestOrderPartsDetail: $("#jqGridCrudLineDetail").jqGrid('getGridParam', 'data'),
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        uid: "@ViewBag.UserId",
+                        formAction: $("#RequestOrderPartsAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudRequestOrderPartsList", "Purchase")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        async: false,
+                        success: function (data) {
+                            $('#crudRequestOrderPartsModal').modal('hide');
+                            var act = $("#RequestOrderPartsAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudRequestOrderPartsError').html(errMsg);
+                        }
+                    });
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+    loadComboLine();
+
+    function loadComboLine() {
+
+        Lineid = $("#crud-RequestOrderPartsLineId").val();
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: { LineId:Lineid },
+            success: function (response) {
+
+                var id = "#crud-RequestOrderPartsLineId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Line")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.LineId).html(sup.LineName)
+                    );
+                });
+
+            }
+        })
+    }
+
+    function loadComboRawMaterial(sid) {
+
+        if (sid === "*") {
+            sid = $("#crud-KanbanRequestOrderPartsNumber").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("RawMaterialsListJson", "RequestOrderPartss")',
+            type: "GET",
+            dataType: "JSON",
+            data: { searchFilter: sid },
+            success: function (response) {
+
+                var id = "#crud-KanbanPartNumberRawMaterial";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Raw Material")
+                );
+
+                $.each(response, function (i, raw) {
+                    $(id).append(
+                        $('<option></option>').val(raw.PartNumber).html(raw.PartNumber + ' : ' + raw.PartName)
+                    );
+                });
+            }
+        })
+    }
+
+    function callFilterRawLineMaterial() {
+
+        var Lineid = $("#crud-RequestOrderPartsLineId").val();
+        var partexist = $("#jqGridCrudLineDetail").getDataIDs();
+
+        var status = $("#RequestOrderPartsDetailAction").val()
+        if (status === "Update") {
+            partexist = "";
+        }
+
+        showfilterPartRawLineMaterial(Lineid, partexist);
+
+    }
+
+    $(document).on('hide.bs.modal', '#filterPartRawLineMaterialModal', function (e) {
+
+        if ($("#search_result").val() != "") {
+            var searchresult = JSON.parse($("#search_result").val());
+            var action = $("#RequestOrderPartsDetailAction").val();
+
+            setTimeout(function () {
+
+                if (searchresult.length != 0) {
+
+                    switch (action) {
+                        case "Create":
+                            $("#crud-RequestOrderPartsDetailSupplierId").val(searchresult.SupplierId);
+                            $("#crud-RequestOrderPartsDetailUniqueNumber").val(searchresult.UniqueNumber);
+                            $("#crud-RequestOrderPartsDetailPartNumber").val(searchresult.PartNumber);
+                            $("#crud-RequestOrderPartsDetailPartName").val(searchresult.PartName);
+                            $("#crud-RequestOrderPartsDetailPartModel").val(searchresult.PartModel);
+                            $("#crud-RequestOrderPartsDetailStockKanban").val(searchresult.StockKanban);
+                            $("#crud-RequestOrderPartsDetailStockQty").val(searchresult.StockQty);
+                            $("#crud-RequestOrderPartsDetailUnitQty").val(searchresult.UnitQty);
+                            $("#crud-RequestOrderPartsDetailUnit").val(searchresult.UnitLevel2);
+                            $("#crud-RequestOrderPartsDetailPackingId").val(searchresult.PackingId);
+
+                            //$("#crud-RequestOrderPartsDetailOnOrderQty").val(OnOrder);
+                            $("#crud-RequestOrderPartsDetailOrderQty").val(0).focus().select();//.attr("min", 1).attr("max", searchresult.StockKanban);
+                            calculateOrderUnitQty();
+
+                            break;
+                        case "Update":
+
+                            crudRequestOrderPartsDetail(action, searchresult.PartNumber);
+                            $("#crud-RequestOrderPartsDetailOrderQty").focus().select();
+
+                            break;
+                    }
+                }
+            }, 100);
+        }
+
+    });
+
+    function calculateOrderUnitQty() {
+        var QtyUnit = $("#crud-RequestOrderPartsDetailUnitQty").val();
+        var OrderQty = $("#crud-RequestOrderPartsDetailOrderQty").val();
+        var OrderUnitQty = 0;
+
+        OrderUnitQty = parseInt(QtyUnit) * parseInt(OrderQty);
+        $("#crud-RequestOrderPartsDetailOrderUnitQty").val(OrderUnitQty);
+
+    }
+
+    loadComboShift();
+    function loadComboShift() {
+
+        $.ajax({
+            url: '@Url.Action("WorkingShiftMasterJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                workday: true,
+            },
+            success: function (response) {
+
+                var id = "#crud-RequestOrderPartsShiftId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Shift")
+                );
+
+                $.each(response, function (i, shift) {
+                    $(id).append(
+                        $('<option></option>').val(shift.ShiftId).html(shift.ShiftId + ' : ' + shift.ShiftName)
+                    );
+                });
+            }
+        })
+    }
+    @*function GetOnOrderStock(ordernumber,Lineid,partnumber) {
+
+        var OnOrder = 0;
+
+        $.ajax({
+            url: '@Url.Action("GetOnOrderStock", "Purchase")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                ordernumber: ordernumber,
+                Lineid: Lineid,
+                partnumber: partnumber
+            },
+            success: function (response) {
+
+                $.each(response, function (i, stock) {
+                    OnOrder = stock.OnOrder;
+                    //console.log(OnOrder);
+                });
+            }
+        })
+
+        return OnOrder;
+    }*@
+
+</script>
+

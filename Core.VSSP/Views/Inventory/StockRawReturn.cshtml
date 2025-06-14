@@ -1,0 +1,296 @@
+﻿@model Core.VSSP.Models.StockRawReturnListModel
+
+<section class="app-section" id="Inventory-StockRawReturn">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Supplier / Unique / P. Number / P. Name...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="SupplierList" class="col-form-label col-form-label-sm">Supplier</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.SupplierList,
+                                    new SelectList(Model.SupplierList, "SupplierId", "SupplierName"),
+                                    new { @id = "SupplierList", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="AreaList" class="col-form-label col-form-label-sm">Area</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.AreaList,
+                                    new SelectList(Model.AreaList, "AreaId", "AreaName"),
+                                    new { @id = "AreaList", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="LocationList" class="col-form-label col-form-label-sm">Location</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.LocationList,
+                                    new SelectList(Model.LocationList, "LocationId", "LocationName"),
+                                    new { @id = "LocationList", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="AbnormalStock" class="col-form-label col-form-label-sm">Abnormal Stock</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="AbnormalStock">
+                                    <label class="custom-control-label" for="AbnormalStock"><small> Minus Stock and Over Stock Only</small></label>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridStockRawReturn()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridStockList"></table>
+            <div id="jqGridPagerStockRawReturn"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            @*<button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudStockRawReturn('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>*@
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridStockRawReturn()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportList,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        //var supplierid = $('#SupplierList').val();
+        //var areaid = $('#AreaList').val();
+        //var locationid = $('#LocationList').val();
+        var abnormal = $("#AbnormalStock").prop("checked");
+        $grid = $("#jqGridStockList").jqGrid({
+            url: '@Url.Action("StockRawReturnJson", "Inventory")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                //supplierid: supplierid,
+                //areaid: areaid,
+                //locationid: locationid,
+                abnormal: abnormal,
+            },
+            colModel: [
+                { label: 'Supplier', name: 'SupplierId', align: 'center', fixed: true, width: 60 },
+                { label: 'Supplier Name', name: 'SupplierName', align: 'left', fixed: true, width: 240 },
+                { label: 'Cost Id', name: 'CostId', align: 'center', fixed: true, width: 53 },
+                { label: 'City', name: 'City', align: 'left', fixed: true, width: 120 },
+                { label: 'Unique Number', name: 'UniqueNumber', align: 'center', fixed: true, width: 50 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 140 },
+                { label: 'Part Name', name: 'PartName', align: 'left', fixed: true, width: 270 },
+                { label: 'Area', name: 'AreaId', align: 'left', fixed: true, width: 80 },
+                { label: 'Loc.', name: 'LocationId', align: 'left', fixed: true, width: 80 },
+                { label: 'Category', name: 'CategoryId', align: 'left', fixed: true, width: 60 },
+                { label: 'Part Model', name: 'PartModel', align: 'center', fixed: true, width: 100 },
+                { label: 'Packing', name: 'PackingId', align: 'left', fixed: true, width: 60 },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 60 },
+                { label: 'Min', name: 'MinStock', align: 'center', fixed: true, width: 60, formatter: "number" },
+                { label: 'Max', name: 'MaxStock', align: 'center', fixed: true, width: 60, formatter: "number" },
+                { label: 'Rejct Qty', name: 'StockQty', align: 'center', fixed: true, width: 80, formatter: "number" },
+                { label: 'On Return Qty', name: 'OutstandingQty', align: 'center', fixed: true, width: 80, formatter: "number" },
+                { label: 'Total Qty', name: 'TotalStockQty', align: 'center', fixed: true, width: 80, formatter: "number" },
+                { label: 'Unit', name: 'PriceUnit', align: 'center', fixed: true, width: 60, formatter: "number" },
+                { label: 'Total Stock', name: 'PriceTotalStock', align: 'center', fixed: true, width: 100, formatter: "number" },
+                { label: 'Total Outstanding', name: 'PriceTotalOutstanding', align: 'center', fixed: true, width: 100, formatter: "number" },
+                { label: 'Grand Total', name: 'PriceTotal', align: 'center', fixed: true, width: 100, formatter: "number" },
+                { label: 'Status', name: 'Status', align: 'center', fixed: true, width: 65, formatter: statusFormatter },
+                { label: 'Last Update', name: 'LastUpdate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerStockRawReturn',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var gridData = $("#jqGridStockList").jqGrid('getRowData');
+                gridStockListResize();
+            },
+        });
+        $('#jqGridStockList').jqGrid('navGrid', '#jqGridPagerStockRawReturn', { search: false, edit: false, add: false, del: false });
+        $('#jqGridStockList').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'MinStock', numberOfColumns: 2, titleText: 'Safety Stock' },
+                //{ startColumnName: 'StockQty', numberOfColumns: 2, titleText: 'Reject Stock' },
+                //{ startColumnName: 'OutstandingQty', numberOfColumns: 2, titleText: 'On Return Stock' },
+                //{ startColumnName: 'TotalStockQty', numberOfColumns: 2, titleText: 'Total Stock' },
+                { startColumnName: 'PriceUnit', numberOfColumns: 4, titleText: 'Price' },
+            ]
+        });
+    });
+
+    function statusFormatter(cellvalue, options, rowObject) {
+
+        if (parseInt(rowObject.StockQty) < parseInt(rowObject.MinStock)) {
+            return "<span class='badge badge-danger'><i class='fa fa-times'></i> Minus</span>"
+        } else
+        if (parseInt(rowObject.StockQty) > parseInt(rowObject.MaxStock)) {
+            return "<span class='badge badge-warning'><i class='fa fa-exclamation'></i> Over</span>"
+        } else {
+            return "<span class='badge badge-success text-white'><i class='fa fa-check'></i> Safe</span>"
+        }
+    }
+
+    function reloadGridStockRawReturn() {
+        var filterData  = $('#searchFilter').val();
+        var supplierid  = $('#SupplierList').val();
+        var areaid      = $('#AreaList').val();
+        var locationid  = $('#LocationList').val();
+        var abnormal    = $("#AbnormalStock").prop("checked");
+
+        $("#jqGridStockList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                supplierid: supplierid,
+                areaid: areaid,
+                locationid: locationid,
+                abnormal: abnormal,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridStockRawReturn();
+        }
+
+        var confidential = '@ViewBag.canConfidential';
+
+        $("#jqGridStockList").jqGrid(showhideCol, "SupplierName")
+        $("#jqGridStockList").jqGrid(showhideCol, "City")
+        $("#jqGridStockList").jqGrid(showhideCol, "AreaId")
+        $("#jqGridStockList").jqGrid(showhideCol, "LocationId")
+        $("#jqGridStockList").jqGrid(showhideCol, "CategoryId")
+        $("#jqGridStockList").jqGrid(showhideCol, "PartModel")
+        $("#jqGridStockList").jqGrid(showhideCol, "PackingId")
+        $("#jqGridStockList").jqGrid(showhideCol, "LastUpdate")
+
+        if (confidential === 'True') {
+            $("#jqGridStockList").jqGrid(showhideCol, "PriceUnit")
+            $("#jqGridStockList").jqGrid(showhideCol, "PriceTotalStock")
+            $("#jqGridStockList").jqGrid(showhideCol, "PriceTotalOutstanding")
+            $("#jqGridStockList").jqGrid(showhideCol, "PriceTotal")
+        } else {
+            $("#jqGridStockList").jqGrid('hideCol', "PriceUnit")
+            $("#jqGridStockList").jqGrid('hideCol', "PriceTotalStock")
+            $("#jqGridStockList").jqGrid('hideCol', "PriceTotalOutstanding")
+            $("#jqGridStockList").jqGrid('hideCol', "PriceTotal")
+        }
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+        $("#SupplierList").prepend(new Option("Choose Supplier", "", true, true));
+        $("#AreaList").prepend(new Option("Choose Area", "", true, true));
+        $("#LocationList").prepend(new Option("Choose Location", "", true, true));
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridStockList").jqGrid("hideCol", "Status")
+        exportGrid('#jqGridStockList', 'A3', '@ViewBag.Title', orientation);
+        $("#jqGridStockList").jqGrid("showCol", "Status")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

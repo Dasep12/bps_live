@@ -1,0 +1,1249 @@
+﻿
+<div class="modal animated fadeIn" id="crudForecastOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudForecastOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderNumber" class="col-sm-4 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-ForecastOrderNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-ForecastOrderDate" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderSupplierId" class="col-sm-4 col-form-label col-form-label-sm">Supplier</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control form-control-sm selectpicker bg-white"  data-live-search="true" data-size="8" id="crud-ForecastOrderSupplierId" name="SupplierId" onchange="loadKanbanCycle(); reloadGridForecastDetail();" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderMonth" class="col-sm-4 col-form-label col-form-label-sm">Month / Shift</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-ForecastOrderMonth" name="KanbanCycle" onchange="loadKanbanCycle(); reloadGridForecastDetail()" required>
+                                </div>
+                                <div class="col-sm-4">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-ForecastOrderShift" name="Shift" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderKanbanCycle" class="col-sm-4 col-form-label col-form-label-sm">Kanban Cycle</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm bg-white border-right-0" style="max-width:70px" id="crud-ForecastOrderKanbanCycle" name="KanbanCycle">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm bg-white" id="crud-ForecastOrderKanbanTime" name="KanbanTime">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-8">
+                                    <input type="text" rows="1" class="form-control form-control-sm bg-white" id="crud-ForecastOrderRemarks" name="Remarks" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudForecastDetail"></table>
+                            <div id="jqGridPagerCrudForecastDetail"></div>
+                        </div>
+                    </div>
+
+                    <div id="crudForecastOrderError"></div>
+                    <input type="hidden" id="ForecastOrderAction" />
+                    <input type="hidden" id="store_lastworkday" placeholder="Last Workday" />
+                    <input type="hidden" id="store_workday" placeholder="Workday" />
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-addForecastOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudForecastOrderDetail('Create','')"><span class="fa fa-plus"></span> New Part Item</button>
+                                <button id="btn-addForecastOrderRevision" type="button" class="btn btn-sm btn-outline-dark" onclick="crudForecastOrderRevision('Open','')"><span class="fa fa-history"></span> Revision History</button>
+                            </div>
+                            @*<div class="ml-3 mt-1">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="crud-showhide" onclick="showhidecrudCol('click')">
+                                    <label class="custom-control-label" for="crud-showhide"><small> Show Sales Number Reference</small></label>
+                                </div>
+                            </div>*@
+                        </div>
+
+
+                        @*<a id="btn-addForecastOrderExport" href="~/Document/Template/13. Template Forecast.xlsx" target="_blank" class="btn btn-sm btn-outline-dark" onclick="crudForecastOrderDetail('Template','')"><span class="fa fa-file-excel-o"></span> Templates</a>
+                        <span id="btn-uploadTemplate" class="btn btn-sm btn-file btn-outline-dark">
+                            <i class="fa fa-upload"></i> Upload Template
+                            <input id="SupplierLogo" name="SupplierLogo" type="file" accept="image/*" class="custom-file-input" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="crudForecastOrderDetail('Import','')" />
+                        </span>*@
+
+                        
+                        <h4 class="mx-auto" style="margin:0;padding:0" hidden><span id="approvalInfo" class="badge badge-warning shadow-sm">APPROVAL</span></h4>
+                        @*<div class="col-md-4">
+                        <div class="form-group form-group-sm">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input form-control-sm" id="file-upload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="loadExcel()">
+                                <label class="custom-file-label" for="file-upload">Choose file</label>
+                            </div>
+                        </div>*@
+                    </div>
+
+                    <button id="btn-crudForecastOrder" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudForecastOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudForecastOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> ForecastOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" id="btn-searchPart" class="btn btn-sm btn-outline-primary" onclick="callFilterRawMaterial()"><span class="fa fa-search"></span> Find Part Number</a>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailUniqueNumber" class="col-md-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailUniqueNumber" readonly required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailPartNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailPartName" class="col-md-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailPartName" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailPartModel" class="col-md-4 col-form-label col-form-label-sm">Model</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailPartModel" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailUnitQty" class="col-md-4 col-form-label col-form-label-sm">Qty / Kanban</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailUnitQty" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailUnit" class="col-md-4 col-form-label col-form-label-sm">Unit</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailUnit" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailPackingId" class="col-md-4 col-form-label col-form-label-sm">Type Packing</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailPackingId" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailDailyLastQty" class="col-md-3 col-form-label col-form-label-sm">Qty / Day</label>
+                                <div class="col-md-9">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-secondary"><b>Last</b></span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailDailyLastQty" readonly>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-secondary"><b>New</b></span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm bg-light border-left-0" id="crud-ForecastOrderDetailDailyQty" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailOrderLastQty" class="col-md-3 col-form-label col-form-label-sm">Last Order</label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text bg-secondary"><b>N-1</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-ForecastOrderDetailOrderLastQty" onchange="calculateDailyQty()" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-ForecastOrderDetailOrderQty" class="col-md-3 col-form-label col-form-label-sm">Firm Order</label>
+                                <div class="col-md-5">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend text-center">
+                                            <span class="input-group-text bg-secondary" style="width:40px"><b>N</b></span>
+                                        </div>
+                                        <input type="number" min="0" class="form-control form-control-sm" id="crud-ForecastOrderDetailOrderQty" onchange="calculateDailyQty()" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ForecastOrderDetailN1" class="col-form-label col-form-label-sm">Forecast</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-secondary"><b>N+1</b></span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control form-control-sm" id="crud-ForecastOrderDetailN1" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text bg-secondary"><b>N+2</b></span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control form-control-sm border-left-0" id="crud-ForecastOrderDetailN2" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text bg-secondary"><b>N+3</b></span>
+                                    </div>
+                                    <input type="number" min="0" class="form-control form-control-sm border-left-0" id="crud-ForecastOrderDetailN3" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ForecastOrderDetailFluctuationQty" class="col-form-label col-form-label-sm">Fluctuation</label>
+                                <div class="input-group input-group-sm">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text bg-secondary"><b>Qty</b></span>
+                                    </div>
+                                    <input type="number" class="form-control form-control-sm bg-light" id="crud-ForecastOrderDetailFluctuationQty" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text bg-secondary"><i class="fa fa-percent"></i></span>
+                                    </div>
+                                    <input type="number" class="form-control form-control-sm bg-light border-left-0" id="crud-ForecastOrderDetailFluctuationPercent" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="ForecastOrderDetailAction" />
+                    <input type="hidden" id="ForecastOrderDetailRowStatus" />
+                    <div id="crudForecastOrderDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute;left:0">
+                        <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudForecastOrderDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                        <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudForecastOrderDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                    </div>
+                    <button id="btn-crudForecastOrderDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $("#crud-ForecastOrderMonth").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    });
+
+    $('#crudForecastOrderDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-ForecastOrderDetailN3") {
+                $("#btn-crudForecastOrderDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudForecastOrder(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartRawMaterial","Search")');
+
+        document.getElementById("crudForecastOrderForm").reset();
+        $('#crudForecastOrderForm').removeClass('was-validated');
+        $('#crudForecastOrderError').html("");
+        $('#btn-addForecastOrderDetail').removeAttr('disabled');
+        $('#btn-addForecastOrderRevision').removeAttr('disabled');
+        $("#btn-crudForecastOrder").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudForecastOrderForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#ForecastOrderAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+        var approval = '@ViewBag.ApprovalLevel';
+
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudForecastOrderError').html(errMsg);
+            $("#crudForecastOrderForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addForecastOrderDetail").attr("disabled", true);
+            $("#btn-crudForecastOrder").attr("disabled", true);
+
+            $('#crudForecastOrderModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                ForecastOrderDate           = Grid.jqGrid('getCell', selectedRowId, 'OrderDate'),
+                ForecastOrderMonth          = Grid.jqGrid('getCell', selectedRowId, 'OrderMonth'),
+                ForecastOrderYear           = Grid.jqGrid('getCell', selectedRowId, 'OrderYear'),
+                ForecastOrderShift          = Grid.jqGrid('getCell', selectedRowId, 'Shift'),
+                ForecastOrderSupplierId     = Grid.jqGrid('getCell', selectedRowId, 'SupplierId'),
+                ForecastOrderKanbanCycle    = Grid.jqGrid('getCell', selectedRowId, 'KanbanCycle'),
+                ForecastOrderKanbanTime     = Grid.jqGrid('getCell', selectedRowId, 'KanbanTime'),
+                ForecastOrderApproval       = Grid.jqGrid('getCell', selectedRowId, 'Approval'),
+                ForecastOrderRemarks        = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            ForecastOrderDate = moment(new Date(ForecastOrderDate)).format("YYYY-MM-DD");
+            ForecastOrderMonth = moment().month(ForecastOrderMonth).format("MM");
+
+            var monthyear = ForecastOrderMonth + "/" + ForecastOrderYear;
+
+            $("#crud-ForecastOrderNumber").val(id);
+            $("#crud-ForecastOrderDate").val(ForecastOrderDate);
+            $("#crud-ForecastOrderSupplierId").val(ForecastOrderSupplierId);
+            $("#crud-ForecastOrderMonth").val(monthyear);
+            $("#crud-ForecastOrderShift").val(ForecastOrderShift);
+            $("#crud-ForecastOrderKanbanCycle").val(ForecastOrderKanbanCycle);
+            $("#crud-ForecastOrderKanbanTime").val(ForecastOrderKanbanTime);
+            $("#crud-ForecastOrderRemarks").val(ForecastOrderRemarks);
+            $("#approvalInfo").text(ForecastOrderApproval);
+
+        }
+
+        $('#crud-ForecastOrderSupplierId').selectpicker('refresh')
+
+        switch (action) {
+            case "Create":
+                $('#btn-addForecastOrderRevision').attr('disabled', true);
+                $("#crud-ForecastOrderNumber").attr("readonly", true);
+                $("#crud-ForecastOrderDate").attr("readonly", true);
+                $("#crud-ForecastOrderKanbanCycle").attr("readonly", true);
+                $("#crud-ForecastOrderKanbanTime").attr("readonly", true);
+                $("#crud-ForecastOrderDate").val(newdate);
+                $("#crudForecastOrderModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudForecastOrderModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudForecastOrderModal').modal('show');
+                $("#crud-ForecastOrderSupplierId").focus();
+                break;
+            case "Update":
+                $("#crud-ForecastOrderNumber").attr("readonly", true);
+                $("#crud-ForecastOrderDate").attr("readonly", true);
+                $("#crud-ForecastOrderSupplierId").attr("disabled", true);
+                $("#crud-ForecastOrderKanbanCycle").attr("readonly", true);
+                $("#crud-ForecastOrderKanbanTime").attr("readonly", true);
+                $("#crudForecastOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudForecastOrderModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudForecastOrderModal').modal('show');
+                $("#crud-ForecastOrderRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudForecastOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ForecastOrderSupplierId").attr("disabled", true);
+                $("#crud-ForecastOrderActived").attr("disabled", true);
+                $('#btn-addForecastOrderDetail').attr('disabled', true);
+                $('#btn-addForecastOrderRevision').attr('disabled', true);
+                $('#btn-addKanban').attr('disabled', true);
+                $("#btn-uploadLogo").addClass("invisible");
+                $("#btn-crudForecastOrder").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudForecastOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudForecastOrderModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudForecastOrderModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudForecastOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ForecastOrderSupplierId").attr("disabled", true);
+                $("#crud-ForecastOrderActived").attr("disabled", true);
+                $('#btn-addForecastOrderDetail').attr('disabled', true);
+                $('#btn-addForecastOrderRevision').attr('disabled', true);
+                $('#btn-addKanban').attr('disabled', true);
+                $("#btn-uploadLogo").addClass("invisible");
+                $("#btn-crudForecastOrder").html("<span class='fa fa-ban'></span> Cancel PRL");
+                $("#crudForecastOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudForecastOrderModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudForecastOrderModal').modal('show');
+                break
+            case "Closed":
+                $("#crudForecastOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-ForecastOrderSupplierId").attr("disabled", true);
+                $("#crud-ForecastOrderActived").attr("disabled", true);
+                $('#btn-addForecastOrderDetail').attr('disabled', true);
+                $('#btn-addForecastOrderRevision').attr('disabled', true);
+                $('#btn-addKanban').attr('disabled', true);
+                $("#btn-uploadLogo").addClass("invisible");
+                $("#btn-crudForecastOrder").html("<span class='fa fa-sign-out'></span> Closing PRL");
+                $("#crudForecastOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudForecastOrderModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudForecastOrderModal').modal('show');
+                break
+        }
+
+        reloadGridForecastDetail();
+        reloadGridForecastRevision();
+
+    }
+
+    $('#crud-ForecastOrderSupplierId').change(function () {
+        $('#crudForecastOrderError').html("");
+    });
+
+    $('#crud-ForecastOrderMonth').change(function () {
+        $('#crudForecastOrderError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridForecastDetail = $("#jqGridCrudForecastDetail").jqGrid({
+            url: "@Url.Action("ForecastOrderDetailListJson", "Purchase")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { ordernumber: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 70, sortable: false, formatter: actionForecastDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 55, sortable: false, formatter: statusCrudFormatter },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', key: true, fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 185, sortable: false },
+                { label: 'MODEL', name: 'Model', align: 'left', fixed: true, width: 55, sortable: false },
+                { label: 'QTY/ KBN', name: 'QtyByKanban', align: 'right', fixed: true, width: 45, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'Unit', align: 'center', fixed: true, width: 40, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', fixed: true, width: 55, sortable: false },
+                { label: 'LAST', name: 'DailyLastQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'NEW', name: 'DailyQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'N-1', name: 'OrderLastQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'N', name: 'OrderQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'N+1', name: 'N1', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'N+2', name: 'N2', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'N+3', name: 'N3', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'FluctuationQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: '%', name: 'FluctuationPercent', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'SO NUMBER REFERENCE', name: 'SONumber', align: 'center', fixed: true, width: 120, sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudForecastDetail',
+            loadonce: true,
+            height: 240,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            loadComplete: function () {
+
+                var lastpart = '';
+                var nextpart = '';
+                var duplicate = 0;
+                var action = $("#ForecastOrderAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        var rowData = $this.jqGrid("getRowData", ids[i]),
+                            nextpart = rowData.PartNumber;
+
+                        if (lastpart === nextpart) {
+                            duplicate += 1;
+                            parameters =
+                            {
+                                RowStatus: "Duplicate",
+                            }
+                            $("#jqGridCrudForecastDetail").jqGrid('setRowData', ids[i], parameters);
+                            $this.jqGrid('setRowData', ids[i], false, "text-danger");
+
+                        } else {
+                            parameters =
+                            {
+                                RowStatus: action,
+                            }
+                            $("#jqGridCrudForecastDetail").jqGrid('setRowData', ids[i], parameters);
+                        }
+
+                        lastpart = nextpart
+
+
+                    }
+
+                    if (duplicate != 0) {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Duplicate Part Number!</b><br/>Please check Sales Order Reference on the right side and makes sure you do not have double order for duplicate part item.</small></div>'
+                        $('#crudForecastOrderError').html(errMsg);
+                        $("#btn-crudForecastOrder").attr("disabled", true);
+                    } else {
+                        $('#crudForecastOrderError').html("");
+                        $("#btn-crudForecastOrder").removeAttr("disabled");
+                    }
+
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudForecastOrderDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudForecastDetail').jqGrid('navGrid', '#jqGridPagerCrudForecastDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudForecastDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'DailyLastQty', numberOfColumns: 2, titleText: 'QTY / DAY' },
+                { startColumnName: 'OrderLastQty', numberOfColumns: 1, titleText: 'LAST' },
+                { startColumnName: 'OrderQty', numberOfColumns: 1, titleText: 'FIRM' },
+                { startColumnName: 'N1', numberOfColumns: 3, titleText: 'FORECAST' },
+                { startColumnName: 'FluctuationQty', numberOfColumns: 2, titleText: 'FLUCTUATION' }
+            ]
+        });
+    });
+
+    function reloadGridForecastDetail() {
+
+        var formaction  = $("#ForecastOrderAction").val();
+        var month       = $("#crud-ForecastOrderMonth").val();
+        var supplierid  = $("#crud-ForecastOrderSupplierId").val();
+        var ordernumber = $("#crud-ForecastOrderNumber").val();
+
+        if (month != null && supplierid != null) {
+
+            var workday = GetWorkday(month);
+
+            if (workday.length != 0) {
+
+                $("#store_lastworkday").val(workday.N10);
+                $("#store_workday").val(workday.N00);
+
+                $("#jqGridCrudForecastDetail").jqGrid('destroyGroupHeader');
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'OrderLastQty', 'N-1' + '<br/>' + workday.M10 + '<br/>' + workday.N10);
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'OrderQty', 'N' + '<br/>' + workday.M00 + '<br/>' + workday.N00, { 'font-weight': 'bold' });
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'N1', 'N+1' + '<br/>' + workday.M01 + '<br/>' + workday.N01);
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'N2', 'N+2' + '<br/>' + workday.M02 + '<br/>' + workday.N02);
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'N3', 'N+3' + '<br/>' + workday.M03 + '<br/>' + workday.N03);
+
+                $('#jqGridCrudForecastDetail').jqGrid('setGroupHeaders', {
+                    useColSpanStyle: true,
+                    groupHeaders: [
+                        { startColumnName: 'DailyLastQty', numberOfColumns: 2, titleText: 'QTY / DAY' },
+                        { startColumnName: 'OrderLastQty', numberOfColumns: 1, titleText: 'LAST' },
+                        { startColumnName: 'OrderQty', numberOfColumns: 1, titleText: 'FIRM' }, { 'font-weight': 'bold' },
+                        { startColumnName: 'N1', numberOfColumns: 3, titleText: 'FORECAST' },
+                        { startColumnName: 'FluctuationQty', numberOfColumns: 2, titleText: 'FLUCTUATION' }
+                    ]
+                });
+
+                $("#jqGridCrudForecastDetail").jqGrid('setLabel', 'Firm', '' ,{ 'font-weight': 'bold' });
+
+            }
+        }
+
+        $("#jqGridCrudForecastDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                ordernumber: ordernumber,
+                month: month,
+                supplierid: supplierid,
+                formAction: formaction,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionForecastDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.PartNumber;
+        var formaction = $("#ForecastOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudForecastOrderDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudForecastOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-trash-o'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#ForecastOrderAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            case "Duplicate":
+                return "<span class='badge badge-danger'>Duplicate</span>"
+                break;
+
+            default:
+                //if (action === "Create") {
+                //    return "<span class='badge badge-primary'>New</span>"
+                //} else {
+                //    return "";
+                //}
+                return "";
+                break;
+        }
+    }
+
+    function crudForecastOrderDetailMove(action) {
+        var $grid = $("#jqGridCrudForecastDetail");
+        var id = $("#crud-ForecastOrderDetailPartNumber").val();
+        var rowIndex = $grid.jqGrid('getInd', id);
+        var dataIDs = $grid.getDataIDs();
+        var datalen = (dataIDs.length) - 1;
+
+        $("#btn-prev").removeClass("disabled");
+        $("#btn-next").removeClass("disabled");
+
+
+        switch (action) {
+            case "prev":
+
+                rowIndex = parseInt(rowIndex) - 2;
+
+                if (dataIDs.length >= rowIndex && rowIndex >= 0) {
+
+                    var prevID = dataIDs[rowIndex];
+                    crudForecastOrderDetail("Update", prevID)
+                    $grid.setSelection(prevID, false);
+
+                }
+
+                if (rowIndex <= 0) {
+                    $("#btn-prev").addClass("disabled");
+                }
+
+                break;
+
+            case "next":
+
+                if (dataIDs.length > rowIndex) {
+
+                    var nextID = dataIDs[rowIndex];
+                    crudForecastOrderDetail("Update", nextID)
+                    $grid.setSelection(nextID, false);
+
+                }
+
+                if (datalen <= rowIndex) {
+                    $("#btn-next").addClass("disabled");
+                }
+
+                break;
+
+        }
+
+    }
+
+    function crudForecastOrderDetail(action, id) {
+
+        document.getElementById("crudForecastOrderDetailForm").reset();
+        $('#crudForecastOrderDetailForm').removeClass('was-validated');
+        $('#crudForecastOrderError').html("");
+        $('#crudForecastOrderDetailError').html("");
+        $("#btn-crudForecastOrderDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#btn-prev").addClass("disabled");
+        $("#btn-next").addClass("disabled");
+        $("#btn-searchPart").removeClass("disabled");
+
+        $("#crudForecastOrderDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#ForecastOrderDetailAction").val(action);
+        var supplierid = $("#crud-ForecastOrderSupplierId").val();
+        var ordermonth = $("#crud-ForecastOrderMonth").val();
+
+        if (supplierid === "" || ordermonth === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Supplier and Order Month completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudForecastOrderError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+            var $grid = $("#jqGridCrudForecastDetail");
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus,
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName,
+                Model = rowData.Model,
+                QtyByKanban = rowData.QtyByKanban,
+                Unit = rowData.Unit,
+                PackingId = rowData.PackingId,
+                DailyLastQty = rowData.DailyLastQty,
+                DailyQty = rowData.DailyQty,
+                OrderLastQty = rowData.OrderLastQty,
+                OrderQty = rowData.OrderQty,
+                N1 = rowData.N1,
+                N2 = rowData.N2,
+                N3 = rowData.N3,
+                FluctuationQty = rowData.FluctuationQty,
+                FluctuationPercent = rowData.FluctuationPercent;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus.split(">");
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#ForecastOrderDetailRowStatus").val(RowStatus);
+            $("#crud-ForecastOrderDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-ForecastOrderDetailPartNumber").val(PartNumber);
+            $("#crud-ForecastOrderDetailPartName").val(PartName);
+            $("#crud-ForecastOrderDetailPartModel").val(Model);
+            $("#crud-ForecastOrderDetailUnitQty").val(QtyByKanban);
+            $("#crud-ForecastOrderDetailUnit").val(Unit);
+            $("#crud-ForecastOrderDetailPackingId").val(PackingId);
+            $("#crud-ForecastOrderDetailDailyLastQty").val(DailyLastQty);
+            $("#crud-ForecastOrderDetailDailyQty").val(DailyQty);
+            $("#crud-ForecastOrderDetailOrderLastQty").val(OrderLastQty);
+            $("#crud-ForecastOrderDetailOrderQty").val(OrderQty);
+            $("#crud-ForecastOrderDetailN1").val(N1);
+            $("#crud-ForecastOrderDetailN2").val(N2);
+            $("#crud-ForecastOrderDetailN3").val(N3);
+            $("#crud-ForecastOrderDetailFluctuationQty").val(FluctuationQty);
+            $("#crud-ForecastOrderDetailFluctuationPercent").val(FluctuationPercent);
+
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-ForecastOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartName").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartModel").attr("disabled", true);
+                $("#crud-ForecastOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-ForecastOrderDetailUnit").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPackingId").attr("disabled", true);
+                $("#crud-ForecastOrderDetailDailyLastOrder").attr("disabled", true);
+                $("#crud-ForecastOrderDetailDailyOrder").attr("disabled", true);
+                $("#crud-ForecastOrderDetailFluctuationQty").attr("disabled", true);
+                $("#crud-ForecastOrderDetailFluctuationPercent").attr("disabled", true);
+                $("#crudForecastOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudForecastOrderDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudForecastOrderDetailModal').modal('show');
+                $("#btn-searchPart").focus();
+                break;
+            case "Update":
+                $("#crud-ForecastOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartName").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPartModel").attr("disabled", true);
+                $("#crud-ForecastOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-ForecastOrderDetailUnit").attr("disabled", true);
+                $("#crud-ForecastOrderDetailPackingId").attr("disabled", true);
+                $("#crud-ForecastOrderDetailDailyLastOrder").attr("disabled", true);
+                $("#crud-ForecastOrderDetailDailyOrder").attr("disabled", true);
+                $("#crud-ForecastOrderDetailFluctuationQty").attr("disabled", true);
+                $("#crud-ForecastOrderDetailFluctuationPercent").attr("disabled", true);
+                $("#crudForecastOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudForecastOrderDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudForecastOrderDetailModal').modal('show');
+                $("#crud-ForecastOrderDetailOrderLastQty").focus().select();
+
+                var rowIndex = $grid.jqGrid('getInd', UniqueNumber);
+                var dataIDs = $grid.getDataIDs();
+                var datalen = (dataIDs.length);
+
+                $("#btn-prev").removeClass("disabled");
+                $("#btn-next").removeClass("disabled");
+
+                if (rowIndex === 1) {
+                    $("#btn-prev").addClass("disabled");
+                }
+                if (rowIndex === datalen) {
+                    $("#btn-next").addClass("disabled");
+                }
+                break;
+            case "Delete":
+                $("#crudForecastOrderDetailForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-searchPart").addClass("disabled");
+                $("#btn-crudForecastOrderDetail").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudForecastOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudForecastOrderDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudForecastOrderDetailModal').modal('show');
+                break
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudForecastOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var action = $('#ForecastOrderDetailAction').val();
+                    var rowStatus = $('#ForecastOrderDetailRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+
+                            parameters =
+                            {
+                                rowID: $("#crud-ForecastOrderDetailPartNumber").val(),
+                                initdata: {
+                                    RowStatus: action,
+                                    UniqueNumber: $("#crud-ForecastOrderDetailUniqueNumber").val(),
+                                    PartNumber: $("#crud-ForecastOrderDetailPartNumber").val(),
+                                    PartName: $("#crud-ForecastOrderDetailPartName").val(),
+                                    Model: $("#crud-ForecastOrderDetailPartModel").val(),
+                                    QtyByKanban: $("#crud-ForecastOrderDetailUnitQty").val(),
+                                    Unit: $("#crud-ForecastOrderDetailUnit").val(),
+                                    PackingId: $("#crud-ForecastOrderDetailPackingId").val(),
+                                    DailyLastQty: $("#crud-ForecastOrderDetailDailyLastQty").val(),
+                                    DailyQty: $("#crud-ForecastOrderDetailDailyQty").val(),
+                                    OrderLastQty: $("#crud-ForecastOrderDetailOrderLastQty").val(),
+                                    OrderQty: $("#crud-ForecastOrderDetailOrderQty").val(),
+                                    N1: $("#crud-ForecastOrderDetailN1").val(),
+                                    N2: $("#crud-ForecastOrderDetailN2").val(),
+                                    N3: $("#crud-ForecastOrderDetailN3").val(),
+                                    FluctuationQty: $("#crud-ForecastOrderDetailFluctuationQty").val(),
+                                    FluctuationPercent: $("#crud-ForecastOrderDetailFluctuationPercent").val()
+                                },
+                                position: "last",
+                            }
+
+                            console.log(parameters);
+                            $("#jqGridCrudForecastDetail").jqGrid('addRow', parameters);
+                            showToast("Success", "Create @ViewBag.Title " + $("#crud-ForecastOrderDetailPartName").val() + " has been saved succesfully");
+                            $('#crudForecastOrderDetailModal').modal('hide');
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#crud-ForecastOrderDetailPartNumber").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                DailyLastQty: $("#crud-ForecastOrderDetailDailyLastQty").val(),
+                                DailyQty: $("#crud-ForecastOrderDetailDailyQty").val(),
+                                OrderLastQty: $("#crud-ForecastOrderDetailOrderLastQty").val(),
+                                OrderQty: $("#crud-ForecastOrderDetailOrderQty").val(),
+                                N1: $("#crud-ForecastOrderDetailN1").val(),
+                                N2: $("#crud-ForecastOrderDetailN2").val(),
+                                N3: $("#crud-ForecastOrderDetailN3").val(),
+                                FluctuationQty: $("#crud-ForecastOrderDetailFluctuationQty").val(),
+                                FluctuationPercent: $("#crud-ForecastOrderDetailFluctuationPercent").val()
+                            }
+
+                            $("#jqGridCrudForecastDetail").jqGrid('setRowData', rowid, parameters);
+                            showToast("Success", "Update @ViewBag.Title " + $("#crud-ForecastOrderDetailPartName").val() + " has been saved succesfully");
+
+                            var lastrow = $("#btn-next").hasClass("disabled");
+                            if (lastrow === true) {
+                                $('#crudForecastOrderDetailModal').modal('hide');
+                            } else {
+                                $("#btn-next").click();
+                            }
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#crud-ForecastOrderDetailPartNumber").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudForecastDetail').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudForecastDetail").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            showToast("Failed", "Delete @ViewBag.Title " + $("#crud-ForecastOrderDetailPartName").val() + " has been removed succesfully");
+                            $('#crudForecastOrderDetailModal').modal('hide');
+
+                            break;
+                    }
+
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudForecastOrderForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudForecastDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#ForecastOrderAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var monthyear = $("#crud-ForecastOrderMonth").val();
+                    monthyear = monthyear.split("/");
+                    var month = monthyear[0];
+                    var years = monthyear[1];
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        ForecastOrder: {
+                            OrderNumber : $("#crud-ForecastOrderNumber").val(),
+                            OrderDate   : $("#crud-ForecastOrderDate").val(),
+                            OrderYear   : years,
+                            OrderMonth  : month,
+                            Shift       : $("#crud-ForecastOrderShift").val(),
+                            SupplierId  : $("#crud-ForecastOrderSupplierId").val(),
+                            Remarks     : $("#crud-ForecastOrderRemarks").val(),
+                            Status      : null,
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        ForecastOrderDetail: $("#jqGridCrudForecastDetail").jqGrid('getGridParam', 'data'),
+                        ForecastOrderRevision: $("#jqGridCrudForecastRevision").jqGrid('getGridParam', 'data'),
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        formAction: $("#ForecastOrderAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudForecastOrderList", "Purchase")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudForecastOrderModal').modal('hide');
+                            var act = $("#ForecastOrderAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudForecastOrderError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboSupplier();
+
+    function loadComboSupplier() {
+
+        supplierid = $("#crud-ForecastOrderSupplierId").val();
+
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { SupplierId:supplierid },
+            success: function (response) {
+
+                var id = "#crud-ForecastOrderSupplierId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Supplier")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.SupplierId).html(sup.SupplierName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadKanbanCycle() {
+
+        supplierid  = $("#crud-ForecastOrderSupplierId").val();
+        month       = $("#crud-ForecastOrderMonth").val();
+
+        if (supplierid === "") return false;
+        if (month === "") return false;
+
+        $.ajax({
+            url: '@Url.Action("KanbanCycleListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { key:supplierid, month: month },
+            success: function (response) {
+
+                $.each(response, function (i, kanban) {
+                    $("#crud-ForecastOrderKanbanCycle").val(kanban.Cycle1 + '-' + kanban.Cycle2 + '-' + kanban.Cycle3);
+                    $("#crud-ForecastOrderKanbanTime").val(kanban.CycleTime);
+                });
+            }
+        })
+    }
+
+    function loadComboRawMaterial(sid) {
+
+        if (sid === "*") {
+            sid = $("#crud-KanbanForecastOrderNumber").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("RawMaterialsListJson", "ForecastOrders")',
+            type: "GET",
+            dataType: "JSON",
+            data: { searchFilter: sid },
+            success: function (response) {
+
+                var id = "#crud-KanbanPartNumberRawMaterial";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Raw Material")
+                );
+
+                $.each(response, function (i, raw) {
+                    $(id).append(
+                        $('<option></option>').val(raw.PartNumber).html(raw.PartNumber + ' : ' + raw.PartName)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboShift();
+
+    function loadComboShift() {
+
+        $.ajax({
+            url: '@Url.Action("ShiftGroupJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-ForecastOrderShift";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Shift")
+                );
+
+                $.each(response, function (i, shift) {
+                    $(id).append(
+                        $('<option></option>').val(shift.TotalShift).html(shift.GroupName)
+                    );
+                });
+            }
+        })
+    }
+
+    function GetWorkday(month) {
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("ForecastWorkDayJson", "Purchase")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { month: month },
+            success: function (response) {
+
+                result = response
+
+            }
+        })
+
+        return result;
+    }
+
+    function callFilterRawMaterial() {
+
+        var supplierid = $("#crud-ForecastOrderSupplierId").val();
+        var partexist = $("#jqGridCrudForecastDetail").getDataIDs();
+
+        var status = $("#ForecastOrderDetailAction").val()
+        if (status === "Update") {
+            partexist = "";
+        }
+
+        showfilterPartRawMaterial(supplierid, partexist);
+
+    }
+
+    function calculateDailyQty() {
+        var workdayN10 = $("#store_lastworkday").val();
+        var workdayN00 = $("#store_workday").val();
+        var orderqtyN10 = $("#crud-ForecastOrderDetailOrderLastQty").val();
+        var orderqtyN00 = $("#crud-ForecastOrderDetailOrderQty").val();
+        var dailyqtyN10 = 0;
+        var dailyqtyN00 = 0;
+        var fluctiationqty = 0;
+        var fluctiationpercent = 0;
+
+        dailyqtyN10 = Math.round(orderqtyN10 / workdayN10);
+        dailyqtyN00 = Math.round(orderqtyN00 / workdayN00);
+        fluctiationqty = orderqtyN00; //(orderqtyN00 - orderqtyN10).toFixed(2);
+        fluctiationpercent = ((orderqtyN10 / orderqtyN00)*100).toFixed(1);
+
+        $("#crud-ForecastOrderDetailDailyLastQty").val(dailyqtyN10);
+        $("#crud-ForecastOrderDetailDailyQty").val(dailyqtyN00);
+        $("#crud-ForecastOrderDetailFluctuationQty").val(fluctiationqty);
+        $("#crud-ForecastOrderDetailFluctuationPercent").val(fluctiationpercent);
+
+    }
+
+    $(document).on('hide.bs.modal', '#filterPartRawMaterialModal', function (e) {
+
+        if ($("#search_result").val() != "") {
+            var searchresult = JSON.parse($("#search_result").val());
+            var action = $("#ForecastOrderDetailAction").val();
+
+            setTimeout(function () {
+
+                if (searchresult.length != 0) {
+
+                    switch (action) {
+                        case "Create":
+                            $("#crud-ForecastOrderDetailUniqueNumber").val(searchresult.UniqueNumber);
+                            $("#crud-ForecastOrderDetailPartNumber").val(searchresult.PartNumber);
+                            $("#crud-ForecastOrderDetailPartName").val(searchresult.PartName);
+                            $("#crud-ForecastOrderDetailPartModel").val(searchresult.PartModel);
+                            $("#crud-ForecastOrderDetailUnitQty").val(searchresult.UnitQty);
+                            $("#crud-ForecastOrderDetailUnit").val(searchresult.UnitLevel2);
+                            $("#crud-ForecastOrderDetailPackingId").val(searchresult.PackingId);
+
+                            $("#crud-ForecastOrderDetailOrderLastQty").focus().select();
+
+                            break;
+                        case "Update":
+
+                            crudForecastOrderDetail(action, searchresult.PartNumber);
+                            $("#crud-ForecastOrderDetailOrderLastQty").focus().select();
+
+                            break;
+                    }
+                }
+            }, 100);
+        }
+
+    });
+
+
+    function showhidecrudCol(event) {
+
+        var res = $("#crud-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+        $("#jqGridCrudForecastDetail").jqGrid(showhideCol, "SONumber")
+
+    };
+
+</script>
+

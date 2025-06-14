@@ -1,0 +1,147 @@
+﻿<div class="modal animated fadeIn" id="scanKanbanModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanKanbanForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-qrcode"></span> Scan E-Kanban</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-QrCodes" class="col-form-label">Scan E-Kanban Card</label>
+                                <input type="text" class="form-control form-control-lg text-center" id="scan-QrCodes" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scanKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanKanban" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function startScan() {
+        document.getElementById("scanKanbanForm").reset();
+        $('#scanKanbanForm').removeClass('was-validated');
+        $('#scanKanbanError').html("");
+
+        $('#scanKanbanModal').modal('show');
+        $("#scan-QrCodes").focus();
+    };
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#scanKanbanForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var scanQrCodes = $("#scan-QrCodes").val();
+                    if (scanQrCodes != "") {
+                        $.ajax({
+                            url: '@Url.Action("PartIdentificationSupplierJson", "Quality")',
+                            type: 'POST',
+                            dataType: "JSON",
+                            data: {
+                                searchFilter: scanQrCodes,
+                                scanQrCodes: scanQrCodes
+                            },
+                            success: function (data) {
+
+                                if (data.length > 0) {
+
+                                    $.each(data, function (i, part) {
+
+                                        var gate = $("#crud-Gate").val();
+                                        if (part.GateId != gate) {
+                                            gate = ""
+                                        }
+
+                                        if (part.GateId != gate) {
+
+                                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Wrong Gate!</b><br/>Part Item only accept in Gate : ' + part.GateId + ', please check kanban carefully and make sure the gate is corect.</small></div>'
+                                            $('#scanKanbanError').html(errMsg);
+
+                                        } else {
+
+                                            $('#scanKanbanModal').modal('hide');
+
+                                            categoryid = part.PartCategory;
+                                            loadComboDefect(categoryid);
+
+                                            $("#label-inspectionSupplier").text(part.SupplierId);
+
+                                            $("#UniqueNumber").val(part.SupplierUniqueNumber);
+                                            $("#PartModel").val(part.PartModel);
+                                            $("#PartNumber").val(part.PartNumber);
+                                            $("#PartName").val(part.PartName);
+                                            $("#QtyKanban").val(part.UnitQty);
+                                            $("#totalCheck").val(part.UnitQty);
+                                            $("#totalDefectUnit").val(0);
+                                            $("#totalDefectQty").val(0);
+                                            $("#CycleTime").val(part.CycleTime);
+                                            $("#img-piimages").attr("src", part.PI_Images + "#" + new Date().getTime());
+                                            $("#img-piimages").removeAttr("hidden");
+                                            $("#scanGroup").attr("hidden", true);
+                                            $("#btn-defectlist").removeAttr("disabled");
+                                            $("#btn-checkout").removeAttr("disabled");
+                                            $("#btn-cancelcheck").removeAttr("disabled");
+
+                                            maxcycle = (part.CycleTime * part.UnitQty);
+                                            return startTicking();
+                                        };
+
+                                    });
+                                } else {
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Scan!</b><br/>Part Identification not found, please check kanban carefully and make sure master of Part Identification already create.</small></div>'
+                                    $('#scanKanbanError').html(errMsg);
+                                }
+                            },
+                            error: function (xhr, desc, err) {
+
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#scanKanbanError').html(errMsg);
+                            }
+                        });
+                    }
+                } else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error!</b><br/>Please scan QC Cards before continue.</small></div>'
+                    $('#scanKanbanError').html(errMsg);
+
+                }
+                unloadblockspinner();
+                setTimeout(function () {
+                    $("#scan-QrCodes").focus().select();
+                }, 550);
+
+            });
+        });
+    });
+
+    $("#scan-QrCodes").change(function () {
+        $('#scanKanbanError').html("");
+    });
+
+</script>

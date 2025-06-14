@@ -1,0 +1,212 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterPartStockRawReturnModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterPartStockRawReturnForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Part Inventory Stock Taking</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterStockRawReturnRawReturn" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterStockRawReturnRawReturn" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterStockRawReturn" type="button" class="btn btn-secondary" onclick="reloadGridFilterStockRawReturn()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterStockRawReturnSupplierId" class="control-label">Supplier:</label>
+                                    <div class="input-group input-group-sm">
+                                        <select id="searchFilterStockRawReturnSupplierId" class="form-control custom-select custom-select-sm" onchange="reloadGridFilterStockRawReturn()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table id="jqGridSearchStockRawReturn"></table>
+                                <div id="jqGridPagerSearchStockRawReturn"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterPartStockRawReturnError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterPartStockRawReturn" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataStockRawReturn()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterStockRawReturnRawReturn").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterStockRawReturn").button().click();
+        }
+    });
+
+    var uniqueFilter = "";
+    var inventorynumber = "";
+    var areaid = "";
+    var locationid = "";
+
+    var filterData = $('#searchFilterStockRawReturnRawReturn').val();
+    var supplierid = $('#searchFilterStockRawReturnSupplierId').val();
+
+    $gridFilterStockRawReturn = $("#jqGridSearchStockRawReturn").jqGrid({
+        url: '@Url.Action("StockRawReturnJson", "Inventory")',
+        datatype: "json",
+        mtype: "POST",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+            supplierid: "*",
+            abnormal: false,
+            exludeZero: true
+        },
+        colModel: [
+            { label: 'SUPPLIER', name: 'SupplierId', align: 'left', hidden: true, width: 70, sortable: false },
+            { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+            { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 110, sortable: false },
+            { label: 'PART NAME', name: 'PartName', align: 'left', width: 190, sortable: false },
+            { label: 'MODEL', name: 'PartModel', align: 'center', fixed: true, width: 70, sortable: false },
+            { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+            { label: 'TYPE PACKING', name: 'PackingId', align: 'center', fixed: true, width: 70, sortable: false },
+            { label: 'NG QTY', name: 'StockQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchStockRawReturn',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }                
+        },
+        ondblClickRow: function () {
+            selectFilterDataStockRawReturn();
+        },
+    });
+
+    $('#jqGridSearchStockRawReturn').jqGrid('navGrid', '#jqGridPagerSearchStockRawReturn', { search: false, edit: false, add: false, del: false });
+
+    function statusFormatterStock(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridFilterStockRawReturn() {
+
+        var partNotInclude = uniqueFilter;
+        var supplierid = $('#searchFilterStockRawReturnSupplierId').val();
+
+        console.log(partNotInclude);
+
+        $("#jqGridSearchStockRawReturn").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                supplierid: supplierid,
+                areaid: areaid,
+                locationid: locationid,
+                PartNotInclude: JSON.stringify(partNotInclude),
+                abnormal: false,
+                exludeZero: true
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterPartStockRawReturn(supplierid, uniqueNotIn) {
+
+        if (supplierid != "") {
+            $("#searchFilterStockRawReturnSupplierId").attr("disabled", true);
+        } else {
+            $("#searchFilterStockRawReturnSupplierId").removeAttr("disabled");
+        }
+        uniqueFilter = uniqueNotIn;
+        loadComboSuppliers(supplierid);
+        reloadGridFilterStockRawReturn();
+
+        $('#filterPartStockRawReturnModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataStockRawReturn () {
+        var selRowId = $('#jqGridSearchStockRawReturn').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchStockRawReturn').jqGrid("getRowData", selRowId);
+
+            $("#search_result").val(JSON.stringify(rowData));
+            $('#filterPartStockRawReturnModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+
+    }
+
+    function loadComboSuppliers(supplierid) {
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            async:false,
+            data: {},
+            success: function (response) {
+
+                var id = "#searchFilterStockRawReturnSupplierId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Supplier")
+                );
+                $.each(response, function (i, Suppliers) {
+                    $(id).append(
+                        $('<option></option>').val(Suppliers.SupplierId).html(Suppliers.SupplierName)
+                    );
+                });
+
+                $(id).val(supplierid);
+            }
+        })
+    }
+</script>

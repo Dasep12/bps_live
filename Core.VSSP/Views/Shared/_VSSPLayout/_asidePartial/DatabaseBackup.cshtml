@@ -1,0 +1,315 @@
+﻿@model IEnumerable<Core.VSSP.Models.DatabaseBackupModel>
+@{
+    string disabled = "";
+    if (Session["UserType"].ToString() == "DEV" || Session["UserType"].ToString() == "ADM")
+    {
+        disabled = "";
+    }
+    else
+    {
+        disabled = "disabled";
+    }
+}
+<div class="tab-pane p-3" id="database" role="tabpanel">
+    <h6>Database Management</h6>
+    <div class="text-uppercase mb-1 mt-4">
+        <small>
+            <b>Backup Database</b>
+        </small>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <a id="btn-backup" class="btn btn-outline-dark btn-sm @disabled" href="#" onclick="doBackup()">
+                <i class="fa fa-database fa-3x"></i><br /> Backup
+            </a>
+        </div>
+        <div class="col-md-9">
+            <div style="padding-left:2px!important">
+                <small>Make a backup to recover in case an operation error than result in data loss</small>
+            </div>
+        </div>
+        <div class="col-md-12 stellarnav-noscroll-x" style="max-height:350px;overflow-y:auto">
+            <br />
+            <div id="backup-result"></div>
+            @if (Model.Count() != 0)
+            {
+                <table id="table-db" class="table table-sm table-hover small" style="max-height: 10px !important;overflow:scroll">
+                    <tbody>
+                        @foreach (var db in Model)
+                        {
+                            <tr>
+                                @if (Session["UserType"].ToString() == "DEV" || Session["UserType"].ToString() == "ADM")
+                                {
+                                    <td><a href="#" id="download-@db.BackupFile.Replace(".bak","")" class="text-success" onclick="doDownload('@db.BackupFile')" title="Download backup database"><span class="fa fa-download"></span></a></td>
+                                    <td><a href="#" id="@db.BackupFile.Replace(".bak","")" onclick="doRestore('@db.BackupFile')" title="Restore database"><span class="fa fa-history"></span></a></td>
+                                }
+
+                                <td>@db.BackupFile</td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <table id="table-db" class="table table-sm table-hover" style="max-height: 10px !important;overflow:scroll">
+                    <tbody>
+                        <tr id="row-nodata">
+                            <td>
+                                <div class="text-uppercase mb-1 mt-1">
+                                    <small>
+                                        <b>No Database Found</b>
+                                    </small>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            }
+        </div>
+    </div>
+
+</div>
+
+<!-- Dowbload Modal -->
+<div class="modal animated fadeIn" id="downloadModal" tabindex="-1" role="dialog" aria-labelledby="downloadModalCenterTitle" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="retoreModalLongTitle"><i class="fa fa-download"></i> Download Backup Database</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                    <div class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Information!</h4>
+                        <div class="form-group form-group-sm row">
+                            <label class="col-sm-4" for="comp-id" style="padding-top:2px">File to download</label>:
+                            <div class="col-sm-7">
+                                <input type="text" class="border-0" id="download-file" name="download-file" style="width:100%; background:none" readonly />
+                            </div>
+                        </div>
+                        <p>This action will download your current selected backup database file to your local drive.</p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+                <button type="button" class="btn btn-sm btn-outline-dark btn-spin" onclick="runDownload()" id="btn-download"><span class="fa fa-download"></span> Download Backup Database</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Restore Modal -->
+<div class="modal animated fadeIn" id="restoreModal" tabindex="-1" role="dialog" aria-labelledby="restoreModalCenterTitle" data-keyboard="false" data-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="retoreModalLongTitle">Restore Database</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+
+                    <div class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Attention!</h4>
+                        <div class="form-group form-group-sm row">
+                            <label class="col-sm-4" for="comp-id" style="padding-top:2px">File to restore</label>:
+                            <div class="col-sm-7">
+                                <input type="text" class="border-0" id="restore-file" name="restore-file" style="width:100%; background:none" readonly />
+                            </div>
+                        </div>
+                        <p>This action will replacing your current database to the selected backup file you want to restore.</p>
+                        <hr>
+                        <p class="mb-0">Some data will be missing that your works after the selected backup file.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+                <button type="button" class="btn btn-sm btn-outline-dark" onclick="runRestore()" id="btn-restore"><span class="fa fa-history"></span> Restore Database</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function doBackup() {
+        var btn     = $("#btn-backup");
+        var btnIc   = $("#btn-backup i");
+        btn.blur();
+        btn.addClass("disabled");
+        btnIc.removeClass("fa-database").addClass("fa-spinner fa-pulse");
+        var res = '<small class="text-primary">Processing...</small>'
+        $('#backup-result').html(res);
+
+        setTimeout(function () {
+            $.ajax({
+                url: '@Url.Action("DatabaseBackup", "System")',
+                type: "POST",
+                dataType: "JSON",
+                data: {},
+                success: function (response) {
+                    var res = '<small class="text-success"><span class="fa fa-check"></span> Backup Success</small>'
+                    $('#backup-result').html(res).fadeIn(500).fadeOut(5000);
+                    $('table#table-db tr#row-nodata').remove();
+                    var table = document.getElementById("table-db");
+                    var row = table.insertRow(0);
+                    var cell1 = row.insertCell(0);
+                    var cell2 = row.insertCell(1);
+                    var cell3 = row.insertCell(2);
+                    cell1.innerHTML = "<a href='#' id='download-" + response.replace(".bak", "") + "' class='text-success animated fadeIn' onclick=\"doDownload('" + response + "')\" title='Download backup database'><span class='fa fa-download'></span></a>";
+                    cell2.innerHTML = "<a href='#' id='" + response.replace(".bak", "") + "' class='animated fadeIn' onclick=\"doRestore('" + response + "')\" title='Restore database'><span class='fa fa-history'></span></a>";
+                    cell3.innerHTML = '<div class="text-primary animated fadeIn">'+response+'</div>';
+
+                    btn.removeClass("disabled");
+                    btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-database");
+
+                },
+                error: function (xhr, desc, err) {
+                    var res = '<small class="text-danger"><span class="fa fa-times"></span>' + ' Backup ' + xhr.responseText + '</small>'
+                    $('#backup-result').html(res);
+                    btn.removeClass("disabled");
+                    btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-database");
+               }
+            });
+        },5000)
+    }
+    function doRestore(file) {
+        var id      = "#" + file.replace(".bak", "");
+        var btn     = $(id);
+        var btnIc   = $(id + ' span');
+        btn.addClass("btn btn-link disabled");
+        btn.attr("style", "padding:0 !important;top:0 !important");
+        btnIc.removeClass("fa-history").addClass("fa-spinner fa-pulse");
+
+        $('#restore-file').val(file);
+        $('#restoreModal').modal('show');
+
+    }
+
+    function runRestore() {
+
+        var res = '<small class="text-primary">Processing...</small>'
+        $('#backup-result').html(res);
+        $('#restoreModal button').attr('disabled', 'disabled')
+        $('#btn-restore span').removeClass('fa-history').addClass('fa-spinner fa-pulse')
+
+
+
+        var file = $('#restore-file').val();
+        var id = "#" + file.replace(".bak", "");
+        var btn = $(id);
+        var btnIc = $(id + ' span');
+
+        $.ajax({
+            url: '@Url.Action("DatabaseRestore", "System")',
+            type: "POST",
+            dataType: "JSON",
+            data: {BackupFile : file},
+            success: function (response) {
+
+                if (response == "success") {
+                    var res = '<small class="text-success"><span class="fa fa-check"></span> Restore Success</small>'
+                    $('#backup-result').html(res).fadeIn(500).fadeOut(5000);
+
+                    btn.removeClass("disabled");
+                    btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-check");
+                    $('#restoreModal button').removeAttr('disabled')
+                    $('#btn-restore span').removeClass('fa-spinner fa-pulse').addClass('fa-history')
+                    $('#restoreModal').modal('hide');
+
+                } else {
+                    var res = '<small class="text-danger"><span class="fa fa-times"></span> Restore Failed</small>'
+                    $('#backup-result').html(res);
+
+                    btn.removeClass("disabled");
+                    btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-times");
+                    $('#restoreModal button').removeAttr('disabled')
+                    $('#btn-restore span').removeClass('fa-spinner fa-pulse').addClass('fa-history')
+                    $('#restoreModal').modal('hide');
+
+                }
+            },
+            error: function (xhr) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                //var err = eval("[" + respText + "]");
+                var res = '<small class="text-danger"><span class="fa fa-times"></span>' + ' Error ' + respText + '</small>'
+                $('#backup-result').html(res).fadeIn(500).fadeOut(10000);
+
+                btn.removeClass("disabled");
+                btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-times");
+                $('#restoreModal button').removeAttr('disabled')
+                $('#btn-restore span').removeClass('fa-spinner fa-pulse').addClass('fa-history')
+                $('#restoreModal').modal('hide');
+            }
+        });
+    }
+
+    $("#restoreModal").on("hidden.bs.modal", function () {
+        setTimeout(function () {
+            var id = '#' + $('#restore-file').val().replace(".bak", "");
+            var btn = $(id);
+            var btnIc = $(id + ' span');
+            btn.removeClass("btn btn-link disabled");
+            btn.removeAttr("style");
+            btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-history");
+        },500);
+    });
+
+    function doDownload(file) {
+        var id = "#download-" + file.replace(".bak", "");
+        var btn = $(id);
+        var btnIc = $(id + ' span');
+        btn.addClass("btn btn-link disabled");
+        btn.attr("style", "padding:0 !important;top:0 !important");
+        btnIc.removeClass("fa-history").addClass("fa-spinner fa-pulse");
+
+        $('#download-file').val(file);
+        $('#downloadModal').modal('show');
+
+    }
+
+    function runDownload(file) {
+
+        var file = $('#download-file').val();
+
+        var url = "@Url.Action("DownloadBackupFile", "System", new { database = "_database_" })";
+        url = url.replace('_database_', encodeURIComponent(file));
+        window.open(url, "_top");
+
+        $(document).focus(function () {
+            unloadblockspinner();
+            $('#downloadModal').modal('hide');
+        })
+    }
+
+    $("#downloadModal").on("hidden.bs.modal", function () {
+        setTimeout(function () {
+            var id = '#download-' + $('#download-file').val().replace(".bak", "");
+            var btn = $(id);
+            var btnIc = $(id + ' span');
+            btn.removeClass("btn btn-link disabled");
+            btn.removeAttr("style");
+            btnIc.removeClass("fa-spinner fa-pulse").addClass("fa-download");
+        }, 500);
+    });
+
+</script>

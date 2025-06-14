@@ -1,0 +1,105 @@
+﻿
+<div class="modal animated fadeIn" id="updateAreaModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-success" role="document">
+        <div class="modal-content">
+            <form id="updateAreaForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-pencil-square-o"></span> Update @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-areaid">Area Id</label>
+                            <input type="text" class="form-control form-control-sm" id="update-areaid" name="areaid" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-areaname">Area Name</label>
+                            <input type="text" class="form-control form-control-sm" id="update-areaname" name="areaname" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-arearemarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="update-arearemarks" name="remarks" value=""></textarea>
+                        </div>
+                    </div>
+                    <div id="updateAreaError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-update-area" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function editArea(areaid,areaname,remarks) {
+        document.getElementById("updateAreaForm").reset();
+        $('#updateAreaForm').removeClass('was-validated');
+        $("#updateAreaForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#update-areaid").val(areaid);
+        $("#update-areaname").val(areaname);
+        $("#update-arearemarks").val(remarks);
+        $('#updateAreaError').html("");
+
+        $("#update-areaid").attr("readonly", true);
+        $('#updateAreaModal').modal('show');
+        $("#update-areaname").focus();
+
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#updateAreaForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#update-areaid').val();
+                    var name = $('#update-areaname').val();
+                    var remarks = $('#update-arearemarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudArea","Warehouse")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            areaId      : id,
+                            areaName    : name,
+                            remarks     : remarks,
+                            formAction  : 'update',
+                        },
+                        success: function (data) {
+                            $('#updateAreaModal').modal('hide');
+                            doSuccess(data,'update');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#updateAreaError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

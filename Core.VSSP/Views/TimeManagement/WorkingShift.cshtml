@@ -1,0 +1,518 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="TimeManagement-WorkingShift">
+    <div class="card card-accent-secondary">
+        <div class="card-body" style="padding:12px">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6>#1 Working Shift</h6>
+                            <hr />
+                        </div>
+                        <div class="col-md-8 mb-1">
+                            <select class="custom-select custom-select-sm" id="WorkingShiftGroupId" name="GroupId" style="width:60%"></select>
+                            <button class="btn btn-sm btn-outline-dark" type="button" title="Create/Update/Delete Group Shift" onclick="crudWorkingShiftGroup()" @ViewBag.canCreate><i class="fa fa-ellipsis-h"></i></button>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <div class="pull-right">
+                                <button id="btnAddShiftMaster" class="btn btn-sm btn-outline-primary" type="button" title="Add New Shift" onclick="crudWorkingShiftMaster('Create')" @ViewBag.canCreate><i class="fa fa-plus"></i></button>
+                                <button id="btnEditShiftMaster" class="btn btn-sm btn-outline-success" type="button" title="Edit Selected Shift" onclick="crudWorkingShiftMaster('Update')" disabled><i class="fa fa-pencil"></i></button>
+                                <button id="btnDeleteShiftMaster" class="btn btn-sm btn-outline-danger" type="button" title="Delete Selected Shift" onclick="crudWorkingShiftMaster('Delete')" disabled><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridShift"></table>
+                            <div id="jqGridPagerShift"></div>
+                            <input id="ShiftSelected" type="text" class="form-control form-control-sm" hidden />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <div class="pull-left mt-2">
+                                <h6>#2 Working Hour</h6>
+                            </div>
+                            <div class="pull-right">
+                                <button id="btnAddShiftHour" class="btn btn-sm btn-outline-primary" type="button" title="Add New Shift Hour" onclick="crudWorkingShiftHour('Create')" @ViewBag.canCreate><i class="fa fa-plus"></i></button>
+                                <button id="btnEditShiftHour" class="btn btn-sm btn-outline-success" type="button" title="Edit Selected Shift Hour" onclick="crudWorkingShiftHour('Update')" disabled><i class="fa fa-pencil"></i></button>
+                                <button id="btnDeleteShiftHour" class="btn btn-sm btn-outline-danger" type="button" title="Delete Selected Shift Hour" onclick="crudWorkingShiftHour('Delete')" disabled><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridHour"></table>
+                            <div id="jqGridPagerHour"></div>
+                            <input id="DaySelected" type="text" class="form-control form-control-sm" hidden />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6>#3 Shift Patern</h6>
+                            <hr />
+                        </div>
+                        <div class="col-md-8 mb-1">
+                            <select class="custom-select custom-select-sm" id="WorkingShiftPatternGroupId" name="GroupId" style="width:80%" required></select>
+                            <button class="btn btn-sm btn-outline-dark" type="button" title="Create/Update/Delete Group Shift Pattern" onclick="crudWorkingShiftPatternGroup()" @ViewBag.canCreate><i class="fa fa-ellipsis-h"></i></button>
+                        </div>
+                        <div class="col-md-4 mb-1">
+                            <div class="pull-right">
+                                <button id="btnAddPatternMaster" class="btn btn-sm btn-outline-primary" type="button" title="Add New Pattern" onclick="crudWorkingShiftPatternMaster('Create')" @ViewBag.canCreate><i class="fa fa-plus"></i></button>
+                                <button id="btnEditPatternMaster" class="btn btn-sm btn-outline-success" type="button" title="Edit Selected Pattern" onclick="crudWorkingShiftPatternMaster('Update')" disabled><i class="fa fa-pencil"></i></button>
+                                <button id="btnDeletePatternMaster" class="btn btn-sm btn-outline-danger" type="button" title="Delete Selected Pattern" onclick="crudWorkingShiftPatternMaster('Delete')" disabled><i class="fa fa-trash"></i></button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridPattern"></table>
+                            <div id="jqGridPagerPatern"></div>
+                            <input id="PatternSelected" type="text" class="form-control form-control-sm" hidden/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridWorkingShift()"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("WorkingShiftPartial/CrudShiftGroup")
+    @Html.Partial("WorkingShiftPartial/CrudShiftMaster")
+    @Html.Partial("WorkingShiftPartial/CrudShiftHour")
+    @Html.Partial("WorkingShiftPartial/CrudShiftPatternGroup")
+    @Html.Partial("WorkingShiftPartial/CrudShiftPatternMaster")
+
+
+</section>
+
+<script>
+
+    /* SHIFT MASTER */
+    $(function () {
+
+        $grid = $("#jqGridShift").jqGrid({
+            url: '@Url.Action("WorkingShiftMasterJson", "TimeManagement")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                groupid: "*",
+            },
+            colModel: [
+                { label: 'Shift Id', key: true, name: 'ShiftId', align: 'center', fixed: true, width: 80 },
+                { label: 'Shift Name', name: 'ShiftName', align: 'left' },
+                { label: 'Day Type', name: 'DayType', align: 'center', hidden: true, width: 80 },
+                { label: 'Day Type', name: 'DayTypeName', align: 'center', fixed: true, width: 100 },
+                { label: 'Sort', name: 'Sort', align: 'center', hidden: true, width: 80 },
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerShift',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            height: 80,
+            //width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var ShiftSelected = $(this).getLocalRow(rowid)
+                $("#ShiftSelected").val(ShiftSelected.ShiftId);
+                reloadGridWorkingHour();
+
+                if (ShiftSelected === "[]") {
+                    $("#btnEditShiftMaster").attr('disabled', true);
+                    $("#btnDeleteShiftMaster").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEditShiftMaster").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDeleteShiftMaster").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridShift').jqGrid('navGrid', '#jqGridPagerShift', { search: false, edit: false, add: false, del: false });
+    });
+
+    /* SHIFT HOUR */
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        $grid = $("#jqGridHour").jqGrid({
+            url: '@Url.Action("WorkingShiftHourJson", "TimeManagement")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+            },
+            colModel: [
+                { label: 'Day', key: true, name: 'DayId', align: 'left', hidden: true },
+                { label: 'Day', name: 'DayName', align: 'left' },
+                { label: 'Start Time', name: 'StartTime', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i" } },
+                { label: 'End Time', name: 'EndTime', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerHour',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            //height: 162,
+            //width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var DaySelected = $(this).getLocalRow(rowid)
+
+                $("#DaySelected").val(DaySelected.DayId);
+
+                if (DaySelected === "[]") {
+                    $("#btnEditShiftHour").attr('disabled', true);
+                    $("#btnDeleteShiftHour").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEditShiftHour").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDeleteShiftHour").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridHour').jqGrid('navGrid', '#jqGridPagerHour', { search: false, edit: false, add: false, del: false });
+    });
+
+    /* SHIFT PATERN */
+    $(function () {
+        $grid = $("#jqGridPattern").jqGrid({
+            url: '@Url.Action("WorkingShiftPatternMasterJson", "TimeManagement")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                groupid: "*",
+            },
+            colModel: [
+                { label: 'Patern Number', name: 'PatternNumber', key: true, align: 'center', fixed: true, width: 80  },
+                { label: 'Shift Id', name: 'ShiftId', align: 'center', hidden: true, width: 80 },
+                { label: 'Shift', name: 'ShiftName', align: 'left', width: 100 },
+                { label: 'Total Day', name: 'TotalDay', align: 'center', fixed: true, width: 80 },
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerPatern',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            //height: 297,
+            //width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var PatternSelected = $(this).getLocalRow(rowid)
+
+                $("#PatternSelected").val(PatternSelected.PatternNumber);
+
+                if (PatternSelected === "[]") {
+                    $("#btnEditPatternMaster").attr('disabled', true);
+                    $("#btnDeletePatternMaster").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEditPatternMaster").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDeletePatternMaster").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridPattern').jqGrid('navGrid', '#jqGridPagerPatern', { search: false, edit: false, add: false, del: false });
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate text-primary' onclick=\"editWorkingShift('" + rowObject.UnitId + "','" + rowObject.UnitName + "','" + rowObject.ParentId + "','" + rowObject.UnitLevel + "','" + rowObject.Remarks + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.UnitName + " ]'>";
+        btn += "<span class='fa fa-pencil-square'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete text-danger' onclick=\"removeWorkingShift('" + rowObject.UnitId + "','" + rowObject.UnitName + "','" + rowObject.ParentId + "','" + rowObject.UnitLevel + "','" + rowObject.Remarks + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.UnitName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function reloadGridWorkingShift() {
+        $("#btnEditShiftMaster").attr('disabled', true);
+        $("#btnDeleteShiftMaster").attr('disabled', true);
+        $("#ShiftSelected").val("");
+
+        var groupid = $('#WorkingShiftGroupId').val();
+        if (groupid === "") {
+            groupid = "*";
+        }
+
+        $("#jqGridShift").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                groupid: groupid,
+            }
+        }).trigger('reloadGrid');
+    };
+    function reloadGridWorkingHour() {
+
+        $("#btnEditShiftHour").attr('disabled', true);
+        $("#btnDeleteShiftHour").attr('disabled', true);
+        $("#DaySelected").val("");
+
+        var groupid = $('#WorkingShiftGroupId').val();
+        var shiftid = $('#ShiftSelected').val();
+
+        $("#jqGridHour").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                groupid: groupid,
+                shiftid: shiftid,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridWorkingShiftPattern() {
+
+        $("#btnEditPatternMaster").attr('disabled', true);
+        $("#btnDeletePatternMaster").attr('disabled', true);
+        $("#PatternSelected").val("");
+
+        var groupid = $('#WorkingShiftPatternGroupId').val();
+
+        $("#jqGridPattern").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                groupid: groupid,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    $("#WorkingShiftGroupId").change(function () {
+        reloadGridWorkingShift();
+    });
+
+    $("#WorkingShiftPatternGroupId").change(function () {
+        reloadGridWorkingShiftPattern();
+    });
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.UnitName + " has been saved succesfully");
+                return reloadGridWorkingShift();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.UnitName + " has been saved succesfully");
+                return reloadGridWorkingShift();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.UnitName + " has been removed succesfully");
+                return reloadGridWorkingShift();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    $("#export").on("click", function () {
+
+        exportGrid('#jqGridPattern','A4','@ViewBag.Title');
+
+    })
+
+    $(document).ready(function () {
+
+        $("#btnEditShiftMaster").attr('disabled', true);
+        $("#btnDeleteShiftMaster").attr('disabled', true);
+        $("#ShiftSelected").val("");
+
+        $("#btnEditShiftHour").attr('disabled', true);
+        $("#btnDeleteShiftHour").attr('disabled', true);
+        $("#DaySelected").val("");
+
+        $("#btnEditPatternMaster").attr('disabled', true);
+        $("#btnDeletePatternMaster").attr('disabled', true);
+        $("#PatternSelected").val("");
+
+        loadComboShiftGroup();
+        loadComboDayType();
+        loadComboShiftPatternGroup();
+
+    });
+
+    function loadComboShiftGroup() {
+        $.ajax({
+            url: '@Url.Action("WorkingShiftGroupJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "";
+
+                /* FORM MAIN */
+                id = "#WorkingShiftGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("*").html("*Choose Shift Group")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.GroupId).html(WorkingShift.GroupName)
+                    );
+                });
+
+                /* FORM SHIFT MASTER */
+                id = "#crud-WorkingShiftMasterGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Shift Group")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.GroupId).html(WorkingShift.GroupName)
+                    );
+                });
+
+                /* FORM SHIFT HOUR */
+                id = "#crud-WorkingShiftHourGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Shift Group")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.GroupId).html(WorkingShift.GroupName)
+                    );
+                });                
+           }
+        })
+    }
+
+    function loadComboDayType() {
+        $.ajax({
+            url: '@Url.Action("WorkingDayTypeJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "";
+
+                /* FORM SHIFT MASTER */
+                id = "#crud-WorkingShiftMasterDayType";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Day Type")
+                );
+                $.each(response, function (i, Day) {
+                    $(id).append(
+                        $('<option></option>').val(Day.DayType).html(Day.DayTypeName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboShiftPatternGroup() {
+        $.ajax({
+            url: '@Url.Action("WorkingShiftPatternGroupJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "";
+
+                /* FORM MAIN */
+                id = "#WorkingShiftPatternGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("*").html("*Choose Pattern Group")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.GroupId).html(WorkingShift.GroupName)
+                    );
+                });
+
+                /* FORM SHIFT MASTER */
+                id = "#crud-WorkingShiftPatternMasterGroupId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Pattern Group")
+                );
+                $.each(response, function (i, WorkingShift) {
+                    $(id).append(
+                        $('<option></option>').val(WorkingShift.GroupId).html(WorkingShift.GroupName)
+                    );
+                });
+
+
+           }
+        })
+    }
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

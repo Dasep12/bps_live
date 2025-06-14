@@ -1,0 +1,103 @@
+﻿@model Core.VSSP.Models.EmailConfigurationModel
+
+@using (Html.BeginForm("EmailConfigurationCRUD", null, FormMethod.Post, new { enctype = "multipart/form-data", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="card">
+    <div class="card-header">
+        <span class="fa fa-envelope-square"></span> Email Configuration
+    </div>
+
+    <div class="card-body">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <div class="row">
+
+            <div class="col-md-6">
+
+                <form-group>
+                    <h6>Why need to settings company account.</h6>
+                    <div class="text-uppercase mb-1 mt-2">
+                        <small>
+                            <b>No Reply</b>
+                        </small>
+                    </div>
+                    <small class="text-muted">This configuration is your noreply company account for auto sending email by the system, like password reset request, ordering, etc. </small>
+                </form-group>
+                <br /><br />
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.AccountName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.AccountName, new { htmlAttributes = new { @class = "form-control", @readonly="true"} })
+                        @Html.ValidationMessageFor(model => model.AccountName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.SenderName, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.SenderName, new { htmlAttributes = new { @class = "form-control", @required=true } })
+                        @Html.ValidationMessageFor(model => model.SenderName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.EmailAddress, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                        @Html.ValidationMessageFor(model => model.EmailAddress, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.EmailUserID, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.EmailUserID, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                        @Html.ValidationMessageFor(model => model.EmailUserID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.EmailPassword, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.EmailPassword, new { htmlAttributes = new { @class = "form-control", @type="password", @required = true } })
+                        @Html.ValidationMessageFor(model => model.EmailPassword, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.OutgoingServer, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.OutgoingServer, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                        @Html.ValidationMessageFor(model => model.OutgoingServer, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.OutgoingPort, htmlAttributes: new { @class = "control-label" })
+                    <div class="input-group input-group-sm">
+                        @Html.EditorFor(model => model.OutgoingPort, new { htmlAttributes = new { @class = "form-control", @required = true } })
+                        @Html.ValidationMessageFor(model => model.OutgoingPort, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group form-group-sm">
+                    @Html.LabelFor(model => model.EnableSSL, htmlAttributes: new { @class = "control-label" })
+                    @Html.CheckBoxFor(model => model.EnableSSL, new { htmlAttributes = new { @class = "form-control bc-checkbox" } })
+                    <div class="input-group input-group-sm">
+                        <div class="">
+                            @Html.ValidationMessageFor(model => model.EnableSSL, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <input type="submit" value="Save" class="btn btn-success btn-sm" />
+        <a href="@Url.Action("Dashboard","Home")" class="btn btn-sm btn-danger">Cancel</a>
+    </div>
+</div>
+}

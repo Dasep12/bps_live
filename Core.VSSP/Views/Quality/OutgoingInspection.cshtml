@@ -1,0 +1,422 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Quality-OutgoingInspection">
+
+    <div id="grid-section" class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-sm-10">
+                    <div class="card-title mt-1">
+                        @if (ViewBag.Category == "threepointcheck")
+                        {
+                            <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                        }
+                        else
+                        {
+                            <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                        }
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="dropdown float-right">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Inspection # or Customer or Part...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control datepicker" placeholder="Start Date" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control datepicker" placeholder="End Date" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="gateFilter" class="col-form-label col-form-label-sm">Gate</label>
+                                <select id="gateFilter" class="custom-select custom-select-sm inspection-gate" placeholder="Inspection Gate">
+                                    <option value="">*Choose Gate</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridList()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridInspection"></table>
+            <div id="jqGridPagerInspection"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" onclick="crudOutgoingInspection('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> New Part Identification</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="gate-section" class="container h-100">
+        <div class="row align-items-center h-100">
+            <div class="col-lg-6 col-md-6 col-sm-12 mx-auto mt-5">
+                <div class="card card-accent-secondary mt-5 shadow-sm">
+                    <form id="crudGateForm" class="needs-validation" novalidate>
+                        <div class="card-header bg-white">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="card-title mt-1">
+                                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group form-group-lg">
+                                        <label for="crud-Gate" class="col-form-label">Inspection Gate</label>
+                                        <select class="custom-select inspection-gate" id="crud-Gate" required>
+                                            <option value="">*Choose Gate</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-row">
+                                        <div id="crudGateError" class="w-100 pl-0 pr-0"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-gray-active">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button id="btn-crudGate" type="submit" class="btn btn-primary btn-spin">Continue <span class="fa fa-arrow-right"></span></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @Html.Partial("OutgoingInspectionPartial/Crud")
+
+</section>
+
+<script>
+
+
+    var gateid = "*",
+        categoryid = "";
+
+    $(function () {
+        $("#crud-Gate").focus();
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudGateForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    gateid = $("#crud-Gate").val();
+
+                    if (gateid === "") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error!</b><br/>Please select inspection gate before continue</small></div>'
+                        $('#crudGateError').html(errMsg);
+                    } else {
+                        //$('#crudGateModal').modal('hide');
+                        //crudOutgoingInspection("Create","*");
+                        $("#gateFilter").val(gateid);
+                        $("#gate-section").attr("hidden", true);
+                        $("#grid-section").removeAttr("hidden");
+                        reloadGridList();
+                    }
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+    loadComboGate();
+    function loadComboGate() {
+
+        $.ajax({
+            url: '@Url.Action("InspectionGateJson", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                searchFilter: 'OUTGOING'
+            },
+            success: function (response) {
+
+                var id = ".inspection-gate";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Inspection Gate")
+                );
+
+                $.each(response, function (i, gate) {
+                    $(id).append(
+                        $('<option></option>').val(gate.GateId).html(gate.GateName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+<script>
+
+    $(document).ready(function () {
+        var todayfilter = moment(new Date()).format("YYYY-MM-DD");
+        $("#startdateFilter").val(todayfilter);
+        $("#enddateFilter").val(todayfilter);
+
+        if (gateid != "*") {
+            $("#gate-section").attr("hidden", true);
+            $("#grid-section").removeAttr("hidden");
+        } else {
+            $("#grid-section").attr("hidden", true);
+            $("#gate-section").removeAttr("hidden");
+        }
+    });
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        $grid = $("#jqGridInspection").jqGrid({
+            url: '@Url.Action("OutgoingInspectionJson", "Quality")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                inspectiongate: gateid,
+                startdate: startdate,
+                enddate: enddate,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+                { label: 'Inspection #', name: 'InspectionNumber', align: 'center', fixed: true, width: 110 },
+                { label: 'Gate', name: 'InspectionGate', align: 'center', fixed: true, width: 37 },
+                { label: 'Date', name: 'InspectionDate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Start', name: 'StartTime', align: 'center', fixed: true, width: 50, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i:s" } },
+                { label: 'Finish', name: 'FinishTime', align: 'center', fixed: true, width: 50, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i:s" } },
+                { label: 'Total Time', name: 'TotalTime', align: 'center', hidden: true, width: 40, formatter: "number" },
+                { label: 'Cycle Time', name: 'CycleTime', align: 'center', hidden: true, width: 70, formatter: "number" },
+                { label: 'Cust.', name: 'CustomerId', align: 'center', fixed: true, width: 40 },
+                { label: 'Unq.', name: 'CustomerUniqueNumber', align: 'center', fixed: true, width: 40 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 113 },
+                { label: 'Part Name', name: 'PartName', align: 'left', fixed: true, width: 200 },
+                { label: 'Part Model', name: 'CustomerUnitModel', align: 'left', hidden: true, width: 80 },
+                { label: 'UnitQty', name: 'UnitQty', align: 'left', hidden: true, width: 60 },
+                { label: 'Total Check', name: 'TotalCheck', align: 'center', fixed: true, width: 50 },
+                { label: 'Unit', name: 'TotalDefectUnit', align: 'center', hidden: true, width: 45 },
+                { label: 'Total Defect', name: 'TotalDefectQty', align: 'center', fixed: true, width: 45 },
+                { label: 'Replaced', name: 'Replaced', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'Remains', name: 'Remains', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PI_Images', name: 'PI_Images', align: 'center', hidden: true, width: 80 },
+                { label: 'PIC', name: 'UserId', fixed: true, width: 60, align: 'left' },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerInspection',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showDefectGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                //var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                gridInspectionResize();
+                //for (i = 0; i < l; i++) {
+                //    var Grid = $('#jqGridInspection'),
+                //        selectedRowId = ids[i],
+                //        imageId = "#Images-" + Grid.jqGrid('getCell', selectedRowId, 'InspectionNumber').replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", ""),
+                //        images = Grid.jqGrid('getCell', selectedRowId, 'PI_Images');
+
+                //    loadImage(imageId,images);
+                //}
+            },
+        }),
+        $('#jqGridInspection').jqGrid('navGrid', '#jqGridPagerInspection', { search: false, edit: false, add: false, del: false });
+        $('#jqGridInspection').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StartTime', numberOfColumns: 2, titleText: 'Check Time' },
+                //{ startColumnName: 'TotalDefectUnit', numberOfColumns: 2, titleText: 'Defect' },
+                { startColumnName: 'Replaced', numberOfColumns: 2, titleText: 'Replacement' },
+            ]
+        });
+    });
+
+    function showDefectGrid(parentRowID, parentRowKey) {
+
+        //CostCenter
+        var childGridID = parentRowID + "_tableCostCenter";
+        var childGridPagerID = parentRowID + "_pagerCostCenter";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        var Grid = $('#jqGridInspection'),
+            selectedRowId = parentRowKey,
+            InspectionNumber = Grid.jqGrid('getCell', selectedRowId, 'InspectionNumber');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("InspectionDefectListJson", "Quality")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                inspectionnumber: InspectionNumber
+            },
+            page: 1,
+            colModel: [
+                { label: 'Defect Id', name: 'DefectId', width: 100, align: 'center', fixed: true },
+                { label: 'Defect Name', name: 'DefectName', width: 180, align: 'left', fixed: true },
+                { label: 'Defect Qty', name: 'DefectQty', width: 100, align: 'center', fixed: true },
+                { label: 'Repair', name: 'Repair', width: 100, align: 'center', fixed: true, formatter: statusFormatter },
+                { label: 'Scrap', name: 'Scrap', width: 100, align: 'center', fixed: true, formatter: statusFormatter },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Defect List',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+    //function loadImage(imageId, src) {
+    //    src += "#" + new Date().getTime()
+    //    setTimeout(function () {
+    //        $(imageId).attr("src", src).attr("disabled", true);
+    //    }, 100);
+    //}
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudOutgoingInspection('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.InspectionNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudOutgoingInspection('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.InspectionNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+    function pi_imagesFormatter(cellvalue, options, rowObject) {
+        var InspectionNumber = rowObject.InspectionNumber.replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", "");
+        var images = "<img id='Images-" + InspectionNumber + "' src='../_VSSPAssets/Images/preloader/loading-buffering.gif' style='height:20px' onclick=\"previewImage('Images-" + InspectionNumber + "','" + rowObject.InspectionNumber + "','" + rowObject.PartName + "')\" title='Preview Part Inspection " + rowObject.InspectionNumber + "'>";
+        return images;
+    }
+    function drawingFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"documentPreview('pdf','" + rowObject.GateId + "')\" datatoogle='tooltip' title='Preview @ViewBag.Title [ " + rowObject.InspectionNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridList() {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        $("#jqGridInspection").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                inspectiongate: gateid,
+                startdate: startdate,
+                enddate: enddate,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create QC inspection <br/>" + data.InspectionNumber + " <br/> has been saved succesfully");
+                reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update QC inspection  <br/>" + data.InspectionNumber + " <br/> has been saved succesfully");
+                reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete QC inspection  <br/>" + data.InspectionNumber + " <br/> has been removed succesfully");
+                return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridInspection").jqGrid("hideCol", "Logo")
+        $("#jqGridInspection").jqGrid("hideCol", "Actived")
+        exportGrid('#jqGridInspection', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridInspection").jqGrid("showCol", "Logo")
+        $("#jqGridInspection").jqGrid("showCol", "Actived")
+
+    })
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

@@ -1,0 +1,242 @@
+﻿
+<div class="modal animated fadeIn" id="crudWorkingShiftMasterModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudWorkingShiftMasterForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title Group</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftMasterGroupId" class="col-form-label col-form-label-sm">Group Id</label>
+                            <select type="text" class="form-control form-control-sm" id="crud-WorkingShiftMasterGroupId" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftMasterId" class="col-form-label col-form-label-sm">Shift Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-WorkingShiftMasterId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftMasterName" class="col-form-label col-form-label-sm">Shift Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-WorkingShiftMasterName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftMasterDayType" class="col-form-label col-form-label-sm">Day Type</label>
+                            <select type="text" class="form-control form-control-sm" id="crud-WorkingShiftMasterDayType" value="" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftMasterSort" class="col-form-label col-form-label-sm">Sort</label>
+                            <input type="number" min="1" class="form-control form-control-sm" id="crud-WorkingShiftMasterSort" value="0" required />
+                        </div>
+                    </div>
+
+                    <div id="crudWorkingShiftMasterError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudWorkingShiftMaster" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="WorkingShiftMasterAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationWorkingShiftMasterModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationWorkingShiftMaster" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteWorkingShiftMaster()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudWorkingShiftMaster(action){
+
+        document.getElementById("crudWorkingShiftMasterForm").reset();
+        $('#crudWorkingShiftMasterForm').removeClass('was-validated');
+        $('#crudWorkingShiftMasterError').html("");
+        $("#btn-crudWorkingShiftMaster").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-WorkingShiftMasterId").removeAttr("disabled");
+        $("#crudWorkingShiftMasterForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#WorkingShiftMasterAction").val(action);
+
+        var groupid = $("#WorkingShiftGroupId").val();
+        var shiftid = $("#ShiftSelected").val();
+        if (groupid === "*") {
+            groupid = "";
+        }
+        if (action != "Create") {
+
+            var Grid = $('#jqGridShift'),
+                selectedRowId = shiftid,
+                ShiftName = Grid.jqGrid('getCell', selectedRowId, 'ShiftName'),
+                DayType = Grid.jqGrid('getCell', selectedRowId, 'DayType'),
+                Sort = Grid.jqGrid('getCell', selectedRowId, 'Sort');
+
+            $("#crud-WorkingShiftMasterGroupId").val(groupid);
+            $("#crud-WorkingShiftMasterId").val(shiftid);
+            $("#crud-WorkingShiftMasterName").val(ShiftName);
+            $("#crud-WorkingShiftMasterDayType").val(DayType);
+            $("#crud-WorkingShiftMasterSort").val(Sort);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-WorkingShiftMasterGroupId").val(groupid);
+                $("#crudWorkingShiftMasterModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudWorkingShiftMasterModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Shift Master');
+                $('#crudWorkingShiftMasterModal').modal('show');
+                $("#crud-WorkingShiftMasterGroupId").focus();
+                break;
+            case "Update":
+                $("#crud-WorkingShiftMasterGroupId").attr("disabled", true);
+                $("#crud-WorkingShiftMasterId").attr("readonly", true);
+                $("#crudWorkingShiftMasterModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudWorkingShiftMasterModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Shift Master');
+                $('#crudWorkingShiftMasterModal').modal('show');
+                $("#crud-WorkingShiftMasterName").focus();
+                break;
+            case "Delete":
+                $("#crudWorkingShiftMasterForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-WorkingShiftMasterGroupId").attr("disabled", true);
+                $("#crud-WorkingShiftMasterDayType").attr("disabled", true);
+                $("#btn-crudWorkingShiftMaster").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudWorkingShiftMasterModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudWorkingShiftMasterModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Shift Master');
+                $('#crudWorkingShiftMasterModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-WorkingShiftMasterName').change(function () {
+        $('#crudWorkingShiftMasterError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudWorkingShiftMasterForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudWorkingShiftMasterForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var groupid = $("#crud-WorkingShiftMasterGroupId").val();
+                        var shiftid = $("#crud-WorkingShiftMasterId").val();
+                        var shiftname = $("#crud-WorkingShiftMasterName").val();
+                        var daytype = $("#crud-WorkingShiftMasterDayType").val();
+                        var sort = $("#crud-WorkingShiftMasterSort").val();
+                        var formaction = $("#WorkingShiftMasterAction").val();
+
+                        $.ajax({
+                            url: '@Url.Action("crudWorkingShiftMaster", "TimeManagement")',
+                            type: 'POST',
+                            dataType: "JSON",
+                            async: false,
+                            data: {
+                                GroupId: groupid,
+                                ShiftId: shiftid,
+                                ShiftName: shiftname,
+                                DayType: daytype,
+                                Sort: parseInt(sort),
+                                formAction: formaction
+                            },
+                            success: function (data) {
+                                $('#crudWorkingShiftMasterModal').modal('hide');
+                                var act = $("#WorkingShiftMasterAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.ShiftName + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.ShiftName + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.ShiftName + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGridWorkingShift();
+                                loadComboPatternShiftMaster();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudWorkingShiftMasterError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+    //$("#btn-deleteWorkingShiftMaster").click(function () {
+    //    $('#deleteConfirmationWorkingShiftMasterModal').modal('show');
+    //});
+
+    //function confirmDeleteWorkingShiftMaster() {
+    //    $("#WorkingShiftMasterAction").val("Delete")
+    //    $("#btn-crudWorkingShiftMaster").click();
+    //    $('#deleteConfirmationWorkingShiftMasterModal').modal('hide');
+    //}
+
+</script>
+

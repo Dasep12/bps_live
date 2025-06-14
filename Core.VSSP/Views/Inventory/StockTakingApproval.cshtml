@@ -1,0 +1,116 @@
+﻿<style>
+    #approval {
+        min-height: 650px !important;
+    }
+</style>
+<section class="padding-100-70 white-gray-bg" id="approval">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12">
+                <div class="area-title text-center wow fadeIn">
+                    <h2>@ViewBag.Title</h2>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12 text-justify">
+                @{
+                    if (@ViewBag.UserName != null)
+                    {
+
+                        <p class="font-weight-bold font-lg">
+                            Hello @ViewBag.UserName,
+                        </p>
+                        <p>
+                            We hereby convey, that there are inventory schedule that you need to digitally sign through this portal. You simply click the <b>Sign Approval</b> button to approve it, or ignore it if you don't agree with it.
+                        </p>
+                        <p>
+                            We hope you read and check the documents that you will approve first. The documents are :
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Title</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.OrderTitle</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inventory Number</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.InventoryNumber</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Inventory Status</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.InventoryStatus</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Date</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.InventoryDate</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Time</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.StartTime to @ViewBag.EndTime</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Document</td>
+                                        <td> : </td>
+                                        <td>
+                                            <a href="@Url.Action("StockList", "Reports", new { inventorynumber = ViewBag.InventoryNumber })" target="_blank"><i class="fa fa-file-pdf-o text-danger"></i> Stock List</a>
+                                            <a href="@Url.Action("StockCard", "Reports", new { inventorynumber = ViewBag.InventoryNumber })" target="_blank" class="ml-2"><i class="fa fa-file-pdf-o text-danger"></i> Stock Card</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Latest Approval</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.InventoryApproval</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Sign</td>
+                                        <td> : </td>
+                                        <td>
+                                            @{
+                                                int status = ViewBag.Status;
+                                                if (status == 3 || status == 4 || status == 5)
+                                                {
+                                                    <label class="col-form-label text-danger">Cannot sign @ViewBag.OrderTitle is already @ViewBag.InventoryStatus</label>
+                                                }
+                                                else
+                                                {
+                                                    <a href="@Url.Action("StockTakingApproved","Inventory",new { InventoryNumber = ViewBag.InventoryNumber, uid = ViewBag.UserID })" class="btn btn-sm btn-primary"><i class="fa fa-check"></i> Sign Approval</a>
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </p>
+                        <p>
+                            Thank you for the good cooperation.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="font-weight-bold font-lg">
+                            Hello Annonymous,
+                        </p>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="mt-auto">
+                                    <span class="fa fa-coffee fa-4x"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-10 ml-3">
+                                <p>
+                                    We're so sorry you don't have access to this page. Please leave page now.
+                                </p>
+                                <p>
+                                    Thank you for the good cooperation.
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

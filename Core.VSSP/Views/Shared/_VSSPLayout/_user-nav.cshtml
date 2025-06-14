@@ -1,0 +1,129 @@
+﻿<li class="nav-item dropdown">
+    <a class="nav-link mr-3" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+        @if (@Session["Images"] == null)
+        {
+            <img src="~/_VSSPAssets/User/user.png" alt="@Session["UserName"]" class="img-avatar" />
+        }
+        else
+        {
+            var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+
+            <img src="@imgSrc" alt="@Session["UserName"]" class="img-avatar" />
+
+        }
+
+        @if (Session["UserID"] != null)
+        {
+            <div class="form-group form-group-sm d-md-down-none pull-right text-left m-0">
+                <small class="form-text mt-0 pt-0">Welcome,</small>
+                <span class="form-text" style="margin-top:-5px !important">@Session["UserName"]</span>
+            </div>
+        }
+    </a>
+    <div class="dropdown-menu dropdown-menu-right user-nav shadow-sm rounded-0 mr-2" style="width:300px">
+
+        <form>
+            <div class="text-center m-3">
+                @if (@Session["Images"] == null)
+                {
+                    <img id="img-user-dropdown" src="~/_VSSPAssets/User/user.png" alt="@Session["UserName"]" width="90" height="90" class="img-circle img-thumbnail" />
+                }
+                else
+                {
+                    var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+                    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                    <img id="img-user-dropdown" src="@imgSrc" alt="@Session["UserName"]" width="90" height="90" class="img-circle img-thumbnail" />
+                }
+
+                @*<a href="#" class="change-image-btn text-primary"><i class="icon-camera"></i></a>*@
+                <span id="btn-upload" class="btn btn-file change-image-btn icon-camera">
+                    @*<i class="icon-camera"></i>*@
+                    <input type="file" id="output" name="ImageData" accept="image/*" onchange="loadFile(event,'img-user-dropdown')" title="Change image profile" />
+                </span>
+                <script>
+                    var loadFile = async function (event, obj) {
+                        var Foto = document.getElementById(obj);
+                        Foto.src = URL.createObjectURL(event.target.files[0]);
+                        $(".img-avatar").attr("src", Foto.src);
+
+                        crudImage();
+
+                    };
+                </script>
+
+                <div class="form-group">
+                    @if (@Session["UserID"] != null)
+                    {
+                        <h5 class="control-label text-dark mt-2"> @Session["UserName"].ToString()</h5>
+                        <h6 class="control-label text-muted"> @Session["Email"].ToString()</h6>
+
+                        <a class="btn btn-pill btn-outline-secondary text-black-50 mt-2" href="@Url.Action("UserProfile", "Account", new { id = Session["UserID"].ToString() })" title="Manage Profile">
+                            Manage Account
+                        </a>
+                    }
+                </div>
+
+            </div>
+            <div class="dropdown-footer p-2 border-top">
+                <a class="btn btn-link" href="@Url.Action("MainIndex","Index")">
+                    <i class="icon-home"></i> Home Site
+                </a>
+                <a class="btn btn-link text-danger ml-auto pull-right" href="@Url.Action("SignOut","Account")">
+                    <i class="icon-lock"></i> Logout
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+</li>
+
+<script>
+    function crudImage() {
+        var formData = new FormData();
+
+        formData.append("userid", "@Session["UserID"]");
+
+        //upload images
+        var fileUpload = $("#output").get(0);
+        var files = fileUpload.files;
+
+        for (var i = 0; i < files.length; i++) {
+            formData.append("ImageData", files[i]);
+        }
+
+        $.ajax({
+            url: '@Url.Action("crudUserImage", "Account")',
+            type: 'POST',
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            dataType: "JSON",
+            data: formData,
+            success: function (data) {
+                console.log(data);
+                if (data === "Success") {
+                    showToast("Success", "Change image has been saved succesfully.");
+                } else {
+                    showToast("Failed", "Change image has been failed.");
+                }
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                showToast("Failed", "Error : <br/>" + respText);
+
+            }
+        });
+    }
+</script>

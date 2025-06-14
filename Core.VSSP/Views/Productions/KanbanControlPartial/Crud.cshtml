@@ -1,0 +1,329 @@
+﻿
+<div class="modal animated fadeIn" id="crudKanbanListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudKanbanForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-qrcode"></span> Set Kanban Out storage</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="crud-KanbanId" class="control-label">Production Kanban :</label>
+                                <input type="text" id="crud-KanbanId" class="form-control text-center" placeholder="Scan here..." />
+                                <button type="button" id="btn-scan" hidden class="btn btn-block btn-outline-success"><i class="fa fa-qrcode"></i> Start Scan</button>
+                                <label id="scan-ready" class="control-label font-weight-bold text-success m-0">READY</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group text-center m-2">
+                                <h1 id="total-Kanban" class="font-weight-bold text-primary">0</h1>
+                                <h6 class="font-weight-bold text-primary">KANBAN</h6>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2">
+                        <table id="jqGridCrudKanban"></table>
+                    </div>
+
+                    
+                    <input hidden type="text" id="KanbanAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <div class="position-absolute" style="left: 15px !important">
+                        <div id="crudKanbanListError"></div>
+                    </div>
+                    <button hidden type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit Kanban</button>
+                    <button id="btn-crudKanbanList" type="button" class="btn btn-sm btn-primary" onclick="SubmitForm()"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function OutStorageKanbanControl(action, id) {
+
+        document.getElementById("crudKanbanForm").reset();
+        $('#crudKanbanForm').removeClass('was-validated');
+        $('#crudKanbanListError').html("");
+        $('#btn-addKanban').removeAttr('disabled');
+        $('#scan-ready').text('');
+        $('#total-Kanban').text('0');
+        $("#crudKanbanForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        reloadGridKanban("*");
+
+
+        $('#crudKanbanListModal').modal('show');
+        $("#crud-KanbanId").focus();
+
+
+    }
+
+    $('#crud-KanbanId').change(function () {
+        $('#crudKanbanListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudKanbanForm").submit(function (event) {
+
+                event.preventDefault();
+
+                $("#scan-ready").addClass("text-warning").removeClass("text-success").text("WAIT");
+                if ($(this).valid()) {
+
+                    var kanbanId = $('#crud-KanbanId').val();
+                    
+                    if (kanbanId != '') {
+                        /* Kanban Validation */
+                        $.ajax({
+                            url: '@Url.Action("KanbanProductionListJson", "Productions")',
+                            type: 'POST',
+                            dataType: "JSON",
+                            data: {
+                                KanbanKey: kanbanId
+                            },
+                            success: function (data) {
+                                if (data.length != 0) {
+                                    if (data[0].Storage === true) {
+                                        if (data[0].Actived === true || (data[0].Storage === true && data[0].Actived === false)) {
+
+                                            var $grid = $("#jqGridCrudKanban"), p = $grid.jqGrid("getGridParam"), i;
+                                            //var existKanban = $grid.jqGrid('getCell', data[0].KanbanKey, 'KanbanKey');
+                                            var existKanban = false;
+
+                                            //console.log(p.data);
+                                            $.each(p.data, function (i, row) {
+                                                if (row.KanbanKey === data[0].KanbanKey) {
+                                                    existKanban = true;
+                                                }
+                                            });
+
+                                            if (existKanban === false) {
+                                            /* add data to grid */
+                                                $grid[0].grid.beginReq();
+
+                                                parameters =
+                                                {
+                                                    rowId: data[0].KanbanKey,
+                                                    initdata: {
+                                                        KanbanKey       : data[0].KanbanKey,
+                                                        KanbanRun       : data[0].KanbanRun,
+                                                        UniqueNumber    : data[0].UniqueNumber,
+                                                        PartNumber      : data[0].PartNumber,
+                                                        PartName        : data[0].PartName,
+                                                        UnitQty         : data[0].UnitQty,
+                                                        UnitLevel2      : data[0].UnitLevel2
+                                                    },
+                                                    position: "first",
+                                                }
+
+                                                $grid.jqGrid('addRow', parameters);
+                                                $grid[0].grid.endReq();
+                                                //$grid.trigger('reloadGrid');
+
+                                                $('#total-Kanban').text($grid.getRowData().length);
+                                                $("#scan-ready").text("READY").removeClass("text-warning").addClass("text-success");
+
+                                            } else {
+                                                var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b>Kanban [' + kanbanId + '] Already Scan!</b><br/>Please scan kanban correctly.</small></div>'
+                                                $('#crudKanbanListError').html(errMsg);
+                                                $('#crud-KanbanId').attr("disabled", true);
+                                            }
+                                        } else {
+                                            var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b>Kanban [' + kanbanId + '] Invalid!</b><br/>Kanban not actived. Please scan kanban correctly.</small></div>'
+                                            $('#crudKanbanListError').html(errMsg);
+                                            $('#crud-KanbanId').attr("disabled", true);
+                                        }
+                                    } else {
+                                        var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b>Kanban [' + kanbanId + '] Invalid!</b><br/>Kanban already out storage. Please scan kanban correctly.</small></div>'
+                                        $('#crudKanbanListError').html(errMsg);
+                                        $('#crud-KanbanId').attr("disabled", true);
+                                    }
+                                } else {
+                                    var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b>Kanban [' + kanbanId + '] Not Found!</b><br/>Please scan kanban correctly.</small></div>'
+                                    $('#crudKanbanListError').html(errMsg);
+                                    $('#crud-KanbanId').attr("disabled", true);
+                                }
+
+                                $('#crudKanbanListError .alert').fadeOut(3000)
+                                    .promise().done(function () {
+                                        $('#crud-KanbanId').removeAttr("disabled").val('');
+                                        $("#scan-ready").text("READY").removeClass("text-warning").addClass("text-success");
+                                    });
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#crudKanbanListError').html(errMsg);
+                                $('#crud-KanbanId').attr("disabled", true);
+                            }
+                        });
+                    } else {
+                        var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b> Invalid Kanban!</b><br/>Please scan kanban correctly.</small></div>'
+                        $('#crudKanbanListError').html(errMsg);
+                        $('#crud-KanbanId').attr("disabled", true);
+                    }
+
+                    $('#crudKanbanListError .alert').fadeOut(3000)
+                        .promise().done(function () {
+                            $('#crud-KanbanId').removeAttr("disabled").val('');
+                            $("#scan-ready").text("READY").removeClass("text-warning").addClass("text-success");
+                        });
+
+                }
+            });
+        });
+    });
+
+    function SubmitForm() {
+
+        var formData = new FormData();
+
+        var jsonData = $("#jqGridCrudKanban").jqGrid('getGridParam', 'data');
+
+        if (jsonData.length === 0) {
+            alert("Please add kanban out storage before submit.");
+            event.stopPropagation();
+            return false;
+        }
+
+        formData.append("jsonData", JSON.stringify(jsonData));
+
+        $.ajax({
+            url: '@Url.Action("crudKanbanControlList", "Productions")',
+            type: 'POST',
+            contentType: false, // Not to set any content header
+            processData: false, // Not to process data
+            dataType: "JSON",
+            data: formData,
+            success: function (data) {
+                $('#crudKanbanListModal').modal('hide');
+                doSuccess(data, "outstorage");
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                var errMsg = '<div class="alert alert-warning m-0 p-1 pl-2 pr-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#crudKanbanListError').html(errMsg);
+            }
+        });
+    }
+
+    $(function () {
+        $gridKanban = $("#jqGridCrudKanban").jqGrid({
+            url: "@Url.Action("KanbanProductionListJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { kanbankey : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 70, formatter: actionKanbanFormatter},
+                { label: 'Kanban Key', name: 'KanbanKey', key: true, align: 'center', width: 80, sorted: false },
+                { label: 'Kanban Run', name: 'KanbanRun', align: 'center', width: 60 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', width: 60 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', width: 100 },
+                { label: 'Part Name', name: 'PartName', align: 'left', width: 250 },
+                { label: 'Qty / KBN', name: 'UnitQty', align: 'center', width: 60 },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', width: 50 },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:229,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999999,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudKanban').jqGrid('navGrid', '#jqGridPagercrudKanban',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+    function reloadGridKanban(id) {
+        $("#jqGridCrudKanban").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                kanbankey: "*",
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionKanbanFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudKanbanList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete Kanban Scan [ " + options.rowId + " ]'>";
+        btn += "<span class='fa fa-trash'></span> Delete";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    $("#crud-KanbanId").on("blur", function () {
+        $(this).attr("hidden", true);
+        $("#scan-ready").removeClass("text-success").addClass("text-danger").text("NOT READY");
+        $("#btn-scan").removeAttr("hidden").focus();
+    });
+    $("#crud-KanbanId").on("focus", function () {
+        $("#scan-ready").addClass("text-success").removeClass("text-danger").text("READY");
+    })
+    $("#btn-scan").on("click", function () {
+        $(this).attr("hidden", true);
+        $("#crud-KanbanId").removeAttr("hidden").focus();
+    });
+</script>

@@ -1,0 +1,243 @@
+﻿
+<div class="modal animated fadeIn" id="crudSpecialSupplyPartListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudSpecialSupplyPartForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartId" class="col-sm-4 col-form-label col-form-label-sm">Id</label>
+                                <div class="col-sm-8">
+                                    <input type="text" maxlength="5" class="form-control form-control-sm" id="crud-SpecialSupplyPartId" name="SpecialSupplyPartId" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartProcessName" class="col-sm-4 col-form-label col-form-label-sm">Process Name</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-SpecialSupplyPartProcessName" name="ProcessName" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="3" class="form-control form-control-sm" id="crud-SpecialSupplyPartRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartSSPStock" class="col-sm-4 col-form-label col-form-label-sm">SSP Stock</label>
+                                <div class="col-sm-8">
+                                    <div class="custom-control custom-checkbox mt-1">
+                                        <input type="checkbox" class="custom-control-input" value="" id="crud-SpecialSupplyPartSSPStock">
+                                        <label class="custom-control-label" for="crud-SpecialSupplyPartSSPStock"><small> Receive as WIP</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartDeliveryOrder" class="col-sm-4 col-form-label col-form-label-sm">Delivery Order SSP</label>
+                                <div class="col-sm-8">
+                                    <div class="custom-control custom-checkbox mt-1">
+                                        <input type="checkbox" class="custom-control-input" value="" id="crud-SpecialSupplyPartDeliveryOrder">
+                                        <label class="custom-control-label" for="crud-SpecialSupplyPartDeliveryOrder"><small> Delivery to Supplier & Calculate SSP Stock</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartDeliveryRawMaterial" class="col-sm-4 col-form-label col-form-label-sm">Delivery Raw Material</label>
+                                <div class="col-sm-8">
+                                    <div class="custom-control custom-checkbox mt-1">
+                                        <input type="checkbox" class="custom-control-input" value="" id="crud-SpecialSupplyPartDeliveryRawMaterial">
+                                        <label class="custom-control-label" for="crud-SpecialSupplyPartDeliveryRawMaterial"><small> Delivery to Customer Calculate Assy Outhouse</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-SpecialSupplyPartActived" class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-8">
+                                    <div class="custom-control custom-checkbox mt-1">
+                                        <input type="checkbox" class="custom-control-input" value="" id="crud-SpecialSupplyPartActived">
+                                        <label class="custom-control-label" for="crud-SpecialSupplyPartActived"><small> Actived</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div id="crudSpecialSupplyPartListError"></div>
+                    <input type="hidden" id="SpecialSupplyPartAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudSpecialSupplyPartList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function crudSpecialSupplyPartList(action, id) {
+
+        document.getElementById("crudSpecialSupplyPartForm").reset();
+        $('#crudSpecialSupplyPartForm').removeClass('was-validated');
+        $('#crudSpecialSupplyPartListError').html("");
+        $("#btn-crudSpecialSupplyPartList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-SpecialSupplyPartSSPStock").removeAttr("checked").removeAttr("disabled");
+        $("#crud-SpecialSupplyPartDeliveryOrder").removeAttr("checked").removeAttr("disabled");
+        $("#crud-SpecialSupplyPartActived").removeAttr("checked").removeAttr("disabled");
+
+        $("#crudSpecialSupplyPartForm input,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#SpecialSupplyPartAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId       = id,
+                Id                  = Grid.jqGrid('getCell', selectedRowId, 'Id'),
+                ProcessName         = Grid.jqGrid('getCell', selectedRowId, 'ProcessName'),
+                Remarks             = Grid.jqGrid('getCell', selectedRowId, 'Remarks'),
+                SSPStock            = Grid.jqGrid('getCell', selectedRowId, 'SSPStock');
+                DeliveryOrder       = Grid.jqGrid('getCell', selectedRowId, 'DeliveryOrder');
+                DeliveryRawMaterial = Grid.jqGrid('getCell', selectedRowId, 'DeliveryRawMaterial');
+                Actived             = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            if (SSPStock.toString().includes("success")) {
+                SSPStock = true;
+            } else {
+                SSPStock = false;
+            }
+            if (DeliveryOrder.toString().includes("success")) {
+                DeliveryOrder = true;
+            } else {
+                DeliveryOrder = false;
+            }
+            if (DeliveryRawMaterial.toString().includes("success")) {
+                DeliveryRawMaterial = true;
+            } else {
+                DeliveryRawMaterial = false;
+            }
+            if (Actived.toString().includes("success")) {
+                Actived = true;
+            } else {
+                Actived = false;
+            }
+
+            $("#crud-SpecialSupplyPartId").val(Id);
+            $("#crud-SpecialSupplyPartProcessName").val(ProcessName);
+            $("#crud-SpecialSupplyPartRemarks").val(Remarks);
+            $("#crud-SpecialSupplyPartSSPStock").attr("checked", SSPStock);
+            $("#crud-SpecialSupplyPartDeliveryOrder").attr("checked", DeliveryOrder);
+            $("#crud-SpecialSupplyPartDeliveryRawMaterial").attr("checked", DeliveryRawMaterial);
+            $("#crud-SpecialSupplyPartActived").attr("checked", Actived);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-SpecialSupplyPartActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudSpecialSupplyPartListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudSpecialSupplyPartListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSpecialSupplyPartListModal').modal('show');
+                $("#crud-SpecialSupplyPartId").focus();
+                break;
+            case "Update":
+                $("#crud-SpecialSupplyPartId").attr("disabled","true");
+                $("#crud-SpecialSupplyPartPartNumber").attr("readonly", true);
+                $("#crudSpecialSupplyPartListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudSpecialSupplyPartListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSpecialSupplyPartListModal').modal('show');
+                $("#crud-SpecialSupplyPartProcessName").focus();
+                break;
+            case "Delete":
+                $("#crudSpecialSupplyPartForm :input").not(type = "button").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-SpecialSupplyPartSSPStock").attr("disabled", true);
+                $("#crud-SpecialSupplyPartSSPDeliveryOrder").attr("disabled", true);
+                $("#crud-SpecialSupplyPartSSPDeliveryRawMaterial").attr("disabled", true);
+                $("#crud-SpecialSupplyPartActived").attr("disabled", true);
+                $("#btn-crudSpecialSupplyPartList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudSpecialSupplyPartListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudSpecialSupplyPartListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSpecialSupplyPartListModal').modal('show');
+                break
+        }
+
+    }
+
+    
+    //CrudFG
+    $(document).ready(function () {
+        $(function () {
+            $("#crudSpecialSupplyPartForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $("#crud-SpecialSupplyPartId").val(),
+                        processname = $("#crud-SpecialSupplyPartProcessName").val(),
+                        remarks     = $("#crud-SpecialSupplyPartRemarks").val(),
+                        sspstock    = $("#crud-SpecialSupplyPartSSPStock").prop("checked"),
+                        delivery    = $("#crud-SpecialSupplyPartDeliveryOrder").prop("checked"),
+                        rawmaterial = $("#crud-SpecialSupplyPartDeliveryRawMaterial").prop("checked"),
+                        actived     = $("#crud-SpecialSupplyPartActived").prop("checked"),
+                        action      = $("#SpecialSupplyPartAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudSpecialSupplyPartList", "Suppliers")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            Id: id,
+                            ProcessName: processname,
+                            Remarks: remarks,
+                            SSPStock: sspstock,
+                            DeliveryOrder: delivery,
+                            DeliveryRawMaterial: rawmaterial,
+                            Actived: actived,
+                            formAction: action,
+                        },
+                            success: function (data) {
+                                $('#crudSpecialSupplyPartListModal').modal('hide');
+                                var act = $("#SpecialSupplyPartAction").val();
+                                act = act.toLowerCase();
+                                doSuccess(data, act);
+                            },
+                            error: function (xhr, desc, err) {
+                                var respText = "";
+                                try {
+                                    respText = eval(xhr.responseText);
+                                } catch {
+                                    respText = xhr.responseText;
+                                }
+
+                                respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                                $('#crudSpecialSupplyPartListError').html(errMsg);
+                            },
+                        });
+                    } else {
+                        event.stopPropagation();
+                    }
+            });
+        });
+    });
+
+</script>
+
+

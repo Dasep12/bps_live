@@ -1,0 +1,63 @@
+﻿<div class="modal animated fadeIn" id="yearModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-calendar"></span> Browse Year</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">Select Year :</label>
+                    <div class="input-group">
+                        <select id="selectYear" class="custom-select form-control" value=""></select>
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="icon-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    $(function () {
+                        var now = new Date();
+                        var year = now.getFullYear();
+                        var StartYear = parseInt(year) - 3;
+                        var EndYear = parseInt(year) + 3;
+                        var loop = StartYear;
+
+                        var id = "#selectYear";
+
+                        $(id).html("");
+
+                        while (loop <= EndYear) {
+
+                            $(id).append($('<option></option>').val(loop).html(loop));
+                            loop += 1;
+
+                        }
+
+                        $(id).val(year);
+                    });
+
+                    function applyYear() {
+
+                        filterResult = $("#selectYear").val();
+                        $('#yearModal').modal('hide');
+
+                    }
+
+                    function showfilterYear() {
+                        $('#yearModal').modal('show');
+                    }
+
+                </script>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="applyYear();"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

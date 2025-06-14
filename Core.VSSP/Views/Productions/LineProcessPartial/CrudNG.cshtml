@@ -1,0 +1,262 @@
+﻿
+<div class="modal animated fadeIn" id="crudLineNGModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content" style="max-height:400px">
+            <form id="crudLineForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-LineId" class="col-sm-4 col-form-label col-form-label-sm">Line Id</label>
+                                <div class="col-md-8">
+                                    <select class="custom-select custom-select-sm" id="crud-LineId" name="LineId" value="" onchange="loadComboCustomer('@ViewBag.AreaId')" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-LineCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-8">
+                                    <select type="text" class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-LineCustomerId" name="LineCustomerId" onchange="loadComboPart()" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-LinePartNumber" class="col-sm-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-LinePartNumber" name="LinePartNumber" value="" required>
+                                        <option value="">*Choose Part Number</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-LineQtyNG" class="col-sm-4 col-form-label col-form-label-sm">NG Qty</label>
+                                <div class="col-md-8">
+                                    <input type="number" min="1" class="form-control form-control-sm" id="crud-LineQtyNG" name="LineQtyNG" value="" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+
+                        </div>
+                    </div>
+
+                    <div id="crudLineNGError"></div>
+                    <input hidden type="text" id="LineAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudLineNG" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudLineNG(action, id) {
+
+        document.getElementById("crudLineForm").reset();
+        $('#crudLineForm').removeClass('was-validated');
+        $('#crudLineNGError').html("");
+        $('#crud-LineQtyNG').removeAttr('disabled');
+
+        $("#btn-crudLineNG").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudLineForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#LineAction").val(action);
+        $("#crud-LineId").val(kanbanlineid).change();
+        //loadComboCustomer("@ViewBag.AreaId");
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                LinePartNumber = Grid.jqGrid('getCell', selectedRowId, 'LinePartNumber');
+
+            //Logo = $("#logo-" + id).attr("src");
+
+            $("#crud-LineId").val(id);
+            $("#crud-LinePartNumber").val(LinePartNumber);
+            $("#crud-LineQtyNG").val(AreaId).change();
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-LineId").attr("disabled", true);
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' N/G Part');
+                $('#crudLineNGModal').modal('show');
+                $("#crud-LinePartNumber").focus();
+                break;
+            case "Update":
+                $("#crud-LineId").attr("disabled", true);
+                $("#crud-LinePartNumber").attr("readonly",true);
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' N/G Part');
+                $('#crudLineNGModal').modal('show');
+                $("#crud-LineQtyNG").focus();
+                break;
+            case "Delete":
+                $("#crudLineForm :input,select").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#btn-crudLineNG").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudLineNGModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudLineNGModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' N/G Part');
+                $('#crudLineNGModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-LineId').change(function () {
+        $('#crudLineNGError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudLineForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+                    var prodDate = proddate;
+
+                    $.ajax({
+                        url: '@Url.Action("crudPartNG", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            prodnumber: '@ViewBag.UserId',
+                            proddate: prodDate,
+                            shiftid: shiftid,
+                            lineid: $("#crud-LineId").val(),
+                            customerid: $("#crud-LineCustomerId").val(),
+                            partnumber: $("#crud-LinePartNumber").val(),
+                            ngqty: $("#crud-LineQtyNG").val(),
+                            uid: "@ViewBag.UserId",
+                            formAction: $("#LineAction").val(),
+                        },
+                        success: function (data) {
+                            $('#crudLineNGModal').modal('hide');
+                            GetProdLatestSummary();
+                            $("#btn-scan").click();
+                            var act = $("#LineAction").val();
+                            act = act.toLowerCase();
+                            showToast("Success", "N/G Part " + data + " has been added succesfully");
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudLineNGError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboLine();
+
+    function loadComboLine() {
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-LineId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Line")
+                );
+                $.each(response, function (i, line) {
+                    $(id).append(
+                        $('<option></option>').val(line.LineId).html(line.LineName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboCustomer(lineid) {
+
+        var id = "#crud-LineCustomerId";
+
+        $.ajax({
+            url: '@Url.Action("MLOKCustomerList", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { lineid: lineid},
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+
+                $.each(response, function (i, Customer) {
+                    $(id).append(
+                        $('<option></option>').val(Customer.CustomerId).html(Customer.CustomerName)
+                    );
+                });
+            }
+        })
+
+        $(id).selectpicker("refresh");
+    }
+    function loadComboPart() {
+
+        lineid = $("#crud-LinePartNumber").val();
+        custid = $("#crud-LineCustomerId").val();
+        var id = "#crud-LinePartNumber";
+
+        $.ajax({
+            url: '@Url.Action("BillOfMaterialsJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter: lineid, customerid: custid },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part Number")
+                );
+
+                $.each(response, function (i, part) {
+                    $(id).append(
+                        $('<option></option>').val(part.PartNumber).html('[' + part.UniqueNumber + '] ' + part.PartNumber + ' : ' + part.PartName)
+                    );
+                });
+            }
+        })
+
+        $(id).selectpicker("refresh");
+    }
+
+
+</script>
+

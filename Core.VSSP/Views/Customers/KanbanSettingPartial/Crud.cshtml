@@ -1,0 +1,432 @@
+﻿
+<div class="modal animated fadeIn" id="crudKanbanSettingModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudKanbanSettingForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body p-2 m-0">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-KanbanSettingCustomerId" class="col-sm-3 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-KanbanSettingCustomerId" name="CustomerId" onchange="reloadGridKanbanSettingSequence();" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-KanbanSettingDataSparator" class="col-sm-3 col-form-label col-form-label-sm">Data Sparator</label>
+                                <div class="col-sm-9">
+                                    <input type="text" maxlength="1" class="form-control form-control-sm" id="crud-KanbanSettingDataSparator" name="DataSparator" required>
+                                </div>
+                            </div>
+                            <label class="font-weight-bold pb-0 mb-0">Generate Process</label>
+
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-KanbanSettingSalesOrder" class="col-sm-3 col-form-label col-form-label-sm">Sales Order</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-KanbanSettingSalesOrder">
+                                            <label class="custom-control-label" for="crud-KanbanSettingSalesOrder"><small> [Yes/No]</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-KanbanSettingProduction" class="col-sm-3 col-form-label col-form-label-sm">Production</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-KanbanSettingProduction">
+                                            <label class="custom-control-label" for="crud-KanbanSettingProduction"><small> [Yes/No]</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-KanbanSettingDeliveryOrder" class="col-sm-3 col-form-label col-form-label-sm">Delivery Order</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-KanbanSettingDeliveryOrder">
+                                            <label class="custom-control-label" for="crud-KanbanSettingDeliveryOrder"><small> [Yes/No]</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudKanbanSettingSequence"></table>
+                            <div id="jqGridPagerCrudKanbanSettingSequence"></div>
+                            <small class="text-primary">Note:<br />Press enter after finish typing <b>Kanban Sequence Relation</b> to apply, or press esc to cancel.</small>
+                        </div>
+                    </div>
+
+
+
+                    <div id="crudKanbanSettingError"></div>
+                    <input type="hidden" id="KanbanSettingAction" />
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <button id="btn-addKanbanSettingDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="crudKanbanSettingDetail('Create','')"><span class="fa fa-plus"></span> New Sequence</button>
+                    </div>
+                    <button id="btn-crudKanbanSetting" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudKanbanSetting(action, id) {
+
+        document.getElementById("crudKanbanSettingForm").reset();
+        $('#crudKanbanSettingForm').removeClass('was-validated');
+        $('#crudKanbanSettingError').html("");
+        $('#btn-addKanbanSettingDetail').removeAttr('disabled');
+        $('#btn-importKanbanSettingDetail').removeAttr('disabled');
+        $('#btn-crudKanbanSetting').removeAttr('disabled');
+
+        $("#btn-crudKanbanSetting").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudKanbanSettingForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-KanbanSettingSalesOrder').attr("checked", false);
+        $('#crud-KanbanSettingProduction').attr("checked", false);
+        $('#crud-KanbanSettingDeliveryOrder').attr("checked", true).attr("disabled", true);
+
+        $("#KanbanSettingAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                KanbanSettingCustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                KanbanSettingDataSparator = Grid.jqGrid('getCell', selectedRowId, 'DataSparator'),
+                KanbanSettingSalesOrder = Grid.jqGrid('getCell', selectedRowId, 'SalesOrder'),
+                KanbanSettingProduction = Grid.jqGrid('getCell', selectedRowId, 'Production'),
+                KanbanSettingDeliveryOrder = Grid.jqGrid('getCell', selectedRowId, 'DeliveryOrder');
+
+            KanbanSettingSalesOrder = KanbanSettingSalesOrder.includes("success");
+            KanbanSettingProduction = KanbanSettingProduction.includes("success");
+            KanbanSettingDeliveryOrder = KanbanSettingDeliveryOrder.includes("success");
+
+            $("#crud-KanbanSettingCustomerId").val(KanbanSettingCustomerId);
+            $("#crud-KanbanSettingDataSparator").val(KanbanSettingDataSparator);
+            $("#crud-KanbanSettingSalesOrder").attr("checked", KanbanSettingSalesOrder);
+            $("#crud-KanbanSettingProduction").attr("checked", KanbanSettingProduction);
+            $("#crud-KanbanSettingDeliveryOrder").attr("checked", KanbanSettingDeliveryOrder);
+
+        }
+
+        $('#crud-KanbanSettingCustomerId').selectpicker('refresh')
+        switch (action) {
+            case "Create":
+                $("#crudKanbanSettingModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudKanbanSettingModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanSettingModal').modal('show');
+                $("#crud-KanbanSettingCustomerId").focus();
+
+                break;
+            case "Update":
+                $("#crud-KanbanSettingCustomerId").attr("disabled", true);
+                $("#crudKanbanSettingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudKanbanSettingModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanSettingModal').modal('show');
+                $("#crud-KanbanSettingRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudKanbanSettingForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-KanbanSettingCustomerId").attr("disabled", true);
+                $('#btn-addKanbanSettingDetail').attr('disabled', true);
+                $("#btn-crudKanbanSetting").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudKanbanSettingModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudKanbanSettingModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudKanbanSettingModal').modal('show');
+                break;
+        }
+
+        reloadGridKanbanSettingSequence();
+
+    }
+
+    $('#crud-KanbanSettingCustomerId').change(function () {
+        $('#crudKanbanSettingError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridKanbanSettingSequence = $("#jqGridCrudKanbanSettingSequence").jqGrid({
+            url: "@Url.Action("KanbanSettingSequenceJson", "Customers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { customerid: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 70, sortable: false, formatter: actionKanbanSettingSequenceFormatter },
+                //{ label: 'STATUS', name: 'RowStatus', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'CustomerId', name: 'CustomerId', align: 'left', hidden: true, width: 50 },
+                { label: 'SEQ', name: 'SequenceNumber', align: 'center', fixed: true, width: 50, editable: true,  sortable: false },
+                {
+                    label: 'FIELD', name: 'FieldName', align: 'left', fixed: true, width: 120, editable: true,  sortable: false, edittype: "select",
+                    editoptions: {
+                        value: "CustomerId:CustomerId;OrderNumber:OrderNumber;RefNumber:RefNumber;OrderDate:OrderDate;KanbanNumber:KanbanNumber;PartNumber:PartNumber;UniqueNumber:UniqueNumber;OrderQty:OrderQty"
+                    } },
+                { label: 'ACTIVE', name: 'Active', align: 'center', fixed: true, width: 50, editable: true, sortable: false, edittype: "checkbox", editoptions: { value: "true:false", defaultValue: "true" }, formatter: "checkbox"},
+                { label: 'REMARKS', name: 'Remarks', align: 'left', fixed: true, width: 172, editable: true,  sortable: false },
+            ],
+            gridview: true,
+            loadonce: true,
+            height: 150,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            caption:"Kanban Sequence Relation",
+            loadComplete: function () {
+            },
+            ondblClickRow: function (rowid) {
+                crudKanbanSettingDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudKanbanSettingSequence').jqGrid('navGrid', '#jqGridPagerCrudKanbanSettingSequence',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudKanbanSettingSequence').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'OrderQty', numberOfColumns: 4, titleText: 'ORDER QTY' },
+            ]
+        });
+    });
+
+    function reloadGridKanbanSettingSequence() {
+
+        var CustomerId = $("#crud-KanbanSettingCustomerId").val();
+
+        $("#jqGridCrudKanbanSettingSequence").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                customerid: CustomerId,
+            }
+        }).trigger('reloadGrid');
+
+
+    };
+
+    function actionKanbanSettingSequenceFormatter(cellvalue, options, rowObject) {
+
+        var formaction = $("#KanbanSettingAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudKanbanSettingDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.FieldName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudKanbanSettingDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.FieldName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function crudKanbanSettingDetail(action, id) {
+
+        var $grid = $("#jqGridCrudKanbanSettingSequence");
+        var dataIDs = $grid.getDataIDs();
+        var rowCount = (dataIDs.length);
+        var rowStatus = "";
+        var KanbanSettingCustomerId = $("#crud-KanbanSettingCustomerId").val();
+
+        //if (id != "") {
+        //    var rowData = $grid.jqGrid("getRowData", id),
+        //        RowStatus = rowData.RowStatus.split(">");
+
+        //    if (RowStatus != "") {
+        //        RowStatus = RowStatus[1].split("<");
+        //        RowStatus = RowStatus[0];
+        //    }
+
+        //    rowStatus = RowStatus;
+        //}
+        switch (action) {
+            case "Create":
+
+                var rowid = parseInt(rowCount) + 1;
+                parameters =
+                {
+                    rowID: rowid,
+                    initdata: {
+                        CustomerId: KanbanSettingCustomerId,
+                        SequenceNumber: rowid,
+                        Active: true
+                    },
+                    position: "last",
+                }
+
+                $grid.jqGrid("addRow", parameters).trigger("reloadGrid");
+                $grid.jqGrid("editRow", rowid, true);
+
+                break;
+
+            case "Update":
+
+                $grid.jqGrid("editRow", id, true);
+
+                break;
+
+            case "Delete":
+
+                $grid.jqGrid('delRowData', id);
+
+                break;
+            default:
+                $('#crudForecastOrderRevisionModal').modal('show');
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudKanbanSettingForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudKanbanSettingSequence");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#KanbanSettingAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Kanban Sequence Relation before submit.");
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        KanbanSetting: {
+                            CustomerId      : $("#crud-KanbanSettingCustomerId").val(),
+                            DataSparator    : $("#crud-KanbanSettingDataSparator").val(),
+                            SalesOrder      : $("#crud-KanbanSettingSalesOrder").prop("checked"),
+                            Production      : $("#crud-KanbanSettingProduction").prop("checked"),
+                            DeliveryOrder   : $("#crud-KanbanSettingDeliveryOrder").prop("checked"),
+                            EditDate        : null,
+                            UserID          : null
+                        },
+                        KanbanSettingSequence: $("#jqGridCrudKanbanSettingSequence").jqGrid('getGridParam', 'data'),
+                        formAction: $("#KanbanSettingAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+                    //console.log(JSON.stringify(jsonData));
+                    //return false;
+
+                    $.ajax({
+                        url: '@Url.Action("crudKanbanSetting", "Customers")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudKanbanSettingModal').modal('hide');
+                            var act = $("#KanbanSettingAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudKanbanSettingError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        Customerid = $("#crud-KanbanSettingCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { CustomerId:Customerid },
+            success: function (response) {
+
+                var id = "#crud-KanbanSettingCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+
+
+    $(document).ready(function () {
+        $(".filter-combo").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("option").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+
+</script>
+

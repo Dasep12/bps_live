@@ -1,0 +1,431 @@
+﻿<style>
+    .table-responsive {
+        height: 390px;
+        overflow: auto;
+    }
+
+    thead tr:nth-child(1) th {
+        position: sticky;
+        background-color:aliceblue;
+        top: 0;
+        z-index: 10;
+    }
+</style>
+<div class="row mb-0 pb-0">
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-facebook">
+                <i class="fa fa-calendar-o"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Monthly Check Unit</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="totalCheck" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Total Unit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-warning">
+                <i class="fa fa-cogs"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Monthly Defect Unit</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="totaldefectUnit" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Unit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="brand-card shadow-sm">
+            <div class="brand-card-header bg-danger">
+                <i class="fa fa-search-plus"></i><br />
+                <div class="chart-wrapper">
+                    <canvas id="social-box-chart-1" height="90"></canvas>
+                </div>
+            </div>
+            <div class="brand-card-body p-0 m-0">
+                <div>
+                    <label class="text-uppercase text-muted font-weight-bold p-0 m-0">Monthly Defect Qty</label>
+                </div>
+            </div>
+            <div class="brand-card-body pt-0">
+                <div>
+                    <div id="totaldefectQty" class="text-value counter">0</div>
+                    <div class="text-uppercase text-muted small">Defect</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="icon-pie-chart"></i> Top 10 Defect Charts
+                <div class="card-header-actions">
+                    <a href="#" class="card-header-action btn-setting" onclick="top10Defect()">
+                        <i class="icon-refresh"></i>
+                    </a>
+                    <a href="#" class="card-header-action btn-minimize" data-toggle="collapse" data-target="#collapseDefectChart" aria-expanded="true" aria-controls="collapseDefectChart">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0 collapse show" id="collapseDefectChart">
+                <div class="card border-0">
+                    <div class="card-body">
+                        <div class="chart">
+                            <canvas id="top10DefectChart" style="width: 100%;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="icon-list"></i> Top 10 Defect List
+                <div class="card-header-actions">
+                    <a href="#" class="card-header-action btn-setting" onclick="top10Defect()">
+                        <i class="icon-refresh"></i>
+                    </a>
+                    <a href="#" class="card-header-action btn-minimize" data-toggle="collapse" data-target="#collapseDefectTop10" aria-expanded="true" aria-controls="collapseDefectTop10">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0 collapse show" id="collapseDefectTop10">
+                <div class="card border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table id="tableTop10" class="table table-sm table-responsive-sm table-bordered table-hover">
+                                <thead class="bg-blue-gradient">
+                                    <tr>
+                                        <td width="30">No.</td>
+                                        <td>Defect Name</td>
+                                        <td>Qty</td>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="icon-list"></i> Latest Defect
+                <div class="card-header-actions">
+                    <a href="#" class="card-header-action btn-setting" onclick="inspectionQuality()">
+                        <i class="icon-refresh"></i>
+                    </a>
+                    <a href="#" class="card-header-action btn-minimize" data-toggle="collapse" data-target="#collapseDefectList" aria-expanded="true" aria-controls="collapseDefectList">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0 collapse show" id="collapseDefectList">
+                <div class="card border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table id="tableDefectList" class="table table-sm table-responsive-sm table-bordered table-hover">
+                                <thead class="bg-blue-gradient">
+                                    <tr>
+                                        <td width="30">No.</td>
+                                        <td>Q Gate</td>
+                                        <td>Part</td>
+                                        <td>Defect Name</td>
+                                        <td>Qty</td>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <i class="icon-list"></i> Latest Problem Information
+                <div class="card-header-actions">
+                    <a href="#" class="card-header-action btn-setting" onclick="problemInformation()">
+                        <i class="icon-refresh"></i>
+                    </a>
+                    <a href="#" class="card-header-action btn-minimize" data-toggle="collapse" data-target="#collapseProblemInformation" aria-expanded="true" aria-controls="collapseProblemInformation">
+                        <i class="icon-arrow-up"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0 collapse show" id="collapseProblemInformation">
+                <div class="card border-0">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table id="tableProblemInformation" class="table table-sm table-responsive-sm table-bordered table-hover">
+                                <thead class="bg-blue-gradient">
+                                    <tr>
+                                        <td width="30">No.</td>
+                                        <td>Q Gate</td>
+                                        <td>Problem Information</td>
+                                        <td>Follow Up</td>
+                                        <td>Status</td>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        qualityCardSummary();
+    })
+
+    function qualityCardSummary() {
+
+        $("#totalCheck").html(0);
+        $("#totaldefectUnit").html(0);
+        $("#totaldefectQty").html(0);
+
+        $.ajax ({
+            url: "@Url.Action("QualityInspectionBrandCardJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async: false,
+            data: {
+                monthyear: $("#monthFilter").val(),
+            },
+            success: function (data) {
+                defectList = data;
+
+                $.each(defectList, function (index, data) {
+                    $("#totalCheck").html(parseFloat(data.TotalCheck).toLocaleString());
+                    $("#totaldefectUnit").html(parseFloat(data.TotalDefectUnit).toLocaleString());
+                    $("#totaldefectQty").html(parseFloat(data.TotalDefectQty).toLocaleString());
+                });
+
+                $('.counter').counterUp()
+
+            }
+        });
+    }
+</script>
+
+<script>
+
+    var charttop10Defect;
+
+    $(document).ready(function () {
+        qualityDashboard();
+    });
+
+    function qualityDashboard() {
+        top10DefectChart();
+        inspectionQuality();
+        problemInformation();
+    }
+
+    function top10DefectChart() {
+
+        $.ajax ({
+            url: "@Url.Action("top10DefectChartJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async:false,
+            data: {
+                monthyear: $("#monthFilter").val(),
+                inspectiontype: 'OUTGOING',
+            },
+            success: function (data) {
+                //console.log (data);
+                defectList = data;
+                var aLabels = [];
+                var aData = [];
+                var nom = 0;
+                var rowDefect = "";
+
+                aLabels.push("");
+                aData.push(0);
+
+                $.each(defectList, function (index, data) {
+                    aLabels.push(data.DefectName);
+                    aData.push(data.DefectQty);
+
+                    nom = parseInt(index) + 1;
+
+                    rowDefect += '<tr id="sr' + nom + '">';
+                    rowDefect += '<td class="text-center">' + nom + '</td>';
+                    rowDefect += '<td>' + data.DefectName + '</td>';
+                    rowDefect += '<td class="text-center">' + data.DefectQty.toFixed(0) + '</td>';
+                    rowDefect += '</tr>';
+
+                });
+
+                $('#tableTop10 tbody').html(rowDefect);
+
+                aLabels.push("");
+                aData.push(0);
+
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: aLabels,
+                        datasets: [
+                            {
+                                label: 'Defect        ',
+                                borderColor: 'rgba(3, 198, 252, 0.5)',
+                                backgroundColor: 'rgba(0, 204, 255, 0.4)',
+                                fill: true,
+                                data: aData
+                            },                            
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        legend: {
+                            display: true
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            position: 'nearest'
+                        },
+                        scales: {
+                            xAxes: [{
+                                gridLines: {
+                                    display: false
+                                }
+                            }],
+                            yAxes: [{
+                                gridLines: {
+                                    display: false
+                                }
+                            }]
+                        }
+                    }
+                }
+
+                if (charttop10Defect) {
+                    charttop10Defect.destroy();
+                }
+                var ctx = document.getElementById('top10DefectChart').getContext('2d');
+                charttop10Defect = new Chart(ctx, config);
+            }
+        });
+    }
+
+    function inspectionQuality() {
+        $.ajax ({
+            url: "@Url.Action("defectListJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async:false,
+            data: {
+                insepctionDate: null,
+                inspectiontype: 'OUTGOING',
+           },
+            success: function (data) {
+
+                defectList = data;
+                var nom = 0;
+                var rowDefect = "";
+
+                $.each(defectList, function (index, data) {
+
+                    nom = parseInt(index) + 1;
+
+                    rowDefect += '<tr id="sr' + nom + '">';
+                    rowDefect += '<td class="text-center">' + nom + '</td>';
+                    rowDefect += '<td>' + data.InspectionGate + '</td>';
+                    rowDefect += '<td>[' + data.UniqueNumber + '] ' + data.PartNumber + '</td>';
+                    rowDefect += '<td>' + data.DefectName + '</td>';
+                    rowDefect += '<td class="text-center">' + data.DefectQty.toFixed(0) + '</td>';
+                    rowDefect += '</tr>';
+
+                });
+
+                $('#tableDefectList tbody').html(rowDefect);
+
+            }
+        });
+    }
+
+    function problemInformation() {
+        $.ajax ({
+            url: "@Url.Action("problemInformationListJson", "Home")",
+            type: "JSON",
+            method: "GET",
+            async:false,
+            data: {
+                problemDate: null,
+                inspectiontype: 'OUTGOING',
+            },
+            success: function (data) {
+
+                defectList = data;
+                var nom = 0;
+                var rowDefect = "";
+                var badgeclass = "";
+
+                $.each(defectList, function (index, data) {
+
+                    nom = parseInt(index) + 1;
+                    if (data.Status === 0) {
+                        badgeclass = "badge-primary";
+                    } else {
+                        badgeclass = "badge-success";
+                    }
+
+                    rowDefect += '<tr id="sr' + nom + '">';
+                    rowDefect += '<td class="text-center">' + nom + '</td>';
+                    rowDefect += '<td>' + data.InspectionGate + '</td>';
+                    rowDefect += '<td>' + data.ProblemInformation + '</td>';
+                    rowDefect += '<td>' + data.FollowUp + '</td>';
+                    rowDefect += '<td class="text-center p-1"><span class="badge ' + badgeclass + ' pt-1">' + data.StatusName + '</span></td>';
+                    rowDefect += '</tr>';
+
+                });
+
+                $('#tableProblemInformation tbody').html(rowDefect);
+
+            }
+        });
+    }
+</script>
+

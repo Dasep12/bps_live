@@ -1,0 +1,35 @@
+﻿<div class="modal animated fadeIn" id="PrintPreviewModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudProdInitializeForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 id="labelModal" class="modal-title"><span class="fa fa-tag"></span> Production Label</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <iframe id="pdf-iframe" width="100%" height="350"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function printToPrinter(title,pdf_url) {
+        
+        const target_iframe = $("#pdf-iframe")
+
+        target_iframe.attr("src", pdf_url);
+
+        setTimeout(function () {
+            target_iframe[0].contentWindow.print();
+        }, 1000);
+
+    }
+</script>

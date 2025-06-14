@@ -1,0 +1,137 @@
+﻿
+<div class="modal animated fadeIn" id="updateUnitsModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-success" role="document">
+        <div class="modal-content">
+            <form id="updateUnitsForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-pencil-square-o"></span> Update @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-UnitId">Units Id</label>
+                            <input type="text" class="form-control form-control-sm" id="update-UnitId" name="UnitId" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-UnitName">Units Name</label>
+                            <input type="text" class="form-control form-control-sm" id="update-UnitName" name="UnitName" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-UnitName">Parent Id</label>
+                            <select class="custom-select custom-select-sm" id="update-ParentId" name="ParentId" required></select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-UnitLevel">Units Level</label>
+                            <input type="number" class="form-control form-control-sm" id="update-UnitLevel" name="UnitLevel" value="0" min="1" max="2" readonly required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="update-Unitremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="update-Unitremarks" name="remarks" value=""></textarea>
+                        </div>
+                    </div>
+                    <div id="updateUnitsError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-update-Units" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function editUnits(UnitId,UnitName,ParentId,UnitLevel,remarks) {
+        document.getElementById("updateUnitsForm").reset();
+        $('#updateUnitsForm').removeClass('was-validated');
+        $("#updateUnitsForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#update-UnitId").val(UnitId).attr("readonly", true);
+        $("#update-UnitName").val(UnitName);
+        $("#update-ParentId").val(ParentId);
+        $("#update-UnitLevel").val(UnitLevel).attr("readonly", true);
+        $("#update-Unitremarks").val(remarks);
+        $('#updateUnitsError').html("");
+
+        $('#updateUnitsModal').modal('show');
+        $("#update-UnitName").focus();
+
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#updateUnitsForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#update-UnitId').val();
+                    var name = $('#update-UnitName').val();
+                    var parent = $('#update-ParentId').val();
+                    var level = $('#update-UnitLevel').val();
+                    var remarks = $('#update-Unitremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudUnits","Measurements")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            UnitId      : id,
+                            UnitName    : name,
+                            ParentId    : parent,
+                            UnitLevel   : level,
+                            remarks     : remarks,
+                            formAction  : 'update',
+                        },
+                        success: function (data) {
+                            $('#updateUnitsModal').modal('hide');
+                            doSuccess(data,'update');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#updateUnitsError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    $('#update-ParentId').change(function () {
+        var val = $(this).val();
+
+        if (val === "") {
+            $("#update-UnitLevel").val(0);
+            return false
+        }
+        if (val === "*") {
+            $("#update-UnitLevel").val(1);
+        } else {
+            $("#update-UnitLevel").val(2);
+        }
+    })
+
+</script>
+

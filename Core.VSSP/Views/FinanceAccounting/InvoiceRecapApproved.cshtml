@@ -1,0 +1,95 @@
+﻿<style>
+    #approval {
+        min-height: 650px !important;
+    }
+</style>
+<section class="padding-100-70 white-gray-bg" id="approval">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12">
+                <div class="area-title text-center wow fadeIn">
+                    <h2>@ViewBag.Title</h2>
+                </div>
+            </div>
+            <div class="col-md-12 col-lg-12 col-md-offset-2 col-lg-offset-2 col-sm-12 col-xs-12 text-justify">
+                @{
+                    if (@ViewBag.UserName != null)
+                    {
+                        string attachment = @ViewBag.OrderTitle + ".pdf";
+
+                        <p class="font-weight-bold font-lg">
+                            Hello @ViewBag.UserName,
+                        </p>
+                        <p>
+                            @ViewBag.Title document is already approved.
+                        </p>
+                        <p>
+                            The documents are :
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>Title</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.RecapTitle</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recap Number</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.RecapNumber</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Supplier</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.SupplierName</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Month</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.RecapDate</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Document</td>
+                                        <td> : </td>
+                                        <td>
+                                            <a href="@Url.Action("InvoiceRecaps","Reports",new { RecapNumber = ViewBag.RecapNumber, FileFormat="Pdf"})" target="_blank"><i class="fa fa-file-pdf-o text-danger"></i> Invoice Recap.pdf</a>
+                                            <a href="@Url.Action("InvoiceRecaps","Reports",new { RecapNumber = ViewBag.RecapNumber, FileFormat="Excel"})" target="_blank" class="ml-2"><i class="fa fa-file-excel-o text-success"></i> Invoice Recap.xlsx</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Approved</td>
+                                        <td> : </td>
+                                        <td>@ViewBag.ApprovedDate</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </p>
+                        <p>
+                            Thank you for the good cooperation.
+                        </p>
+                    }
+                    else
+                    {
+                        <p class="font-weight-bold font-lg">
+                            Hello Annonymous,
+                        </p>
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="mt-auto">
+                                    <span class="fa fa-coffee fa-4x"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-10 ml-3">
+                                <p>
+                                    We're so sorry you don't have access to this page. Please leave page now.
+                                </p>
+                                <p>
+                                    Thank you for the good cooperation.
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

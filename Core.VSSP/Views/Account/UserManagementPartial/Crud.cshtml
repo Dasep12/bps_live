@@ -1,0 +1,280 @@
+﻿
+<div class="modal animated fadeIn" id="crudUserManagementModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudUserManagementForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-UserId" class="col-form-label col-form-label-sm">User Id</label>
+                                    <input type="text" class="form-control form-control-sm" id="crud-UserId" name="RoleId" value="" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-UserName" class="col-form-label col-form-label-sm">User Name</label>
+                                    <input type="text" class="form-control form-control-sm" id="crud-UserName" name="RoleName" value="" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-UserRemark" class="col-form-label col-form-label-sm">Remarks</label>
+                                    <input type="text" class="form-control form-control-sm" id="crud-UserRemark" name="RoleRemark" value="">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <table id="jqGridMenu"></table>
+                        </div>
+                    </div>
+
+                    <div id="crudUserManagementError"></div>
+                    <input type="hidden" id="MenuAction" />
+                    <input type="hidden" id="MenuList" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudUserManagement" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function crudUserManagementList(action, id) {
+
+        document.getElementById("crudUserManagementForm").reset();
+        $('#crudUserManagementForm').removeClass('was-validated');
+        $('#crudUserManagementError').html("");
+        $("#btn-crudUserManagement").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudUserManagementForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#MenuAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                RoleName = Grid.jqGrid('getCell', selectedRowId, 'UserType'),
+                RoleRemark = Grid.jqGrid('getCell', selectedRowId, 'Remark');
+
+
+            $("#crud-UserId").val(id);
+            $("#crud-UserName").val(RoleName);
+            $("#crud-UserRemark").val(RoleRemark);
+
+        }
+
+        reloadGridMenu();
+
+        switch (action) {
+            case "Create":
+                $("#crud-MenuActive").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudUserManagementModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudUserManagementModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudUserManagementModal').modal('show');
+                $("#crud-UserId").focus();
+                break;
+            case "Update":
+                $("#crud-UserId").attr("readonly",true);
+                $("#crudUserManagementModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudUserManagementModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudUserManagementModal').modal('show');
+                $("#crud-UserName").focus();
+                break;
+            case "Delete":
+                $("#crudUserManagementForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("select").attr("disabled", true);
+                $("#crud-MenuNeedApproval").attr("disabled", true);
+                $("#crud-MenuActive").attr("disabled", true);
+                $("#btn-crudUserManagement").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudUserManagementModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudUserManagementModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudUserManagementModal').modal('show');
+                break
+        }
+
+    }
+
+
+    $('#crud-UserId').change(function () {
+        $('#crudUserManagementError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudUserManagementForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        UserManagement: {
+                            RoleId: $("#crud-UserId").val(),
+                            RoleName: $("#crud-UserName").val(),
+                            RoleRemark: $("#crud-UserRemark").val(),
+                            MenuList: $("#MenuList").val(),
+                            FormAction: $("#MenuAction").val()
+                        },
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+                    //console.log(JSON.stringify(jsonData));
+                    //return false;
+
+                    $.ajax({
+                        url: '@Url.Action("crudUserManagement","Account")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudUserManagementModal').modal('hide');
+                            var act = $("#MenuAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudUserManagementError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+
+    $(function () {
+
+        $grid = $("#jqGridMenu").jqGrid({
+            url: '@Url.Action("UserMenuListJson", "Account")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                userCategoryID: '*'  
+            },
+            colModel: [
+                { label: 'ID', name: 'MenuID', key: true, editable: false, edittype: 'text', width: 100, hidden: true, align: 'left' },
+                { label: 'Menu Name', name: 'MenuName', editable: false, edittype: 'text', autoResizing: { minColWidth: 180 }, align: 'left' },
+                { label: 'Active', name: 'IsActive', hidden: true, editable: false, edittype: 'checkbox', formatter: "checkbox", formatoptions: { disabled: true }, editoptions: { value: "true:false" }, width: 70, fixed: true, align: 'center' },
+            ],
+            gridview: true,
+            loadonce: true,
+            multiselect: true,
+            pager: '#jqGridPagerMenu',
+            rowNum: 9999,
+            rowList: [100],
+            viewrecords: true,
+            height: 300,
+            width: '110%',
+            rownumbers: true,
+            rownumWidth: 40,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+                CheckedActive();
+            },
+            onSelectRow: function () {
+                var myGrid = $('#jqGridMenu');
+                var i,
+                    selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"),
+                    n,
+                    rowData;
+                var menuselected = JSON.stringify(selRowIds);
+                //alert(menuselected);
+                document.getElementById("MenuList").value = menuselected;
+                if (menuselected === "[]") {
+                    $("#btnSave").attr('disabled', 'disabled');
+                } else {
+                    $("#btnSave").removeAttr("disabled");
+                }
+            },
+            onSelectAll: function () {
+                var myGrid = $('#jqGridMenu');
+                var i,
+                    selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"),
+                    n,
+                    rowData;
+                var menuselected = JSON.stringify(selRowIds);
+                //alert(menuselected);
+                document.getElementById("MenuList").value = menuselected;
+                if (menuselected === "[]") {
+                    $("#btnSave").attr('disabled', 'disabled');
+                } else {
+                    $("#btnSave").removeAttr("disabled");
+                }
+            },
+        })
+
+        $('#jqGridMenu').jqGrid('navGrid', '#jqGridPagerMenu', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function reloadGridMenu() {
+        var roleId = $("#crud-UserId").val();
+        $("#jqGridMenu").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                userCategoryID: roleId
+            },
+        }).trigger('reloadGrid');
+    };
+
+    //$(document).ready(function () {
+    //    reloadGridMenu();
+    //});
+
+    function CheckedActive() {
+        var datafromgrid = $('#jqGridMenu').jqGrid('getRowData');
+        //alert(datafromgrid);
+        $.each(datafromgrid, function (x, y) {
+            //alert(x + '. ' + y.IsActive);
+            var _val = y.IsActive;
+            var _scode = _val;
+            if (_scode == "true") {
+                //alert(y.MenuID + _scode);
+                selectRow(y.MenuID);
+            }
+        });
+    };
+
+    function selectRow(id) {
+        jQuery('#jqGridMenu').jqGrid('setSelection', id);
+    };
+
+</script>
+

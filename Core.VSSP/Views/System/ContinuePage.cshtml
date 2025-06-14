@@ -1,0 +1,84 @@
+﻿@{ Layout = ""; }
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @@version v2.0.0
+* @@link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+*
+* Adaptated to ASP.NET MVC Core 2.1 by Miguel Veloso
+* http://coderepo.blog
+-->
+@{
+    ViewBag.Title = "Continue Page";
+}
+<html lang="en">
+<head>
+    @Html.Partial("_VSSPLayout/_app-meta")
+
+    <title>@ViewBag.Title</title>
+
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+
+</head>
+<body class="app flex-row align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+
+                <div class="clearfix">
+                    <form id="myform" method="post" name="myform">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h1 class="float-left display-1 mr-4"><span class="fa fa-coffee"></span></h1>
+                            </div>
+                            <div class="col-md-9">
+                                <h4 class="pt-3">Finish process!</h4>
+                                <p class="text-muted">
+                                    @{
+                                        string message = @TempData["ContinueMessage"].ToString();
+                                    }
+                                    @Html.Raw(Html.Encode(message).Replace("\n", "<br/>"))
+                                </p>
+
+                                <div class="float-left display-3 mr-4">
+                                    <button class="btn btn-info btn-block" type="button" onClick="submitForm(this.form)"><span class="fa fa-arrow-right"></span> Continue @TempData["ContinueApps"].ToString()</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap and necessary plugins-->
+    @Scripts.Render("~/Core/JS/Plugins")
+
+</body>
+</html>
+
+<script>
+
+function submitForm(FormID)
+                                        {
+
+var uri = '@Url.Action(@TempData["ContinueAction"].ToString(), @TempData["ContinueController"].ToString())'; @*"../"+@TempData["ContinueController"].ToString()+"/"+@TempData["ContinueAction"].ToString();*@
+var res = encodeURI(uri);
+
+$(FormID).attr('action', res);
+FormID.submit();
+}
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+    })
+</script>

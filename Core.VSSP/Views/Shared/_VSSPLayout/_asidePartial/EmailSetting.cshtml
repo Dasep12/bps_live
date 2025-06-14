@@ -1,0 +1,75 @@
+﻿@model Core.VSSP.Models.EmailConfigurationModel
+
+@{
+    string disabled = "";
+    if (Session["UserType"].ToString() == "DEV" || Session["UserType"].ToString() == "ADM")
+    {
+        disabled = "";
+    }
+    else
+    {
+        disabled = "disabled";
+    }
+}
+
+<div class="tab-pane p-3" id="messages" role="tabpanel">
+    <h6>No Reply Email Configuration</h6>
+    @if (Model != null)
+    {
+        <div class="text-uppercase mb-1 mt-4">
+            <small>
+                <b>Sender Name</b>
+            </small>
+        </div>
+        <small>@Model.SenderName</small>
+        <div class="text-uppercase mb-1 mt-2">
+            <small>
+                <b>Email Address</b>
+            </small>
+        </div>
+        <small>@Model.EmailAddress</small>
+        <div class="text-uppercase mb-1 mt-2">
+            <small>
+                <b>User Id</b>
+            </small>
+        </div>
+        if (Session["UserType"].ToString() == "DEV" || Session["UserType"].ToString() == "ADM")
+        {
+
+            <small>@Model.EmailUserID</small>
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b>SMTP Server</b>
+                </small>
+            </div>
+            <small>@Model.OutgoingServer</small>
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b>SMTP Port</b>
+                </small>
+            </div>
+            <small>@Model.OutgoingPort</small>
+            <div class="text-uppercase mb-1 mt-2">
+                <small>
+                    <b>SSL</b>
+                </small>
+            </div>
+            <small>@Model.EnableSSL</small>
+        }
+
+    }
+    else
+    {
+        <div class="text-uppercase mb-1 mt-4">
+            <small>
+                <b>No Email Configuration Found</b>
+            </small>
+        </div>
+    }
+
+    <hr>
+    <a class="btn btn-success btn-sm @disabled" href="@Url.Action("EmailConfigurationEdit","System")">
+        <i class="icon-pencil"></i> Edit
+    </a>
+
+</div>

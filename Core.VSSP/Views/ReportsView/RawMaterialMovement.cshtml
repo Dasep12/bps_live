@@ -1,0 +1,189 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="RawMaterialMovement-List">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="dropdown pull-right">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <label for="supplierFilter" class="col-form-label col-form-label-sm">Supplier</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="supplierFilter" name="supplierFilter" type="text" class="form-control" placeholder="Supplier Id or Name...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="partFilter" class="col-form-label col-form-label-sm">Part</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="partFilter" name="partFilter" type="text" class="form-control" placeholder="Part or Unique Number...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control input-daterange" placeholder="Start Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control date" placeholder="End Date">
+                                </div>
+                            </div>
+
+
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridList()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<script>
+
+
+    if ($("#startdateFilter").val() === "") {
+        $("#startdateFilter").val(moment(new Date()).format("YYYY-MM-DD"));
+    }
+    if ($("#enddateFilter").val() === "") {
+        $("#enddateFilter").val(moment(new Date()).format("YYYY-MM-DD"));
+    }
+
+    $(function () {
+        var supplierid = $('#supplierFilter').val();
+        var partnumber = $('#partFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("RawMaterialMovementListJson", "ReportsView")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                SupplierId: supplierid,
+                PartNumber: partnumber,
+                StartDate: startdate,
+                EndDate: enddate,
+            },
+            colModel: [
+                { label: 'Supplier Id', name: 'SupplierId', align: 'left', fixed: true, width: 60 },
+                { label: 'Supplier Name', name: 'SupplierName', align: 'left', fixed: true, width: 200 },
+                { label: 'Date', name: 'Date_Process', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 60 },
+                { label: 'Part Number', name: 'PartNumber', align: 'left', fixed: true, width: 100 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 150 } },
+                { label: 'Receive KBN', name: 'ReceiveKanban', fixed: true, width: 80, align: 'center', formatter: 'number' },
+                { label: 'Receive QTY', name: 'ReceiveQty', fixed: true, width: 80, align: 'right', formatter: 'number' },
+                { label: 'Delivery KBN', name: 'DeliveryKanban', fixed: true, width: 80, align: 'center', formatter: 'number' },
+                { label: 'Delivery QTY', name: 'DeliveryQty', fixed: true, width: 80, align: 'right', formatter: 'number' },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+    });
+
+    function reloadGridList() {
+        var supplierid  = $('#supplierFilter').val();
+        var partnumber  = $('#partFilter').val();
+        var startdate   = $('#startdateFilter').val();
+        var enddate     = $('#enddateFilter').val();
+
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                SupplierId: supplierid,
+                PartNumber: partnumber,
+                StartDate: startdate,
+                EndDate: enddate,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    $("input").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    $("#export").click(function () {
+
+        var supplierid = $('#supplierFilter').val();
+        var partnumber = $('#partFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var fileformat = $('#ExportOption').val();
+
+        var url = "@Html.Raw(@Url.Action("RawMaterialTransaction", "Reports", new { SupplierId = "_supplierid_", PartNumber = "_partnumber_", StartDate = "_startdate_", EndDate = "_enddate_", FileFormat = "_fileformat_" }))";
+
+        url = url.replace('_supplierid_', supplierid);
+        url = url.replace('_partnumber_', partnumber);
+        url = url.replace('_startdate_', startdate);
+        url = url.replace('_enddate_', enddate);
+        url = url.replace('_fileformat_', fileformat);
+
+        window.open(url, "_blank");
+
+    })
+</script>
+

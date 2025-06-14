@@ -1,0 +1,772 @@
+﻿<style>
+    .custom-checkbox{
+        z-index:99 !important
+    }
+</style>
+<div class="modal animated fadeIn" id="crudCustomerInvoiceModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudCustomerInvoiceForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceNumber" class="col-sm-4 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-CustomerInvoiceNumber">
+                                        <div class="input-group-append">
+                                            <button id="btnGenerateNumber" type="button" class="btn btn-sm btn-outline-secondary" title="Generate Invoice Number..." onclick="generateNumber('generate')"><i class="fa fa-refresh"></i></button>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button id="btnManualNumber" type="button" class="btn btn-sm btn-outline-secondary" title="Type Invoice Number manualy..." onclick="generateNumber('manual')"><i class="fa fa-pencil"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceDate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-CustomerInvoiceDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-8">
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-CustomerInvoiceCustomerId" name="CustomerId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceStartDate" class="col-sm-4 col-form-label col-form-label-sm">Delivery Date</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group input-group-sm">
+                                        <input type="date" class="form-control form-control-sm bg-white" id="crud-CustomerInvoiceStartDate" name="StartDate" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">To</span>
+                                        </div>
+                                        <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-CustomerInvoiceEndDate" name="EndDate" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 mb-2">
+                            <div class="pull-right">
+                                <button id="btn-addCustomerInvoiceDetail" type="button" class="btn btn-sm btn-outline-dark" style="height:73px; width:73px" onclick="crudCustomerInvoiceDetail('Create','')"><span class="fa fa-refresh"></span> Recap</button>
+                                <button id="btn-crudCustomerInvoice" type="submit" class="btn btn-sm btn-outline-primary btn-spin ml-3" style="height:73px; width:73px" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger ml-3" style="height:73px; width:73px" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudCustomerInvoiceDetail"></table>
+                            <div id="jqGridPagerCrudCustomerInvoiceDetail"></div>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceTerms" class="col-md-2 col-form-label col-form-label-sm">Terms</label>
+                                <div class="col-md-7">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-CustomerInvoiceTerms" name="Terms" />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-CustomerInvoiceRemarks" class="col-md-2 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-md-7">
+                                    <textarea type="text" rows="1" class="form-control form-control-sm bg-white" id="crud-CustomerInvoiceRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            @*<div class="pull-right">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="crud-CustomerInvoicePPH23">
+                                    <label class="custom-control-label" for="crud-CustomerInvoicePPH23"><small> Include PPH 23</small></label>
+                                </div>
+                            </div>*@
+
+                            <table class="table table-sm table-borderless">
+                                <tbody id="crud-summaryCustomerInvoice" class="text-right font-weight-bold">
+                                    <tr>
+                                        <td>Sub Total</td>
+                                        <td>:</td>
+                                        <td id="SummarySubTotal">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <select id="crud-CustomerInvoicePPN">
+                                                <option value="11">PPN (11%)</option>
+                                                <option value="10">PPN (10%)</option>
+                                            </select>
+                                        </td>
+                                        <td>:</td>
+                                        <td id="SummaryPPN">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="form-check form-check-inline mr-0">
+                                                <input class="form-check-input" type="checkbox" id="crud-CustomerInvoicePPH23" value="">
+                                                <label class="form-check-label" for="crud-CustomerInvoicePPH23">PPH 23 (2%)</label>
+                                            </div>
+                                        </td>
+                                        <td>:</td>
+                                        <td id="SummaryPPH23">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Grand Total</td>
+                                        <td>:</td>
+                                        <td id="SummaryGrandTotal">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="crudCustomerInvoiceError"></div>
+                    <input type="hidden" id="CustomerInvoiceAction" />
+                    <h4 class="mx-auto" style="margin:0;padding:0" hidden><span id="approvalInfo" class="badge badge-warning shadow-sm">APPROVAL</span></h4>
+
+                </div>
+                <!--<div class="modal-footer">-->
+                    
+                    @*<div class="mr-auto mt-0 mb-auto">
+                    </div>
+                    <div class="col-md-2">
+                        
+                    </div>*@
+                <!--</div>-->
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudReprocessModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-refresh"></span> Reprocess Recap</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-danger">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <span class="fa fa-warning fa-4x"></span>
+                        </div>
+                        <div class="col-md-9">
+                            <h5>Are you sure want to reprocess current invoice?</h5>
+                            <h6>This action will replace your existing invoice.</h6>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-primary" data-dismiss="modal" onclick="showfilterRecapDelivery()"><span class="fa fa-dot-circle-o"></span> Re-Process</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var subtotal = 0;
+    var ppn = 0;
+    var ppnpercent = 0;
+    var pph23 = 0;
+    var grandtotal = 0;
+
+    $("#crud-CustomerInvoiceMonth").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    });
+
+    $('#crudCustomerInvoiceDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-CustomerInvoiceDetailOrderQty") {
+                $("#btn-crudCustomerInvoiceDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudCustomerInvoice(action, id) {
+
+        document.getElementById("crudCustomerInvoiceForm").reset();
+        $('#crudCustomerInvoiceForm').removeClass('was-validated');
+        $('#crudCustomerInvoiceError').html("");
+        $('#btn-addCustomerInvoiceDetail').removeAttr('disabled');
+        $('#btnGenerateNumber').removeAttr("disabled");
+        $('#btnManualNumber').removeAttr("disabled");
+        $("#btn-crudCustomerInvoice").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudCustomerInvoiceForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-CustomerInvoiceCustomerId").selectpicker("refresh");
+        //$("#chk-filterImport").removeAttr("checked");
+
+        //showhidedetailCol();
+        summaryCustomerInvoice(0, 0, 0, 0);
+        $("#approvalInfo").text("");
+        $("#CustomerInvoiceAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+                var approval = '@ViewBag.ApprovalLevel';
+
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudCustomerInvoiceError').html(errMsg);
+            $("#crudCustomerInvoiceForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addCustomerInvoiceDetail").attr("disabled", true);
+            $("#btn-crudCustomerInvoice").attr("disabled", true);
+
+            $('#crudCustomerInvoiceModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                CustomerInvoiceDate         = Grid.jqGrid('getCell', selectedRowId, 'InvoiceDate'),
+                CustomerInvoiceCustomerId   = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                CustomerInvoiceStartDate    = Grid.jqGrid('getCell', selectedRowId, 'DOStart'),
+                CustomerInvoiceEndDate      = Grid.jqGrid('getCell', selectedRowId, 'DOEnd'),
+                CustomerInvoiceApproval     = Grid.jqGrid('getCell', selectedRowId, 'Approval'),
+                CustomerInvoicePPN          = Grid.jqGrid('getCell', selectedRowId, 'PPNPercent');
+                CustomerInvoicePPH23        = Grid.jqGrid('getCell', selectedRowId, 'IncludePPH23');
+                CustomerInvoiceTerms        = Grid.jqGrid('getCell', selectedRowId, 'Terms');
+                CustomerInvoiceRemarks      = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            CustomerInvoiceDate = moment(new Date(CustomerInvoiceDate)).format("YYYY-MM-DD");
+            CustomerInvoiceStartDate = moment(new Date(CustomerInvoiceStartDate)).format("YYYY-MM-DD");
+            CustomerInvoiceEndDate = moment(new Date(CustomerInvoiceEndDate)).format("YYYY-MM-DD");
+            CustomerInvoicePPH23 = parseBool(CustomerInvoicePPH23);
+
+            $("#crud-CustomerInvoiceNumber").val(id);
+            $("#crud-CustomerInvoiceDate").val(CustomerInvoiceDate);
+            $("#crud-CustomerInvoiceCustomerId").val(CustomerInvoiceCustomerId);
+            $("#crud-CustomerInvoiceStartDate").val(CustomerInvoiceStartDate);
+            $("#crud-CustomerInvoiceEndDate").val(CustomerInvoiceEndDate);
+            $("#crud-CustomerInvoicePPN").val(CustomerInvoicePPN);
+            $("#crud-CustomerInvoicePPH23").attr("checked",CustomerInvoicePPH23);
+            $("#crud-CustomerInvoiceTerms").val(CustomerInvoiceTerms);
+            $("#crud-CustomerInvoiceRemarks").val(CustomerInvoiceRemarks);
+            $("#approvalInfo").text(CustomerInvoiceApproval);
+
+            reloadGridCustomerInvoiceDetail(action);
+            $('#btnGenerateNumber').attr("disabled", true);
+            $('#btnManualNumber').attr("disabled", true);
+
+        }
+
+        $(".selectpicker").selectpicker("refresh");
+
+        switch (action) {
+            case "Create":
+
+                $('#jqGridCrudCustomerInvoiceDetail').jqGrid('clearGridData');
+
+                $("#crud-CustomerInvoiceNumber").attr("readonly", true);
+                //$("#crud-CustomerInvoiceDate").attr("readonly", true);
+                $("#crud-CustomerInvoiceDate").val(newdate);
+                $("#crudCustomerInvoiceModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudCustomerInvoiceModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerInvoiceModal').modal('show');
+                $("#crud-CustomerInvoiceCustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-CustomerInvoiceNumber").attr("readonly", true);
+                //$("#crud-CustomerInvoiceDate").attr("readonly", true); req nur -> date bisa diubah
+                $("#crud-CustomerInvoiceCustomerId").attr("disabled", true);
+                $("#crudCustomerInvoiceModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudCustomerInvoiceModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerInvoiceModal').modal('show');
+                $("#crud-CustomerInvoiceRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudCustomerInvoiceForm :input").each(function () {
+                    $(this).not("button").attr("disabled",true);
+                });
+                $('#btn-addCustomerInvoiceDetail').attr('disabled', true);
+                $("#btn-crudCustomerInvoice").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudCustomerInvoiceModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudCustomerInvoiceModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerInvoiceModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudCustomerInvoiceForm :input").each(function () {
+                    $(this).not("button").attr("disabled",true);
+                });
+                $('#btn-addCustomerInvoiceDetail').attr('disabled', true);
+                $("#btn-crudCustomerInvoice").html("<span class='fa fa-ban'></span> Cancel");
+                $("#crudCustomerInvoiceModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudCustomerInvoiceModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerInvoiceModal').modal('show');
+                break
+            case "Closed":
+                $("#crudCustomerInvoiceForm :input").each(function () {
+                    $(this).not("button").attr("disabled",true);
+                });
+                $('#btn-addCustomerInvoiceDetail').attr('disabled', true);
+                $("#btn-crudCustomerInvoice").html("<span class='fa fa-sign-out'></span> Closing");
+                $("#crudCustomerInvoiceModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudCustomerInvoiceModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerInvoiceModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-CustomerInvoiceCustomerId').change(function () {
+        $('#crudCustomerInvoiceError').html("");
+    });
+
+    $('#crud-CustomerInvoiceMonth').change(function () {
+        $('#crudCustomerInvoiceError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridCustomerInvoiceDetail = $("#jqGridCrudCustomerInvoiceDetail").jqGrid({
+            url: "@Url.Action("GetCustomerInvoiceDetail", "FinanceAccounting")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                InvoiceNumber: "*",
+                FormAction: "*"
+            },
+            colModel: [
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber',align: 'center', fixed: true, width: 80, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber',align: 'center', fixed: true, width: 140, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', autoResizing: { minColWidth: 180 }, sortable: false },
+                { label: 'PRICE / UNIT', name: 'PriceUnit', align: 'right', fixed: true, width: 100, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'InvoiceQty', align: 'right', fixed: true, width: 100, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 80, sortable: false },
+                { label: 'AMOUNT', name: 'Amount', align: 'right', fixed: true, width: 100, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudCustomerInvoiceDetail',
+            loadonce: true,
+            height: 160,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                subtotal = 0;
+                ppn = 0;
+                ppnpercent = parseInt($("#crud-CustomerInvoicePPN").val())/100;
+                pph23 = 0;
+                grandtotal = 0;
+
+                for (i = 0; i < l; i++) {
+
+                    subtotal += parseFloat($this.jqGrid('getCell', ids[i], 'Amount'));
+
+                }
+
+                includepph23 = $("#crud-CustomerInvoicePPH23").prop("checked");
+                
+
+                //ppn = subtotal * 0.1;
+                ppn = subtotal * ppnpercent;
+                if (includepph23 === true) {
+                    pph23 = subtotal * 0.02;
+                }
+                grandtotal = (subtotal + ppn) - pph23;
+
+                summaryCustomerInvoice(subtotal, ppn, pph23, grandtotal);
+
+            },
+
+        });
+
+        $('#jqGridCrudCustomerInvoiceDetail').jqGrid('navGrid', '#jqGridPagerCrudCustomerInvoiceDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+    });
+
+    function reloadGridCustomerInvoiceDetail(formaction) {
+
+        summaryCustomerInvoice(0, 0, 0, 0);
+
+        var invoicenumber = $("#crud-CustomerInvoiceNumber").val();
+
+        if (formaction === "Create") {
+            invoicenumber = "@ViewBag.UserId";
+        }
+
+        $("#jqGridCrudCustomerInvoiceDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                InvoiceNumber: invoicenumber,
+                FormAction: formaction,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    @*function selectedRecap(id) {
+
+        var selected = $("#select-" + id).prop("checked");
+        var invoicenumber = $("#crud-CustomerInvoiceNumber").val();
+        var Customerid = $("#crud-CustomerInvoiceCustomerId").val();
+
+        var formaction = $("#CustomerInvoiceAction").val();
+
+        if (formaction === "Create") {
+            invoicenumber = "@ViewBag.UserId";
+        }
+
+        var Grid = $('#jqGridCrudCustomerInvoiceDetail'),
+            selectedRowId = id,
+            receivenumber = Grid.jqGrid('getCell', selectedRowId, 'ReceiveNumber'),
+            partnumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber');
+
+        $.ajax({
+            url: '@Url.Action("crudSelectedRecap", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                invoicenumber: invoicenumber,
+                ReceiveNumber: receivenumber,
+                CustomerId: Customerid,
+                PartNumber: partnumber,
+                Selected: selected,
+            },
+            success: function (response) {
+                var status = "";
+                if (selected === true) {
+                    status = "Selected";
+                } else {
+                    status = "Unselected";
+                }
+                showToast("Success", response + " has been " + status + " succesfully");
+            },
+            error: function (xhr, desc, err) {
+                var responsetext = "";
+                try {
+                    responsetext = eval(xhr.responseText);
+                } catch {
+                    responsetext = xhr.responseText;
+                }
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                $('#crudCustomerInvoiceError').html(errMsg);
+            }
+
+        })
+    }*@
+
+    @*function actionCustomerInvoiceDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.UniqueNumber;
+        var formaction = $("#CustomerInvoiceAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='text-primary " + canupdate + "' onclick=\"crudCustomerInvoiceDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-pencil-square'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='text-danger " + candelete + "' onclick=\"crudCustomerInvoiceDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#CustomerInvoiceAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }*@
+
+    function summaryCustomerInvoice(subTotal, Ppn, Pph23, grandTotal) {
+        var summary = '';
+
+
+        includepph23 = $("#crud-CustomerInvoicePPH23").prop("checked");
+
+        subtotal = subTotal;
+        ppn = Ppn;
+        pph23 = Pph23;
+        grandtotal = grandTotal;
+
+        $("#SummarySubTotal").text(subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+        $("#SummaryPPN").text(ppn.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+        $("#SummaryPPH23").text(pph23.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+        $("#SummaryGrandTotal").text(grandtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+        //summary += '<tr><td>Sub Total</td><td>:</td><td> ' + subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }) +'</td></tr>';
+        //summary += '<tr><td>PPN (10%)</td><td>:</td><td> ' + ppn.toLocaleString(undefined, { minimumFractionDigits: 2 }) +'</td></tr>';
+        //summary += '<tr><td>PPH 23 (2%)</td><td>:</td><td> ' + pph23.toLocaleString(undefined, { minimumFractionDigits: 2 }) + '</td></tr>';
+        //summary += '<tr><td>Payment</td><td>:</td><td> ' + grandtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }) +'</td></tr>'
+
+        //$('#crud-summaryCustomerInvoice').html(summary);
+
+    }
+
+    $("#crud-CustomerInvoicePPN").change(function () {
+        ppnpercent = parseInt($("#crud-CustomerInvoicePPN").val()) / 100;
+        ppn = subtotal * ppnpercent;
+        grandtotal = (subtotal + ppn) - pph23;
+
+        summaryCustomerInvoice(subtotal, ppn, pph23, grandtotal);
+
+    })
+
+    $("#crud-CustomerInvoicePPH23").change(function () {
+        includepph23 = $("#crud-CustomerInvoicePPH23").prop("checked");
+        if (includepph23 === true) {
+            pph23 = subtotal * 0.02;
+        } else {
+            pph23 = 0;
+        }
+        grandtotal = (subtotal + ppn) - pph23;
+
+        summaryCustomerInvoice(subtotal, ppn, pph23, grandtotal);
+
+    })
+
+    function crudCustomerInvoiceDetail(action, id) {
+
+        $('#crudCustomerInvoiceError').html("");
+        $("#btn-crudCustomerInvoiceDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudCustomerInvoiceDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        var Customerid = $("#crud-CustomerInvoiceCustomerId").val();
+        var StartDate = $("#crud-CustomerInvoiceStartDate").val();
+        var EndDate = $("#crud-CustomerInvoiceEndDate").val();
+
+        if (Customerid === "" || StartDate === "" || EndDate === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer and Delivery Start/End Date completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudCustomerInvoiceError').html(errMsg);
+            return false;
+        }
+
+        var formaction = $("#CustomerInvoiceAction").val();
+
+        if (action === 'Reprocess') {
+            showfilterRecapDelivery('Create');
+        } else {
+
+            if (formaction == "Update" && action == "Create") {
+                $('#crudReprocessModal').modal('show');
+            } else {
+                showfilterRecapDelivery(formaction);
+                $('#crudReprocessModal').modal('hide');
+
+            }
+        }
+
+
+        //if (id != "") {
+        //    var $grid = $("#jqGridCrudCustomerInvoiceDetail");
+        //    var rowData = $grid.jqGrid("getRowData", id),
+        //        RowStatus = rowData.RowStatus.split(">");
+
+        //    if (RowStatus != "") {
+        //        RowStatus = RowStatus[1].split("<");
+        //        RowStatus = RowStatus[0];
+        //    }
+
+        //}
+
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudCustomerInvoiceForm").submit(function (event) {
+                loadblockspinner();
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudCustomerInvoiceDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#CustomerInvoiceAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+                    @*var invoicenumber = $("#crud-CustomerInvoiceNumber").val();
+                    if (invoicenumber === "") {
+                        invoicenumber = "@ViewBag.UserId";
+                    }*@
+
+                    var jsonData = {
+                        CustomerInvoice: {
+                            InvoiceNumber   : $("#crud-CustomerInvoiceNumber").val(),
+                            InvoiceDate     : $("#crud-CustomerInvoiceDate").val(),
+                            CustomerId      : $("#crud-CustomerInvoiceCustomerId").val(),
+                            DOStart         : $("#crud-CustomerInvoiceStartDate").val(),
+                            DOEnd           : $("#crud-CustomerInvoiceEndDate").val(),
+                            SubTotal        : subtotal,
+                            PPN             : ppn,
+                            PPH23           : pph23,
+                            GrandTotal      : grandtotal,
+                            Terms           : $("#crud-CustomerInvoiceTerms").val(),
+                            Remarks         : $("#crud-CustomerInvoiceRemarks").val(),
+                            IncludePPH23    : $("#crud-CustomerInvoicePPH23").prop("checked"),
+                            Paid            : null,
+                            Status          : null,
+                            UserID          : null,
+                            EditDate        : null
+                        },
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        uid: "@ViewBag.UserId",
+                        formAction: $("#CustomerInvoiceAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudCustomerInvoiceList", "FinanceAccounting")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudCustomerInvoiceModal').modal('hide');
+                            var act = $("#CustomerInvoiceAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                            unloadblockspinner();
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudCustomerInvoiceError').html(errMsg);
+                            unloadblockspinner();
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        Customerid = $("#crud-CustomerInvoiceCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { CustomerId:Customerid },
+            success: function (response) {
+
+                var id = "#crud-CustomerInvoiceCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+    function generateNumber(action) {
+        switch (action) {
+            case "generate":
+                var customerid = $("#crud-CustomerInvoiceCustomerId").val();
+                var invoicedate = $("#crud-CustomerInvoiceDate").val();
+
+                $.ajax({
+                    url: '@Url.Action("GetInvoiceNumber", "FinanceAccounting")',
+                    type: "GET",
+                    dataType: "JSON",
+                    async: false,
+                    data: {
+                        CustomerId: customerid,
+                        InvoiceDate : invoicedate
+                    },
+                    success: function (response) {
+
+                        $("#crud-CustomerInvoiceNumber").val(response.InvoiceNumber).attr("readonly",true);
+
+                    }
+                })
+                break;
+            case "manual":
+
+                $("#crud-CustomerInvoiceNumber").removeAttr("readonly").focus();
+
+                break;
+        }
+    }
+</script>

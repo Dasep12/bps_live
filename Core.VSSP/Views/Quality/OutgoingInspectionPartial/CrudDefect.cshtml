@@ -1,0 +1,643 @@
+﻿
+<div class="modal animated fadeIn" id="crudDefectListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudDefectListForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-list-alt"></span> Defect List </h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    
+                    <input type="hidden" class="form-control form-control-sm bg-white" id="crud-DefectListInspectionNumber" placeholder="Auto Generate">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="col-form-label col-form-label-sm pt-0 font-weight-bold">Total</label>
+                            <hr class="pt-0 mt-0" />
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListTotalCheck" class="col-sm-4 col-form-label col-form-label-sm">Check</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control form-control-sm bg-white" id="crud-DefectListTotalCheck" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListTotalDefectUnit" class="col-sm-4 col-form-label col-form-label-sm">Defect</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control form-control-sm bg-white" id="crud-DefectListTotalDefectUnit" onchange="calcRemains()" hidden>
+                                    <input type="number" class="form-control form-control-sm bg-white" onchange="calcRemains()" id="crud-DefectListTotalDefectQty" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-form-label col-form-label-sm pt-0 font-weight-bold">Replacement</label>
+                            <hr class="pt-0 mt-0" />
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListReplaced" class="col-sm-4 col-form-label col-form-label-sm">Replaced</label>
+                                <div class="col-sm-8">
+                                    <input type="number" min="0" class="form-control form-control-sm bg-white" id="crud-DefectListReplaced" onchange="calcRemains()" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListRemains" class="col-sm-4 col-form-label col-form-label-sm">Remains</label>
+                                <div class="col-sm-8">
+                                    <input type="number" min="0" class="form-control form-control-sm bg-white" id="crud-DefectListRemains" >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-2">
+                            <hr class="mt-0 mb-0" />
+                            <button id="btn-addDefectListDetail" type="button" class="btn btn-sm btn-link ml-0 pl-0" onclick="crudDefectListDetail('Create','*')"><span class="fa fa-plus"></span> New Defect</button>
+                            <table id="jqGridCrudDefectList"></table>
+                        </div>
+                    </div>
+                    <div id="crudDefectListError"></div>
+                    <input type="hidden" id="DefectListAction" />
+                </div>
+                <div class="modal-footer" hidden>
+                    <button id="btn-crudDefectList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="crudDefectDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudDefectDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-list-alt"></span> Defect List </h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectDetailId" class="col-sm-4 col-form-label col-form-label-sm">Defect Type</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-DefectDetailId" required>
+                                        <option value="">*Choose Defect</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectDetailQty" class="col-sm-4 col-form-label col-form-label-sm">Defect Qty</label>
+                                <div class="col-sm-8">
+                                    <input type="number" min="1" class="form-control form-control-sm" id="crud-DefectDetailQty" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectDetailStatus" class="col-sm-4 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-md-8 col-form-label">
+                                    <div class="form-check form-check-inline pt-0 mr-1">
+                                        <input class="form-check-input" type="radio" id="crud-DefectDetailRepair" value="" name="defect-status" checked>
+                                        <label class="form-check-label small" for="crud-DefectDetailRepair">Repair</label>
+                                    </div>
+                                    <div class="form-check form-check-inline pt-0 mr-1">
+                                        <input class="form-check-input" type="radio" id="crud-DefectDetailScrap" value="" name="defect-status">
+                                        <label class="form-check-label small" for="crud-DefectDetailScrap">Scrap</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="crudDefectDetailError"></div>
+                    <input type="hidden" id="DefectDetailAction" />
+                    <input type="hidden" id="DefectDetailId" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudDefectDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function crudDefectList(action, id) {
+
+        $('#btn-addDefectListDetail').removeAttr('disabled');
+        $('#btn-crudDefectList').removeAttr('disabled');
+
+        $("#btn-crudDefectList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crud-DefectListTotalCheck").attr("disabled", true);
+        $("#crud-DefectListTotalDefectQty").attr("disabled", true);
+        $("#crud-DefectListRemains").attr("disabled", true);
+
+        $("#DefectListAction").val(action);
+
+        $("#crud-DefectListTotalCheck").val($("#totalCheck").val());
+        $("#crud-DefectListTotalDefectUnit").val($("#totalDefectUnit").val());
+        $("#crud-DefectListTotalDefectQty").val($("#totalDefectQty").val());
+        calcRemains();
+
+        switch (action) {
+            case "Create":
+
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudDefectListModal .modal-footer").attr("hidden", true);
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-list-alt"></span> Defect List');
+                $('#crudDefectListModal').modal('show');
+                $("#crud-DefectListReplaced").focus();
+
+                break;
+            case "Checkout":
+                $("#crud-DefectListDefectId").attr("disabled", true);
+                $('#btn-addDefectListDetail').attr('disabled', true);
+
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudDefectListModal .modal-footer").removeAttr("hidden");
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-check-square-o"></span> Checkout');
+                $('#crudDefectListModal').modal('show');
+                $("#btn-crudDefectList").focus();
+                break;
+            case "Delete":
+                $("#crudDefectListForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-DefectListDefectId").attr("disabled", true);
+                $('#btn-addDefectListDetail').attr('disabled', true);
+                $("#btn-crudDefectList").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudDefectListModal .modal-footer").removeAttr("hidden");
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-trash-o"></span> Delete Inspection');
+                $('#crudDefectListModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-DefectDetailId').change(function () {
+        $('#crudDefectListError').html("");
+        $("#crud-DefectDetailQty").focus().select();
+    });
+
+    function calcRemains() {
+        let replaced = $("#crud-DefectListReplaced").val(),
+            defectUnit = $("#crud-DefectListTotalDefectUnit").val(),
+            defectQty = $("#crud-DefectListTotalDefectQty").val(),
+            remains = 0;
+
+        remains = parseInt(defectUnit) - parseInt(replaced);
+        if (isNaN(remains)) remains = 0;
+
+        $("#totalDefectUnit").val(defectUnit);
+        $("#totalDefectQty").val(defectQty);
+        $("#crud-DefectListRemains").val(remains);
+        $("#crud-DefectListReplaced").attr("max", defectUnit);
+    };
+
+    $(function () {
+        $gridDefectListSequence = $("#jqGridCrudDefectList").jqGrid({
+            url: "@Url.Action("InspectionDefectListJson", "Quality")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                inspectionnumber: "*",
+                inspectiontype: "Outgoing"
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: actionDefectListFormatter },
+                { label: 'DefectNumber', name: 'DefectNumber', align: 'left', hidden: true, width: 50 },
+                { label: 'DefectId', name: 'DefectId', align: 'left', hidden: true, width: 50 },
+                { label: 'Defect', name: 'DefectName', align: 'left', fixed: true, width: 218, sortable: false, sortable: false },
+                { label: 'Qty', name: 'DefectQty', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'Repair', name: 'Repair', align: 'center', fixed: true, width: 50, sortable: false, formatter: statusFormatter},
+                { label: 'Scrap', name: 'Scrap', align: 'center', fixed: true, width: 50, sortable: false, formatter: statusFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height: 250,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            //autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //caption:"Kanban Sequence Relation",
+            loadComplete: function () {
+            },
+            ondblClickRow: function (rowid) {
+                crudDefectListDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudDefectList').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'Repair', numberOfColumns: 2, titleText: 'Status' },
+            ]
+        });
+    });
+
+    function reloadGridDefectList() {
+
+        var InspectionNumber = $("#crud-DefectListInspectionNumber").val();
+
+        $("#jqGridCrudDefectList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                inspectionnumber: InspectionNumber,
+                inspectiontype: "Outgoing"
+           }
+        }).trigger('reloadGrid');
+
+
+    };
+
+    function actionDefectListFormatter(cellvalue, options, rowObject) {
+
+        var formaction = $("#InspectionAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudDefectListDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.DefectName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudDefectListDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.DefectName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudDefectListForm").submit(function (event) {
+
+                event.preventDefault();
+                var resValid = true;
+
+                $("#crudDefectListForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            Inspection: {
+                                InspectionNumber: $("#crud-DefectListInspectionNumber").val(),
+                                InspectionGate: $("#crud-Gate").val(),
+                                InspectionDate: $("#dateInspection").val(),
+                                StartTime: moment(startTick).format("YYYY-MM-DD HH:mm:ss"),
+                                FinishTime: moment(finishTick).format("YYYY-MM-DD HH:mm:ss"),
+                                CustomerId : $("#label-inspectionCustomer").text(),
+                                PartNumber: $("#PartNumber").val(),
+                                TotalCheck: $("#crud-DefectListTotalCheck").val(),
+                                TotalDefectUnit: $("#crud-DefectListTotalDefectUnit").val(),
+                                TotalDefectQty: $("#crud-DefectListTotalDefectQty").val(),
+                                Replaced: $("#crud-DefectListReplaced").val(),
+                                Remains: $("#crud-DefectListRemains").val(),
+                                EditDate: null,
+                                UserId: "@ViewBag.UserId",
+                                UserName: "@ViewBag.UserName"
+                            },
+                            InspectionDefects: $("#jqGridCrudDefectList").jqGrid('getGridParam', 'data'),
+                            formAction: $("#InspectionAction").val(),
+                            compid: "@ViewBag.CompId",
+                        };
+
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudOutgoingInspection", "Quality")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            async: false,
+                            success: function (data) {
+
+                                $("#crudDefectListModal").modal('hide');
+                                var act = $("#InspectionAction").val();
+                                doSuccess(data, act.toLowerCase());
+
+                                crudOutgoingInspection("Create", "*");
+                                startScan();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var responsetext = "";
+                                try {
+                                    responsetext = eval(xhr.responseText);
+                                } catch {
+                                    responsetext = xhr.responseText;
+                                }
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                                $("#crudDefectListError").html(errMsg);
+                            }
+                        });
+
+                        unloadblockspinner();
+
+                    } else {
+                        unloadblockspinner();
+                    }
+                }, 500);
+            });
+        });
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        DefectId = $("#crud-DefectListDefectId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { DefectId:DefectId },
+            success: function (response) {
+
+                var id = "#crud-DefectListDefectId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.DefectId).html(sup.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+
+
+    $(document).ready(function () {
+        $(".filter-combo").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("option").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+
+    loadComboDefect("");
+    function loadComboDefect(categoryid) {
+
+        $.ajax({
+            url: '@Url.Action("DefectListJson", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                categoryid: categoryid
+            },
+            success: function (response) {
+
+                var id = "#crud-DefectDetailId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Defect")
+                );
+
+                $.each(response, function (i, def) {
+                    $(id).append(
+                        $('<option></option>').val(def.DefectId).html(def.DefectName)
+                    );
+                });
+            }
+        })
+    }
+    function getDefectNumber() {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("GetDefectNumber", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                result = response;
+
+            }
+        });
+
+        return result;
+    }
+
+</script>
+<script>
+
+    function crudDefectListDetail(action, id) {
+
+        document.getElementById("crudDefectDetailForm").reset();
+        $('#crudDefectDetailForm').removeClass('was-validated');
+        $('#crudDefectDetailError').html("");
+        $("#btn-crudDefectDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudDefectDetailForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#DefectDetailAction").val(action);
+        $("#DefectDetailId").val(id);
+        $('#crud-DefectDetailRepair').attr("checked", true);
+        $('#crud-DefectDetailScrap').attr("checked", false);
+
+        if (id != "*") {
+            var $grid = $("#jqGridCrudDefectList"),
+                rowData = $grid.jqGrid("getRowData", id),
+                DefectId = rowData.DefectId,
+                DefectUnit = rowData.DefectUnit,
+                DefectQty = rowData.DefectQty,
+                Repair = rowData.Repair.includes("success"),
+                Scrap = rowData.Scrap.includes("success");
+
+            $("#crud-DefectDetailId").val(DefectId);
+            $("#crud-DefectDetailUnit").val(DefectUnit);
+            $("#crud-DefectDetailQty").val(DefectQty);
+            $("#crud-DefectDetailRepair").prop("checked", Repair);
+            $("#crud-DefectDetailScrap").prop("checked", Scrap);
+
+        } else {
+            $("#crud-DefectDetailUnit").val(0);
+            $("#crud-DefectDetailQty").val(0);
+        }
+        switch (action) {
+            case "Create":
+                $("#crudDefectDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudDefectDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> New Defect');
+                $('#crudDefectDetailModal').modal('show');
+                $("#crud-DefectDetailId").focus();
+                break;
+            case "Update":
+                $("#crud-DefectDetailId").attr("disabled", true);
+                $("#crudDefectDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudDefectDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Defect');
+                $('#crudDefectDetailModal').modal('show');
+                $("#crud-DefectDetailQty").focus();
+                break;
+            case "Delete":
+                $("#crudDefectDetailForm input,select").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-crudDefectDetail").html("<span class='fa fa-trash'></span> Delete Defect");
+                $("#crudDefectDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudDefectDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' Defect');
+                $('#crudDefectDetailModal').modal('show');
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudDefectDetailForm").submit(function (event) {
+
+                event.preventDefault();
+                var resValid = true;
+
+                $("#crudDefectDetailForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+                    if (resValid) {
+
+                        let action = $('#DefectDetailAction').val(),
+                            totaldefectunit = parseInt($("#crud-DefectListTotalDefectUnit").val()),
+                            totaldefectqty = parseInt($("#crud-DefectListTotalDefectQty").val()),
+                            defectqty = parseInt($("#crud-DefectDetailQty").val());
+
+                        switch (action) {
+                            case "Create":
+
+                                var existDefects = $("#jqGridCrudDefectList").jqGrid('getGridParam', 'data'),
+                                    existtotdefect = 0, existstatus = false, rowid = "";
+
+                                $.each(existDefects, function (i, def) {
+                                    if (def.DefectId === $("#crud-DefectDetailId").val() && def.Repair === $("#crud-DefectDetailRepair").prop("checked")) {
+                                        existstatus = true;
+                                        rowid = def._id_;
+                                        existtotdefect += def.DefectQty;
+                                    }
+                                });
+
+                                if (existstatus === false) {
+                                    parameters =
+                                    {
+                                        rowID: $("#jqGridCrudDefectList").getRowData().length + 1,
+                                        initdata: {
+                                            RowStatus: action,
+                                            DefectNumber: getDefectNumber(),
+                                            DefectId: $("#crud-DefectDetailId").val(),
+                                            DefectName: $("#crud-DefectDetailId option:selected").text(),
+                                            DefectQty: parseInt($("#crud-DefectDetailQty").val()),
+                                            Repair: $("#crud-DefectDetailRepair").prop("checked"),
+                                            Scrap: $("#crud-DefectDetailScrap").prop("checked"),
+                                        },
+                                        position: "last",
+                                    }
+
+                                    $("#jqGridCrudDefectList").jqGrid('addRow', parameters);
+                                    $("#crud-DefectListTotalDefectUnit").val(totaldefectunit + 1);
+                                    $("#crud-DefectListTotalDefectQty").val(totaldefectqty + defectqty);
+                                    showToast("Success", "Add new defect has been saved succesfully", "toast-bottom-center");
+                                } else {
+                                    //var rowid = $("#crud-DefectDetailId").val();
+
+                                    parameters =
+                                    {
+                                        DefectName: $("#crud-DefectDetailId option:selected").text(),
+                                        DefectQty: parseInt($("#crud-DefectDetailQty").val()) + existtotdefect,
+                                        Repair: $("#crud-DefectDetailRepair").prop("checked"),
+                                        Scrap: $("#crud-DefectDetailScrap").prop("checked"),
+                                    }
+
+                                    $("#jqGridCrudDefectList").jqGrid('setRowData', rowid, parameters);
+                                    showToast("Success", "Update existing defect item has been saved succesfully", "toast-bottom-center");
+                                }
+
+                                break;
+
+                            case "Update":
+
+                                var rowid = $("#DefectDetailId").val();
+
+                                parameters =
+                                {
+                                    DefectName: $("#crud-DefectDetailId option:selected").text(),
+                                    DefectQty: parseInt($("#crud-DefectDetailQty").val()),
+                                    Repair: $("#crud-DefectDetailRepair").prop("checked"),
+                                    Scrap: $("#crud-DefectDetailScrap").prop("checked"),
+                                }
+
+                                $("#jqGridCrudDefectList").jqGrid('setRowData', rowid, parameters);
+                                showToast("Success", "Update defect item has been saved succesfully", "toast-bottom-center");
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#DefectDetailId").val()
+
+                                $('#jqGridCrudDefectList').jqGrid('delRowData', rowid);
+                                $("#crud-DefectListTotalDefectUnit").val(totaldefectunit - 1);
+                                $("#crud-DefectListTotalDefectQty").val(totaldefectqty - defectqty);
+                                showToast("Failed", "Delete defect item has been removed succesfully", "toast-bottom-center");
+
+                                break;
+                        }
+
+                        let InspectionDefects = $("#jqGridCrudDefectList").jqGrid('getGridParam', 'data'),
+                            totdefect = 0;
+
+                        $.each(InspectionDefects, function (i, def) {
+                            totdefect += def.DefectQty;
+                        });
+
+                        $("#crud-DefectListTotalDefectQty").val(totdefect);
+                        calcRemains();
+
+                        $('#crudDefectDetailModal').modal('hide');
+                        unloadblockspinner();
+
+                    } else {
+                        unloadblockspinner();
+                    }
+                }, 500);
+            });
+        });
+    });
+
+</script>

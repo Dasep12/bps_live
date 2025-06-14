@@ -1,0 +1,459 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="DeliverySchedule">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-7">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="input-group input-group-sm input-daterange mt-1">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="startDateFilter">Schedule</label>
+                        </div>
+                        <input id="startDateFilter" type="date" class="form-control form-control-sm datepicker" placeholder="Start date" required>
+                        <div class="input-group-append">
+                            <span class="fa fa-calendar input-group-text"></span>
+                        </div>
+                        <input id="endDateFilter" type="date" class="form-control form-control-sm border-left-0 datepicker" placeholder="End date" required>
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridSchedule"></table>
+            <div id="jqGridPagerSchedule"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            @*<button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="createDeliverySchedule('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>*@
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*@Html.Partial("DeliverySchedulePartial/Create")
+    @Html.Partial("DeliverySchedulePartial/Update")*@
+
+</section>
+
+<script>
+
+    $(document).ready(function() {
+        startVal    = $('#startDateFilter');
+        endVal      = $('#endDateFilter');
+        startdate   = new Date();
+        enddate     = new Date();
+
+        var month = startdate.getMonth();
+        var years = startdate.getFullYear();
+
+        //startdate   = moment(startdate.setDate(startdate.getDate() - 14)).format("MM/DD/Y");
+        //enddate     = moment(enddate.setDate(enddate.getDate() + 15)).format("MM/DD/Y");
+        startdate = moment(new Date(years, parseInt(month), 1)).format("YYYY-MM-DD");
+        enddate = moment(new Date(years, parseInt(month) + 1, 0)).format("YYYY-MM-DD");
+
+        if (startVal.val()==="") {
+            //startVal.val(startdate)
+            $('#startDateFilter').val(startdate)
+        }
+        if (endVal.val() === "") {
+            //endVal.val(enddate)
+            $('#endDateFilter').val(enddate)
+        }
+
+        loadJQGrid();
+
+    })
+
+    function loadJQGrid() {
+
+        var gridArrayData = "";
+        var orderNumber = "",
+            startVal = "",
+            endVal = "";
+        var columnsIn = "";
+        var colNV = "";
+        var colMV = "";
+        var colD = "";
+        var colL = "";
+        var colI = "";
+
+        $.jgrid.gridUnload('#jqGridSchedule');
+
+        var colN = [];
+        var colM = [];
+
+        var startdate = $('#startDateFilter').val();
+        var enddate = $('#endDateFilter').val();
+
+        $.ajax({
+            url: '@Url.Action("DeliveryScheduleJson", "Marketing")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                startdate: startdate,
+                enddate: enddate,
+            },
+            success: function (response) {
+
+                var results = response;
+                var gridArrayData = "";
+                // get the first result set, or you can loop trhrough all, assuming that each reuslt set is the same.
+                if (results.length > 0) {
+                    columnsIn = results[0];
+                    colNV = "";
+                    colMV = "";
+                    colL = "";
+                    colD = "";
+                    colI = "";
+
+                    for (var keys in columnsIn) {
+                        //console.log(keys); // here is your column name you are looking for
+                        $.map(results, function (value, key) {
+                            //headers
+                            if (key === 0) {
+                                colNV += "'" + value[keys].Key + "',";
+                                colMV = value[keys].Key;
+
+                                switch (keys) {
+                                    case "0": {
+                                        colM.push({ label: 'SO Number', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 110, fixed: true },);
+                                        break;
+                                    }
+                                    case "1": {
+                                        colM.push({ label: 'CUSTOMER', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 70, fixed: true },);
+                                        break;
+                                    }
+                                    case "2": {
+                                        colM.push({ label: 'UNIQUE', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 50, frozen: true },);
+                                        break;
+                                    }
+                                    case "3": {
+                                        colM.push({ label: 'PART NUMBER', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 100, frozen: true },);
+                                        break;
+                                    }
+                                    case "4": {
+                                        colM.push({ label: 'PART NAME', name: '' + colMV + '', index: '' + colMV + '', align: 'left', editable: false, sortable: false, width: 200, frozen: true },);
+                                        break;
+                                    }
+                                    case "5": {
+                                        colM.push({ label: 'ORDER QTY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                        break;
+                                    }
+                                    case "6": {
+                                        colM.push({ label: 'QTY / KBN', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                        break;
+                                    }
+                                    case "7": {
+                                        colM.push({ label: 'DEL. / DAY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                        break;
+                                    }
+                                    default:
+
+                                        if (colMV.toLowerCase() != "total") {
+                                            colL = moment(new Date(colMV)).format("DD MMM Y").toUpperCase();
+                                            colI = "X" + moment(new Date(colMV)).format("YMMDD");
+                                            colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 38, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                        } else {
+                                            colL = colMV.toUpperCase();
+                                            colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 55, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
+                                        }
+
+                                        break;
+                                }
+
+                            }
+
+                        });
+                    }
+
+                    //data json
+                    colD = "[{";
+                    //console.log(results);
+                    for (var res in results) {
+
+                        columnsIn = results[res];
+                        //console.log('data ' + res);
+                        //console.log(columnsIn);
+
+                        var totals = 0;
+                        var i = 0;
+                        if (colD != "[{") colD += '},{';
+
+                        columnsIn.map(getData);
+
+                        var keyVal = "";
+                        var objVal = "";
+                        function getData(item) {
+                            keyVal = item.Key;
+                            objVal = item.Value === null ? 0 : item.Value;
+
+                            i += 1;
+
+                            if (keyVal != "Total") {
+
+                                if (i > 8) {
+                                    totals += parseFloat(objVal);
+                                }
+                                colD += '"' + keyVal + '":"' + objVal + '",'
+
+                            } else {
+
+                                colD += '"' + keyVal + '":"' + totals + '"'
+
+                            }
+                        }
+
+                    };
+
+                    var len = colD.length;
+                    colD = colD.substring(0, len);
+                    colN.push(colNV);
+                    colD += "}]";
+
+                    gridArrayData = JSON.parse(JSON.stringify(colD));
+                    gridArrayData = JSON.parse(gridArrayData);
+
+                } else {
+                    console.log("No columns");
+                }
+
+                $("#jqGridSchedule").jqGrid({
+                    datatype: "local",
+                    data: gridArrayData,
+                    colModel: colM,
+                    altRows: true,
+                    gridview: true,
+                    loadonce: true,
+                    pager: '#jqGridPagerSchedule',
+                    rowNum: 20,
+                    rowList: [20, 50, 100],
+                    viewrecords: true,
+                    rownumbers: true,
+                    rownumWidth: 40,
+                    autoresizeOnLoad: true,
+                    autowidth: true,
+                    shrinkToFit: false,
+                    fromServer: false,
+                    //hoverrows: false,
+                    //beforeSelectRow: function (rowid, e) {
+                    //    return false;
+                    //},
+                    loadComplete: function () {
+                        var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                        var colModel = $this.jqGrid('getGridParam', 'colModel');
+
+                        if (gridArrayData.length === 0) {
+                            $this.jqGrid('clearGridData');
+                        }
+
+                        $.each(colModel, function (i, col) {
+                            if (i > 9) {
+
+                                if (col.name != "Total") {
+                                    var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(col.name)));
+
+                                    if (dateEvt.length != 0) {
+
+                                        if (dateEvt[0].Holidays === true) {
+                                            $("#jqGridSchedule").jqGrid('setLabel', col.name, '', { 'background': 'red', 'color': 'white', 'font-weight': 'bold' });
+                                        } else {
+                                            $("#jqGridSchedule").jqGrid('setLabel', col.name, '', { 'background': 'green', 'color': 'white', 'font-weight': 'bold' });
+                                        }
+
+                                    } else {
+                                        var dayname = moment(new Date(col.name)).format("ddd");
+
+                                        if (dayname === "Sat" || dayname === "Sun") {
+                                            $("#jqGridSchedule").jqGrid('setLabel', col.name, '', { 'color': 'red', 'font-weight': 'bold' });
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    },
+                });
+                $('#jqGridSchedule').jqGrid('navGrid', '#jqGridPagerSchedule', { search: true, edit: false, add: false, del: false, refresh: false });
+
+            }
+        });
+    }
+
+    function getContent(id,dateval,shift,remarks,obj) {
+
+        var dataContent = "<div>";
+        dataContent += "<label class='text-gray'><b>Events</b></label><br/> " + unescape(remarks) + "<hr/>";
+        dataContent += "<label class='text-gray'><b>Shift</b></label><br/>";
+        dataContent += "<table class='table table-sm table-borderless'>";
+        dataContent += "<tr><td>Group</td><td>:</td><td>" + id + "</td></tr>";
+        dataContent += "<tr><td>Shift</td><td>:</td><td>" + shift + "</td></tr>";
+        dataContent += "</table>";
+        dataContent += "<hr/><ul class='nav w-100'><li>";
+        dataContent += "<a href='#' class='btn btn-sm btn-block btn-success @ViewBag.canUpdate' onclick=\"updateDeliverySchedule('" + id + "','" + dateval + "','" + shift + "')\" ><i class='fa fa-pencil'></i> Change Shift</a>";
+        dataContent += "</li></ul></div>";
+        $('#'+obj.id).attr('data-content', dataContent).popover();
+
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        if (cellvalue != null) {
+
+            var id = rowObject.GroupId;
+            var colname = options.colModel.name;
+            var colvalue = cellvalue["Value"];
+            var colbutton = "";
+
+            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'font-weight': 'bold' });
+
+            switch (colname) {
+                case "GroupId":
+                    rowObject.GroupId = colvalue;
+                    return colvalue;
+                    break;
+                case "GroupName":
+                    return colvalue;
+                    break;
+                case "Workday":
+                    return colvalue;
+                    break;
+                case "Holiday":
+                    return colvalue;
+                    break;
+                default:
+
+                    var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(colname)));
+                    var remarks = "No Event.";
+
+                    if (dateEvt.length != 0) {
+
+                        remarks = escape(dateEvt[0].Remarks);
+
+                        if (dateEvt[0].Holidays === true) {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'background': 'red', 'color': 'white', 'font-weight': 'bold' });
+                        } else {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'background': 'green', 'color': 'white', 'font-weight': 'bold' });
+                        }
+
+                    } else {
+                        var dayname = moment(new Date(colname)).format("ddd");
+
+                        if (dayname === "Sat" || dayname === "Sun") {
+                            $("#jqGridSchedule").jqGrid('setLabel', colname, '', { 'color': 'red', 'font-weight': 'bold' });
+                        }
+                    }
+
+                    colbutton += "<a id='" + id + '-' + colname + "' onmousedown=\"getContent('" + id + "','" + colname + "','" + colvalue + "','" + remarks + "',this)\" tabindex='0' class='btn btn-sm btn-light' role='button' data-toggle='popover' ";
+                    colbutton += "data-timeout='2000' data-html='true' title='" + moment(new Date(colname)).format("DD MMM Y") + "' data-content='' >";
+                    colbutton += colvalue;
+                    colbutton += "</a>";
+
+                    return colbutton
+
+                    break;
+            }
+        } else {
+            return "";
+        }
+    }
+
+    //$('.input-daterange input').each(function () {
+    //    $(this).datepicker().on('changeDate', function (e) {
+    //        $(this).datepicker('hide').nextAll('input').focus();
+    //    });
+
+    //});
+
+    function reloadGridList() {
+
+        //location.reload();
+        loadJQGrid();
+        gridScheduleResize()
+    };
+
+    function doSuccess(startdate, enddate, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create schedule from " + startdate + " to " + enddate + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update schedule from " + startdate.CurrentShift + " to " + startdate.NewShift + " has been saved succesfully");
+
+                startVal = $('#startDateFilter').val();
+                endVal = $('#endDateFilter').val();
+
+                $("#jqGridSchedule").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        startdate: startVal,
+                        enddate: endVal,
+                    }
+                }).trigger('reloadGrid');
+
+                break;
+       }
+    }
+
+    function getWorkingDay(dateVal) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("WorkingCalendarListJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { calendardate: dateVal },
+            success: function (response) {
+
+                result = response;
+                //$.each(response, function (i, day) {
+                //    result = day.CalendarDate + ',' + day.DayId + ',' + day.Remarks;
+                //});
+            }
+        })
+
+        return result;
+
+    }
+
+    $("#export").on("click", function () {
+        var orientation;
+            orientation = "landscape";
+        setTimeout(function () { 
+            exportGrid('#jqGridSchedule', 'A2', '@ViewBag.Title', orientation);
+            unloadblockspinner();
+        }, 500);
+    })
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

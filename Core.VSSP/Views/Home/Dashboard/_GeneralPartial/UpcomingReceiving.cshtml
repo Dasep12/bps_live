@@ -1,0 +1,135 @@
+﻿@model IEnumerable<Core.VSSP.WorkEntity.SP_IDX_UpcomingReceiving_Result>
+
+<div class="card-body collapse show" style="padding:2px">
+    <div id="container-timeline" class="container">
+        @if (Model.Count() > 0)
+        {
+            int loop = 0;
+            int modloop = 0;
+            string timelineclass = "";
+            string iconclass = "";
+            string iconcolour = "";
+            string badgestatus = "";
+            bool focusTimeline = false;
+            string focusId = "";
+            DateTime nowTime = DateTime.Now;
+
+            <ul class="timeline">
+
+                @foreach (var mod in Model)
+                {
+                    loop += 1;
+                    modloop = loop % 2;
+                    if (modloop == 0)
+                    {
+                        timelineclass = "timeline-inverted";
+                    }
+                    else
+                    {
+                        timelineclass = "";
+                    }
+                    switch (mod.Status.ToString())
+                    {
+                        case "0":
+                            iconclass = "fa fa-truck";
+                            iconcolour = "bg-info";
+                            badgestatus = "Create order";
+                            break;
+                        case "1":
+                            iconclass = "fa fa-truck";
+                            iconcolour = "bg-danger";
+                            badgestatus = "Waiting incoming order";
+                            break;
+                        case "2":
+                            iconclass = "fa fa-dropbox";
+                            iconcolour = "bg-warning";
+                            badgestatus = "Receive with outstanding";
+                            break;
+                        case "3":
+                            iconclass = "fa fa-cubes";
+                            iconcolour = "bg-success";
+                            badgestatus = "Receive completed";
+                            break;
+                    }
+
+                    if (@mod.IncomingTime >= nowTime)
+                    {
+                        if (focusTimeline == false)
+                        {
+                            focusTimeline = true;
+                            focusId = "focus-timeline";
+                        }
+                        else
+                        {
+                            focusId = "";
+                        }
+                    }
+                    <li id="@focusId" class="@timelineclass">
+                        <div class="timeline-badge @iconcolour"><i class="@iconclass"></i></div>
+                        <div class="timeline-panel">
+                            <div class="timeline-heading border-bottom">
+                                <h6 class="timeline-title font-weight-bold text-uppercase">@mod.SupplierName</h6>
+                                <small class="text-muted"><i class="fa fa-clock-o"></i> @Convert.ToDateTime(@mod.IncomingTime).ToString("HH:mm") <i class="fa fa-map-marker ml-2"></i> @mod.City, @mod.Country</small><br />
+                                <small class="text-muted"><i class="fa fa-hashtag"></i> @mod.OrderNumber</small>
+                            </div>
+                            <div class="timeline-body">
+                                <table class="font-small" style="width:100%">
+                                    <tbody>
+                                        <tr style="padding:0 !important">
+                                            <td>Raw Material</td>
+                                            <td>:</td>
+                                            <td class="text-right">@mod.OrderItem</td>
+                                            <td>Items</td>
+                                        </tr>
+                                        <tr style="padding:0 !important">
+                                            <td>Kanban</td>
+                                            <td>:</td>
+                                            <td class="text-right">@mod.KanbanQty</td>
+                                            <td>Cards</td>
+                                        </tr>
+                                        <tr style="padding:0 !important">
+                                            <td>Quantity</td>
+                                            <td>:</td>
+                                            <td class="text-right">@mod.OrderUnit</td>
+                                            <td>Units</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <span class="badge @iconcolour">@badgestatus</span>
+                            </div>
+                        </div>
+                    </li>
+
+                }
+
+            </ul>
+        }
+        else
+        {
+            <div class="col-md-12 text-center text-success mt-auto mb-auto" style="top:150px"><h1><i class="icon-check"></i></h1> <h4>No upcoming event</h4></div>
+        }
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        setTimeout(function () {
+            var container = $('#upcoming-receiving'),
+                scrollTo = $('#focus-timeline');
+
+            container.animate({
+                scrollTop: 0
+            });
+
+            if (scrollTo.length>0) {
+                container.animate({
+                    scrollTop: scrollTo.offset().top - container.offset().top +
+                        (container.scrollTop() - 15)
+                });
+            }
+        }, 1000);
+
+    });
+</script>

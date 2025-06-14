@@ -1,0 +1,94 @@
+﻿<div id="geo-location"></div>
+
+<script>
+    GetGeoLocation();
+
+    function GetGeoLocation() {
+
+        /*RESULT :
+        {
+            "ip": "119.11.176.194",
+            "is_eu": false,
+            "city": "Jakarta",
+            "region_code": "Jakarta",
+            "region_code": "JK",
+            "country_name": "Indonesia",
+            "country_code": "ID",
+            "continent_name": "Asia",
+            "continent_code": "AS",
+            "latitude": -6.1741,
+            "longitude": 106.8296,
+            "asn": "AS10217",
+            "organisation": "PT. NTT Indonesia",
+            "postal": null,
+            "calling_code": "62",
+            "flag": "https://ipdata.co/flags/id.png",
+            "emoji_flag": "\ud83c\uddee\ud83c\udde9",
+            "emoji_unicode": "U+1F1EE U+1F1E9",
+            "carrier": {
+                "name": "Esia",
+                "mcc": "510",
+                "mnc": "99"
+            },
+            "languages": [
+                {
+                    "name": "Indonesian",
+                    "native": "Bahasa Indonesia"
+                }
+            ],
+            "currency": {
+                "name": "Indonesian Rupiah",
+                "code": "IDR",
+                "symbol": "Rp",
+                "native": "Rp",
+                "plural": "Indonesian rupiahs"
+            },
+            "time_zone": {
+                "name": "Asia/Jakarta",
+                "abbr": "WIB",
+                "offset": "+0700",
+                "is_dst": false,
+                "current_time": "2019-09-05T12:00:03.961671+07:00"
+            },
+            "threat": {
+                "is_tor": false,
+                "is_proxy": false,
+                "is_anonymous": false,
+                "is_known_attacker": false,
+                "is_known_abuser": false,
+                "is_threat": false,
+                "is_bogon": false
+            },
+            "count": "0"
+        }
+        */
+
+        var apikey = "c115d0561db9570eddedfbb45b2e2be5f3a0168dc20c4f0239f71c59";
+        var uri = "https://api.ipdata.co/?api-key=" + apikey;
+
+        $.ajax({
+            url: uri,
+            type: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                //$("#geo-location").html(""); // clear before appending new list
+                //alert(response.ip);
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='ipaddress'>IP Address</label>:<div class='col-sm-8'><input type='text' id='ipaddress' name='ipaddress' class='border-0' style='width:100%' placeholder='no ip address' value='" + response.ip + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='country_code'>Country Code</label>:<div class='col-sm-8'><input type='text' id='country_code' name='country_code' class='border-0' style='width:100%' placeholder='no country code' value='" + response.country_code + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='country_name'>Country Name</label>:<div class='col-sm-8'><input type='text' id='country_name' name='country_name' class='border-0' style='width:100%' placeholder='no country name' value='" + response.country_name + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='region_code'>Region Code</label>:<div class='col-sm-8'><input type='text' id='region_code' name='region_code' class='border-0' style='width:100%' placeholder='no region_code code' value='" + response.region_code + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='region'>Region Name</label>:<div class='col-sm-8'><input type='text' id='region' name='region' class='border-0' style='width:100%' placeholder='no region_code name' value='" + response.region + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='city'>City</label>:<div class='col-sm-8'><input type='text' id='city' name='city' class='border-0' style='width:100%' placeholder='city' value='" + response.city + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='zip_code'>Zip Code</label>:<div class='col-sm-8'><input type='text' id='zip_code' name='zip_code' class='border-0' style='width:100%' placeholder='no zip code' value='" + response.postal + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='time_zone'>Time Zone</label>:<div class='col-sm-8'><input type='text' id='time_zone' name='time_zone' class='border-0' style='width:100%' placeholder='no time zone' value='" + response.time_zone.name + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='latitude'>Latitude</label>:<div class='col-sm-8'><input type='text' id='latitude' name='latitude' class='border-0' style='width:100%' placeholder='no latitude' value='" + response.latitude + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='longitude'>Longitude</label>:<div class='col-sm-8'><input type='text' id='longitude' name='longitude' class='border-0' style='width:100%' placeholder='no longitude' value='" + response.longitude + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='flag'>Flag</label>:<div class='col-sm-8'><input type='text' id='flag' name='flag' class='border-0' style='width:100%' placeholder='no flag' value='" + response.flag + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='language_name'>Language Name</label>:<div class='col-sm-8'><input type='text' id='language_name' name='language_name' class='border-0' style='width:100%' placeholder='no language name' value='" + response.languages[0].name + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='currency_name'>Currency Name</label>:<div class='col-sm-8'><input type='text' id='currency_name' name='currency_name' class='border-0' style='width:100%' placeholder='no currency name' value='" + response.currency.name + "' readonly></div></div>");
+                $("#geo-location").append("<div hidden class='row'><label class='col-sm-3' for='currencyPcode'>Currency Code</label>:<div class='col-sm-8'><input type='text' id='currency_code' name='currency_code' class='border-0' style='width:100%' placeholder='no currency code' value='" + response.currency.code + "' readonly></div></div>");
+
+            }
+        })
+    }
+</script>

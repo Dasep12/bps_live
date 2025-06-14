@@ -1,0 +1,1408 @@
+﻿@*<style>
+        #scan-CustomerId{
+            background-color:white !important;
+            border-color:#005bff !important;
+        }
+    </style>*@
+
+<div class="modal animated fadeIn" id="crudKanbanOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudKanbanOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderDONumber" class="col-sm-3 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-KanbanOrderDONumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderDODate" class="col-sm-3 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-KanbanOrderDODate" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-5 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderCustomerId" class="col-sm-3 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                        </div>
+                                        <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-KanbanOrderCustomerId" name="CustomerId" onchange="loadSalesNumber()" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderSONumber" class="col-sm-3 col-form-label col-form-label-sm">Sales Number</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group input-group-sm">
+                                        <div class="input-group-prepend">
+                                            <button type="button" class="btn btn-sm btn-outline-secondary text-danger" title="Preview Sales Order Document" onclick="previewSalesOrder()"><i class="fa fa-file-pdf-o"></i></button>
+                                        </div>
+                                        <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-KanbanOrderSONumber" name="SONumber" required></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderRefNumber" class="col-sm-4 col-form-label col-form-label-sm">Ref. Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Customer DN Number" id="crud-KanbanOrderRefNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-KanbanOrderRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="1" class="form-control form-control-sm bg-white" style="height:30px" id="crud-KanbanOrderRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12 pt-2">
+                            <table id="jqGridCrudKanbanDetail"></table>
+                            <div id="jqGridPagerCrudKanbanDetail"></div>
+                        </div>
+                    </div>
+
+                    <div id="crudKanbanOrderError"></div>
+                    <input type="hidden" id="KanbanOrderAction" />
+                    <input type="hidden" id="KanbanOrderUsage" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-scanKanbanOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="scanKanbanOrderDetail('Scan','')"><span class="fa fa-qrcode"></span> Scan Kanban</button>
+                                <button id="btn-scanKanbanOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="scanKanbanOrderDetail('Upload','')"><span class="fa fa-qrcode"></span> Upload Kanban</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-crudKanbanOrder" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="crudKanbanOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <form id="crudKanbanOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-trash"></span> Remove Kanban</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row text-danger">
+                        <div class="col-md-1">
+                            <span class="fa fa-question-circle fa-3x mt-2"></span>
+                        </div>
+                        <div class="col-md-11">
+                            <h4>Are you sure want to delete kanban:</h4>
+                            <h4 id="KanbanOrderDetailKanbanKeyInfo"></h4>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="KanbanOrderDetailKanbanKey" />
+                    <input type="hidden" id="KanbanOrderDetailKanbanNumber" />
+                    <input type="hidden" id="KanbanOrderDetailKanbanPartNumber" />
+                    <input type="hidden" id="KanbanOrderDetailAction" />
+                    <input type="hidden" id="KanbanOrderDetailRowStatus" />
+                    <div id="crudKanbanOrderDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudKanbanOrderDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-trash"></span> Delete</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="scanCustomerOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanCustomerOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-qrcode"></span> Customer Delivery Note Number</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-CustomerId" class="col-form-label font-weight-bold">Customer</label>
+                                <select class="form-control selectpicker bg-white border-primary" data-live-search="true" data-size="8" id="scan-CustomerId" name="CustomerId" required></select>
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <label for="scan-KanbanUsage" class="col-form-label font-weight-bold">Kanban Usage</label>
+                                <select class="custom-select bg-white border-primary" id="scan-KanbanUsage" name="KanbanUsage" disabled required>
+                                    <option value="">NO KANBAN</option>
+                                    <option value="Customer">Kanban Customer</option>
+                                    <option value="Production">Kanban Production</option>
+                                </select>
+                            </div>
+                            <div class="form-group form-group-lg">
+                                <label for="scan-CustomerRefNumber" class="col-form-label font-weight-bold">Ref. Number</label>
+                                <input type="text" class="form-control form-control-lg text-center border-primary" id="scan-CustomerRefNumber" placeholder="Scan or Typing Order Number" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="alert alert-primary mt-2" role="alert">
+                            <small class="text-primary">
+                                <b> Information!</b><br />
+                                Customer Delivery Note Number save as a Reference Number.<br />
+                                Please choose monthly Customer PO Number after scan.
+                            </small>
+                        </div>
+                    </div>
+                    <div id="crudScanOrderError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanCustomerOrder" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-sign-out"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="scanKanbanOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanKanbanOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> KanbanOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-KanbanOrderDetailKanbanKey" class="col-form-label">Scan Kanban</label>
+                                <input type="text" class="form-control form-control-lg text-center border-primary" id="scan-KanbanOrderDetailKanbanKey" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scanKanbanOrderKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanKanbanOrderDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-sign-out"></span> Finish</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@*Modal Upload Kanban*@
+<div class="modal animated fadeIn" id="uploadKanbanOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="uploadKanbanOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> KanbanOrderDetail</h6>
+                    <button type="button" id="btnCloseUploadKanban" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <input type="file" class="form-control form-control-sm mb-1" name="file" id="kanbanInput" accept="application/pdf" required />
+                                <div id="loading" style="display: none; color: blue;">Processing...</div>
+                                <table id="jqGridTempDetailBarcode"></table>
+                                <div id="jqGridTempDetailBarcodePager"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="uploadKanbanOrderKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-uploadKanbanOrderDetailReset" type="button" class="btn btn-sm btn-outline-dark" onclick="ResetuploadKanbanOrderDetail()"><span class="fa fa-refresh"></span> Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-uploadKanbanOrderDetail" type="button" class="btn btn-sm btn-primary"><span class="fa fa-dot-circle-o"></span> Process Kanban</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="btn-finishUploadKanbanOrderDetail"><span class="fa fa-sign-out"></span> Finish</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudKanbanOrder(action, id, Customerid, RefNumber, KanbanUsage) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartRawMaterial","Search")');
+
+        document.getElementById("crudKanbanOrderForm").reset();
+        $('#crudKanbanOrderForm').removeClass('was-validated');
+        $('#crudKanbanOrderError').html("");
+        $('#btn-addKanbanOrderDetail').removeAttr('disabled');
+        $('#btn-scanKanbanOrderDetail').removeAttr('disabled');
+        $("#btn-crudKanbanOrder").html("<span class='fa fa-dot-circle-o'></span> Submit").removeAttr('disabled');
+        $("#crudKanbanOrderForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-showhide").removeAttr("checked");
+        $("#KanbanOrderAction").val(action);
+        $("#KanbanOrderUsage").val(KanbanUsage);
+
+        var newdate = new Date();
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+
+        if (action != "Create" && id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                KanbanOrderStatus = Grid.jqGrid('getCell', selectedRowId, 'StatusName'),
+                KanbanOrderDODate = Grid.jqGrid('getCell', selectedRowId, 'DODate'),
+                KanbanOrderCustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                KanbanOrderSONumber = Grid.jqGrid('getCell', selectedRowId, 'SONumber'),
+                KanbanOrderRefNumber = Grid.jqGrid('getCell', selectedRowId, 'RefNumber'),
+                KanbanOrderRemarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            KanbanOrderDODate = moment(new Date(KanbanOrderDODate)).format("YYYY-MM-DD");
+
+            $("#crud-KanbanOrderDONumber").val(id);
+            $("#crud-KanbanOrderDODate").val(KanbanOrderDODate);
+            $("#crud-KanbanOrderCustomerId").val(KanbanOrderCustomerId).change();
+            $("#crud-KanbanOrderSONumber").val(KanbanOrderSONumber);
+            $("#crud-KanbanOrderRefNumber").val(KanbanOrderRefNumber);
+            $("#crud-KanbanOrderRemarks").val(KanbanOrderRemarks);
+            var showhide = ''
+            if (KanbanOrderStatus.includes('Open')) {
+                showhide = 'showCol';
+            } else {
+                showhide = 'hideCol';
+            }
+
+            //loadSalesNumber(KanbanOrderSONumber);
+
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "Action")
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "RowStatus")
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "StockKanban")
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "StockQty")
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "OutstandingKanban")
+            $("#jqGridCrudKanbanDetail").jqGrid(showhide, "OutstandingQty")
+
+        }
+
+        $(".selectpicker").selectpicker('refresh');
+
+        switch (action) {
+            case "Create":
+                $("#crud-KanbanOrderCustomerId").val(Customerid).selectpicker("refresh").change();
+                $("#crud-KanbanOrderRefNumber").val(RefNumber);
+                $("#crud-KanbanOrderDODate").val(newdate);
+
+                $("#crud-KanbanOrderRefNumber").attr("readonly", true);
+                //$("#crud-KanbanOrderDODate").attr("readonly", true);
+                $("#crud-KanbanOrderCustomerId").attr("disabled", true);
+                $("#crud-KanbanOrderRefNumber").attr("readonly", true);
+
+                $("#crudKanbanOrderModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudKanbanOrderModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanOrderModal').modal('show');
+                $('#btn-scanKanbanOrderDetail').click();
+                break;
+            case "Update":
+                $("#crud-KanbanOrderDONumber").attr("readonly", true);
+                //$("#crud-KanbanOrderDODate").attr("readonly", true);
+                $("#crud-KanbanOrderCustomerId").attr("disabled", true);
+                $("#crud-KanbanOrderSONumber").attr("disabled", true);
+                $("#crud-KanbanOrderRefNumber").attr("readonly", true);
+                $("#crudKanbanOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudKanbanOrderModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanOrderModal').modal('show');
+                $("#crud-KanbanOrderRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudKanbanOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-KanbanOrderCustomerId").attr("disabled", true);
+                $("#crud-KanbanOrderShift").attr("disabled", true);
+                $("#crud-KanbanOrderActived").attr("disabled", true);
+                $('#btn-addKanbanOrderDetail').attr('disabled', true);
+                $('#btn-scanKanbanOrderDetail').attr('disabled', true);
+                $("#btn-crudKanbanOrder").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudKanbanOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudKanbanOrderModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanOrderModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudKanbanOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-KanbanOrderCustomerId").attr("disabled", true);
+                $("#crud-KanbanOrderShift").attr("disabled", true);
+                $("#crud-KanbanOrderActived").attr("disabled", true);
+                $('#btn-addKanbanOrderDetail').attr('disabled', true);
+                $('#btn-scanKanbanOrderDetail').attr('disabled', true);
+                $("#btn-crudKanbanOrder").html("<span class='fa fa-ban'></span> Cancel @ViewBag.Title");
+                $("#crudKanbanOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudKanbanOrderModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudKanbanOrderModal').modal('show');
+                break
+            case "Closed":
+                $("#crudKanbanOrderForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-KanbanOrderCustomerId").attr("disabled", true);
+                $("#crud-KanbanOrderShift").attr("disabled", true);
+                $("#crud-KanbanOrderActived").attr("disabled", true);
+                $('#btn-addKanbanOrderDetail').attr('disabled', true);
+                $('#btn-scanKanbanOrderDetail').attr('disabled', true);
+                $("#btn-crudKanbanOrder").html("<span class='fa fa-sign-out'></span> Closing @ViewBag.Title");
+                $("#crudKanbanOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudKanbanOrderModal .modal-title").html('<span class="fa fa-sign-out"></span> ' + action + ' @ViewBag.Title');
+                $('#crudKanbanOrderModal').modal('show');
+                break;
+            case "UpdateReff":
+                $("#update-ReffNumber").focus();
+                $("#update-doNumberReff").val(id);
+                $("#update-ReffNumber").val(KanbanOrderRefNumber);
+                $("#ReffNumberModal .modal-title").html('<span class="fa fa-pencil"></span> Update Reff Number');
+                $('#ReffNumberModal').modal('show');
+                break;
+        }
+
+
+        var recnumber = id;
+        if (recnumber === "*") {
+            recnumber = '@ViewBag.TransId';
+        }
+        clearKanbanKanban(recnumber, action);
+        reloadGridKanbanDetail();
+
+    }
+
+    $('#crud-KanbanOrderCustomerId').change(function () {
+        $('#crudKanbanOrderError').html("");
+    });
+
+    $('#crud-KanbanOrderShift').change(function () {
+        $('#crudKanbanOrderError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridKanbanDetail = $("#jqGridCrudKanbanDetail").jqGrid({
+            url: "@Url.Action("KanbanOrderDetailSumJson", "Shipping")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { DONumber: "*" },
+            colModel: [
+                //{ label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', hidden: true, width: 80, sortable: false, formatter: statusCrudFormatter },
+                //{ label: 'REF NUMBER', name: 'RefNumber', align: 'left', fixed: true, width: 160, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 548, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 55, sortable: false },
+                { label: 'MODEL', name: 'CustomerUnitModel', align: 'center', fixed: true, width: 100, sortable: false },
+                //{ label: 'KBN QTY', name: 'OrderQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                //{ label: 'UNIT QTY', name: 'OrderUnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+                { label: 'KBN QTY', name: 'DeliveryQty', align: 'center', fixed: true, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'DeliveryUnitQty', align: 'center', fixed: true, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+            //    { label: 'KBN QTY', name: 'OutstandingQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+            //    { label: 'UNIT QTY', name: 'OutstandingUnitQty', align: 'right', fixed: true, width: 50, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            pager: '#jqGridPagerCrudKanbanDetail',
+            loadonce: true,
+            height: 240,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#KanbanOrderAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        parameters =
+                        {
+                            RowStatus: action,
+                        }
+                        $("#jqGridCrudKanbanDetail").jqGrid('setRowData', ids[i], parameters);
+
+                    }
+                }
+            },
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showKanbanGrid, // javascript function that will take care of showing the child
+
+        });
+        $('#jqGridCrudKanbanDetail').jqGrid('navGrid', '#jqGridPagerCrudKanbanDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudKanbanDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                //{ startColumnName: 'OrderQty', numberOfColumns: 2, titleText: 'ORDER' },
+                { startColumnName: 'DeliveryQty', numberOfColumns: 2, titleText: 'DELIVERY ORDER' },
+                //{ startColumnName: 'OutstandingQty', numberOfColumns: 2, titleText: 'OUTSTANDING' },
+            ]
+        });
+    });
+
+    function showKanbanGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+        var DONumber = $('#crud-KanbanOrderDONumber').val();
+        if (DONumber === "") {
+            DONumber="@ViewBag.TransId"
+        }
+        var Grid = $('#jqGridCrudKanbanDetail'),
+            selectedRowId = parentRowKey,
+            partnumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber');
+
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("KanbanOrderDetailTempJson", "Shipping")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                DONumber: DONumber,
+                PartNumber: partnumber ,
+            },
+            page: 1,
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, sortable: false, formatter: actionKanbanDetailFormatter },
+                { label: 'KANBAN #', name: 'KanbanNumber', align: 'center', fixed: true, width: 80 },
+                { label: 'UNIQUE', name: 'UniqueNumber', fixed: true, align: 'center', width: 50 },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 100 },
+                { label: 'PART NAME', name: 'PartName', fixed: true, width: 210 },
+                { label: 'QTY / KBN', name: 'DeliveryQty', align: 'center', fixed: true, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 0 } },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 60 },
+                { label: 'KANBAN DATA', name: 'KanbanData', align: 'left', fixed: true, width: 250 },
+                { label: 'USER', name: 'UserId', align: 'center', fixed: true, width: 60 },
+                { label: 'SCANNED', name: 'ScanTime', align: 'center', fixed: true, width: 120, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Details',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+    function reloadGridKanbanDetail() {
+
+        var DONumber = $("#crud-KanbanOrderDONumber").val();
+        var action = $("#KanbanOrderAction").val();
+
+        if (action === 'Create') {
+            DONumber = '@ViewBag.TransId';
+        }
+
+        $("#jqGridCrudKanbanDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                DONumber: DONumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionKanbanDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var kanbannumber = rowObject.KanbanNumber;
+        var partnumber = rowObject.PartNumber;
+        var formaction = $("#KanbanOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-danger text-light" + candelete + "' onclick=\"crudKanbanOrderDetail('Delete','" + rowid + "','" + kanbannumber + "','" + partnumber + "')\" datatoogle='tooltip' title='Remove @ViewBag.Title Item [ " + rowid + " : " + kanbannumber + " - " + partnumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span> Remove";
+        btn += "</a> ";
+        @*btn += "<a href='#' id='btn-delete" + rowid + "' class='text-danger " + candelete + "' onclick=\"crudKanbanOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";*@
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#KanbanOrderAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                //if (action === "Create") {
+                //    return "<span class='badge badge-primary'>New</span>"
+                //} else {
+                //    return "";
+                //}
+                return "";
+                break;
+        }
+    }
+
+
+    function crudKanbanOrderDetail(action, kanbankey, kanbannumber, partnumber) {
+
+        $('#crudKanbanOrderDetailError').html("");
+
+        $("#KanbanOrderDetailAction").val(action);
+        $("#KanbanOrderDetailKanbanKey").val(kanbankey);
+        $("#KanbanOrderDetailKanbanNumber").val(kanbannumber);
+        $("#KanbanOrderDetailKanbanPartNumber").val(partnumber);
+        $("#KanbanOrderDetailKanbanKeyInfo").html('<b>'+ kanbankey + ' : ' + kanbannumber + ' - ' + partnumber + '</b>')
+
+        $('#crudKanbanOrderDetailModal').modal('show');
+
+    }
+
+    function scanKanbanOrderDetail(action, id) {
+
+        document.getElementById("scanKanbanOrderDetailForm").reset();
+        $('#scanKanbanOrderDetailError').html("");
+        $('#scanKanbanOrderDetailForm').removeClass('was-validated');
+        $("#scanKanbanOrderDetailForm input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#KanbanOrderDetailAction").val(action);
+
+        var Customerid = $("#scan-KanbanOrderCustomerId").val();
+        var KanbanUsage = $("#KanbanOrderUsage").val();
+        var headercolor = "";
+        switch (KanbanUsage) {
+            case "Customer":
+                headercolor = "modal-success";
+                break;
+            case "Production":
+                headercolor = "modal-primary";
+                break;
+        }
+
+        if (Customerid === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer completely before add @ViewBag.Title Detail.</small></div>'
+            $('#scanKanbanOrderError').html(errMsg);
+            return false;
+        }
+
+        switch (action) {
+            case "Scan":
+                $("#scanKanbanOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass(headercolor)
+                $("#scanKanbanOrderDetailModal .modal-title").html('<span class="fa fa-qrcode"></span> ' + action + ' ' + KanbanUsage + ' @ViewBag.Title');
+                $('#scanKanbanOrderDetailModal').modal('show');
+                $("#scan-KanbanOrderDetailKanbanKey").focus();
+                break;
+            case "Upload":
+                $("#uploadKanbanOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass(headercolor)
+                $("#uploadKanbanOrderDetailModal .modal-title").html('<span class="fa fa-qrcode"></span> ' + action + ' ' + KanbanUsage + ' @ViewBag.Title');
+                $('#uploadKanbanOrderDetailModal').modal('show');
+                $("#btn-finishUploadKanbanOrderDetail").attr("disabled", true);
+                //ResetuploadKanbanOrderDetail()
+            break;
+        }
+    }
+
+    $("#scan-KanbanOrderDetailKanbanKey").on("change",function () {
+        $('#scanKanbanOrderKanbanError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#scanKanbanOrderDetailForm").submit(function (event) {
+
+                loadblockspinner();
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var DONumber = $("#crud-KanbanOrderDONumber").val();
+                    var SONumber = $("#crud-KanbanOrderSONumber").val();
+                    var SODate = $("#crud-KanbanOrderSODate").val();
+                    var CustomerId = $("#crud-KanbanOrderCustomerId").val();
+                    var RefNumber = $("#crud-KanbanOrderRefNumber").val();
+                    var kanban = $("#scan-KanbanOrderDetailKanbanKey").val();
+                    //var kanbankey = kanban.split(';');
+                    //var kanbankey = kanbankey[0];
+
+                    var action = $('#KanbanOrderAction').val();
+                    var KanbanUsage = $("#KanbanOrderUsage").val();
+                    var murl = "";
+                    switch (KanbanUsage) {
+                        case "Customer":
+                            murl = '@Url.Action("kanbanReader", "Shipping")';
+                            break;
+                        case "Production":
+                            murl = '@Url.Action("kanbanProductionReader", "Shipping")';
+                            break;
+                    }
+                    if (action === 'Create') {
+                        DONumber = '@ViewBag.TransId';
+                    }
+
+                    $.ajax({
+                        url: murl,
+                        type: 'POST',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            DONumber: DONumber,
+                            CustomerId: CustomerId,
+                            OrderNumber: SONumber,
+                            OrderDate: SODate,
+                            RefNumber: RefNumber,
+                            KanbanData: kanban,
+                        },
+                        success: function (response) {
+
+                            unloadblockspinner();
+
+                            var res = response;
+                            var message = res.ErrMessages;
+
+                            setTimeout(function () {
+                                if (message.includes('Error')) {
+                                    message = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger">' + message + '</div>';
+                                    scanKanbanOrderDetail("Scan", "");
+                                    $('#scanKanbanOrderKanbanError').html(message);
+                                } else {
+                                    showToast("Success", message);
+                                    reloadGridKanbanDetail();
+                                    scanKanbanOrderDetail("Scan", "");
+                                }
+                            }, 500);
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>';
+                            $('#scanKanbanOrderKanbanError').html(errMsg);
+
+                            $("#scan-KanbanOrderDetailKanbanKey").val("").focus();
+
+                        }
+                    });
+                } else {
+                    unloadblockspinner();
+                    $("#scan-KanbanOrderDetailKanbanKey").focus();
+                }
+
+                unloadblockspinner();
+
+            });
+        });
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudKanbanOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($("#KanbanOrderDetailKanbanKey").val() === "") {
+                    showToast("Failed", "Please select kanban before submit.");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                if ($(this).valid()) {
+
+                    var donumber = $('#crud-KanbanOrderDONumber').val();
+                    var customerid = $('#crud-KanbanOrderCustomerId').val();
+                    var kanbankey = $('#KanbanOrderDetailKanbanKey').val();
+                    var kanbannumber = $('#KanbanOrderDetailKanbanNumber').val();
+                    var partnumber = $('#KanbanOrderDetailKanbanPartNumber').val();
+                    var action = $("#KanbanOrderAction").val();
+                    var connStatus = checkConnection();
+
+                    if (connStatus != "Success") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error 404!</b><br/>' + connStatus + ' Please try again later after you connected to server.</small></div>'
+                        $('#crudKanbanOrderDetailError').html(errMsg);
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    if (action === 'Create') {
+                        donumber = '@ViewBag.TransId';
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("crudDeliveryOrderKanbanTemp", "Shipping")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            DONumber: donumber,
+                            CustomerId: customerid,
+                            PartNumber: partnumber,
+                            KanbanNumber: kanbannumber,
+                            DeliveryQty: 0,
+                            formAction: "Delete",
+                        },
+                        success: function (data) {
+
+                            showToast("Error", "Kanban " + kanbankey + " : " + kanbannumber + " - " + partnumber +" already remove successfuly.");
+                            $('#crudKanbanOrderDetailModal').modal('hide');
+                            reloadGridKanbanDetail();
+
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudKanbanOrderDetailError').html(errMsg);
+                        }
+                    });
+
+
+                }
+            });
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudKanbanOrderForm").submit(function (event) {
+
+                var btnSubmitHtml = $("#btn-crudKanbanOrder").html();
+                $("#btn-crudKanbanOrder").html("<span class='fa fa-spinner fa-spin'></span> Submit").attr('disabled', true);
+
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    loadblockspinner();
+
+                    var $grid = $("#jqGridCrudKanbanDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#KanbanOrderAction").val();
+                    var kanbanUsage = $("#KanbanOrderUsage").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        DeliveryOrder: {
+                            DONumber    : $("#crud-KanbanOrderDONumber").val(),
+                            DODate      : $("#crud-KanbanOrderDODate").val(),
+                            CustomerId  : $("#crud-KanbanOrderCustomerId").val(),
+                            SONumber    : $("#crud-KanbanOrderSONumber").val(),
+                            RefNumber   : $("#crud-KanbanOrderRefNumber").val(),
+                            Remarks     : $("#crud-KanbanOrderRemarks").val(),
+                            KanbanOrder : true,
+                            KanbanUsage : kanbanUsage,
+                            Status      : null,
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        DeliveryOrderDetail: $("#jqGridCrudKanbanDetail").jqGrid('getGridParam', 'data'),
+                        transid: "@ViewBag.TransId",
+                        uid: "@ViewBag.UserId",
+                        formAction: $("#KanbanOrderAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+                    setTimeout(function () {
+                        $.ajax({
+                            url: '@Url.Action("crudDeliveryOrderKanban", "Shipping")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            success: function (data) {
+                                $('#crudKanbanOrderModal').modal('hide');
+                                var act = $("#KanbanOrderAction").val();
+                                act = act.toLowerCase();
+                                doSuccess(data, act);
+                            },
+                            error: function (xhr, desc, err) {
+                                var responsetext = "";
+                                try {
+                                    responsetext = eval(xhr.responseText);
+                                } catch {
+                                    responsetext = xhr.responseText;
+                                }
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                                $('#crudKanbanOrderError').html(errMsg);
+                                $("#btn-crudKanbanOrder").html(btnSubmitHtml).removeAttr('disabled');
+
+                            }
+                        });
+                    }, 100);
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function () {
+    var formData = new FormData();
+    $("#kanbanInput").change(function () {
+        var file = this.files[0];
+        if (!file) return; // Jika tidak ada file, keluar
+        var formData = new FormData();
+        formData.append("file", file);
+
+        $("#loading").show(); // Tampilkan indikator loading
+        $.ajax({
+         url: '@Url.Action("UploadPdf", "Shipping")',
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success: function (response) {
+              $("#loading").hide();
+              console.log(response);
+
+              let filteredBarcodes = response.barcodes.filter(item => item.includes(";"));
+              console.log(filteredBarcodes);
+              var barcodeDetails = [];
+              for (let i =0; i < filteredBarcodes.length; i++) {
+                  var kanbanData = filteredBarcodes[i];
+                  var splitbarcode = kanbanData.split(';');
+                  var tempObj = {
+                      status: '',
+                      id: i,
+                      kanban: splitbarcode[0].replace(/ /g,""),
+                      kanbanData: kanbanData ,
+                      orderNumber: splitbarcode[1],
+                      supplierId: splitbarcode[2],
+                      unique: splitbarcode[3],
+                      partNumber: splitbarcode[4],
+                      partName: splitbarcode[5],
+                      qtyPerUnit: splitbarcode[6],
+                      unit: splitbarcode[7],
+                  };
+                  barcodeDetails.push(tempObj);
+
+              }
+
+              // Bersihkan grid sebelum menambahkan data baru
+              $("#jqGridTempDetailBarcode").jqGrid("clearGridData");
+              for (let i = 0; i < barcodeDetails.length; i++) {
+                  var rowId = barcodeDetails[i].id; // Pastikan ID unik
+                  var existingRow = $("#jqGridTempDetailBarcode").jqGrid("getRowData", rowId);
+
+                  if (existingRow.barcode) {
+                      // Jika barcode sudah ada, update row
+                      $("#jqGridTempDetailBarcode").jqGrid("setRowData", rowId, barcodeDetails[i]);
+                  } else {
+                      // Jika barcode belum ada, tambahkan row baru
+                      $("#jqGridTempDetailBarcode").jqGrid("addRowData", rowId, barcodeDetails[i]);
+                  }
+              }
+              $("#kanbanInput").val();
+          },
+          error: function (xhr, desc, err) {
+              $("#loading").hide();
+              var responsetext = "";
+              try {
+                  responsetext = eval(xhr.responseText);
+              } catch {
+                  responsetext = xhr.responseText;
+              }
+              var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>';
+              alert(errMsg);
+          }
+        });
+     });
+        function toggleButtons(state) {
+            $("#btn-uploadKanbanOrderDetail, #btn-uploadKanbanOrderDetailReset, #btn-finishUploadKanbanOrderDetail,#kanbanInput")
+                .prop("disabled", !state);
+        }
+
+        function checkErrorsAndToggleFinishButton() {
+        var grid = $("#jqGridTempDetailBarcode");
+        var rowIds = grid.getDataIDs();
+        var hasError = rowIds.some(function (rowId) {
+            var status = grid.getCell(rowId, "status");
+            return status.includes("Error"); // Cek jika ada error
+        });
+
+        $("#btn-finishUploadKanbanOrderDetail").prop("disabled", hasError);
+    }
+
+        function processKanbanGridRows() {
+        var gridBarcode = $("#jqGridTempDetailBarcode");
+        var rowIds = gridBarcode.getDataIDs(); // Ambil semua ID baris
+        toggleButtons(false);
+        $("#btn-finishUploadKanbanOrderDetail").prop("disabled", true);
+        $('#btnCloseUploadKanban').removeAttr('data-dismiss');
+        function processRow(index) {
+            //loadblockspinner();
+            if (index >= rowIds.length) {
+                toggleButtons(true);
+                checkErrorsAndToggleFinishButton();
+                $('#btnCloseUploadKanban').attr('data-dismiss', 'modal');
+                return; // Hentikan jika sudah selesai semua
+            }
+
+            var rowId = rowIds[index];
+            var rowData = gridBarcode.getRowData(rowId);
+            var cells = $("#" + rowId).find("td"); // Ambil semua sel dalam baris ini
+            var action = $('#KanbanOrderAction').val();
+            var KanbanUsage = $("#KanbanOrderUsage").val();
+
+            // Update status jadi "Processing..." dan beri warna kuning
+            gridBarcode.jqGrid("setCell", rowId, "status", "Processing...");
+            cells.css("background-color", "yellow");
+            var DONumber = $("#crud-KanbanOrderDONumber").val();
+            var SONumber = $("#crud-KanbanOrderSONumber").val();
+            var SODate = $("#crud-KanbanOrderSODate").val();
+            var CustomerId = $("#crud-KanbanOrderCustomerId").val();
+            var RefNumber = $("#crud-KanbanOrderRefNumber").val();
+            var kanban = rowData.kanbanData;
+            if (action === 'Create') {
+                DONumber = '@ViewBag.TransId';
+            }
+
+            //console.log('DONumber upload : ' + DONumber)
+            //console.log('CustomerId upload : ' + CustomerId)
+            //console.log('SONumber upload : ' + SONumber)
+            //console.log('SODate upload : ' + SODate)
+            //console.log('kanban upload : ' + kanban)
+
+            setTimeout(function () {
+                $.ajax({
+                    url: '@Url.Action("kanbanReader", "Shipping")', // Ganti dengan endpoint yang sesuai
+                    dataType: "JSON",
+                    async: false,
+                    data: {
+                        DONumber: DONumber,
+                        CustomerId: CustomerId,
+                        OrderNumber: SONumber,
+                        OrderDate: SODate,
+                        RefNumber: RefNumber,
+                        KanbanData: kanban,
+                    },
+                    success: function (response) {
+                        //console.log(response);
+                        //gridBarcode.jqGrid("setCell", rowId, "status", response)
+                        //unloadblockspinner();
+                        var res = response;
+                        var message = res.ErrMessages;
+                        if (message.includes('Error')) {
+                            gridBarcode.jqGrid("setCell", rowId, "status",'Error :'+ message.split(":")[1])
+                            cells.css("background-color", "rgb(255 158 158)"); // Hijau jika sukses
+                        } else {
+                            gridBarcode.jqGrid("setCell", rowId, "status", message);
+                            cells.css("background-color", "lightgreen"); // Merah jika gagal
+                        }
+                    },
+                    error: function () {
+                        //unloadblockspinner();
+                        gridBarcode.jqGrid("setCell", rowId, "status", "Error"); // Update status jadi error
+                        cells.css("background-color", "red"); // Merah jika error
+                    },
+                    complete: function () {
+                        // Lanjut ke baris berikutnya setelah delay
+                        setTimeout(function () {
+                            processRow(index + 1);
+                        }, 500); // Delay antar baris
+                    }
+                });
+            }, 500); // Delay untuk memperlihatkan efek warna
+        }
+
+        // Mulai proses dari baris pertama
+        processRow(0);
+
+        //unloadblockspinner();
+    }
+
+    // Panggil fungsi setelah grid siap atau dengan event tertentu
+        $("#btn-uploadKanbanOrderDetail").on("click", function () {
+            processKanbanGridRows();
+        });
+
+        $("#btn-finishUploadKanbanOrderDetail").on("click", function () {
+        var confirmAction = confirm("Apakah Anda yakin ingin menyelesaikan upload?");
+        if (confirmAction) {
+            reloadGridKanbanDetail();
+            $('#uploadKanbanOrderDetailModal').modal('hide');
+            $("#btn-finishUploadKanbanOrderDetail").attr("disabled", true);
+            ResetuploadKanbanOrderDetail();
+            //alert("Upload telah selesai!");
+        } else {
+            //alert("Proses upload dibatalkan.");
+        }
+    })
+    });
+
+
+function ResetuploadKanbanOrderDetail() {
+    $("#jqGridTempDetailBarcode").jqGrid("clearGridData");
+    $("#kanbanInput").val('');
+    $("#btn-finishUploadKanbanOrderDetail").prop("disabled", true);
+}
+
+    loadComboCustomer();
+
+    $(function () {
+        $grid = $("#jqGridTempDetailBarcode").jqGrid({
+            datatype: "local",
+            colModel: [
+                { label: 'Id', name: 'id', key: true, hidden: true, width: 150 },
+                { label: 'STATUS', name: 'status', width: 160 },
+                { label: 'KANBAN', name: 'kanban', width: 150 },
+                { label: 'UNIQUE', name: 'unique', width: 50, align: 'center' },
+                { label: 'PART NUMBER', name: 'partNumber', width: 110, align: 'center' },
+                { label: 'PART NAME', name: 'partName', width: 140, align: 'center' },
+                { label: 'QTY / KBN', name: 'qtyPerUnit', width: 60, align: 'center' },
+                { label: 'UNIT', name: 'unit', width: 50, align: 'center' },
+                { label: 'KANBAN DATA', name: 'kanbanData', width: 240 },
+                { label: 'ORDER NUMBER', name: 'orderNumber', width: 100, hidden: true, align: 'center' },
+                { label: 'SUPPLIER', name: 'supplierId', width: 100, hidden: true, align: 'center' },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridTempDetailBarcodePager',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showCustomerGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+
+            },
+        });
+    });
+
+    function loadComboCustomer() {
+
+        var Customerid = $("#crud-KanbanOrderCustomerId").val();
+        var id = "#crud-KanbanOrderCustomerId";
+        var id2 = "#scan-CustomerId";
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { CustomerId:Customerid },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $(id2).html("");
+                $(id2).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                    $(id2).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+
+            }
+        })
+
+    }
+
+    function clearKanbanKanban(DONumber,action) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("clearKanbanOrderJson", "Shipping")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                DONumber: DONumber,
+                formAction: action,
+                uid: '@ViewBag.UserId',
+            },
+            success: function (response) {
+                result = response;
+                if (result === 'Success') {
+                    reloadGridKanbanDetail();
+                }
+            }
+        })
+
+        return result;
+    }
+
+    function scanRefNumber(kanbanUsage) {
+
+        document.getElementById("scanCustomerOrderForm").reset();
+        $('#scanCustomerOrderForm').removeClass('was-validated');
+        $('#crudScanOrderError').html("");
+
+
+        $('#scan-CustomerId').val("TBINA");
+        $('#scan-KanbanUsage').val(kanbanUsage);
+        $('.selectpicker').selectpicker("refresh");
+
+        $('#scan-KanbanUsage').attr("disabled", true);
+        $('#scanCustomerOrderModal').modal('show');
+        $('#scan-CustomerRefNumber').val('').removeClass('error').focus();
+
+    }
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#scanCustomerOrderForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var CustomerId = $('#scan-CustomerId').val();
+                    var RefNumber = $('#scan-CustomerRefNumber').val();
+                    var KanbanUsage = $('#scan-KanbanUsage').val();
+
+                    $.ajax({
+                        url: '@Url.Action("referenceOrderReader", "Shipping")',
+                        type: 'GET',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            CustomerId: CustomerId,
+                            RefNumber: RefNumber
+                        },
+                        success: function (data) {
+                            if (data.length > 0) {
+                                if (confirm('Ref. Number : ' + data[0].RefNumber + ' already create DN : ' + data[0].DONumber + '. Do you want to continue?')) {
+                                    $('#scanCustomerOrderModal').modal('hide');
+                                    crudKanbanOrder('Create', '*', CustomerId, RefNumber, KanbanUsage);
+                                } else {
+                                    $('#scan-CustomerRefNumber').val('').removeClass('error').focus();
+                                    return false;
+                                }
+                            } else {
+                                $('#scanCustomerOrderModal').modal('hide');
+                                crudKanbanOrder('Create', '*', CustomerId, RefNumber, KanbanUsage);
+                            }
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                            $('#crudScanOrderError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    function showDetails() {
+
+        var RefNumber = $('#crud-KanbanOrderRefNumber').val();
+        var isShow = $('#collapseHeader').hasClass('show');
+        var showhideCol = "";
+
+        if (isShow === true) {
+            $('#btn-seeDetails').html('<i class="icon-arrow-right-circle"></i> Show Detail [' + RefNumber + ']')
+            showhideCol = 'hideCol';
+        } else {
+            $('#btn-seeDetails').html('<i class="icon-arrow-left-circle"></i> Hide Detail [' + RefNumber + ']')
+            showhideCol = 'showCol';
+        }
+
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "RefNumber")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "PartNumber")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "PartName")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "UnitQty")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "PackingId")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "OrderUnitQty")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "OutstandingQty")
+        $("#jqGridCrudKanbanDetail").jqGrid(showhideCol, "OutstandingUnitQty")
+
+    }
+
+    function LoadFormSize() {
+        var width = $(window).innerWidth();
+        var hidden = $('#btn-seeDetails').attr('hidden');
+        var isShow = $('#collapseHeader').hasClass('show');
+
+        if (parseInt(width) <= 990) {
+            if (isShow == true) {
+                $('#btn-seeDetails').click();
+            }
+            if (hidden === "hidden") {
+                $('#btn-seeDetails').removeAttr('hidden');
+            }
+        } else {
+            if (isShow == false && hidden != "hidden") {
+                $('#btn-seeDetails').click();
+            }
+            $('#btn-seeDetails').attr('hidden', true);
+        }
+    }
+
+    //$(document).load(function () {
+    //    LoadFormSize();
+    //})
+
+    //$(window).on("resize", function () {
+    //    LoadFormSize();
+    //});
+    function loadSalesNumber(selected="") {
+
+        Customerid = $("#crud-KanbanOrderCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("SalesOrderListJson", "Marketing")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                customerid: Customerid,
+                status: 99,
+            },
+            success: function (response) {
+
+                var id = "#crud-KanbanOrderSONumber";
+
+                $(id).html("");
+                //$(id).append(
+                //    $('<option></option>').val("").html("*Choose Sales Number")
+                //);
+                $.each(response, function (i, sales) {
+                    $(id).append(
+                        $('<option></option>').val(sales.SONumber).html(sales.SONumber + ': ' + sales.PONumber)
+                    );
+                });
+
+                if (selected != "") $(id).val(selected);
+                $(id).selectpicker("refresh");
+
+            }
+        })
+    }
+
+    function previewSalesOrder() {
+        ordernumber = $("#crud-KanbanOrderSONumber").val();
+        var url = "@Url.Action("SalesOrders","Reports", new { sonumber = "_ordernumber_" })";
+        url = url.replace('_ordernumber_', encodeURIComponent(ordernumber));
+        window.open(url, "_blank");
+    }
+
+    $('#crudKanbanOrderModal').on('hidden.bs.modal', function () {
+        var formaction  = $("#KanbanOrderAction").val();
+        var donumber    = $("#crud-KanbanOrderDONumber").val();
+
+        if (donumber === "") {
+            donumber = '@ViewBag.TransId';
+        }
+        clearKanbanKanban(donumber, formaction);
+    });
+
+</script>
+

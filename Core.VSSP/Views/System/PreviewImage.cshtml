@@ -1,0 +1,72 @@
+﻿
+<div class="modal animated fadeIn" id="previewImageModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">
+                    <span class="@ViewBag.IconClass"></span>
+                    <label id="preview-Id">1234567</label>
+                    <label id="preview-Name">John Doe</label>
+                </h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body m-0 p-2">
+                <img id="img-Preview" src="~/_VSSPAssets/Images/noimage.png" class="img-thumbnail mt-2 mb-2" width="100%" style="max-height:400px" />
+            </div>
+            <div class="modal-footer">
+                <div class="ml-3" style="position:absolute; left:0 !important">
+                    <div class="row">
+                        <div class="col">
+                            <button id="btn-zoomImage" type="button" class="btn btn-sm btn-link" onclick="zoomImage('img-Preview')"><span class="fa fa-search-plus"></span> Zoom Preview</button>
+                        </div>
+                        <div class="col">
+                            <a id="btn-downloadImage" href="~/_VSSPAssets/Images/noimage.png" class="btn btn-sm btn-link" onclick="downloadImage('img-Preview')"><span class="fa fa-download"></span> Download Drawing</a>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function previewImage(imgid,id,name){
+
+        var imageSrc = $("#" + imgid).prop("src");
+        $("#img-Preview").attr("src", imageSrc);
+        $("#preview-Id").html("<b>" + id + "</b>");
+        $("#preview-Name").text('[' + name + ']');
+        $('#previewImageModal').modal('show');
+
+    }
+
+    function zoomImage(imageId) {
+        var image = new Image();
+        image.src = $('#' + imageId).attr('src');
+        image.name = $("#preview-Id b").text();
+        image.height = '100%';
+        image.width = '100%';
+
+        var w = window.open("", '_blank');
+        w.document.write("<html><head><title>" + image.name +"</title></head><body style='width:100%; padding:0; margin:0; text-align:center'><img src='"+ image.src +"' width='90%'></img></body></html>");
+        //w.document.write(image.outerHTML);
+        w.document.close();
+        $('#previewImageModal').modal('hide');
+
+    }
+
+    function downloadImage(imageId) {
+        var image = new Image();
+        image.src = $('#' + imageId).attr('src');
+        image.name = $("#preview-Id b").text() + '.jpg';
+
+        $("#btn-downloadImage").attr("href", image.src).attr("download", image.name);
+
+    }
+</script>
+

@@ -1,0 +1,713 @@
+﻿
+<div class="modal animated fadeIn" id="crudCustomerListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudCustomerForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabcrudcustomer" role="tab">
+                                Customer
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabcrudcontact" role="tab">
+                                Contact
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabcrudcustomer" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row mb-1">
+                                        <div class="col-md-4">
+                                            <div class="mt-2">
+                                                <img id="image-logo" src="~/_VSSPAssets/Images/noimage.png" style="width:100%" class="img-thumbnail" />
+                                            </div>
+                                            <span id="btn-uploadLogo" class="btn btn-sm btn-file btn-block btn-outline-secondary mt-2">
+                                                <i class="fa fa-upload"></i> Upload Logo
+                                                <input id="CustomerLogo" name="CustomerLogo" type="file" accept="image/*" class="custom-file-input" onchange="loadFilesm(event)" />
+                                            </span>
+
+                                            <script>
+                                                var loadFilesm = function (event) {
+                                                    var Foto = document.getElementById('image-logo');
+                                                    Foto.src = URL.createObjectURL(event.target.files[0]);
+                                                };
+                                            </script>
+
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <label for="crud-CustomerId" class="col-form-label col-form-label-sm">Customer Id</label>
+                                                    <input type="text" class="form-control form-control-sm" id="crud-CustomerId" name="CustomerId" value="" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="crud-CustomerName" class="col-form-label col-form-label-sm">Customer Name</label>
+                                                    <input type="text" class="form-control form-control-sm" id="crud-CustomerName" name="CustomerName" value="" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerCustomerCode" class="col-md-4 col-form-label col-form-label-sm">Customer Code</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerCustomerCode" name="CustomerCode" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerAccountCode" class="col-md-4 col-form-label col-form-label-sm">Account Code</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerAccountCode" name="AccountCode" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerTaxId" class="col-md-4 col-form-label col-form-label-sm">Tax Id / NPWP</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerTaxId" name="TaxId" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerWebsites" class="col-md-4 col-form-label col-form-label-sm">Websites</label>
+                                        <div class="col-md-8">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerWebsites" name="CustomerWebsites" value="" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-group-sm row">
+                                        <label class="col-sm-12 col-form-label col-form-label-sm font-weight-bold" ><i class="fa fa-map-marker"></i> Location :</label>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerAddress" class="col-sm-3 col-form-label col-form-label-sm">Address</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerAddress" name="Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerCity" class="col-sm-3 col-form-label col-form-label-sm">City</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerCity" name="City">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerProvience" class="col-sm-3 col-form-label col-form-label-sm">Provience</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerProvience" name="Provience">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerCountry" class="col-sm-3 col-form-label col-form-label-sm">Country</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerCountry" name="Country">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerPostalCode" class="col-sm-3 col-form-label col-form-label-sm">Postal Code</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-CustomerPostalCode" name="PostalCode">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-CustomerActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                        <div class="col-sm-9">
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-CustomerActived">
+                                                <label class="custom-control-label" for="crud-CustomerActived"><small> Actived</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tabcrudcontact" role="tabpanel">
+                            <button id="btn-addContact" type="button" class="btn btn-sm btn-outline-dark" onclick="crudContactList('Create','')"><span class="fa fa-plus"></span> Add New Contact</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudContact"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudCustomerListError"></div>
+                    <input type="hidden" id="customerAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudCustomerList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudContactListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudContactForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Contact</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactCustomerId" class="col-form-label col-form-label-sm">Customer Id</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactCustomerId" readonly>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactName" class="col-form-label col-form-label-sm">Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactName" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactOrganization" class="col-form-label col-form-label-sm">Organization</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactOrganization">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPosition" class="col-form-label col-form-label-sm">Position</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPosition">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPhone1" class="col-form-label col-form-label-sm">Phone1</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPhone1">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPhone2" class="col-form-label col-form-label-sm">Phone2</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPhone2">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactFax" class="col-form-label col-form-label-sm">Fax</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactFax">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactEmail" class="col-form-label col-form-label-sm">Email</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactEmail">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="crud-ContactReceiveOrder">
+                                    <label class="custom-control-label" for="crud-ContactReceiveOrder"><small> Receive Order (as Attention in DN)</small></label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="contactAction" />
+                    <input type="hidden" id="contactRowStatus" />
+                    <input type="hidden" id="contactId" />
+                    <div id="crudContactListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudContactList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudCustomerList(action, id) {
+
+        document.getElementById("crudCustomerForm").reset();
+        $("#image-logo").attr("src", "../_VSSPAssets/Images/noimage.png");
+        $('#crudCustomerForm').removeClass('was-validated');
+        $('#crudCustomerListError').html("");
+        $('#btn-addContact').removeAttr('disabled');
+        $('a[href="#tabcrudcustomer"]').click()
+        $("#btn-uploadLogo").removeClass("invisible");
+        $("#btn-crudCustomerList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-CustomerActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudCustomerForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#customerAction").val(action);
+        //$("#contactAction").val(action);
+        //$("#contactId").val(CustomerName);
+
+        reloadGridContact(id);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                CustomerCode = Grid.jqGrid('getCell', selectedRowId, 'CustomerCode'),
+                AccountCode = Grid.jqGrid('getCell', selectedRowId, 'AccountCode'),
+                CustomerName = Grid.jqGrid('getCell', selectedRowId, 'CustomerName'),
+                Address = Grid.jqGrid('getCell', selectedRowId, 'Address'),
+                City = Grid.jqGrid('getCell', selectedRowId, 'City'),
+                Provience = Grid.jqGrid('getCell', selectedRowId, 'Provience'),
+                Country = Grid.jqGrid('getCell', selectedRowId, 'Country'),
+                PostalCode = Grid.jqGrid('getCell', selectedRowId, 'PostalCode'),
+                TaxId = Grid.jqGrid('getCell', selectedRowId, 'TaxId'),
+                Websites = Grid.jqGrid('getCell', selectedRowId, 'Websites'),
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            Logo = $("#logo-" + id).attr("src");
+
+            $("#crud-CustomerId").val(id);
+            $("#crud-CustomerCustomerCode").val(CustomerCode);
+            $("#crud-CustomerAccountCode").val(AccountCode);
+            $("#crud-CustomerName").val(CustomerName);
+            $("#crud-CustomerAddress").val(Address);
+            $("#crud-CustomerCity").val(City);
+            $("#crud-CustomerProvience").val(Provience);
+            $("#crud-CustomerCountry").val(Country);
+            $("#crud-CustomerPostalCode").val(PostalCode);
+            $("#crud-CustomerTaxId").val(TaxId);
+            $("#crud-CustomerWebsites").val(Websites);
+            if (Actived.includes("success")) {
+                $("#crud-CustomerActived").attr("checked", true);
+            } else {
+                $("#crud-CustomerActived").removeAttr("checked");
+            }
+            if (Logo === undefined) {
+                $("#image-logo").attr("src", "../_VSSPAssets/Images/noimage.png");
+            } else {
+                $("#image-logo").removeAttr("src").attr("src", Logo);
+            }
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-CustomerActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudCustomerListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudCustomerListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerListModal').modal('show');
+                $("#crud-CustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-CustomerId").attr("readonly",true);
+                $("#crudCustomerListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudCustomerListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerListModal').modal('show');
+                $("#crud-CustomerName").focus();
+                break;
+            case "Delete":
+                $("#crudCustomerForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crud-CustomerActived").attr("disabled", true);
+                $('#btn-addContact').attr('disabled', true);
+                $("#btn-uploadLogo").addClass("invisible");
+                $("#btn-crudCustomerList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudCustomerListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudCustomerListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudCustomerListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudContactList(action, name) {
+        document.getElementById("crudContactForm").reset();
+        $('#crudContactForm').removeClass('was-validated');
+        $('#crudCustomerListError').html("");
+        $('#crudContactListError').html("");
+        $("#btn-crudContactList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudContactForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-ContactReceiveOrder").removeAttr("disabled");
+
+        $("#contactAction").val(action);
+        $("#contactId").val(name);
+        var custid = $("#crud-CustomerId").val();
+
+        if (name != "") {
+            var rowData = $("#jqGridCrudContact").jqGrid("getRowData", name),
+                RowStatus = rowData.RowStatus.split(">"),
+                ContactName = rowData.ContactName,
+                Organization = rowData.Organization,
+                Position = rowData.Position,
+                Phone1 = rowData.Phone1,
+                Phone2 = rowData.Phone2,
+                Fax = rowData.Fax,
+                Email = rowData.Email,
+                ReceiveOrder = rowData.ReceiveOrder;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#contactRowStatus").val(RowStatus);
+            $("#crud-ContactCustomerId").val(custid);
+            $("#crud-ContactName").val(ContactName);
+            $("#crud-ContactOrganization").val(Organization);
+            $("#crud-ContactPosition").val(Position);
+            $("#crud-ContactPhone1").val(Phone1);
+            $("#crud-ContactPhone2").val(Phone2);
+            $("#crud-ContactFax").val(Fax);
+            $("#crud-ContactEmail").val(Email);
+            if (ReceiveOrder.includes("success")) {
+                $("#crud-ContactReceiveOrder").attr("checked", true);
+            } else {
+                $("#crud-ContactReceiveOrder").removeAttr("checked");
+            }
+        }
+
+        switch (action) {
+            case "Create":
+                if (custid === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add contact.</small></div>'
+                    $('#crudCustomerListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-ContactCustomerId").attr("readonly", true);
+                $("#crud-ContactCustomerId").val(custid);
+                $("#crudContactListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                $("#crud-ContactName").focus();
+                break;
+            case "Update":
+                $("#crud-ContactCustomerId").attr("readonly",true);
+                $("#crudContactListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                $("#crud-ContactName").focus();
+                break;
+            case "Delete":
+                $("#crudContactForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crud-ContactReceiveOrder").attr("disabled", true);
+                $("#btn-crudContactList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudContactListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-CustomerId').change(function () {
+        $('#crudCustomerListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudContactForm").submit(function (event) {
+
+                event.preventDefault();
+                $(this).validate();
+
+                if ($(this).valid()) {
+
+                    var name = $('#crud-ContactName').val();
+                    var action = $('#contactAction').val();
+                    var rowStatus = $('#contactRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+                            var alreadyInput = validationAlreadyInput(name);
+
+                            if (alreadyInput === true) {
+                               var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Contact!</b><br/>' + name + ' already created, please check carefully before creating @ViewBag.Title Contact.</small></div>'
+                                $('#crudContactListError').html(errMsg);
+                                event.stopPropagation();
+                                return false;
+                            }
+
+                            parameters =
+                            {
+                                rowID: $("#crud-ContactName").val(),
+                                initdata: {
+                                    RowStatus: action,
+                                    ContactId: $("#crud-ContactName").val(),
+                                    CustomerId: $("#crud-ContactCustomerId").val(),
+                                    CustomerCode: $("#crud-ContactCustomerCode").val(),
+                                    AccountCode: $("#crud-ContactAccountCode").val(),
+                                    ContactName: $("#crud-ContactName").val(),
+                                    Organization: $("#crud-ContactOrganization").val(),
+                                    Position: $("#crud-ContactPosition").val(),
+                                    Phone1: $("#crud-ContactPhone1").val(),
+                                    Phone2: $("#crud-ContactPhone2").val(),
+                                    Fax: $("#crud-ContactFax").val(),
+                                    Email: $("#crud-ContactEmail").val(),
+                                    ReceiveOrder: $("#crud-ContactReceiveOrder").prop("checked"),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudContact").jqGrid('addRow', parameters);
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#contactId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                CustomerId: $("#crud-ContactCustomerId").val(),
+                                ContactName: $("#crud-ContactName").val(),
+                                Organization: $("#crud-ContactOrganization").val(),
+                                Position: $("#crud-ContactPosition").val(),
+                                Phone1: $("#crud-ContactPhone1").val(),
+                                Phone2: $("#crud-ContactPhone2").val(),
+                                Fax: $("#crud-ContactFax").val(),
+                                Email: $("#crud-ContactEmail").val(),
+                                ReceiveOrder: $("#crud-ContactReceiveOrder").prop("checked"),
+                            }
+
+                            $("#jqGridCrudContact").jqGrid('setRowData', rowid, parameters);
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#contactId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudContact').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudContact").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            break;
+                    }
+
+                    $('#crudContactListModal').modal('hide');
+                }
+            });
+        });
+    });
+
+    function validationAlreadyInput(val) {
+        var result = false;
+
+        var grid = $('#jqGridCrudContact');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+            contactName = rowData['ContactName'];
+            if (contactName === val) {
+                result = true;
+            }
+        }
+
+        return result;
+
+    };
+
+    function validationExist(cid) {
+
+        if (aid === "*") {
+            aid = $("#crud-FinishGoodAreaId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("LocationListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : aid},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodLocationId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Location")
+                );
+                $.each(response, function (i, location) {
+                    $(id).append(
+                        $('<option></option>').val(location.LocationId).html(location.LocationName)
+                    );
+                });
+            }
+        })
+    }
+
+    $(function () {
+        $gridContact = $("#jqGridCrudContact").jqGrid({
+            url: "@Url.Action("CustomerContactListJson", "Customers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {customerid : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionContactFormatter },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 50, formatter: statusContactFormatter },
+                { label: 'Contact Id', name: 'ContactId', key: true, hidden: true },
+                { label: 'Customer Id', name: 'CustomerId', hidden: true },
+                { label: 'Contact Name', name: 'ContactName', align: 'left', fixed: true, width: 100 },
+                { label: 'Organization', name: 'Organization', align: 'left', fixed: true, width: 100 },
+                { label: 'Position', name: 'Position', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #1', name: 'Phone1', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #2', name: 'Phone2', align: 'left', fixed: true, width: 100 },
+                { label: 'Fax', name: 'Fax', align: 'left', fixed: true, width: 100 },
+                { label: 'Email', name: 'Email', align: 'left', fixed: true, width: 100 },
+                { label: 'Receive Order', name: 'ReceiveOrder', edittype: "checkbox", editoptions: { value: "true:false" }, align: 'center', fixed: true, width: 80, formatter: statusFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:245,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudContact').jqGrid('navGrid', '#jqGridPagercrudContact',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+    function reloadGridContact(id) {
+        $("#jqGridCrudContact").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                customerid: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionContactFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudContactList('Update','" + rowObject.ContactId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Contact [ " + rowObject.ContactName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudContactList('Delete','" + rowObject.ContactId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Contact [ " + rowObject.ContactName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusContactFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+    $(document).ready(function () {
+        $(function () {
+            $("#crudCustomerForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        customer: {
+                            CustomerId  : $("#crud-CustomerId").val(),
+                            CustomerCode: $("#crud-CustomerCustomerCode").val(),
+                            AccountCode : $("#crud-CustomerAccountCode").val(),
+                            CustomerName: $("#crud-CustomerName").val(),
+                            Address     : $("#crud-CustomerAddress").val(),
+                            City        : $("#crud-CustomerCity").val(),
+                            Provience   : $("#crud-CustomerProvience").val(),
+                            Country     : $("#crud-CustomerCountry").val(),
+                            PostalCode  : $("#crud-CustomerPostalCode").val(),
+                            TaxId       : $("#crud-CustomerTaxId").val(),
+                            Websites    : $("#crud-CustomerWebsites").val(),
+                            Actived     : $("#crud-CustomerActived").prop("checked"),
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        customerContact: $("#jqGridCrudContact").jqGrid('getGridParam', 'data'),
+                        formAction: $("#customerAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    //upload images
+                    var fileUpload = $("#CustomerLogo").get(0);
+                    var files = fileUpload.files;
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("crudCustomerList","Customers")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudCustomerListModal').modal('hide');
+                            var act = $("#customerAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudCustomerListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

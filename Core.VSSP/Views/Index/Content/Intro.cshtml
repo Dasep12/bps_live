@@ -1,0 +1,77 @@
+﻿@model IEnumerable<Core.VSSP.Models.CMSListModel>
+
+<!--WELCOME SLIDER AREA-->
+<style>
+    .flex-c-m {
+        text-decoration: none !important;
+    }
+    .jumbotron-fluid .section-slide {
+        padding-bottom: 0px !important;
+    }
+</style>
+<div class="jumbotron-fluid" id="home">
+    @if (@Model.Count() > 0)
+    {
+        <section class="section-slide text-white">
+            <div class="wrap-slick1">
+                <div class="slick1">
+
+                    @foreach (var intro in Model)
+                    {
+
+                        var base64 = Convert.ToBase64String((byte[])intro.Image);
+                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+
+                        <div class="item-slick1">
+                            <div class="container h-full">
+                                <img src="@imgSrc" />
+                                <div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+                                    <div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+                                        <h1 class="ltext-201 col-12 p-t-19 respon2">
+                                            @intro.Title
+                                        </h1>
+                                    </div>
+                                    <div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+                                        <h2 class="ltext-202 col-12 p-t-19 p-b-43 respon1">
+                                            @intro.SubTitle<br />
+                                            @intro.IsContent
+                                        </h2>
+                                    </div>
+                                    <div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+                                        @if (Session["UserID"] == null)
+                                        {
+                                            @*<a href="@Url.Action("Login","Account")" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                                Login @Session["AppID"].ToString()
+                                            </a>*@
+                                            <a href="@Url.Action("Login","Account")" class="btn btn-dropbox btn-lg p-lr-15 trans-04 ml-3 font-weight-bold shadow active">
+                                                <span class="icon-login"></span> Login @Session["AppID"].ToString()
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            @*<a href="@Url.Action("Dashboard","Home")" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+                                                View @Session["AppID"].ToString()
+                                            </a>*@
+                                            <a href="@Url.Action("Dashboard","Home")" class="btn btn-dropbox btn-lg p-lr-15 trans-04 ml-3 font-weight-bold shadow active">
+                                                <span class="icon-globe"></span> View @Session["AppID"].ToString()
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+    else
+    {
+        <div class="col-md-12 text-center">
+            <h4>Data Not Found...</h4>
+        </div>
+    }
+</div>
+
+@*@Html.Partial("Content/startup_notice")*@

@@ -1,0 +1,474 @@
+﻿<style>
+    .btn-fullscreen {
+        position: absolute;
+        top: -13px;
+        left: -8px;
+        font-size: 10px;
+        color: #dca200
+    }
+</style>
+<div class="modal animated fadeIn" id="crudOutgoingInspectionModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-fs modal-dialog-centered bg-white" role="document">
+        <div class="modal-content">
+            <form id="crudOutgoingInspectionForm" class="needs-validation" novalidate>
+                <div class="modal-body bg-white p-0">
+                    <div class="row p-2 bg-yellow">
+                        <div class="col-md-5">
+                            <div class="btn-group">
+                                <a href="#" id="btn-fullscreen" class="btn btn-sm btn-link btn-fullscreen" onclick="openFullscreen()"><i class="icon-size-fullscreen"></i> Toogle Fullscreen</a>
+                                <a href="#" id="btn-exit" class="btn btn-sm btn-link btn-fullscreen" aria-label="Close" onclick="exitInspection()"><i class="icon-close"></i> Finish</a>
+                            </div>
+                            <div class="card-title text-red font-weight-bold mt-1 mb-1">
+                                <h6 id="label-inspectionNumber" class="mb-0">Inspection Number</h6>
+                                <h3 class="mt-0 mb-0">
+                                    Display Part Identification
+                                </h3>
+                                <h6 id="label-inspectionGate" class="mt-0 mb-0">Gate</h6>
+                                <h6 id="label-inspectionCustomer" class="mt-0"></h6>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pr-1">
+                            <div class="row pt-2 pb-2 pl-1 ml-1 mr-1 mb-2 border border-danger border-radius shadow-sm">
+                                <div class="col-sm-2 pr-0 pl-1">
+                                    @if (@Session["Images"] == null)
+                                    {
+                                        <img src="~/_VSSPAssets/User/user.png" alt="@Session["UserName"]" class="img-avatar" />
+                                    }
+                                    else
+                                    {
+                                        var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+                                        var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+
+                                        <img src="@imgSrc" alt="@Session["UserName"]" class="img-avatar" />
+
+                                    }
+                                </div>
+                                <div class="col-sm-6 pl-1">
+                                    @if (Session["UserID"] != null)
+                                    {
+                                        <div class="form-group form-group-sm text-left text-red m-0">
+                                            <h6 class="form-text mt-0 pt-1">@Session["UserID"]</h6>
+                                            <h5 class="form-text" style="margin-top:-5px !important">@Session["UserName"]</h5>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="col-sm-4 pl-0 pr-1 pt-2">
+                                    <h2 id="tickTime" class="font-weight-bold text-red float-right">08:00:01</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4 pr-1">
+                                    <button id="btn-defectlist" type="button" class="btn btn-block btn-secondary mt-0 mb-1 ml-1" onclick="crudDefectList('Create','*')"><i class="fa fa-list-alt"></i> [F1] Defect List</button>
+                                </div>
+                                <div class="col-sm-4 pr-1 pl-1">
+                                    <button id="btn-checkout" type="button" class="btn btn-block btn-secondary mt-0 mb-1" onclick="crudDefectList('Checkout','*')"><i class="fa fa-check-square-o"></i> [F2] Checkout</button>
+                                    <button id="btn-delete" type="button" class="btn btn-block btn-secondary mt-0 mb-1" onclick="crudDefectList('Delete','*')" hidden><i class="fa fa-trash-o"></i> [F4] Delete</button>
+                                </div>
+                                <div class="col-sm-4 pl-0 pr-3">
+                                    <button id="btn-cancelcheck" type="button" class="btn btn-block btn-secondary mt-0 mb-1" onclick="crudOutgoingInspection('Cancel','*')"><i class="fa fa-close"></i> [F8] Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="dateInspection" class="col-sm-5 text-red col-form-label font-weight-bold pr-0">Date</label>
+                                <div class="col-sm-7 pl-1">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control bg-white datepicker pr-0" id="dateInspection" disabled required />
+                                        <div class="input-group-append">
+                                            <label for="dateInspection" class="input-group-text pl-2 pr-2" style="cursor:pointer"><i class="fa fa-calendar"></i></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="totalCheck" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Total Check</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input type="text" class="form-control bg-white" id="totalCheck" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-0">
+                                <label for="totalDefectUnit" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Total Defect</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input type="text" class="form-control bg-white" id="totalDefectQty" disabled />
+                                    <input type="hidden" class="form-control bg-white" id="totalDefectUnit" disabled />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row pl-2 pr-2 bg-yellow shadow-sm">
+                        <div class="col-md-3 pt-2 border border-danger">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="UniqueNumber" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Unique Number</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input id="UniqueNumber" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-2">
+                                <label for="PartModel" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Model</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input id="PartModel" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 pt-2 border border-danger">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="PartNumber" class="col-sm-3 text-red col-form-label font-weight-bold">Part Number</label>
+                                <div class="col-sm-9">
+                                    <input id="PartNumber" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="PartName" class="col-sm-3 text-red col-form-label font-weight-bold">Part Name</label>
+                                <div class="col-sm-9">
+                                    <input id="PartName" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 pt-2 border border-danger">
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="QtyKanban" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Qty / Kanban</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input id="QtyKanban" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row mb-1">
+                                <label for="CycleTime" class="col-sm-5 text-red col-form-label font-weight-bold pr-1">Cycle Time</label>
+                                <div class="col-sm-7 pl-1">
+                                    <input id="CycleTime" type="text" class="form-control bg-white" disabled />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="card-image" class="card-body d-flex align-items-center justify-content-center p-0">
+                        <div id="scanGroup" class="jumbotron text-center">
+                            <h3>
+                                Start Outgoing Quality Control
+                            </h3>
+                            <button type="button" class="btn btn-outline-primary mt-auto mb-auto" onclick="startScan()"><i class="fa fa-qrcode"></i> Scan QR / Barcode</button>
+                        </div>
+
+                        <img id="img-piimages" src="~/_VSSPAssets/Images/noimage.png" style="height:100%" hidden />
+
+                    </div>
+
+                    <div id="crudOutgoingInspectionError"></div>
+                    <input type="hidden" id="InspectionAction" />
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+@*@Html.Partial("OutgoingInspectionPartial/CrudGate")*@
+@if (ViewBag.Category == "threepointcheck")
+{
+    @Html.Partial("OutgoingInspectionPartial/CrudScanVer2")
+}
+else
+{
+    @Html.Partial("OutgoingInspectionPartial/CrudScan")
+}
+@Html.Partial("OutgoingInspectionPartial/CrudDefect")
+
+<script>
+
+    var isShown = false;
+
+    function crudOutgoingInspection(action, id) {
+
+        document.getElementById("crudOutgoingInspectionForm").reset();
+        $('#crudOutgoingInspectionForm').removeClass('was-validated');
+        $('#crudOutgoingInspectionError').html("");
+        $('#btn-checkout').removeAttr("hidden");
+        $('#btn-delete').attr("hidden", true);
+        document.getElementById("crudDefectListForm").reset();
+        $('#crudDefectListForm').removeClass('was-validated');
+        $('#crudDefectListError').html("");
+        $("#crudDefectListForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#dateInspection").attr("disabled", true);
+        $("#label-inspectionNumber").text("");
+        $("#label-inspectionCustomer").text("");
+        $("#crud-DefectListReplaced").val(0);
+        $("#InspectionAction").val(action);
+
+        $('#tickTime').html("");
+
+        if (id != "*") {
+            var Grid = $('#jqGridInspection'),
+                selectedRowId = id,
+                InspectionNumber = Grid.jqGrid('getCell', selectedRowId, 'InspectionNumber'),
+                InspectionGate = Grid.jqGrid('getCell', selectedRowId, 'InspectionGate'),
+                InspectionDate = Grid.jqGrid('getCell', selectedRowId, 'InspectionDate'),
+                StartTime = Grid.jqGrid('getCell', selectedRowId, 'StartTime'),
+                FinishTime = Grid.jqGrid('getCell', selectedRowId, 'FinishTime'),
+                CustomerId = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                UniqueNumber = Grid.jqGrid('getCell', selectedRowId, 'CustomerUniqueNumber'),
+                PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber'),
+                PartName = Grid.jqGrid('getCell', selectedRowId, 'PartName'),
+                CustomerUnitModel = Grid.jqGrid('getCell', selectedRowId, 'CustomerUnitModel'),
+                UnitQty = Grid.jqGrid('getCell', selectedRowId, 'UnitQty'),
+                CycleTime = Grid.jqGrid('getCell', selectedRowId, 'CycleTime'),
+                TotalCheck = Grid.jqGrid('getCell', selectedRowId, 'TotalCheck'),
+                TotalDefectUnit = Grid.jqGrid('getCell', selectedRowId, 'TotalDefectUnit'),
+                TotalDefectQty = Grid.jqGrid('getCell', selectedRowId, 'TotalDefectQty'),
+                Replaced = Grid.jqGrid('getCell', selectedRowId, 'Replaced'),
+                Remains = Grid.jqGrid('getCell', selectedRowId, 'Remains'),
+                PI_Images = Grid.jqGrid('getCell', selectedRowId, 'PI_Images');
+
+
+            InspectionDate = moment(new Date(InspectionDate)).format("YYYY-MM-DD");
+            StartTime = moment(new Date(InspectionDate + ' ' + StartTime)).format("YYYY-MM-DD HH:mm:ss");
+            FinishTime = moment(new Date(InspectionDate + ' ' + FinishTime)).format("YYYY-MM-DD HH:mm:ss");
+            maxcycle = CycleTime * UnitQty;
+
+            PI_Images += "#" + new Date().getTime();
+
+            $("#label-inspectionNumber").text(InspectionNumber);
+            $("#label-inspectionCustomer").text(CustomerId);
+            $("#crud-DefectListInspectionNumber").val(InspectionNumber);
+            $("#dateInspection").val(InspectionDate);
+
+            startTick = StartTime;
+            finishTick = FinishTime;
+
+            $("#totalCheck").val(TotalCheck);
+            $("#totalDefectUnit").val(TotalDefectUnit);
+            $("#totalDefectQty").val(TotalDefectQty);
+            $("#UniqueNumber").val(UniqueNumber);
+            $("#PartModel").val(CustomerUnitModel);
+            $("#PartNumber").val(PartNumber);
+            $("#PartName").val(PartName);
+            $("#QtyKanban").val(UnitQty);
+            $("#CycleTime").val(CycleTime);
+
+            $("#crud-DefectListTotalCheck").val(TotalCheck);
+            $("#crud-DefectListTotalDefectUnit").val(TotalDefectUnit);
+            $("#crud-DefectListTotalDefectQty").val(TotalDefectQty);
+            $("#crud-DefectListReplaced").val(Replaced);
+            $("#crud-DefectListRemains").val(Remains);
+
+            $("#img-piimages").attr("src", PI_Images);
+
+            reloadGridDefectList();
+
+        }
+
+        switch (action) {
+            case "Gate":
+                startGate();
+                break;
+            case "Scan":
+                startScan();
+                break;
+            case "Create":
+                let today = new Date();
+                stopTick = true;
+                $("#dateInspection").val(moment(today).format("YYYY-MM-DD"));
+                $("#scanGroup").removeAttr("hidden");
+                $("#img-piimages").attr("hidden", true);
+                $("#btn-defectlist").attr("disabled", true);
+                $("#btn-checkout").attr("disabled", true);
+                $("#btn-cancelcheck").attr("disabled", true);
+                $("#label-inspectionGate").html($('#crud-Gate option:selected').text());
+                $("#jqGridCrudDefectList").jqGrid("clearGridData");
+
+                isShown = $('#crudOutgoingInspectionModal').hasClass('show');
+                if (!isShown) {
+                    $('#crudOutgoingInspectionModal').modal('show');
+                    openFullscreen();
+                }
+                break;
+
+            case "Update":
+
+                $("#scanGroup").attr("hidden", true);
+                $("#img-piimages").removeAttr("hidden");
+                $("#label-inspectionGate").html($('#crud-Gate option:selected').text());
+                $("#btn-defectlist").removeAttr("disabled");
+                $("#btn-checkout").removeAttr("disabled");
+                $("#btn-cancelcheck").removeAttr("disabled");
+
+                isShown = $('#crudOutgoingInspectionModal').hasClass('show');
+                if (!isShown) {
+                    $('#crudOutgoingInspectionModal').modal('show');
+                    openFullscreen();
+                }
+                break;
+
+            case "Delete":
+
+                $('#btn-checkout').attr("hidden", true);
+                $('#btn-delete').removeAttr("hidden");
+                $("#scanGroup").attr("hidden", true);
+                $("#img-piimages").removeAttr("hidden");
+                $("#label-inspectionGate").html($('#crud-Gate option:selected').text());
+                $("#btn-defectlist").removeAttr("disabled");
+                $("#btn-checkout").removeAttr("disabled");
+                $("#btn-cancelcheck").removeAttr("disabled");
+
+                isShown = $('#crudOutgoingInspectionModal').hasClass('show');
+                if (!isShown) {
+                    $('#crudOutgoingInspectionModal').modal('show');
+                    openFullscreen();
+                }
+
+                break;
+
+            case "Cancel":
+                stopTick = true;
+                crudOutgoingInspection("Create", '*');
+                startScan();
+                break;
+        }
+        //    $("#scan-QrCodes").focus();
+    };
+
+    var stopTick = true;
+    var startTick = "";
+    var finishTick = "";
+    var cyclerun = 0;
+    var maxcycle = 0;
+
+    function startTicking() {
+
+        stopTick = false;
+        startTick = new Date();
+        cyclerun = 0;
+
+        var tickTime = setInterval(function () {
+
+            // Get today's date and time
+            var result = "";
+            finishTick = new Date();
+
+            // If the count down is over, write some text
+            if (stopTick != true) {
+
+                result = getDiffTime(startTick, finishTick)
+                document.getElementById("tickTime").innerHTML = result;
+
+                cyclerun += 1;
+                //console.log(cyclerun + ' to ' + maxcycle);
+
+                if (cyclerun > maxcycle) {
+                    var modrun = (cyclerun % 10);
+                    if (modrun === 0) {
+                        showToast("Failed", "Your inspection time is over!", "toast-bottom-right")
+                    }
+                }
+
+            } else {
+                clearInterval(tickTime);
+            }
+
+        }, 1000);
+    }
+
+</script>
+<script>
+
+    var fs_status = false;
+    var elem = document.getElementById("crudOutgoingInspectionForm");
+
+    function screenEvent() {
+        if (fs_status === false) {
+            openFullscreen();
+        } else {
+            closeFullscreen();
+        }
+        $("#btn-scan").click();
+    }
+
+    /* View Full Screen */
+    function openFullscreen() {
+
+        toggleFullScreen();
+
+    }
+
+    /* Close fullscreen */
+    function closeFullscreen() {
+
+        toggleFullScreen();
+
+    }
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    document.addEventListener('fullscreenchange', (event) => {
+        if (document.fullscreenElement) {
+            fs_status = true;
+            var h = $(window).height();
+            cardResize();
+            $("#btn-fullscreen").html("<i class='icon-size-actual'></i> Exit Fullscreen");
+        } else {
+            fs_status = false;
+            cardResize();
+            $("#btn-fullscreen").html("<i class='icon-size-fullscreen'></i> Toogle Fullscreen");
+        }
+    });
+
+    $(window).resize(function () {
+        cardResize();
+    });
+
+    function exitInspection() {
+        if (stopTick) {
+            $('#crudOutgoingInspectionModal').modal('hide');
+            if (fs_status) toggleFullScreen();
+        } else {
+            showToast("Failed", "Cannot exit form while active checking");
+        }
+    }
+
+    function cardResize() {
+        setTimeout(function () {
+            let sheight = $('body').innerHeight(),
+                cheight = sheight - 220;
+
+            $('#card-image').height(cheight);
+        }, 100);
+    }
+
+    $(document).bind('keydown', function (e) {
+
+        isShown = $('#crudOutgoingInspectionModal').hasClass('show');
+        let disabled = false;
+
+        if (isShown) {
+            switch (e.key) {
+                case 'F1':
+                    disabled = $("#btn-defectlist").prop("disabled");
+                    if (!disabled) crudDefectList('Create', '*');
+                    break;
+                case 'F2':
+                    disabled = $("#btn-checkout").prop("disabled");
+                    if (!disabled) crudDefectList('Checkout', '*');
+                    break;
+                case 'F4':
+                    disabled = $("#btn-delete").prop("disabled");
+                    if (!disabled) crudDefectList('delete', '*');
+                    break;
+                case 'F8':
+                    disabled = $("#btn-cancelcheck").prop("disabled");
+                    if (!disabled) crudOutgoingInspection('Cancel', '*');
+                    break;
+            }
+        }
+    });
+
+</script>

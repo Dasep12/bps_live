@@ -1,0 +1,538 @@
+﻿@model Core.VSSP.Models.StockTakingListModel
+
+<section class="app-section" id="Inventory-StockTaking">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Inventory Number...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Inventory">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="InventoryDateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="InventoryDateFilter" type="date" class="form-control datepicker" placeholder="Inventory Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="statusFilter" class="col-form-label col-form-label-sm">Status</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.StatusList,
+                                    new SelectList(Model.StatusList, "Id", "Name"),
+                                    new { @id = "statusFilter", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridStockTaking()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-12">
+                    <div style="padding:2px!important">
+                        <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudStockTaking('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                        <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridStockTaking()"><i class="fa fa-refresh"></i> Refresh</button>
+                        <button id="btn-actual" class="btn btn-sm btn-outline-dark" type="button" onclick="crudStockActual('Update')" disabled><i class="fa fa-check"></i> Input Actual Stock</button>
+                        <div id="crudStockTakingListError"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("StockTakingPartial/Crud")
+    @Html.Partial("StockTakingPartial/CrudActual")
+    @Html.Partial("StockTakingPartial/Email")
+
+</section>
+
+<script>
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    $(document).ready(function () {
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        $("#statusFilter").val("99");
+    })
+
+    $(function () {
+        var filterData      = $('#searchFilter').val();
+        var month           = $('#monthFilter').val();
+        var inventorydate   = $('#InventoryDateFilter').val();
+        var status          = $('#statusFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("StockTakingListJson", "Inventory")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                month: month,
+                inventorydate: inventorydate,
+                status: status,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 70, formatter: actionFormatter },
+                { label: 'Document', name: 'Document', align: 'center', fixed: true, width: 110, formatter: documentFormatter },
+                { label: 'Status', name: 'Status', align: 'center', fixed: true, width: 70, formatter: statusFormatter },
+                { label: 'Number', name: 'InventoryKey', key: true, align: 'left', hidden: true, fixed: true, width: 160 },
+                { label: 'Number', name: 'InventoryNumber', align: 'center', autoResizing: { minColWidth: 120 } },
+                { label: 'Date', name: 'InventoryDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Start Time', name: 'InventoryStartTime', align: 'center', fixed: true, width: 65, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i" } },
+                { label: 'End Time', name: 'InventoryEndTime', align: 'center', fixed: true, width: 65, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "H:i" } },
+                { label: 'Stock Type', name: 'StockType', align: 'center', fixed: true, width: 100 },
+                { label: 'Materials', name: 'TotalPart', align: 'right', formatter: 'number', fixed: true, width: 60 },
+                { label: 'Total Qty', name: 'TotalOrder', align: 'right', formatter: 'number', fixed: true, width: 60 },
+                { label: 'Remarks', name: 'Remarks', align: 'left', fixed: true, width: 120 },
+                { label: 'Approval', name: 'ApprovalLevel', align: 'center', fixed: true, width: 80, formatter: approvalFormatter },
+                { label: 'Approval Name', name: 'ApprovalName', align: 'left', hidden: true, fixed: true, width: 80 },
+                { label: 'Approval', name: 'Approval', align: 'left', fixed: true, width: 200 },
+                { label: 'Status Name', name: 'StatusName', align: 'center', hidden: true, fixed: true, width: 60 },
+                { label: 'Updated', name: 'Updated', align: 'center', hidden: true, fixed: true, width: 60 },
+                { label: 'User', name: 'UserId', align: 'center', fixed: true, width: 60 },
+                { label: 'Edited', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i", reformatAfterEdit: true } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showStockListGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    var newid = ids[i].replaceAll("/", "");
+                    var btnid = 'btn-' + newid;
+                    var Grid = $('#jqGridMain'),
+                        selectedRowId = ids[i],
+                        Status = Grid.jqGrid('getCell', selectedRowId, 'StatusName');
+
+                    showButton(ids[i], btnid, Status);
+                    //$("#" + ids[i]).attr("id", newid )
+                }
+            },
+            onSelectRow: function (ids) {
+                var Grid = $('#jqGridMain'),
+                    selectedRowId = ids,
+                    inventorynumber = Grid.jqGrid('getCell', selectedRowId, 'InventoryNumber'),
+                    updated = Grid.jqGrid('getCell', selectedRowId, 'Updated'),
+                    editdate = Grid.jqGrid('getCell', selectedRowId, 'EditDate'),
+                    status = Grid.jqGrid('getCell', selectedRowId, 'StatusName');
+
+                $("#btn-actual").html("<i class='fa fa-check'></i> Input Actual Stock [" + inventorynumber + "]");
+                if (status === "Received" && updated == "true") {
+                    $("#btn-actual").removeAttr("disabled");
+                } else {
+                    $("#btn-actual").attr("disabled", true);
+                }
+            }
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showStockListGrid(parentRowID, parentRowKey) {
+
+        //Approval
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+        var btnupdate = "";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        var Grid = $('#jqGridMain'),
+            selectedRowId = parentRowKey,
+            inventorynumber = Grid.jqGrid('getCell', selectedRowId, 'InventoryNumber'),
+            updated = Grid.jqGrid('getCell', selectedRowId, 'Updated'),
+            editdate = Grid.jqGrid('getCell', selectedRowId, 'EditDate'),
+            rowstatus = Grid.jqGrid('getCell', selectedRowId, 'Status');
+
+        if (rowstatus != "") {
+            rowstatus = rowstatus.split('>');
+            rowstatus = rowstatus[1].split('<');
+            rowstatus = rowstatus[0]
+        }
+
+        switch (rowstatus) {
+            case "Closed":
+                btnupdate = "";
+                break;
+            case "Canceled":
+                btnupdate = "";
+                break;
+            case "Deleted":
+                btnupdate = "";
+                break;
+            default:
+                btnupdate += "<button id='btnupdate-" + parentRowKey + "' type='button' class='btn btn-sm btn-outline-success mt-1 mb-1' onclick=\"updateLastStock('" + inventorynumber + "','" + childGridID + "')\"><span class='fa fa-refresh'></span> Update Latest Stock Qty</button>";
+                break;
+        }
+
+        if (updated === "true") {
+            btnupdate += '<label id="lblupdate-' + parentRowKey + '" class="text-primary ml-2 mt-1">Already updated last stock qty at ' + editdate + '</label>';
+        } else {
+            btnupdate += '<label id="lblupdate-' + parentRowKey + '" class="text-primary ml-2 mt-1"></label>';
+        }
+
+        $('#' + parentRowID).append(btnupdate + '<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("StockTakingDetailListJson", "Inventory")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { InventoryNumber : parentRowKey },
+            page: 1,
+            colModel: [
+                { label: 'CUSTOMER', name: 'CustomerId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'LINE', name: 'LineId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'SUPPLIER', name: 'SupplierId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'STOCK TYPE', name: 'StockType', align: 'center', fixed: true, width: 100, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 210, sortable: false },
+                { label: 'MODEL', name: 'PartModel', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 45, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', fixed: true, width: 70, sortable: false },
+                { label: 'KANBAN', name: 'StockKanban', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'StockQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'ACTUAL', name: 'ActualQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'BALANCE', name: 'BalanceQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Stock List',
+            pager: "#" + childGridPagerID
+        });
+        $('#' + childGridID).jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 4, titleText: 'STOCK' },
+            ]
+        });
+    }
+
+    function updateLastStock(inventorynumber, grid) {
+        $.ajax({
+            url: '@Url.Action("crudLatestStock", "Inventory")',
+            type: 'POST',
+            dataType: "JSON",
+            data: {InventoryNumber : inventorynumber },
+            success: function (data) {
+                var editdate = new Date()
+                $("#lblupdate-" + inventorynumber.replaceAll("/", "")).text('Already updated last stock qty at ' + moment(editdate).format("DD MMM YYYY HH mm") + '');
+                parameters =
+                {
+                    Updated: true,
+                    EditDate: editdate,
+                }
+                $("#jqGridMain").jqGrid('setRowData', inventorynumber.replaceAll("/", ""), parameters);
+
+                reloadGridStockTakingList(inventorynumber, grid);
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch{
+                    respText = xhr.responseText;
+                }
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#crudStockTakingListError').html(errMsg);
+            }
+        });
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var canemail = "";
+        var canupdate = "";
+        var candelete = '@ViewBag.canDelete';
+        var btnid = rowObject.InventoryNumber.replaceAll("/", "");
+
+        if (rowObject.StatusName === "Open" || rowObject.StatusName === "Sent") {
+            canemail = '@ViewBag.canCreate';
+            canupdate = '@ViewBag.canUpdate';
+            //candelete = '@ViewBag.canDelete';
+        } else {
+            canemail = 'disabled';
+            canupdate = 'disabled';
+            //candelete = 'disabled';
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-primary text-white " + canemail + "' onclick=\"sentStockTakingEmail('Open','" + rowObject.InventoryKey + "','" + rowObject.InventoryDate + "','" + rowObject.InventoryStartTime + "','" + rowObject.InventoryEndTime + "')\" datatoogle='tooltip' title='Sent Email @ViewBag.Title [ " + rowObject.InventoryNumber + " ]'>";
+        btn += "<span class='fa fa-envelope'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-success text-white " + canupdate + "' onclick=\"crudStockTaking('Update','" + rowObject.InventoryKey + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.InventoryNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span> ";
+        btn += "</a> ";
+        btn += "<a id='btn-" + btnid + "' tabindex='0' class='btn btn-sm btn-info text-white " + candelete + "' role='button' data-toggle='popover' ";
+        btn += "data-timeout='2000' data-html='true' title='@ViewBag.Title " + rowObject.InventoryNumber + "' data-content='-'>";
+        btn += "<span class='fa fa-sign-out'></span>";
+        btn += "</a>";
+        btn += "</div>";
+
+
+        return btn;
+    }
+    function documentFormatter(cellvalue, options, rowObject) {
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewStockTaking('STOCK LIST','" + rowObject.InventoryNumber + "')\" datatoogle='tooltip' title='Preview STOCK LIST [ " + rowObject.InventoryNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span></span><small> LIST</small>";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewStockTaking('STOCK CARD','" + rowObject.InventoryNumber + "')\" datatoogle='tooltip' title='Preview STOCK CARD [ " + rowObject.InventoryNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span><small> CARD</small>";
+        btn += "</a> ";
+        btn += "</div>";
+
+        return btn;
+    }
+    function showButton(InventoryNumber,id,status) {
+
+        var candelete = '';
+        var canclosed = '';
+
+        if (status === "Open" || status === "Sent") {
+            candelete = '@ViewBag.canDelete';
+        } else {
+            candelete = 'disabled';
+        }
+        if (status === "Open" || status === "Sent" || status === "Received") {
+            canclosed = '@ViewBag.canUpdate';
+        } else {
+            canclosed = 'disabled';
+        }
+
+        var dataContent = "<div>";
+        dataContent += "<ul class='nav'><li>";
+        dataContent += "<button type='button' " + canclosed + " class='btn btn-sm btn-info' onclick=\"crudStockTaking('Closed','" + InventoryNumber + "')\" ><i class='fa fa-sign-out'></i> Closing</button>";
+        dataContent += "<button type='button' " + candelete + " class='btn btn-sm btn-warning ml-2' onclick=\"crudStockTaking('Canceled','" + InventoryNumber + "')\" ><i class='fa fa-ban'></i> Canceled</button>";
+        dataContent += "<button type='button' " + candelete + " class='btn btn-sm btn-danger ml-2' onclick=\"crudStockTaking('Delete','" + InventoryNumber + "')\" ><i class='fa fa-trash'></i> Delete</button>";
+        dataContent += "</li></ul></div>";
+
+        $('#' + id).attr('data-content', dataContent).popover();
+
+    }
+
+    function previewStockTaking(action, InventoryNumber) {
+
+        if (action == "STOCK LIST") {
+            var url = "@Url.Action("StockList", "Reports", new { InventoryNumber = "_InventoryNumber_" })";
+            url = url.replace('_InventoryNumber_', encodeURIComponent(InventoryNumber));
+            window.open(url, "_blank");
+        } else {
+            var url = "@Url.Action("StockCard", "Reports", new { InventoryNumber = "_InventoryNumber_" })";
+            url = url.replace('_InventoryNumber_', encodeURIComponent(InventoryNumber));
+            window.open(url, "_blank");
+        }
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 0:
+                return "<span class='badge badge-primary'>" + rowObject.StatusName + "</span>"
+                break;
+            case 1:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-success text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-warning'>" + rowObject.StatusName + "</span>"
+                break;
+            case 5:
+                return "<span class='badge badge-danger'>" + rowObject.StatusName + "</span>"
+                break;
+        }
+    }
+
+    function approvalFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 1:
+                return "<span class='badge badge-warning'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-primary'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-success'>" + rowObject.ApprovalName + "</span>"
+                break;
+        }
+    }
+    function reloadGridStockTaking() {
+        var filterData      = $('#searchFilter').val();
+        var month           = $('#monthFilter').val();
+        var inventorydate   = $('#InventoryDateFilter').val();
+        var status          = $('#statusFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                month: month,
+                inventorydate: inventorydate,
+                status: status,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridStockTakingList(inventorynumber, grid) {
+        $("#" + grid).jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                InventoryNumber: inventorynumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.InventoryNumber + " has been saved succesfully");
+                sentStockTakingEmail("Approval", data.InventoryNumber, data.InventoryDate, data.InventoryStartTime, data.InventoryEndTime)
+                return reloadGridStockTaking();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.InventoryNumber + " has been saved succesfully");
+                sentStockTakingEmail("Approval", data.InventoryNumber, data.InventoryDate, data.InventoryStartTime, data.InventoryEndTime)
+                return reloadGridStockTaking();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.InventoryNumber + " has been removed succesfully");
+                return reloadGridStockTaking();
+                break;
+            case "canceled":
+                showToast("Failed", "Cancel stock taking " + data.InventoryNumber + " has been canceled succesfully");
+                return reloadGridStockTaking();
+                break;
+            case "closed":
+
+                showToast("Success", "Closing stock taking " + data.InventoryNumber + " has been closed succesfully");
+                return reloadGridStockTaking();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridStockTaking();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "SupplierName")
+        $("#jqGridMain").jqGrid(showhideCol, "Remarks")
+        $("#jqGridMain").jqGrid(showhideCol, "KanbanCycle")
+        $("#jqGridMain").jqGrid(showhideCol, "KanbanTime")
+        $("#jqGridMain").jqGrid(showhideCol, "Approval")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+    $(document).on('hide.bs.modal', '#emailSenderModal', function (e) {
+        reloadGridStockTaking();
+    });
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

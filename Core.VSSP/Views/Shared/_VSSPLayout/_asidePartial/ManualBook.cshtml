@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Core.VSSP.Models.ManualBookModel>
+
+<div class="tab-pane p-3" id="manualbook" role="tabpanel">
+    <h6 class="font-weight-bold" >Manual Book</h6>
+
+    <div>
+        @{
+
+            if (Model.Count() != 0)
+            {
+                foreach (var m in Model)
+                {
+                    <small>
+                        <a href="@m.FileUrl" target="_blank">
+                            <span class="fa fa-file-pdf-o text-danger"></span> @m.FileName
+                        </a>
+                    </small><br />
+                }
+            }
+            else
+            {
+                <small>
+                    No Manual Book Available.
+                </small>
+            }
+
+        }
+        @*<small>
+            <a href="https://drive.google.com/file/d/1PT_aowSw-6yH-RIgOSvcgocdAgDantGL/view?usp=sharing" target="_blank">
+                01. Manual Book BPS - For Administrator
+            </a>
+        </small>
+        <small>
+            <a href="https://drive.google.com/file/d/1TWOw1DgCjxQU2dQaVfGQiy2MAXWOUwSS/view?usp=sharing" target="_blank">
+                02. Manual Book BPS - For Users
+            </a>
+        </small>*@
+    </div>
+
+
+</div>

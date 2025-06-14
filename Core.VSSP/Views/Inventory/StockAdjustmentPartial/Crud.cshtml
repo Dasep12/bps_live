@@ -1,0 +1,953 @@
+﻿
+<div class="modal animated fadeIn" id="crudStockAdjustmentModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudStockAdjustmentForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentNumber" class="col-sm-3 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-StockAdjustmentNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDate" class="col-sm-3 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-StockAdjustmentDate" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentAreaId" class="col-sm-3 col-form-label col-form-label-sm">Area</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-StockAdjustmentAreaId" onchange="loadComboLocation('*')" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentLocationId" class="col-sm-3 col-form-label col-form-label-sm">Location</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-StockAdjustmentLocationId" required></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentInventoryNumber" class="col-sm-3 col-form-label col-form-label-sm">Inventory Number</label>
+                                <div class="col-sm-6">
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-StockAdjustmentInventoryNumber" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentRemarks" class="col-sm-3 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-6">
+                                    <textarea rows="1" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridCrudStockAdjustmentList"></table>
+                        </div>
+                    </div>
+
+                    <div id="crudStockAdjustmentError"></div>
+                    <input type="hidden" id="StockAdjustmentAction" />
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-2" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="#btn-addStockAdjustmentDetail" type="button" class="btn btn-sm btn-outline-dark ml-2" onclick="crudStockAdjustmentDetail('Create','')"><span class="fa fa-plus"></span> Add New Adjustment Item</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="btn-crudStockAdjustment" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudStockAdjustmentDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudStockAdjustmentDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> StockAdjustmentDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" id="btn-searchPart" class="btn btn-sm btn-outline-primary" onclick="callFilterStockTaking()"><span class="fa fa-search"></span> Find Part Stock Taking</a>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockAdjustmentDetailCustomerId" class="col-md-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailCustomerId" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockAdjustmentDetailLineId" class="col-md-4 col-form-label col-form-label-sm">Line</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailLineId" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row" hidden>
+                                <label for="crud-StockAdjustmentDetailSupplierId" class="col-md-4 col-form-label col-form-label-sm">Supplier</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailSupplierId" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailStockType" class="col-md-4 col-form-label col-form-label-sm">Stock Type</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailStockType" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailUniqueNumber" class="col-md-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailUniqueNumber" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailPartNumber" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailPartName" class="col-md-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailPartName" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailPartModel" class="col-md-4 col-form-label col-form-label-sm">Model</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailPartModel" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailPackingId" class="col-md-4 col-form-label col-form-label-sm">Type Packing</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailPackingId" disabled>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailUnitQty" class="col-md-4 col-form-label col-form-label-sm">Qty / Kanban</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailUnitQty" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailUnitLevel2" class="col-md-4 col-form-label col-form-label-sm">Unit</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailUnitLevel2" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailStockKanban" class="col-md-4 col-form-label col-form-label-sm">Stock Kanban</label>
+                                <div class="col-md-8">
+                                    <input type="number" class="form-control form-control-sm bg-white" id="crud-StockAdjustmentDetailStockKanban" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailStockQty" class="col-md-4 col-form-label col-form-label-sm">Stock Qty</label>
+                                <div class="col-md-8">
+                                    <input type="number" class="form-control form-control-sm bg-light border-primary" id="crud-StockAdjustmentDetailStockQty" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailActualQty" class="col-md-4 col-form-label col-form-label-sm">Actual Qty</label>
+                                <div class="col-md-8">
+                                    <input type="number" min="0" class="form-control form-control-sm bg-light border-success" id="crud-StockAdjustmentDetailActualQty" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailBalanceQty" class="col-md-4 col-form-label col-form-label-sm">Balance Qty</label>
+                                <div class="col-md-8">
+                                    <input type="number" class="form-control form-control-sm bg-light border-warning" id="crud-StockAdjustmentDetailBalanceQty" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-StockAdjustmentDetailAdjustmentQty" class="col-md-4 col-form-label col-form-label-sm">Adjustment Qty</label>
+                                <div class="col-md-8">
+                                    <input type="number" class="form-control form-control-sm" id="crud-StockAdjustmentDetailAdjustmentQty" required>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="StockAdjustmentDetailId" />
+                    <input type="hidden" id="StockAdjustmentDetailAction" />
+                    <input type="hidden" id="StockAdjustmentDetailRowStatus" />
+                    <div id="crudStockAdjustmentDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    @*<div class="ml-3" style="position:absolute;left:0">
+                        <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudStockAdjustmentDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                        <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudStockAdjustmentDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                    </div>*@
+                    <button id="btn-crudStockAdjustmentDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#crudStockAdjustmentDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-StockAdjustmentDetailAdjustmentQty") {
+                $("#btn-crudStockAdjustmentDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    function crudStockAdjustment(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartStockTaking", "Search")');
+
+        document.getElementById("crudStockAdjustmentForm").reset();
+        $('#crudStockAdjustmentForm').removeClass('was-validated');
+        $('#crudStockAdjustmentError').html("");
+        $('#btn-addStockAdjustmentDetail').removeAttr('disabled');
+        $("#btn-crudStockAdjustment").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudStockAdjustmentForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#StockAdjustmentAction").val(action);
+
+        var newdate = '@ViewBag.DateTime';
+        newdate = moment(new Date(newdate)).format("YYYY-MM-DD");
+        var approval = '@ViewBag.ApprovalLevel';
+
+        if (approval != 1) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Incorrect Approval Level!</b><br/>Create/Edit/Delete @ViewBag.Title need approval level as Creator. More Info : please contact your system administrator.</small></div>'
+            $('#crudStockAdjustmentError').html(errMsg);
+            $("#crudStockAdjustmentForm input,select").each(function () {
+                $(this).attr("readonly", true).attr("disabled", true);
+            });
+
+            $("#btn-addStockAdjustmentDetail").attr("disabled", true);
+            $("#btn-crudStockAdjustment").attr("disabled", true);
+
+            $('#crudStockAdjustmentModal').modal('show');
+            return false;
+        }
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                AdjustmentNumber            = Grid.jqGrid('getCell', selectedRowId, 'AdjustmentNumber'),
+                StockAdjustmentDate         = Grid.jqGrid('getCell', selectedRowId, 'AdjustmentDate'),
+                StockAdjustmentAreaId       = Grid.jqGrid('getCell', selectedRowId, 'AreaId'),
+                StockAdjustmentLocationId   = Grid.jqGrid('getCell', selectedRowId, 'LocationId'),
+                InventoryNumber             = Grid.jqGrid('getCell', selectedRowId, 'InventoryNumber'),
+                StockAdjustmentRemarks      = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            StockAdjustmentDate         = moment(new Date(StockAdjustmentDate)).format("YYYY-MM-DD");
+            //StockAdjustmentStartTime    = moment(new Date(StockAdjustmentStartTime)).format("H:i");
+            //StockAdjustmentEndTime      = moment(new Date(StockAdjustmentEndTime)).format("H:i");
+
+            $("#crud-StockAdjustmentNumber").val(AdjustmentNumber);
+            $("#crud-StockAdjustmentDate").val(StockAdjustmentDate);
+            $("#crud-StockAdjustmentAreaId").val(StockAdjustmentAreaId);
+            loadComboLocation(StockAdjustmentAreaId);
+            $("#crud-StockAdjustmentLocationId").val(StockAdjustmentLocationId);
+            loadComboInventoryNumber(InventoryNumber);
+            $("#crud-StockAdjustmentInventoryNumber").val(InventoryNumber);
+            $("#crud-StockAdjustmentRemarks").val(StockAdjustmentRemarks);
+
+            reloadGridStockAdjustmentDetail();
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-StockAdjustmentNumber").attr("readonly", true);
+                $("#crud-StockAdjustmentDate").attr("readonly", true);
+                $("#crud-StockAdjustmentDate").val(newdate);
+                $("#crud-StockAdjustmentDate").focus();
+                $("#crudStockAdjustmentModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudStockAdjustmentModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title');
+                jQuery('#jqGridCrudStockAdjustmentList').jqGrid('clearGridData')
+                    .trigger('reloadGrid');
+                $('#crudStockAdjustmentModal').modal('show');
+                break;
+            case "Update":
+                $("#crud-StockAdjustmentNumber").attr("readonly", true);
+                $("#crudStockAdjustmentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudStockAdjustmentModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockAdjustmentModal').modal('show');
+                $("#crud-StockAdjustmentRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudStockAdjustmentForm input, textarea").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#btn-addStockAdjustmentDetail").attr("disabled", true);
+                $("#btn-crudStockAdjustment").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudStockAdjustmentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudStockAdjustmentModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockAdjustmentModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudStockAdjustmentForm input, textarea").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-StockAdjustmentSupplierId").attr("disabled", true);
+                $("#crud-StockAdjustmentActived").attr("disabled", true);
+                $("#btn-addStockAdjustmentDetail").attr("disabled", true);
+                $("#btn-crudStockAdjustment").html("<span class='fa fa-ban'></span> Cancel @ViewBag.Title");
+                $("#crudStockAdjustmentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudStockAdjustmentModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockAdjustmentModal').modal('show');
+                break
+            case "Closed":
+                $("#crudStockAdjustmentForm input, textarea").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-StockAdjustmentSupplierId").attr("disabled", true);
+                $("#crud-StockAdjustmentActived").attr("disabled", true);
+                $("#btn-addStockAdjustmentDetail").attr("disabled", true);
+                $("#btn-crudStockAdjustment").html("<span class='fa fa-sign-out'></span> Closing @ViewBag.Title");
+                $("#crudStockAdjustmentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudStockAdjustmentModal .modal-title").html('<span class="fa fa-sign-out"></span> '+ action + ' @ViewBag.Title');
+                $('#crudStockAdjustmentModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-StockAdjustmentAreaId').change(function () {
+        $('#crudStockAdjustmentError').html("");
+    });
+
+    $('#crud-StockAdjustmentLocationId').change(function () {
+        $('#crudStockAdjustmentError').html("");
+    });
+
+    $('#crud-StockAdjustmentInventoryNumber').change(function () {
+        $('#crudStockAdjustmentError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridStockAdjustmentDetail = $("#jqGridCrudStockAdjustmentList").jqGrid({
+            url: "@Url.Action("StockAdjustmentDetailListJson", "Inventory")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { AdjustmentNumber: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, sortable: false, formatter: actionStockAdjustmentDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'CUSTOMER', name: 'CustomerId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'LINE', name: 'LineId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'SUPPLIER', name: 'SupplierId', align: 'left', hidden: true, width: 60, sortable: false },
+                { label: 'STOCK TYPE', name: 'StockType', align: 'center', fixed: true, width: 100, sortable: false },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 110, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 175, sortable: false },
+                { label: 'MODEL', name: 'PartModel', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 45, formatter: 'number', sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'TYPE PACKING', name: 'PackingId', align: 'center', fixed: true, width: 60, sortable: false },
+                { label: 'KANBAN', name: 'StockKanban', align: 'right', fixed: true, width: 60, formatter: 'number', sortable: false },
+                { label: 'QTY', name: 'StockQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'ACTUAL', name: 'ActualQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'BALANCE', name: 'BalanceQty', align: 'right', fixed: true, width: 70, formatter: 'number', sortable: false },
+                { label: 'ADJUSTMENT', name: 'AdjustmentQty', align: 'right', fixed: true, width: 75, formatter: 'number', sortable: false },
+            ],
+            gridview: true,
+            //pager: '#jqGridPagerCrudStockAdjustmentDetail',
+            loadonce: true,
+            height: 220,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            loadComplete: function () {
+
+                var action = $("#StockAdjustmentAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        parameters =
+                        {
+                            RowStatus: action,
+                        }
+                        $("#jqGridCrudStockAdjustmentList").jqGrid('setRowData', ids[i], parameters);
+
+                    }
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudStockAdjustmentDetail("Update", rowid);
+            },
+        });
+
+        $('#jqGridCrudStockAdjustmentList').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 5, titleText: 'STOCK' },
+            ]
+        });
+    });
+
+    function reloadGridStockAdjustmentDetail() {
+
+        var formaction  = $("#StockAdjustmentAction").val();
+        var Adjustmentnumber = $("#crud-StockAdjustmentNumber").val();
+
+        $("#jqGridCrudStockAdjustmentList").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                AdjustmentNumber: Adjustmentnumber,
+                formAction: formaction,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionStockAdjustmentDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var formaction = $("#StockAdjustmentOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudStockAdjustmentDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudStockAdjustmentDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#StockAdjustmentAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    function crudStockAdjustmentDetail(action, id) {
+
+        document.getElementById("crudStockAdjustmentDetailForm").reset();
+        $('#crudStockAdjustmentDetailForm').removeClass('was-validated');
+        $('#crudStockAdjustmentError').html("");
+        $('#crudStockAdjustmentDetailError').html("");
+        $("#btn-crudStockAdjustmentDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-StockAdjustmentDetailAdjustmentQty").removeAttr("disabled")
+        $("#crudStockAdjustmentDetailForm :input").each(function () {
+            $(this).removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#StockAdjustmentDetailAction").val(action);
+
+        var inventorynumber = $("#crud-StockAdjustmentInventoryNumber").val();
+        var areaid = $("#crud-StockAdjustmentAreaId").val();
+        var location = $("#crud-StockAdjustmentLocationId").val();
+
+        if (areaid === "" || location === "" || inventorynumber === "" ) {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Area / Location / Inventory Number completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudStockAdjustmentError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+
+            $("#StockAdjustmentDetailId").val(id);
+
+            var $grid = $("#jqGridCrudStockAdjustmentList");
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                CustomerId = rowData.CustomerId,
+                LineId = rowData.LineId,
+                SupplierId = rowData.SupplierId,
+                StockType = rowData.StockType,
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName,
+                PartModel = rowData.PartModel,
+                PartModel = rowData.PartModel,
+                UnitQty = rowData.UnitQty,
+                UnitLevel2 = rowData.UnitLevel2,
+                PackingId = rowData.PackingId,
+                StockKanban = rowData.StockKanban,
+                StockQty = rowData.StockQty,
+                ActualQty = rowData.ActualQty,
+                BalanceQty = rowData.BalanceQty,
+                AdjustmentQty = rowData.AdjustmentQty;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#crud-StockAdjustmentDetailAdjustmentQty").attr("min", BalanceQty).attr("max", BalanceQty).focus().select();
+
+            $("#StockAdjustmentDetailRowStatus").val(RowStatus);
+            $("#crud-StockAdjustmentDetailCustomerId").val(CustomerId);
+            $("#crud-StockAdjustmentDetailLineId").val(LineId);
+            $("#crud-StockAdjustmentDetailSupplierId").val(SupplierId);
+            $("#crud-StockAdjustmentDetailStockType").val(StockType);
+            $("#crud-StockAdjustmentDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-StockAdjustmentDetailPartNumber").val(PartNumber);
+            $("#crud-StockAdjustmentDetailPartName").val(PartName);
+            $("#crud-StockAdjustmentDetailPartModel").val(PartModel);
+            $("#crud-StockAdjustmentDetailUnitQty").val(UnitQty);
+            $("#crud-StockAdjustmentDetailUnitLevel2").val(UnitLevel2);
+            $("#crud-StockAdjustmentDetailPackingId").val(PackingId);
+            $("#crud-StockAdjustmentDetailStockKanban").val(StockKanban);
+            $("#crud-StockAdjustmentDetailStockQty").val(StockQty);
+            $("#crud-StockAdjustmentDetailActualQty").val(ActualQty);
+            $("#crud-StockAdjustmentDetailBalanceQty").val(BalanceQty);
+            $("#crud-StockAdjustmentDetailAdjustmentQty").val(AdjustmentQty);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudStockAdjustmentDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudStockAdjustmentDetailModal .modal-title").html('<span class="fa fa-plus-squre"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudStockAdjustmentDetailModal').modal('show');
+                $("#btn-searchPart").removeClass("disabled").focus().select();
+
+                $("#btn-prev").addClass("disabled");
+                $("#btn-next").addClass("disabled");
+
+                break;
+
+            case "Update":
+                $("#crudStockAdjustmentDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudStockAdjustmentDetailModal .modal-title").html('<span class="fa fa-pencil"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudStockAdjustmentDetailModal').modal('show');
+                $("#crud-StockAdjustmentDetailAdjustmentQty").focus().select();
+
+                var rowIndex = $grid.jqGrid('getInd', PartNumber);
+                var dataIDs = $grid.getDataIDs();
+                var datalen = (dataIDs.length);
+
+                $("#btn-prev").removeClass("disabled");
+                $("#btn-next").removeClass("disabled");
+
+                if (rowIndex === 1) {
+                    $("#btn-prev").addClass("disabled");
+                }
+                if (rowIndex === datalen) {
+                    $("#btn-next").addClass("disabled");
+                }
+
+                break;
+            case "Delete":
+                $("#crudStockAdjustmentDetailForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-searchPart").addClass("disabled");
+                $("#btn-crudStockAdjustmentDetail").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudStockAdjustmentDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudStockAdjustmentDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudStockAdjustmentDetailModal').modal('show');
+                break
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudStockAdjustmentDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                var uniquenumber = $("#crud-StockAdjustmentDetailUniqueNumber").val();
+                if (uniquenumber === "") {
+                    showToast("Error", "Please select Part Item before submit..");
+                    $("#btn-searchPart").focus().select();
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                if ($(this).valid()) {
+
+                    var action = $('#StockAdjustmentDetailAction').val();
+                    var rowStatus = $('#StockAdjustmentDetailRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+
+                            var $grid = $("#jqGridCrudStockAdjustmentList");
+                            var dataIDs = $grid.getDataIDs();
+                            var datalen = (dataIDs.length);
+                            var rowid = parseInt(datalen) + 1;
+
+                            parameters =
+                            {
+                                rowID: rowid,
+                                initdata: {
+                                    RowStatus: action,
+                                    CustomerId: $("#crud-StockAdjustmentDetailCustomerId").val(),
+                                    LineId: $("#crud-StockAdjustmentDetailLineId").val(),
+                                    SupplierId: $("#crud-StockAdjustmentDetailSupplierId").val(),
+                                    StockType: $("#crud-StockAdjustmentDetailStockType").val(),
+                                    UniqueNumber: $("#crud-StockAdjustmentDetailUniqueNumber").val(),
+                                    PartNumber: $("#crud-StockAdjustmentDetailPartNumber").val(),
+                                    PartName: $("#crud-StockAdjustmentDetailPartName").val(),
+                                    PartModel: $("#crud-StockAdjustmentDetailPartModel").val(),
+                                    UnitQty: $("#crud-StockAdjustmentDetailUnitQty").val(),
+                                    UnitLevel2: $("#crud-StockAdjustmentDetailUnitLevel2").val(),
+                                    PackingId: $("#crud-StockAdjustmentDetailPackingId").val(),
+                                    StockKanban: $("#crud-StockAdjustmentDetailStockKanban").val(),
+                                    StockQty: $("#crud-StockAdjustmentDetailStockQty").val(),
+                                    ActualQty: $("#crud-StockAdjustmentDetailActualQty").val(),
+                                    BalanceQty: $("#crud-StockAdjustmentDetailBalanceQty").val(),
+                                    AdjustmentQty: $("#crud-StockAdjustmentDetailAdjustmentQty").val(),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudStockAdjustmentList").jqGrid('addRow', parameters);
+                            showToast("Success", "Create @ViewBag.Title " + $("#crud-StockAdjustmentDetailPartName").val() + " has been saved succesfully");
+                            $('#crudStockAdjustmentDetailModal').modal('hide');
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#StockAdjustmentDetailId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                AdjustmentQty: $("#crud-StockAdjustmentDetailAdjustmentQty").val(),
+                            }
+
+                            $("#jqGridCrudStockAdjustmentList").jqGrid('setRowData', rowid, parameters);
+                            showToast("Success", "Update @ViewBag.Title " + $("#crud-StockAdjustmentDetailPartName").val() + " has been saved succesfully");
+                            $('#crudStockAdjustmentDetailModal').modal('hide');
+
+                            //var lastrow = $("#btn-next").hasClass("disabled");
+                            //if (lastrow === true) {
+                            //    $('#crudStockAdjustmentDetailModal').modal('hide');
+                            //} else {
+                            //    $("#btn-next").click();
+                            //}
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#StockAdjustmentDetailId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudStockAdjustmentList').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudStockAdjustmentList").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            showToast("Failed", "Delete @ViewBag.Title " + $("#crud-StockAdjustmentDetailPartName").val() + " has been removed succesfully");
+                            $('#crudStockAdjustmentDetailModal').modal('hide');
+
+                            break;
+                    }
+
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudStockAdjustmentForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var $grid = $("#jqGridCrudStockAdjustmentList");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#StockAdjustmentAction").val();
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        StockAdjustment: {
+                            AdjustmentNumber    : $("#crud-StockAdjustmentNumber").val(),
+                            AdjustmentDate      : $("#crud-StockAdjustmentDate").val(),
+                            InventoryNumber     : $("#crud-StockAdjustmentInventoryNumber").val(),
+                            AreaId              : $("#crud-StockAdjustmentAreaId").val(),
+                            LocationId          : $("#crud-StockAdjustmentLocationId").val(),
+                            Remarks             : $("#crud-StockAdjustmentRemarks").val(),
+                            Update              : null,
+                            Status              : null,
+                            EditDate            : null,
+                            UserID              : null
+                        },
+                        StockAdjustmentDetail: $("#jqGridCrudStockAdjustmentList").jqGrid('getGridParam', 'data'),
+                        ApprovalId: '@ViewBag.ApprovalId',
+                        formAction: $("#StockAdjustmentAction").val()
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    $.ajax({
+                        url: '@Url.Action("crudStockAdjustmentList", "Inventory")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudStockAdjustmentModal').modal('hide');
+                            var act = $("#StockAdjustmentAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch{
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudStockAdjustmentError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboArea();
+
+    function loadComboArea() {
+
+        $.ajax({
+            url: '@Url.Action("AreaListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-StockAdjustmentAreaId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Area")
+                );
+                $.each(response, function (i, area) {
+                    $(id).append(
+                        $('<option></option>').val(area.AreaID).html(area.AreaName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboLocation(aid) {
+
+        if (aid === "*") {
+            aid = $("#crud-StockAdjustmentAreaId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("LocationListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : aid},
+            success: function (response) {
+
+                var id = "#crud-StockAdjustmentLocationId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Location")
+                );
+                $.each(response, function (i, location) {
+                    $(id).append(
+                        $('<option></option>').val(location.LocationId).html(location.LocationName)
+                    );
+                });
+            }
+        })
+
+    }
+
+    loadComboInventoryNumber("");
+
+    function loadComboInventoryNumber(inventorynumber) {
+
+        $.ajax({
+            url: '@Url.Action("GetInventoryNumberJson", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { InventoryNumber: inventorynumber },
+            success: function (response) {
+
+                var id = "#crud-StockAdjustmentInventoryNumber";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Inventory")
+                );
+                $.each(response, function (i, inv) {
+                    var invdate = inv.InventoryDate;
+                    invdate = moment(new Date(parseInt(invdate.substr(6)))).format("DD-MMM-YYYY");
+
+                    $(id).append(
+                        $('<option></option>').val(inv.InventoryNumber).html(inv.InventoryNumber + ' [' + invdate + ']')
+                    );
+                });
+            }
+        })
+
+    }
+    function callFilterStockTaking() {
+
+        var inventorynumber = $("#crud-StockAdjustmentInventoryNumber").val();
+        var areaid = $("#crud-StockAdjustmentAreaId").val();
+        var locationid = $("#crud-StockAdjustmentLocationId").val();
+        //var partexist = $("#jqGridCrudStockAdjustmentList").getDataIDs();
+        var partexist = $("#jqGridCrudStockAdjustmentList").jqGrid('getGridParam', 'data');
+
+        var status = $("#StockAdjustmentDetailAction").val()
+        if (status === "Update") {
+            partexist = "";
+        }
+
+        showfilterPartStockTaking(inventorynumber,areaid,locationid,partexist);
+
+    }
+
+    $(document).on('hide.bs.modal', '#filterPartStockTakingModal', function (e) {
+
+        if ($("#search_result").val() != "") {
+            var searchresult = JSON.parse($("#search_result").val());
+            var action = $("#StockAdjustmentDetailAction").val();
+
+            setTimeout(function () {
+
+                if (searchresult.length != 0) {
+
+                    switch (action) {
+                        case "Create":
+                            $("#crud-StockAdjustmentDetailCustomerId").val(searchresult.CustomerId);
+                            $("#crud-StockAdjustmentDetailLineId").val(searchresult.LineId);
+                            $("#crud-StockAdjustmentDetailSupplierId").val(searchresult.SupplierId);
+                            $("#crud-StockAdjustmentDetailStockType").val(searchresult.StockType);
+                            $("#crud-StockAdjustmentDetailUniqueNumber").val(searchresult.UniqueNumber);
+                            $("#crud-StockAdjustmentDetailPartNumber").val(searchresult.PartNumber);
+                            $("#crud-StockAdjustmentDetailPartName").val(searchresult.PartName);
+                            $("#crud-StockAdjustmentDetailPartModel").val(searchresult.PartModel);
+                            $("#crud-StockAdjustmentDetailUnitQty").val(searchresult.UnitQty);
+                            $("#crud-StockAdjustmentDetailUnitLevel2").val(searchresult.UnitLevel2);
+                            $("#crud-StockAdjustmentDetailPackingId").val(searchresult.PackingId);
+                            $("#crud-StockAdjustmentDetailStockKanban").val(searchresult.StockKanban);
+                            $("#crud-StockAdjustmentDetailStockQty").val(searchresult.StockQty);
+                            $("#crud-StockAdjustmentDetailActualQty").val(searchresult.ActualQty);
+                            $("#crud-StockAdjustmentDetailBalanceQty").val(searchresult.BalanceQty);
+                            $("#crud-StockAdjustmentDetailAdjustmentQty").val(searchresult.BalanceQty);
+
+                            $("#crud-StockAdjustmentDetailAdjustmentQty").attr("min", searchresult.BalanceQty).attr("max", searchresult.BalanceQty).focus().select();
+
+                            break;
+                    }
+                }
+            }, 100);
+        }
+
+    });
+</script>
+

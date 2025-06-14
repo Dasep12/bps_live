@@ -1,0 +1,150 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterSupplierModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterSupplierForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Supplier</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterSupplier" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterSupplier" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterSupplier" type="button" class="btn btn-secondary" onclick="reloadGridSearchSupplier()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <table id="jqGridSearchSupplier"></table>
+                                <div id="jqGridPagerSearchSupplier"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterSupplierError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterSupplier" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataSupplier()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterSupplier").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterSupplier").button().click();
+        }
+    });
+
+    var filterData = $('#searchFilterSupplier').val();
+    $gridFilterSupplier = $("#jqGridSearchSupplier").jqGrid({
+        url: '@Url.Action("SupplierListJson", "Suppliers")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+        },
+        colModel: [
+            { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 50, formatter: statusSupplierFormatter },
+            { label: 'Id', name: 'SupplierId', align: 'center', fixed: true, width: 60 },
+            { label: 'Name', name: 'SupplierName', align: 'left', autoResizing: { minColWidth: 150 } },
+            { label: 'City', name: 'City', align: 'left', fixed: true, width: 80 },
+            { label: 'Websites', name: 'Websites', align: 'left', fixed: true, width: 80 },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchSupplier',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+        ondblClickRow: function () {
+            selectFilterDataSupplier();
+        },
+    });
+
+    $('#jqGridSearchSupplier').jqGrid('navGrid', '#jqGridPagerSearchSupplier', { search: false, edit: false, add: false, del: false });
+
+    function statusSupplierFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridSearchSupplier() {
+        var filterData = $('#searchFilterSupplier').val();
+
+        $("#jqGridSearchSupplier").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterSupplier() {
+
+        reloadGridSearchSupplier();
+
+        $('#filterSupplierModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataSupplier () {
+        var selRowId = $('#jqGridSearchSupplier').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchSupplier').jqGrid("getRowData", selRowId);
+            filterResult = rowData.SupplierId;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterSupplierModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+    }
+</script>

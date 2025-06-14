@@ -1,0 +1,324 @@
+﻿
+@model Core.VSSP.Models.UserProfileModel
+
+<style>
+    .image-sign {
+        width: 100%;
+        max-width: 200px !important;
+        text-align: center;
+    }
+
+    #img-sign {
+        width: 100%;
+        max-width: 200px !important;
+    }
+</style>
+
+
+@{
+    var imgSrc = "";
+}
+
+@if (Session["BackgroundImage"] == null)
+{
+    imgSrc = "/_VSSPAssets/Images/Background/plant-site.png";
+}
+else
+{
+    var base64 = Convert.ToBase64String((byte[])Session["BackgroundImage"]);
+    imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+}
+
+
+@using (Html.BeginForm("UpdateUserProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="banner">
+            <img class="img-banner" src="@imgSrc" />
+        </div>
+        <div class="form-profile">
+            <div class="card bg-none border-0">
+                <h3 class="pb-1 text-light">Hello @Session["UserName"].ToString()</h3>
+                <h6 class="small text-secondary">This is your profile page, you can manage your profile account here.</h6>
+                <h6 class="small text-secondary">*Some configuration manage by your administrator.</h6>
+            </div>
+            <div class="card pl-2 pr-2 pt-2 pb-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Messages</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa-duotone fa-message-dots fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div id="msg-value" class="text-value counter">@Model.UserProfileSummary.IncomingMessages.ToString("#,##0")</div>
+                                            <small class="">Incoming</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Activities</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa-duotone fa-history fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="log-value" class="text-value counter">@Model.UserProfileSummary.LogActivities.ToString("#,##0")</div>
+                                            <small class="">This week</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card shadow-sm p-0">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Incoming Messages
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    @*@{
+                                            Html.RenderAction("IncomingMessages", "System", new { uid = Model.UserEdit.UserID });
+                                        }*@
+                                </div>
+                            </div>
+                            <div class="card shadow-sm p-0 mb-2">
+                                <div class="card-header">
+                                    <div class="card-title">
+                                        Last Activity
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    @*@{
+                                            Html.RenderAction("LogActivities", "System", new { FormAction = "partial" });
+                                        }*@
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                            <div class="card border-0 mb-0 pn-0">
+
+                                <div class="card-body text-center mt-0 pt-0">
+
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                                    <div class="profile-container">
+                                        @if (Model.UserEdit.Image != null)
+                                        {
+                                            var base64 = Convert.ToBase64String((byte[])Model.UserEdit.Image);
+                                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                            <img id="img-avatar" src="@imgSrc" alt="Photo" class="profile-image" style="width:100%" />
+
+                                        }
+                                        else
+                                        {
+                                            <img id="img-avatar" src="~/App_Assets/Images/avatars/blank-user.jpg" class="profile-image" style="width:100%" alt="Photo" />
+                                        }
+                                        <div class="profile-middle">
+                                            <span id="btn-upload" class="btn btn-file btn-outline-light profile-button">
+                                                <i class="fa-duotone fa-camera-retro"></i>
+                                                <input type="file" id="output" name="ImageData" accept="image/*" onchange="loadFile(event,'img-avatar')" />
+                                            </span>
+                                        </div>
+
+                                        <script>
+                                            var loadFile = function (event, obj) {
+                                                setTimeout(function () {
+                                                    if (!fileExceed) {
+                                                        var Foto = document.getElementById(obj);
+                                                        try {
+                                                            Foto.src = URL.createObjectURL(event.target.files[0]);
+                                                        } catch {
+                                                            //nothing
+                                                        }
+                                                    } else {
+                                                        event.preventDefault();
+                                                        event.stopPropagation();
+                                                        return false;
+                                                    }
+                                                }, 500)
+                                            };
+                                        </script>
+                                    </div>
+                                    <div class="brand-card border-0 mt-2 mb-0 pb-0">
+                                        <div class="brand-card-body">
+                                            <div>
+                                                <div class="text-value">Login</div>
+                                                <div class="text-uppercase text-muted">@Model.UserEdit.UserID</div>
+                                            </div>
+                                            <div>
+                                                <div class="text-value">Role</div>
+                                                <div class="text-uppercase text-muted">@Model.UserEdit.UserTypeID</div>
+                                            </div>
+                                            <div>
+                                                @{
+                                                    string area = @Model.UserEdit.Area;
+                                                    if (area == "" || area == null) area = "None";
+                                                    <div class="text-value">Area</div>
+                                                    <div class="text-uppercase text-muted">@area</div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card shadow-sm pt-0 mt-0 mb-2">
+                                <div class="card-body mt-0 pt-0">
+                                    @Html.LabelFor(model => model.UserEdit.UserName, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.UserEdit.UserName, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-none"><i class="fa-duotone fa-user"></i></span>
+                                        </div>
+                                    </div>
+                                    @Html.LabelFor(model => model.UserEdit.Email, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.UserEdit.Email, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-none"><i class="fa-duotone fa-envelope"></i></span>
+                                        </div>
+                                    </div>
+                                    @Html.LabelFor(model => model.UserEdit.Password, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.UserEdit.Password, new { htmlAttributes = new { @type = "password", @class = "form-control", @Required = true } })
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-none"><i class="fa-duotone fa-lock"></i></span>
+                                        </div>
+                                    </div>
+                                    @Html.LabelFor(model => model.UserEdit.Phone, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                    <div class="input-group">
+                                        @Html.EditorFor(model => model.UserEdit.Phone, new { htmlAttributes = new { @class = "form-control" } })
+                                        <div class="input-group-append">
+                                            <span class="input-group-text bg-none"><i class="fa-duotone fa-phone"></i></span>
+                                        </div>
+                                    </div>
+                                    @Html.LabelFor(model => model.UserEdit.Sign, htmlAttributes: new { @class = "control-label", @style = "padding-top:8px !important" })
+                                    <div class="image-sign ml-auto mr-auto">
+                                        @if (Model.UserEdit.Sign != null)
+                                        {
+                                            var base64 = Convert.ToBase64String((byte[])Model.UserEdit.Sign);
+                                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+                                            <img id="img-sign" class="border-radius shadow-sm" src="@imgSrc" alt="Sign" />
+
+                                        }
+                                        else
+                                        {
+                                            <img id="img-sign" class="border-radius shadow-sm" src="~/App_Assets/Images/noimage.png" alt="Sign" width="200" />
+                                        }
+                                        <span id="btn-upload" class="btn btn-file btn-outline-dark btn-sm btn-block mt-1">
+                                            <i class="fa-duotone fa-upload"></i> Upload Sign
+                                            <input type="file" id="Sign" name="ImageSign" accept="image/*" onchange="loadFile(event,'img-sign')" />
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="card-footer text-center">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="fa-duotone fa-circle-dot"></span> Submit
+                                    </button>
+
+                                    @Html.EditorFor(model => model.UserEdit.UserID, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+                                    @Html.EditorFor(model => model.UserEdit.UserTypeID, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+                                    @Html.EditorFor(model => model.UserEdit.Area, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+                                    @Html.EditorFor(model => model.UserEdit.ReturnAction, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+                                    @Html.EditorFor(model => model.UserProfileSummary.IncomingMessages, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+                                    @Html.EditorFor(model => model.UserProfileSummary.LogActivities, new { htmlAttributes = new { @class = "invisible", @hidden = "true" } })
+
+                                    @Html.ValidationMessageFor(model => model.UserEdit.UserID, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.UserEdit.Password, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.UserEdit.UserName, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.UserEdit.Email, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.UserEdit.UserTypeID, "", new { @class = "text-danger" })
+                                    @Html.ValidationMessageFor(model => model.UserEdit.Phone, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @Html.DropDownListFor(model => model.UserEdit.UserTypeID,
+                 new SelectList(Model.UserEdit.UserTypeList, "ID", "UserType"),
+                 new { @class = "invisible", @Required = true, @hidden = "true" })
+        </div>
+    </form>
+
+}
+
+<script>
+    $('#type').val($('#UserTypeID').val());
+    $('.counter').counterUp()
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudUserManagementForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        UserManagement: {
+                            RoleId: $("#crud-UserId").val(),
+                            RoleName: $("#crud-UserName").val(),
+                            RoleRemark: $("#crud-UserRemark").val(),
+                            MenuList: $("#MenuList").val(),
+                            FormAction: $("#MenuAction").val()
+                        },
+                    };
+
+                    formData.append("jsonData", JSON.stringify(jsonData));
+                    //console.log(JSON.stringify(jsonData));
+                    //return false;
+
+                    $.ajax({
+                        url: '@Url.Action("crudUserManagement","Account")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudUserManagementModal').modal('hide');
+                            var act = $("#MenuAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudUserManagementError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+

@@ -1,0 +1,71 @@
+﻿@if (TempData["Alert"] != null)
+{
+    <input id="alert-status" type="hidden" value="@TempData["Alert"]" />
+    <input id="alert-message" type="hidden" value="@TempData["Message"]" />
+}
+else
+{
+    <input id="alert-status" type="hidden" value="" />
+    <input id="alert-message" type="hidden" value="" />
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        showToast("","");
+
+    })
+    var showToastrs = false;
+
+    function showToast(status, message, position = "toast-top-right") {
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "positionClass": position,
+            "onclick": null,
+            "fadeIn": 300,
+            "fadeOut": 100,
+            "timeOut": 5000,
+            "extendedTimeOut": 1000
+        }
+
+        if (status === "" || message === "") {
+            var statusAlert = $("#alert-status").val();
+            var messageAlert = $("#alert-message").val();
+        } else {
+            var statusAlert = status;
+            var messageAlert = message;
+        }
+
+        if (statusAlert == "Success") {
+            // Display a success toast, with a title
+            toastr.success(messageAlert, 'Success');
+        } else
+        if (statusAlert == "Notification") {
+            // Display a success toast, with a title
+            toastr.success(messageAlert, 'Notification');
+        } else
+        if (statusAlert == "Failed") {
+            // Display a warning toast, with no title
+            toastr.warning(messageAlert, 'Warning');
+        } else
+        if (statusAlert == "Error") {
+            // Display a warning toast, with no title
+            toastr.error(messageAlert, 'Error');
+        } else
+        if (statusAlert == "Info") {
+            // Display a warning toast, with no title
+            toastr.info(messageAlert, 'Info');
+        }
+
+
+        // Define a callback for when the toast fades in/out
+        toastr.options.onFadeIn = function () { showToastrs = true; };
+        toastr.options.onFadeOut = function () { showToastrs = false; };
+
+        $("#alert-status").val('');
+        $("#alert-message").val('');
+
+    }
+</script>

@@ -1,0 +1,1892 @@
+﻿
+<div class="modal animated fadeIn" id="crudSupplierListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudSupplierForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" role="tabList">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tabcrudSupplier" role="tab">
+                                Supplier
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tabcrudcontact" role="tab">
+                                Contact
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" data-toggle="tab" href="#tabcrudKanban" role="tab">
+                                Kanban Cycle
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-success" data-toggle="tab" href="#tabcrudCostCenter" role="tab">
+                                Cost Center
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-danger @ViewBag.canConfidential" data-toggle="tab" href="#tabcrudBankAccount" role="tab">
+                                Bank Account
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tabcrudSupplier" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mt-2">
+                                                <img id="image-logo" src="~/_VSSPAssets/Images/noimage.png" style="width:100%" class="img-thumbnail" />
+                                            </div>
+                                            <span id="btn-uploadLogo" class="btn btn-sm btn-file btn-block btn-outline-secondary mt-2">
+                                                <i class="fa fa-upload"></i> Upload Logo
+                                                <input id="SupplierLogo" name="SupplierLogo" type="file" accept="image/*" class="custom-file-input" onchange="loadFilesm(event)" />
+                                            </span>
+
+                                            <script>
+                                                var loadFilesm = function (event) {
+                                                    var Foto = document.getElementById('image-logo');
+                                                    Foto.src = URL.createObjectURL(event.target.files[0]);
+                                                };
+                                            </script>
+
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="form-row">
+                                                <div class="col-md-12">
+                                                    <label for="crud-SupplierId" class="col-form-label col-form-label-sm">Supplier Id</label>
+                                                    <input type="text" class="form-control form-control-sm" id="crud-SupplierId" name="SupplierId" value="" required>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-12 mb-3">
+                                                    <label for="crud-SupplierName" class="col-form-label col-form-label-sm">Supplier Name</label>
+                                                    <input type="text" class="form-control form-control-sm" id="crud-SupplierName" name="SupplierName" value="" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-SupplierTaxId" class="col-form-label col-form-label-sm">Tax Id / NPWP</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierTaxId" name="TaxId" value="" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12">
+                                            <label for="crud-SupplierWebsites" class="col-form-label col-form-label-sm">Websites</label>
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierWebsites" name="SupplierWebsites" value="" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierAddress" class="col-sm-3 col-form-label col-form-label-sm">Address</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierAddress" name="Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierCity" class="col-sm-3 col-form-label col-form-label-sm">City</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierCity" name="City">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierProvience" class="col-sm-3 col-form-label col-form-label-sm">Provience</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierProvience" name="Provience">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierCountry" class="col-sm-3 col-form-label col-form-label-sm">Country</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierCountry" name="Country">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierPostalCode" class="col-sm-3 col-form-label col-form-label-sm">Postal Code</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="crud-SupplierPostalCode" name="PostalCode">
+                                        </div>
+                                    </div>
+                                    <div class="form-group form-group-sm row">
+                                        <label for="crud-SupplierActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                        <div class="col-sm-9">
+                                            <div class="custom-control custom-checkbox mt-1">
+                                                <input type="checkbox" class="custom-control-input" value="" id="crud-SupplierActived">
+                                                <label class="custom-control-label" for="crud-SupplierActived"><small> Actived</small></label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="tab-pane" id="tabcrudcontact" role="tabpanel">
+                            <button id="btn-addContact" type="button" class="btn btn-sm btn-outline-dark" onclick="crudContactList('Create','')"><span class="fa fa-plus"></span> Add New Contact</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudContact"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudKanban" role="tabpanel">
+                            <button id="btn-addKanban" type="button" class="btn btn-sm btn-outline-dark" onclick="crudKanbanList('Create','*',)"><span class="fa fa-plus"></span> Add New Kanban Cycle</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudKanban"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudCostCenter" role="tabpanel">
+                            <button id="btn-addCostCenter" type="button" class="btn btn-sm btn-outline-dark" onclick="crudCostCenterList('Create','*',)"><span class="fa fa-plus"></span> Add New Cost Center</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudCostCenter"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tabcrudBankAccount" role="tabpanel">
+                            <button id="btn-addBankAccount" type="button" class="btn btn-sm btn-outline-dark" onclick="crudBankAccountList('Create','*',)"><span class="fa fa-plus"></span> Add New Bank Account</button>
+                            <div class="mt-2">
+                                <table id="jqGridCrudBankAccount"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudSupplierListError"></div>
+                    <input type="hidden" id="SupplierAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudSupplierList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudContactListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudContactForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Contact</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactSupplierId" class="col-form-label col-form-label-sm">Supplier Id</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactSupplierId" readonly>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactName" class="col-form-label col-form-label-sm">Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactName" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactOrganization" class="col-form-label col-form-label-sm">Organization</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactOrganization">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPosition" class="col-form-label col-form-label-sm">Position</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPosition">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactFax" class="col-form-label col-form-label-sm">Fax</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactFax">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPhone1" class="col-form-label col-form-label-sm">Phone1</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPhone1">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactPhone2" class="col-form-label col-form-label-sm">Phone2</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactPhone2">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactEmail" class="col-form-label col-form-label-sm">Email</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-ContactEmail">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactReceiveOrder" class="col-form-label col-form-label-sm">Receive Order</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="crud-ContactReceiveOrder">
+                                    <label class="custom-control-label" for="crud-ContactReceiveOrder"><small> By Email</small></label>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-ContactReceiveInvoice" class="col-form-label col-form-label-sm  mt-2">Receive Invoice</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" value="" id="crud-ContactReceiveInvoice">
+                                    <label class="custom-control-label" for="crud-ContactReceiveInvoice"><small> By Email</small></label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <input type="hidden" id="contactAction" />
+                    <input type="hidden" id="contactRowStatus" />
+                    <input type="hidden" id="contactId" />
+                    <div id="crudContactListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudContactList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudKanbanListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="KanbanAction" />
+            <input type="hidden" id="KanbanId" />
+            <input type="hidden" id="KanbanRowStatus" />
+
+            <form id="crudKanbanForm" class="needs-validation" novalidate>
+                <input type="text" class="form-control form-control-sm" id="crud-KanbanSupplierId" hidden>
+
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Kanban</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-KanbanStartDate" class="col-form-label col-form-label-sm">Start Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-KanbanStartDate" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-KanbanEndDate" class="col-form-label col-form-label-sm">End Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-KanbanEndDate">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-KanbanCycle" class="col-form-label col-form-label-sm">Kanban Cycle</label>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text font-weight-bold" for="crud-KanbanCycle1">
+                                                    #1
+                                                </label>
+                                            </div>
+                                            <input type="number" min="1" class="form-control text-center" id="crud-KanbanCycle1" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text font-weight-bold" for="crud-KanbanCycle2">
+                                                    #2
+                                                </label>
+                                            </div>
+                                            <input type="number" min="1" class="form-control text-center" id="crud-KanbanCycle2" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group input-group-sm">
+                                            <div class="input-group-prepend">
+                                                <label class="input-group-text font-weight-bold" for="crud-KanbanCycle3">
+                                                    #3
+                                                </label>
+                                            </div>
+                                            <input type="number" min="1" class="form-control text-center" id="crud-KanbanCycle3" required />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-KanbanCycleTime" class="col-form-label col-form-label-sm">Kanban Cycle Time</label>
+                                <textarea rows="2" class="form-control form-control-sm" id="crud-KanbanCycleTime" placeholder="Time format HH:mm with comma sparator if more than one cycle time                      ex: 10:15, 21:45" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudKanbanListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudKanbanList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudCostCenterListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="CostCenterAction" />
+            <input type="hidden" id="CostCenterId" />
+            <input type="hidden" id="CostCenterRowStatus" />
+
+            <form id="crudCostCenterForm" class="needs-validation" novalidate>
+                <input type="text" class="form-control form-control-sm" id="crud-CostCenterSupplierId" hidden>
+
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Cost Center</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-CostCenterCostId" class="col-form-label col-form-label-sm">Cost Id</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-CostCenterCostId" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-CostCenterCostName" class="col-form-label col-form-label-sm">Cost Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-CostCenterCostName">
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div id="crudCostCenterListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudCostCenterList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudBankAccountListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <input type="hidden" id="BankAccountAction" />
+            <input type="hidden" id="BankId" />
+            <input type="hidden" id="BankAccountRowStatus" />
+
+            <form id="crudBankAccountForm" class="needs-validation" novalidate>
+                <input type="text" class="form-control form-control-sm" id="crud-BankAccountSupplierId" hidden>
+
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Cost Center</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountBankId" class="col-form-label col-form-label-sm">Bank</label>
+                                <select type="text" class="custom-select custom-select-sm" id="crud-BankAccountBankId" required></select>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountBankAddress" class="col-form-label col-form-label-sm">Branch / Address</label>
+                                <input class="form-control form-control-sm" id="crud-BankAccountBankAddress" />
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountAccountNumber" class="col-form-label col-form-label-sm">Account Number</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-BankAccountAccountNumber" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountAccountName" class="col-form-label col-form-label-sm">Account Name</label>
+                                <input type="text" class="form-control form-control-sm" id="crud-BankAccountAccountName" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountStartDate" class="col-form-label col-form-label-sm">Start Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-BankAccountStartDate" required>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="crud-BankAccountEndDate" class="col-form-label col-form-label-sm">End Date</label>
+                                <input type="date" class="form-control form-control-sm datepicker" id="crud-BankAccountEndDate">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudBankAccountListError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudBankAccountList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<script>
+
+    function crudSupplierList(action, id) {
+
+        document.getElementById("crudSupplierForm").reset();
+        $("#image-logo").attr("src", "../_VSSPAssets/Images/noimage.png");
+        $('#crudSupplierForm').removeClass('was-validated');
+        $('#crudSupplierListError').html("");
+        $('#btn-addContact').removeAttr('disabled');
+        $('#btn-addKanban').removeAttr('disabled');
+        $('a[href="#tabcrudSupplier"]').click()
+        $("#btn-uploadLogo").removeClass("invisible");
+        $("#btn-crudSupplierList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-SupplierActived").removeAttr("checked").removeAttr("disabled");
+        $("#crudSupplierForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#SupplierAction").val(action);
+        //$("#contactAction").val(action);
+        //$("#contactId").val(SupplierName);
+
+        reloadGridContact(id);
+        reloadGridKanban(id);
+        reloadGridCostCenter(id);
+        reloadGridBankAccount(id);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                SupplierName = Grid.jqGrid('getCell', selectedRowId, 'SupplierName'),
+                Address = Grid.jqGrid('getCell', selectedRowId, 'Address'),
+                City = Grid.jqGrid('getCell', selectedRowId, 'City'),
+                Provience = Grid.jqGrid('getCell', selectedRowId, 'Provience'),
+                Country = Grid.jqGrid('getCell', selectedRowId, 'Country'),
+                PostalCode = Grid.jqGrid('getCell', selectedRowId, 'PostalCode'),
+                TaxId = Grid.jqGrid('getCell', selectedRowId, 'TaxId'),
+                Websites = Grid.jqGrid('getCell', selectedRowId, 'Websites'),
+                Actived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            Logo = $("#logo-" + id).attr("src");
+
+            $("#crud-SupplierId").val(id);
+            $("#crud-SupplierName").val(SupplierName);
+            $("#crud-SupplierAddress").val(Address);
+            $("#crud-SupplierCity").val(City);
+            $("#crud-SupplierProvience").val(Provience);
+            $("#crud-SupplierCountry").val(Country);
+            $("#crud-SupplierPostalCode").val(PostalCode);
+            $("#crud-SupplierTaxId").val(TaxId);
+            $("#crud-SupplierWebsites").val(Websites);
+            if (Actived.includes("success")) {
+                $("#crud-SupplierActived").attr("checked", true);
+            } else {
+                $("#crud-SupplierActived").removeAttr("checked");
+            }
+            if (Logo === undefined) {
+                $("#image-logo").attr("src", "../_VSSPAssets/Images/noimage.png");
+            } else {
+                $("#image-logo").removeAttr("src").attr("src", Logo);
+            }
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-SupplierActived").attr("checked", true).attr("disabled", true).val("true");
+                $("#crudSupplierListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudSupplierListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSupplierListModal').modal('show');
+                $("#crud-SupplierId").focus();
+                break;
+            case "Update":
+                $("#crud-SupplierId").attr("readonly",true);
+                $("#crudSupplierListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudSupplierListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSupplierListModal').modal('show');
+                $("#crud-SupplierName").focus();
+                break;
+            case "Delete":
+                $("#crudSupplierForm :input").each(function () {
+                    $(this).attr("readonly",true);
+                });
+                $("#crud-SupplierActived").attr("disabled", true);
+                $('#btn-addContact').attr('disabled', true);
+                $('#btn-addKanban').attr('disabled', true);
+                $("#btn-uploadLogo").addClass("invisible");
+                $("#btn-crudSupplierList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudSupplierListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudSupplierListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudSupplierListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudContactList(action, name) {
+        document.getElementById("crudContactForm").reset();
+        $('#crudContactForm').removeClass('was-validated');
+        $('#crudSupplierListError').html("");
+        $('#crudContactListError').html("");
+        $("#btn-crudContactList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudContactForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-ContactReceiveOrder").removeAttr("disabled");
+        $("#crud-ContactReceiveInvoice").removeAttr("disabled");
+
+        $("#contactAction").val(action);
+        $("#contactId").val(name);
+        var suppid = $("#crud-SupplierId").val();
+
+        if (name != "") {
+            var rowData = $("#jqGridCrudContact").jqGrid("getRowData", name),
+                RowStatus = rowData.RowStatus.split(">"),
+                ContactName = rowData.ContactName,
+                Organization = rowData.Organization,
+                Position = rowData.Position,
+                Phone1 = rowData.Phone1,
+                Phone2 = rowData.Phone2,
+                Fax = rowData.Fax,
+                Email = rowData.Email,
+                ReceiveOrder = rowData.ReceiveOrder,
+                ReceiveInvoice = rowData.ReceiveInvoice;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#contactRowStatus").val(RowStatus);
+            $("#crud-ContactSupplierId").val(suppid);
+            $("#crud-ContactName").val(ContactName);
+            $("#crud-ContactOrganization").val(Organization);
+            $("#crud-ContactPosition").val(Position);
+            $("#crud-ContactPhone1").val(Phone1);
+            $("#crud-ContactPhone2").val(Phone2);
+            $("#crud-ContactFax").val(Fax);
+            $("#crud-ContactEmail").val(Email);
+            if (ReceiveOrder.includes("success")) {
+                $("#crud-ContactReceiveOrder").attr("checked", true);
+            } else {
+                $("#crud-ContactReceiveOrder").removeAttr("checked");
+            }
+            if (ReceiveInvoice.includes("success")) {
+                $("#crud-ContactReceiveInvoice").attr("checked", true);
+            } else {
+                $("#crud-ContactReceiveInvoice").removeAttr("checked");
+            }
+        }
+
+        switch (action) {
+            case "Create":
+                if (suppid === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add contact.</small></div>'
+                    $('#crudSupplierListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-ContactSupplierId").attr("readonly", true);
+                $("#crud-ContactSupplierId").val(suppid);
+                $("#crudContactListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                $("#crud-ContactName").focus();
+                break;
+            case "Update":
+                $("#crud-ContactSupplierId").attr("readonly",true);
+                $("#crud-ContactName").attr("readonly", true);
+                $("#crudContactListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                $("#crud-ContactOrganization").focus();
+                break;
+            case "Delete":
+                $("#crudBankAccountForm :input").not(':input[type=button], :input[type=submit], :input[type=reset]').each(function () {
+                    $(this).attr("readonly", true).attr("disabled", true);
+                });
+                $("#crud-ContactReceiveOrder").attr("disabled", true);
+                $("#crud-ContactReceiveInvoice").attr("disabled", true);
+                $("#btn-crudContactList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudContactListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudContactListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudContactListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudKanbanList(action, id) {
+        document.getElementById("crudKanbanForm").reset();
+        $('#crudKanbanForm').removeClass('was-validated');
+        $('#crudKanbanListError').html("");
+        $("#btn-crudKanbanList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudKanbanForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#KanbanAction").val(action);
+        $("#KanbanId").val(id);
+        var suppid = $("#crud-SupplierId").val();
+
+        if (id != "*") {
+            var rowData = $("#jqGridCrudKanban").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                SupplierId = suppid,
+                KanbanStartDate = moment(new Date(rowData.StartDate)).format('YYYY-MM-DD'),
+                KanbanEndDate = moment(new Date(rowData.EndDate)).format('YYYY-MM-DD'),
+                Cycle1 = parseInt(rowData.Cycle1),
+                Cycle2 = parseInt(rowData.Cycle2),
+                Cycle3 = parseInt(rowData.Cycle3),
+                CycleTime = rowData.CycleTime;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#KanbanRowStatus").val(RowStatus);
+            $("#crud-KanbanSupplierId").val(SupplierId);
+            $("#crud-KanbanStartDate").val(KanbanStartDate);
+            $("#crud-KanbanEndDate").val(KanbanEndDate);
+            $("#crud-KanbanCycle1").val(Cycle1);
+            $("#crud-KanbanCycle2").val(Cycle2);
+            $("#crud-KanbanCycle3").val(Cycle3);
+            $("#crud-KanbanCycleTime").val(CycleTime);
+
+        }
+
+        switch (action) {
+            case "Create":
+                if (suppid === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Id before add Kanban.</small></div>'
+                    $('#crudRawMaterialListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-KanbanSupplierId").val(suppid);
+                $("#crudKanbanListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudKanbanListModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Kanban Cycle');
+                $('#crudKanbanListModal').modal('show');
+                $("#crud-KanbanStartDate").focus();
+                break;
+            case "Update":
+                $("#crud-KanbanStartDate").attr("readonly", true);
+                $("#crudKanbanListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudKanbanListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Kanban Cycle');
+                $('#crudKanbanListModal').modal('show');
+                $("#crud-KanbanEndDate").focus();
+                break;
+            case "Delete":
+                $("#crudKanbanForm input").each(function () {
+                    $(this).attr("readonly",true).attr("disabled",true);
+                });
+                $("#btn-crudKanbanList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudKanbanListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudKanbanListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Kanban Cycle');
+                $('#crudKanbanListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-SupplierId').change(function () {
+        $('#crudSupplierListError').html("");
+    });
+
+    function crudCostCenterList(action, id) {
+        document.getElementById("crudCostCenterForm").reset();
+        $('#crudCostCenterForm').removeClass('was-validated');
+        $('#crudCostCenterListError').html("");
+        $("#btn-crudCostCenterList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudCostCenterForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#CostCenterAction").val(action);
+        $("#CostCenterId").val(id);
+
+        var suppid = $("#crud-SupplierId").val();
+
+        if (id != "*") {
+            var rowData = $("#jqGridCrudCostCenter").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                SupplierId = suppid,
+                CostId = rowData.CostId,
+                CostName = rowData.CostName;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#CostCenterRowStatus").val(RowStatus);
+            $("#crud-CostCenterSupplierId").val(SupplierId);
+            $("#crud-CostCenterCostId").val(CostId);
+            $("#crud-CostCenterCostName").val(CostName);
+        }
+
+        switch (action) {
+            case "Create":
+                if (suppid === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Supplier Id before add Cost Center.</small></div>'
+                    $('#crudRawMaterialListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-CostCenterSupplierId").val(suppid);
+                $("#crudCostCenterListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudCostCenterListModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Cost Center');
+                $('#crudCostCenterListModal').modal('show');
+                $("#crud-CostCenterCostId").focus();
+                break;
+            case "Update":
+                $("#crud-CostCenterCostId").attr("readonly", true);
+                $("#crudCostCenterListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudCostCenterListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Cost Center');
+                $('#crudCostCenterListModal').modal('show');
+                $("#crud-CostCenterCostName").focus();
+                break;
+            case "Delete":
+                $("#crudCostCenterForm input").each(function () {
+                    $(this).attr("readonly",true).attr("disabled",true);
+                });
+                $("#btn-crudCostCenterList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudCostCenterListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudCostCenterListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Cost Center');
+                $('#crudCostCenterListModal').modal('show');
+                break
+        }
+
+    }
+
+    function crudBankAccountList(action, id) {
+        document.getElementById("crudBankAccountForm").reset();
+        $('#crudBankAccountForm').removeClass('was-validated');
+        $('#crudBankAccountListError').html("");
+        $("#btn-crudBankAccountList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudBankAccountForm input,select,textarea").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#BankAccountAction").val(action);
+        $("#BankId").val(id);
+
+        var suppid = $("#crud-SupplierId").val();
+
+        if (id != "*") {
+            var rowData = $("#jqGridCrudBankAccount").jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                SupplierId = suppid,
+                BankId = rowData.BankId,
+                BankId = rowData.BankName,
+                BankAddress = rowData.BankAddress,
+                AccountNumber = rowData.AccountNumber,
+                AccountName = rowData.AccountName,
+                StartDate = moment(new Date(rowData.StartDate)).format('YYYY-MM-DD'),
+                EndDate = moment(new Date(rowData.EndDate)).format('YYYY-MM-DD');
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            $("#BankAccountRowStatus").val(RowStatus);
+            $("#crud-BankAccountSupplierId").val(SupplierId);
+            $("#crud-BankAccountBankId").val(BankId);
+            $("#crud-BankAccountAccountNumber").val(AccountNumber);
+            $("#crud-BankAccountAccountName").val(AccountName);
+            $("#crud-BankAccountBankAddress").val(BankAddress);
+            $("#crud-BankAccountStartDate").val(StartDate);
+            $("#crud-BankAccountEndDate").val(EndDate);
+        }
+
+        switch (action) {
+            case "Create":
+                if (suppid === "") {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>No Id!</b><br/>Please type @ViewBag.Title Supplier Id before add Bank Account.</small></div>'
+                    $('#crudRawMaterialListError').html(errMsg);
+                    return false;
+                }
+                $("#crud-BankAccountSupplierId").val(suppid);
+                $("#crudBankAccountListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudBankAccountListModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Bank Account');
+                $('#crudBankAccountListModal').modal('show');
+                $("#crud-BankAccountBankId").focus();
+                break;
+            case "Update":
+                $("#crud-BankAccountBankId").attr("disabled", true);
+                $("#crud-BankAccountStartDate").attr("disabled", true);
+                $("#crudBankAccountListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudBankAccountListModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Bank Account');
+                $('#crudBankAccountListModal').modal('show');
+                $("#crud-BankAccountBankName").focus();
+                break;
+            case "Delete":
+                $("#crudBankAccountForm :input").not(':input[type=button], :input[type=submit], :input[type=reset]').each(function () {
+                    $(this).attr("readonly", true).attr("disabled", true);
+                });
+                $("#btn-crudBankAccountList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudBankAccountListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudBankAccountListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Bank Account');
+                $('#crudBankAccountListModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-SupplierId').change(function () {
+        $('#crudSupplierListError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudContactForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var name = $('#crud-ContactName').val();
+                    var action = $('#contactAction').val();
+                    var rowStatus = $('#contactRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+                            var alreadyInput = validationAlreadyInput(name);
+
+                            if (alreadyInput === true) {
+                               var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Contact!</b><br/>' + name + ' already created, please check carefully before creating @ViewBag.Title Contact.</small></div>'
+                                $('#crudContactListError').html(errMsg);
+                                event.stopPropagation();
+                                return false;
+                            }
+
+                            parameters =
+                            {
+                                rowID: $("#crud-ContactName").val(),
+                                initdata: {
+                                    RowStatus: action,
+                                    ContactId: $("#crud-ContactName").val(),
+                                    SupplierId: $("#crud-ContactSupplierId").val(),
+                                    ContactName: $("#crud-ContactName").val(),
+                                    Organization: $("#crud-ContactOrganization").val(),
+                                    Position: $("#crud-ContactPosition").val(),
+                                    Phone1: $("#crud-ContactPhone1").val(),
+                                    Phone2: $("#crud-ContactPhone2").val(),
+                                    Fax: $("#crud-ContactFax").val(),
+                                    Email: $("#crud-ContactEmail").val(),
+                                    ReceiveOrder: $("#crud-ContactReceiveOrder").prop("checked"),
+                                    ReceiveInvoice: $("#crud-ContactReceiveInvoice").prop("checked"),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudContact").jqGrid('addRow', parameters);
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#contactId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                SupplierId: $("#crud-ContactSupplierId").val(),
+                                ContactName: $("#crud-ContactName").val(),
+                                Organization: $("#crud-ContactOrganization").val(),
+                                Position: $("#crud-ContactPosition").val(),
+                                Phone1: $("#crud-ContactPhone1").val(),
+                                Phone2: $("#crud-ContactPhone2").val(),
+                                Fax: $("#crud-ContactFax").val(),
+                                Email: $("#crud-ContactEmail").val(),
+                                ReceiveOrder: $("#crud-ContactReceiveOrder").prop("checked"),
+                                ReceiveInvoice: $("#crud-ContactReceiveInvoice").prop("checked"),
+                            }
+
+                            $("#jqGridCrudContact").jqGrid('setRowData', rowid, parameters);
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#contactId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudContact').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudContact").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            break;
+                    }
+
+                    $('#crudContactListModal').modal('hide');
+                }
+            });
+        });
+    });
+
+    //CRUD KANBAN
+    $(document).ready(function () {
+        $(function () {
+            $("#crudKanbanForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudKanbanForm input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+                        var startdate = $('#crud-KanbanStartDate').val();
+                        var enddate = $('#crud-KanbanEndDate').val();
+                        var action = $('#KanbanAction').val();
+                        var rowStatus = $('#KanbanRowStatus').val();
+                        var alreadyInput = validationAlreadyInputKanban(action, $("#KanbanId").val(), startdate, enddate);
+
+                        $("#jqGridCrudKanban")[0].grid.beginReq();
+
+                        switch (action) {
+                            case "Create":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Kanban in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active Kanban on range start and end date, please check carefully before creating @ViewBag.Title Kanban.</small></div>'
+                                    $('#crudKanbanListError').html(errMsg);
+
+                                    $("#jqGridCrudKanban")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    parameters =
+                                    {
+                                        rowID: $("#crud-KanbanStartDate").val(),
+                                        initdata: {
+                                            RowStatus: action,
+                                            KanbanId: $("#crud-KanbanStartDate").val(),
+                                            SupplierId: $("#crud-KanbanSupplierId").val(),
+                                            StartDate: $("#crud-KanbanStartDate").val(),
+                                            EndDate: $("#crud-KanbanEndDate").val(),
+                                            Cycle1: $("#crud-KanbanCycle1").val(),
+                                            Cycle2: $("#crud-KanbanCycle2").val(),
+                                            Cycle3: $("#crud-KanbanCycle3").val(),
+                                            CycleTime: $("#crud-KanbanCycleTime").val(),
+                                        },
+                                        position: "last",
+                                    }
+
+                                    $("#jqGridCrudKanban").jqGrid('addRow', parameters);
+                                }
+
+                                break;
+
+                            case "Update":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add Kanban in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active Kanban on range start and end date, please check carefully before creating @ViewBag.Title Kanban.</small></div>'
+                                    $('#crudKanbanListError').html(errMsg);
+
+                                    $("#jqGridCrudKanban")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    var rowid = $("#KanbanId").val();
+
+                                    if (rowStatus != "New") {
+                                        rowStatus = action
+                                    } else {
+                                        rowStatus = "Create"
+                                    }
+
+                                    var sdate = moment(new Date($("#crud-KanbanStartDate").val())).format("DD MMM YYYY");
+                                    var edate = $("#crud-KanbanEndDate").val();
+                                    if (edate != "") {
+                                        edate = moment(new Date($("#crud-KanbanEndDate").val())).format("DD MMM YYYY");
+                                    } else {
+                                        edate = null;
+                                    }
+                                    //alert(edate);
+
+                                    parameters =
+                                    {
+                                        RowStatus: rowStatus,
+                                        StartDate: sdate,
+                                        EndDate: edate,
+                                        Cycle1: $("#crud-KanbanCycle1").val(),
+                                        Cycle2: $("#crud-KanbanCycle2").val(),
+                                        Cycle3: $("#crud-KanbanCycle3").val(),
+                                        CycleTime: $("#crud-KanbanCycleTime").val(),
+                                    }
+
+                                    $("#jqGridCrudKanban").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#KanbanId").val();
+                                var sdate = moment(new Date($("#crud-KanbanStartDate").val())).format("DD MMM YYYY");
+
+                                if (rowStatus === "New") {
+                                    $('#jqGridCrudKanban').jqGrid('delRowData', rowid);
+                                } else {
+                                    parameters =
+                                    {
+                                        StartDate: sdate,
+                                        RowStatus: action,
+                                    }
+                                    $("#jqGridCrudKanban").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+                        }
+
+                        $("#jqGridCrudKanban")[0].grid.endReq();
+                        $('#crudKanbanListModal').modal('hide');
+
+                    }
+
+                }, 250);
+
+            });
+        });
+    });
+
+    //CRUD COST CENTER
+    $(document).ready(function () {
+        $(function () {
+            $("#crudCostCenterForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var costId = $('#crud-CostCenterCostId').val();
+                    var action = $('#CostCenterAction').val();
+                    var rowStatus = $('#CostCenterRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+                            var alreadyInput = validationAlreadyInput(costId);
+
+                            if (alreadyInput === true) {
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add CostCenter!</b><br/>' + costId + ' already created, please check carefully before creating @ViewBag.Title Cost enter.</small></div>'
+                                $('#crudCostCenterListError').html(errMsg);
+                                event.stopPropagation();
+                                return false;
+                            }
+
+                            parameters =
+                            {
+                                rowID: costId,
+                                initdata: {
+                                    RowStatus: action,
+                                    CostId: $("#crud-CostCenterCostId").val(),
+                                    CostName: $("#crud-CostCenterCostName").val(),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudCostCenter").jqGrid('addRow', parameters);
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#crud-CostCenterCostId").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                CostName: $("#crud-CostCenterCostName").val(),
+                            }
+
+                            $("#jqGridCrudCostCenter").jqGrid('setRowData', rowid, parameters);
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#crud-CostCenterCostId").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudCostCenter').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudCostCenter").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            break;
+                    }
+
+                    $('#crudCostCenterListModal').modal('hide');
+                }
+            });
+        });
+    });
+
+    //CRUD BANK ACCOUNT
+    $(document).ready(function () {
+        $(function () {
+            $("#crudBankAccountForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudBankAccountForm input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+                        var startdate = $('#crud-BankAccountStartDate').val();
+                        var enddate = $('#crud-BankAccountEndDate').val();
+                        var action = $('#BankAccountAction').val();
+                        var rowStatus = $('#BankAccountRowStatus').val();
+                        var alreadyInput = validationAlreadyInputBankAccount(action, $("#BankId").val(), startdate, enddate);
+
+                        $("#jqGridCrudBankAccount")[0].grid.beginReq();
+
+                        switch (action) {
+                            case "Create":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add BankAccount in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active BankAccount on range start and end date, please check carefully before creating @ViewBag.Title BankAccount.</small></div>'
+                                    $('#crudBankAccountListError').html(errMsg);
+
+                                    $("#jqGridCrudBankAccount")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    parameters =
+                                    {
+                                        rowID: $("#crud-BankAccountStartDate").val(),
+                                        initdata: {
+                                            RowStatus: action,
+                                            BankId: $("#crud-BankAccountBankId").val(),
+                                            BankName: $("#crud-BankAccountBankId option:selected").text(),
+                                            AccountNumber: $("#crud-BankAccountAccountNumber").val(),
+                                            AccountName: $("#crud-BankAccountAccountName").val(),
+                                            SupplierId: $("#crud-BankAccountSupplierId").val(),
+                                            StartDate: $("#crud-BankAccountStartDate").val(),
+                                            EndDate: $("#crud-BankAccountEndDate").val(),
+                                            BankAddress: $("#crud-BankAccountBankAddress").val()
+                                        },
+                                        position: "last",
+                                    }
+
+                                    $("#jqGridCrudBankAccount").jqGrid('addRow', parameters);
+                                }
+
+                                break;
+
+                            case "Update":
+
+                                if (alreadyInput === true) {
+
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Cannot Add BankAccount in ' + startdate + ' ' + enddate + '!</b><br/>Already created or invalid range or already active BankAccount on range start and end date, please check carefully before creating @ViewBag.Title BankAccount.</small></div>'
+                                    $('#crudBankAccountListError').html(errMsg);
+
+                                    $("#jqGridCrudBankAccount")[0].grid.endReq();
+                                    event.stopPropagation();
+                                    return false;
+
+                                } else {
+                                    var rowid = $("#BankId").val();
+
+                                    if (rowStatus != "New") {
+                                        rowStatus = action
+                                    } else {
+                                        rowStatus = "Create"
+                                    }
+
+                                    var sdate = moment(new Date($("#crud-BankAccountStartDate").val())).format("DD MMM YYYY");
+                                    var edate = $("#crud-BankAccountEndDate").val();
+                                    if (edate != "") {
+                                        edate = moment(new Date($("#crud-BankAccountEndDate").val())).format("DD MMM YYYY");
+                                    } else {
+                                        edate = null;
+                                    }
+                                    //alert(edate);
+
+                                    parameters =
+                                    {
+                                        RowStatus: rowStatus,
+                                        StartDate: sdate,
+                                        EndDate: edate,
+                                        BankAddress: $("#crud-BankAccountBankAddress").val(),
+                                        AccountNumber: $("#crud-BankAccountAccountNumber").val(),
+                                        AccountName: $("#crud-BankAccountAccountName").val()
+                                    }
+
+                                    $("#jqGridCrudBankAccount").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+
+                            case "Delete":
+
+                                var rowid = $("#BankId").val();
+                                var sdate = moment(new Date($("#crud-BankAccountStartDate").val())).format("DD MMM YYYY");
+
+                                if (rowStatus === "New") {
+                                    $('#jqGridCrudBankAccount').jqGrid('delRowData', rowid);
+                                } else {
+                                    parameters =
+                                    {
+                                        StartDate: sdate,
+                                        RowStatus: action,
+                                    }
+                                    $("#jqGridCrudBankAccount").jqGrid('setRowData', rowid, parameters);
+                                }
+
+                                break;
+                        }
+
+                        $("#jqGridCrudBankAccount")[0].grid.endReq();
+                        $('#crudBankAccountListModal').modal('hide');
+
+                    }
+
+                }, 250);
+
+            });
+        });
+    });
+
+    function validationAlreadyInput(val) {
+        var result = false;
+
+        var grid = $('#jqGridCrudContact');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+            contactName = rowData['ContactName'];
+            if (contactName === val) {
+                result = true;
+            }
+        }
+
+        return result;
+
+    };
+
+    function validationExist(cid) {
+
+        if (aid === "*") {
+            aid = $("#crud-FinishGoodAreaId").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("LocationListJson", "Warehouse")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter : aid},
+            success: function (response) {
+
+                var id = "#crud-FinishGoodLocationId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Location")
+                );
+                $.each(response, function (i, location) {
+                    $(id).append(
+                        $('<option></option>').val(location.LocationId).html(location.LocationName)
+                    );
+                });
+            }
+        })
+    }
+
+    function validationAlreadyInputKanban(action, id, valstart, valend) {
+        var result = false;
+
+        var grid = $('#jqGridCrudKanban');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            rowStatus = rowData['RowStatus'].split('>');
+            rowStartDate = moment(new Date(rowData['StartDate'])).format('YYYY-MM-DD');
+            rowEndDate = moment(new Date(rowData['EndDate'])).format('YYYY-MM-DD');
+            valStartDate = moment(new Date(valstart)).format('YYYY-MM-DD');
+            valEndDate = moment(new Date(valend)).format('YYYY-MM-DD');
+
+            if (rowStatus != "") {
+                rowStatus = rowStatus[1].split('<');
+                rowStatus = rowStatus[0];
+            }
+
+            if (rowEndDate === 'Invalid date') {
+                rowEndDate = moment(new Date(valstart)).add(-1, "days").format('YYYY-MM-DD');
+            }
+            if (valEndDate == 'Invalid date') {
+                valEndDate = valStartDate;
+            }
+
+            switch (action) {
+                case "Create":
+                    if (rowStartDate === valStartDate || (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    } else {
+
+
+                        if (rowData['EndDate'].length <= 1) {
+
+                            if (rowStatus != "New") {
+                                rowStatus = "Update"
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                StartDate: moment(rowStartDate).format("DD MMM YYYY"),
+                                EndDate: moment(rowEndDate).format("DD MMM YYYY"),
+                                RowStatus:rowStatus,
+                            }
+                            $("#jqGridCrudKanban").jqGrid('setRowData', rows[i], parameters);
+                        }
+                    }
+
+                    break;
+                case "Update":
+                    if (rows[i] != id && (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    }
+                    break;
+            }
+
+        }
+
+        return result;
+
+    };
+
+    function validationAlreadyInputBankAccount(action, id, valstart, valend) {
+        var result = false;
+
+        var grid = $('#jqGridCrudBankAccount');
+        var rows = grid.jqGrid('getDataIDs');
+
+        for (i = 0; i < rows.length; i++) {
+            var rowData = grid.jqGrid('getRowData', rows[i]);
+
+            rowStatus = rowData['RowStatus'].split('>');
+            rowStartDate = moment(new Date(rowData['StartDate'])).format('YYYY-MM-DD');
+            rowEndDate = moment(new Date(rowData['EndDate'])).format('YYYY-MM-DD');
+            valStartDate = moment(new Date(valstart)).format('YYYY-MM-DD');
+            valEndDate = moment(new Date(valend)).format('YYYY-MM-DD');
+
+            if (rowStatus != "") {
+                rowStatus = rowStatus[1].split('<');
+                rowStatus = rowStatus[0];
+            }
+
+            if (rowEndDate === 'Invalid date') {
+                rowEndDate = moment(new Date(valstart)).add(-1, "days").format('YYYY-MM-DD');
+            }
+            if (valEndDate == 'Invalid date') {
+                valEndDate = valStartDate;
+            }
+
+            switch (action) {
+                case "Create":
+                    if (rowStartDate === valStartDate || (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    } else {
+
+
+                        if (rowData['EndDate'].length <= 1) {
+
+
+                            if (rowStatus != "New") {
+                                rowStatus = "Update"
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                StartDate: moment(rowStartDate).format("DD MMM YYYY"),
+                                EndDate: moment(rowEndDate).format("DD MMM YYYY"),
+                                RowStatus: rowStatus,
+                            }
+                            $("#jqGridCrudBankAccount").jqGrid('setRowData', rows[i], parameters);
+                        }
+                    }
+
+                    break;
+                case "Update":
+                    if (rows[i] != id && (rowStartDate <= valStartDate && rowEndDate >= valStartDate) || (valStartDate > valEndDate)) {
+                        result = true;
+                    }
+                    break;
+            }
+
+        }
+
+        return result;
+
+    };
+    $(function () {
+        $gridContact = $("#jqGridCrudContact").jqGrid({
+            url: "@Url.Action("SupplierContactListJson", "Suppliers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {Supplierid : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionContactFormatter },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 50, formatter: statusCrudFormatter },
+                { label: 'Contact Id', name: 'ContactId', key: true, hidden: true },
+                { label: 'Supplier Id', name: 'SupplierId', hidden: true },
+                { label: 'Contact Name', name: 'ContactName', align: 'left', fixed: true, width: 100 },
+                { label: 'Organization', name: 'Organization', align: 'left', fixed: true, width: 100 },
+                { label: 'Position', name: 'Position', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #1', name: 'Phone1', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #2', name: 'Phone2', align: 'left', fixed: true, width: 100 },
+                { label: 'Fax', name: 'Fax', align: 'left', fixed: true, width: 100 },
+                { label: 'Email', name: 'Email', align: 'left', fixed: true, width: 150 },
+                { label: 'Receive Order', name: 'ReceiveOrder', edittype: "checkbox", editoptions: { value: "true:false" }, align: 'center', fixed: true, width: 80, formatter: statusFormatter },
+                { label: 'Receive Invoice', name: 'ReceiveInvoice', edittype: "checkbox", editoptions: { value: "true:false" }, align: 'center', fixed: true, width: 100, formatter: statusFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudContact').jqGrid('navGrid', '#jqGridPagercrudContact',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+    $(function () {
+        $gridKanban = $("#jqGridCrudKanban").jqGrid({
+            url: "@Url.Action("KanbanCycleListJson", "Suppliers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {key : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionKanbanFormatter },
+                { label: 'Raw Material Id', name: 'RawMaterialId', key: true, hidden: true },
+                { label: 'Supplier Id', name: 'SupplierId', hidden: true },
+                { label: 'Start Date', name: 'StartDate', editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'End Date', name: 'EndDate', editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'Cycle #1', name: 'Cycle1', width: 60, align: 'center', fixed: true, },
+                { label: 'Cycle #2', name: 'Cycle2', width: 60, align: 'center', fixed: true, },
+                { label: 'Cycle #3', name: 'Cycle3', width: 60, align: 'center', fixed: true, },
+                { label: 'Cycle Time', name: 'CycleTime', align: 'center', autoResizing: { minColWidth: 100 } },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 80, formatter: statusCrudFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudKanban').jqGrid('navGrid', '#jqGridPagercrudKanban',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+    });
+
+     $(function () {
+        $gridCostCenter = $("#jqGridCrudCostCenter").jqGrid({
+            url: "@Url.Action("SupplierCostCenterListJson", "Suppliers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {SupplierId : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionCostCenterFormatter },
+                { label: 'Cost Id', name: 'CostId', key: true, width: 60, align: 'center', fixed: true, },
+                { label: 'Cost Name', name: 'CostName', align: 'left', autoResizing: { minColWidth: 100 } },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 80, formatter: statusCrudFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudCostCenter').jqGrid('navGrid', '#jqGridPagercrudCostCenter',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+     });
+
+    $(function () {
+        $gridBankAccount = $("#jqGridCrudBankAccount").jqGrid({
+            url: "@Url.Action("SupplierBankAccountListJson", "Suppliers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {SupplierId : "*"},
+            colModel: [
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 50, formatter: actionBankAccountFormatter },
+                { label: 'Bank Id', name: 'BankId', width: 60, align: 'center', hidden: true, },
+                { label: 'Bank Name', name: 'BankName', align: 'left', width: 120, fixed: true },
+                { label: 'Branch / Address', name: 'BankAddress', align: 'left', width: 100, fixed: true },
+                { label: 'Account Number', name: 'AccountNumber', align: 'left', width: 100, fixed: true },
+                { label: 'Account Name', name: 'AccountName', align: 'left', width: 120, fixed: true },
+                { label: 'Start Date', name: 'StartDate', key: true, editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'End Date', name: 'EndDate', editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'Status', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 80, formatter: statusCrudFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            height:200,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridCrudBankAccount').jqGrid('navGrid', '#jqGridPagercrudBankAccount',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+     });
+    function reloadGridContact(id) {
+        $("#jqGridCrudContact").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                Supplierid: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridKanban(id) {
+        $("#jqGridCrudKanban").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                key: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridCostCenter(id) {
+        $("#jqGridCrudCostCenter").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                SupplierId: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function reloadGridBankAccount(id) {
+        $("#jqGridCrudBankAccount").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                SupplierId: id,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionContactFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudContactList('Update','" + rowObject.ContactId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Contact [ " + rowObject.ContactName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudContactList('Delete','" + rowObject.ContactId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Contact [ " + rowObject.ContactName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function actionKanbanFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudKanbanList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Kanban [ " + rowObject.Cycle1 + '-' + rowObject.Cycle2 + '-' + rowObject.Cycle3 + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudKanbanList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Kanban [ " + rowObject.Cycle1 + '-' + rowObject.Cycle2 + '-' + rowObject.Cycle3 + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function actionCostCenterFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudCostCenterList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title CostCenter [ " + rowObject.CostName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudCostCenterList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title CostCenter [ " + rowObject.CostName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function actionBankAccountFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudBankAccountList('Update','" + options.rowId + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title BankAccount [ " + rowObject.CostName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudBankAccountList('Delete','" + options.rowId + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title BankAccount [ " + rowObject.CostName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                return "";
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudSupplierForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        Supplier: {
+                            SupplierId  : $("#crud-SupplierId").val(),
+                            SupplierName: $("#crud-SupplierName").val(),
+                            Address     : $("#crud-SupplierAddress").val(),
+                            City        : $("#crud-SupplierCity").val(),
+                            Provience   : $("#crud-SupplierProvience").val(),
+                            Country     : $("#crud-SupplierCountry").val(),
+                            PostalCode  : $("#crud-SupplierPostalCode").val(),
+                            TaxId       : $("#crud-SupplierTaxId").val(),
+                            Websites    : $("#crud-SupplierWebsites").val(),
+                            Actived     : $("#crud-SupplierActived").prop("checked"),
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        SupplierContact: $("#jqGridCrudContact").jqGrid('getGridParam', 'data'),
+                        KanbanCycle: $("#jqGridCrudKanban").jqGrid('getGridParam', 'data'),
+                        SupplierCostCenter: $("#jqGridCrudCostCenter").jqGrid('getGridParam', 'data'),
+                        SupplierBankAccount: $("#jqGridCrudBankAccount").jqGrid('getGridParam', 'data'),
+                        formAction: $("#SupplierAction").val()
+                    };
+
+                    $.each(jsonData.KanbanCycle, function (i, js) {
+                        if (js.EndDate === "&#160;") {
+                            js.EndDate = null;
+                        }
+                    });
+                    $.each(jsonData.SupplierBankAccount, function (i, js) {
+                        if (js.EndDate === "&#160;") {
+                            js.EndDate = null;
+                        }
+                    });
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    //upload images
+                    var fileUpload = $("#SupplierLogo").get(0);
+                    var files = fileUpload.files;
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append(files[i].name, files[i]);
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("crudSupplierList","Suppliers")',
+                        type: 'POST',
+                        contentType: false, // Not to set any content header
+                        processData: false, // Not to process data
+                        dataType: "JSON",
+                        data: formData,
+                        success: function (data) {
+                            $('#crudSupplierListModal').modal('hide');
+                            var act = $("#SupplierAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudSupplierListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    function loadComboSupplier() {
+
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-KanbanSupplierId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("Filter")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.SupplierId).html(sup.SupplierId)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboBank();
+
+    function loadComboBank() {
+
+        $.ajax({
+            url: '@Url.Action("BankListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-BankAccountBankId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Bank")
+                );
+                $.each(response, function (i, bank) {
+                    $(id).append(
+                        $('<option></option>').val(bank.BankId).html(bank.BankName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+

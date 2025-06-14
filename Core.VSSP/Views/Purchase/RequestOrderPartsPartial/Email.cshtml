@@ -1,0 +1,203 @@
+﻿<div class="modal animated fadeIn" id="crudRequestOrderPartsEmailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-envelope"></span> Sent Email</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <button id="btn-EmailApproval" type="button" class="btn btn-sm btn-warning btn-block" onclick="sentRequestOrderPartsEmail('Approval')"><span class="fa fa-share-square"></span> To Logistic</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+            <input type="hidden" id="RequestOrderPartsNumberEmail" />
+            <input type="hidden" id="RequestOrderPartsDateEmail" />
+            <input type="hidden" id="RequestOrderPartsLineIdEmail" />
+            <input type="hidden" id="RequestOrderPartsLineEmail" />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("../System/EmailSender")
+
+<script>
+
+    function sentRequestOrderPartsEmail(action, id, orderdate, line, lineid) {
+
+        var $grid = $("#jqGridMain");
+        if (id != "") {
+            var rowData = $grid.jqGrid("getRowData", id),
+                ApprovalName    = rowData.ApprovalName,
+                LineId          = rowData.LineId,
+                StatusName      = rowData.StatusName;
+        }
+
+        //$("#btn-EmailApproval").attr("disabled", true);
+        $("#btn-EmailLine").attr("disabled", true);
+
+        if (ApprovalName === "Created" || ApprovalName === "Checked") {
+            $("#btn-EmailApproval").removeAttr("disabled");
+        } else {
+            if (StatusName === "Open" || StatusName === "Sent") {
+                $("#btn-EmailLine").removeAttr("disabled");
+            }
+        }
+
+        switch (action) {
+            case "Open":
+
+                var OrderDate = moment(new Date(parseInt(orderdate.substr(6)))).format('MMMM DD, YYYY');
+                //console.log(lineid);
+                if (lineid != null) {
+                    LineId = lineid;
+                }
+                $("#RequestOrderPartsNumberEmail").val(id);
+                $("#RequestOrderPartsDateEmail").val(OrderDate);
+                $("#RequestOrderPartsLineIdEmail").val(LineId);
+                $("#RequestOrderPartsLineEmail").val(line);
+                $('#crudRequestOrderPartsEmailModal').modal('show');
+                break;
+
+            case "Approval":
+
+                var ordernumber = $("#RequestOrderPartsNumberEmail").val();
+                var orderdate   = $("#RequestOrderPartsDateEmail").val();
+                var line        = $("#RequestOrderPartsLineEmail").val();
+
+                var subject = "Request Order Parts List " + ordernumber;
+                var sentto = getApprovalMailList(ordernumber);
+                var attachment1 = "@Url.Action("RequestOrderParts","Reports")?OrderNumber=" + ordernumber;
+
+                var content = "";
+                content += "Please approve the following Request Order Parts : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + ordernumber + " </td></tr>";
+                content += "<tr><td width='120'>Line</td><td> : </td><td> " + line + " </td></tr>";
+                content += "<tr><td width='120'>Date </td><td> : </td><td> " + orderdate + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboApprovalMailList(ordernumber);
+                sentEmail("RequestOrderPartsApproval" ,subject, sentto, "", content, attachment1, '', '', ordernumber);
+                $('#crudRequestOrderPartsEmailModal').modal('hide');
+                break;
+
+        }
+
+    }
+
+    function getApprovalMailList(ordernumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("RequestOrderPartsApprovalListJson", "Purchase")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                ordernumber: ordernumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.UserId;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboApprovalMailList(ordernumber) {
+
+        $.ajax({
+            url: '@Url.Action("RequestOrderPartsApprovalListJson", "Purchase")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                ordernumber: ordernumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.UserId + '" selected>' + raw.UserName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+
+    function getLineMailList(Lineid) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("LineContactListJson", "Lines")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                LineId: Lineid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.Email;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboLineMailList(Lineid) {
+
+        $.ajax({
+            url: '@Url.Action("LineContactListJson", "Lines")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                LineId: Lineid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.Email + '" selected>' + raw.ContactName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+</script>

@@ -1,0 +1,57 @@
+﻿@model IEnumerable<Core.VSSP.WorkEntity.SP_GET_ProductionDailyShiftSummary_Result>
+
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 animated fade-in">
+            <div class="card bg-light shadow-sm">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <h5 class="font-weight-bold">@item.LineName [@item.ShiftId]</h5>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-left mb-0">
+                                <h6>Target</h6>
+                                <h6 class="text-value counter">@item.DailyShiftTarget.ToString("#,##0")</h6>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="text-right mb-0">
+                                <h6>Actual</h6>
+                                <h6 class="text-value counter">@item.DailyShiftActual.ToString("#,##0")</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <div class="progress progress-sm my-2 mb-0 pb-0 bg-white">
+                            <div id="prog-rawmaterial" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: @item.DailyShiftPercent%" aria-valuenow="@item.DailyShiftPercent" aria-valuemin="@item.DailyShiftPercent" aria-valuemax="100"></div>
+                        </div>
+                        <div class="text-muted">@item.DailyShiftPercent %</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<div class="col-md-3">
+            <div class="card shadow-sm">
+                <a href="#" id="btn-stockrawmaterial" onclick="changeStockFilter('rawmaterial')">
+                    <div class="card-body p-0 d-flex align-items-center bc-hover-primary">
+                        <div class="w-100 mr-2">
+                            <div id="stock-rawmaterial" class="text-value-sm text-primary font-3xl counter">@item.DailyShiftActual</div>
+                            <div class="text-muted text-uppercase font-weight-bold small">@item.LineName [@item.ShiftId]</div>
+                            <div>
+                                <div class="progress progress-xs my-2 mb-0 pb-0">
+                                    <div id="prog-rawmaterial" class="progress-bar bg-danger" role="progressbar" style="width: @item.DailyShiftPercent%" aria-valuenow="@item.DailyShiftPercent" aria-valuemin="@item.DailyShiftPercent" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>*@
+    }
+</div>
+
+

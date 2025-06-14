@@ -1,0 +1,109 @@
+﻿
+<div class="modal animated fadeIn" id="timerangeModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-clock-o"></span> Browse Time Range</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label for="crud-WorkingShiftStartTime" class="col-form-label col-form-label-sm">Start Time</label>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-sm date" id="datetimepickerStart" data-date-format="HH:mm" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                            <input type="text" id="StartTime" class="form-control form-control-sm datetimepicker-input" data-target="#datetimepickerStart" required />
+                            <div class="input-group-append" data-target="#datetimepickerStart" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="crud-WorkingShiftEndTime" class="col-form-label col-form-label-sm">End Time</label>
+                    <div class="col-md-12">
+                        <div class="input-group input-group-sm date" id="datetimepickerEnd" data-date-format="HH:mm" data-date-useseconds="false" data-date-pickDate="false" data-target-input="nearest">
+                            <input type="text" id="EndTime" class="form-control form-control-sm bg-white datetimepicker-input" data-target="#datetimepickerEnd" required />
+                            <div class="input-group-append" data-target="#datetimepickerEnd" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-clock-o"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="TimeRangeId" />
+                <script>
+
+                    //var StartTime = new Date();
+                    //var EndTime = new Date();
+                    //var timerange = moment(StartTime).format('H:m') + ' - ' + moment(EndTime).format('H:m');
+
+                    //$('input[name="timerange"]').val(timerange);
+
+                    //$(function () {
+                    //    $('input[name="timerange"]').timerangepicker({
+                    //        opens: 'center',
+                    //        timePicker: true
+                    //    }, function (start, end, label) {
+                    //        StartTime = start.format('HH:mm');
+                    //        EndTime = end.format('HH:mm');
+                    //    });
+                    //});
+
+                    $(function () {
+                        $('#datetimepickerStart').datetimepicker({
+                            autoclose: true,
+                            format: 'HH:mm'
+                        });
+                        $('#datetimepickerEnd').datetimepicker({
+                            autoclose: true,
+                            format: 'HH:mm'
+                        });
+                    });
+
+                    function applytimerange() {
+                        var StartTime = $("#StartTime").val();
+                        var EndTime = $("#EndTime").val();
+                        if (StartTime.length < 3) {
+                            alert("Plese select Start time correctly!");
+                            $("#StartTime").focus();
+                            return false;
+                        } else if (StartTime.length < 5 || EndTime.length < 5) {
+                            alert("Plese select End Time correctly!");
+                            $("#EndTime").focus();
+                            return false;
+                        } else {
+                            timerange = StartTime + " - " + EndTime;
+                            filterResult = timerange;
+                            $('#timerangeModal').modal('hide');
+                        }
+                    }
+
+                    function showfilterTime() {
+                        $('#timerangeModal').modal('show');
+                    }
+
+                </script>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="applytimerange();"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(function () {
+            $("#crudMenuForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    
+                }
+            });
+        });
+    });
+</script>

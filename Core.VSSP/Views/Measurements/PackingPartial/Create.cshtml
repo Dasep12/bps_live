@@ -1,0 +1,98 @@
+﻿
+<div class="modal animated fadeIn" id="createPackingModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="createPackingForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> Create @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-PackingId">Packing Id</label>
+                            <input type="text" class="form-control form-control-sm" id="create-PackingId" name="PackingId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-PackingName">Packing Name</label>
+                            <input type="text" class="form-control form-control-sm" id="create-PackingName" name="PackingName" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12 mb-2">
+                            <label for="create-Packingremarks">Remarks</label>
+                            <textarea type="text" rows="3" class="form-control form-control-sm" id="create-Packingremarks" name="remarks" value=""></textarea>
+                        </div>
+                    </div>
+                    <div id="createPackingError"></div>
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-create-Packing" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function addPacking() {
+        document.getElementById("createPackingForm").reset();
+        $('#createPackingForm').removeClass('was-validated');
+        $("#createPackingForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#createPackingError').html("");
+        $('#createPackingModal').modal('show');
+        $('#create-PackingId').focus()
+    }
+
+    $(document).ready(function () {
+        $(function () {
+            $("#createPackingForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $('#create-PackingId').val();
+                    var name = $('#create-PackingName').val();
+                    var remarks = $('#create-Packingremarks').val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudPacking","Measurements")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            PackingId      : id,
+                            PackingName    : name,
+                            remarks     : remarks,
+                            formAction  : 'create',
+                        },
+                        success: function (data) {
+                            $('#createPackingModal').modal('hide');
+                            doSuccess(data,'create');
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#createPackingError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+

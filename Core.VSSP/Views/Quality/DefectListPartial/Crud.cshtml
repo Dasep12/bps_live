@@ -1,0 +1,260 @@
+﻿
+
+<div class="modal animated fadeIn" id="crudDefectListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudDefectListForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListId" class="col-sm-3 col-form-label col-form-label-sm">Defect Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DefectListId" name="Id" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListName" class="col-sm-3 col-form-label col-form-label-sm">Defect Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DefectListName" name="Name" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListCategory" class="col-sm-3 col-form-label col-form-label-sm">Category</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm" id="crud-DefectListCategory" name="Category" required>
+                                        <option value="">Choose Defect Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListPartCategory" class="col-sm-3 col-form-label col-form-label-sm">Part Category</label>
+                                <div class="col-sm-9">
+                                    <select class="custom-select custom-select-sm" id="crud-DefectListPartCategory" name="PartCategory" required>
+                                        <option value="">Choose Part Category</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectListActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-DefectListActived">
+                                            <label class="custom-control-label" for="crud-DefectListActived"><small> Actived</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="crudDefectListError"></div>
+                    <input type="hidden" id="DefectListAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudDefectList" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudDefectList(action, id) {
+
+        document.getElementById("crudDefectListForm").reset();
+        $('#crudDefectListForm').removeClass('was-validated');
+        $('#crudDefectListError').html("");
+        $('#btn-addDefectListDetail').removeAttr('disabled');
+        $('#btn-importDefectListDetail').removeAttr('disabled');
+        $('#btn-crudDefectList').removeAttr('disabled');
+
+        $("#btn-crudDefectList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudDefectListForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-DefectListActived').attr("checked", true);
+
+        $("#DefectListAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                DefectListId = Grid.jqGrid('getCell', selectedRowId, 'DefectId'),
+                DefectListName = Grid.jqGrid('getCell', selectedRowId, 'DefectName'),
+                DefectCategory = Grid.jqGrid('getCell', selectedRowId, 'DefectCategory'),
+                PartCategory = Grid.jqGrid('getCell', selectedRowId, 'PartCategory'),
+                DefectListActived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            DefectListActived = DefectListActived.includes("success");
+
+            $("#crud-DefectListId").val(DefectListId);
+            $("#crud-DefectListName").val(DefectListName);
+            $("#crud-DefectListCategory").val(DefectCategory);
+            $("#crud-DefectListPartCategory").val(PartCategory);
+            $("#crud-DefectListActived").attr("checked", DefectListActived);
+
+        }
+
+        switch (action) {
+            case "Create":
+
+                $('#crud-DefectListActived').attr("disabled", true);
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDefectListModal').modal('show');
+                $("#crud-DefectListId").focus();
+
+                break;
+            case "Update":
+                $("#crud-DefectListId").attr("disabled", true);
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDefectListModal').modal('show');
+                $("#crud-DefectListRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudDefectListForm input,select").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-DefectListId").attr("disabled", true);
+                $('#btn-addDefectListDetail').attr('disabled', true);
+                $("#btn-crudDefectList").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudDefectListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudDefectListModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudDefectListModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-DefectListId').change(function () {
+        $('#crudDefectListError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudDefectListForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formaction = $("#DefectListAction").val(),
+                        Id = $("#crud-DefectListId").val(),
+                        Name = $("#crud-DefectListName").val(),
+                        Category = $("#crud-DefectListCategory").val(),
+                        PartCategory = $("#crud-DefectListPartCategory").val(),
+                        Actived = $("#crud-DefectListActived").prop("checked"),
+                        Uid = "@ViewBag.UserId";
+
+                    $.ajax({
+                        url: '@Url.Action("crudDefectList", "Quality")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            defectid: Id,
+                            defectname: Name,
+                            defectcategory: Category,
+                            partcategory: PartCategory,
+                            actived: Actived,
+                            uid: Uid,
+                            formAction: formaction
+                        },
+                        success: function (data) {
+                            $('#crudDefectListModal').modal('hide');
+                            var act = $("#DefectListAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudDefectListError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    loadComboCategory();
+    function loadComboCategory() {
+
+        $.ajax({
+            url: '@Url.Action("DefectCategoryJson", "Quality")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-DefectListCategory";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Defect Category")
+                );
+
+                $.each(response, function (i, cat) {
+                    $(id).append(
+                        $('<option></option>').val(cat.CategoryId).html(cat.CategoryName)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboPartCategory();
+    function loadComboPartCategory() {
+
+        $.ajax({
+            url: '@Url.Action("CategoriesListJson", "Measurements")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-DefectListPartCategory";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Part Category")
+                );
+
+                $.each(response, function (i, cat) {
+                    $(id).append(
+                        $('<option></option>').val(cat.CategoryId).html(cat.CategoryName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+

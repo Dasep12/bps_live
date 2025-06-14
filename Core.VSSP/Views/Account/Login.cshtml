@@ -1,0 +1,271 @@
+﻿@{ Layout = ""; }
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    @Html.Partial("_VSSPLayout/_app-meta")
+
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+
+    <!-- Bootstrap and necessary plugins-->
+    @Scripts.Render("~/Core/JS/Plugins")
+    @Scripts.Render("~/Core/JS/Main")
+    @Scripts.Render("~/Core/JS/jqGrid")
+    @Scripts.Render("~/Core/JS/Validation")
+
+    <style>
+        @{
+        var imgSrc = "";
+        }
+
+        @if (Session["BackgroundImage"] == null)
+        {
+            imgSrc = "/_VSSPAssets/Images/Background/plant-site.png";
+        }
+        else
+        {
+            var base64 = Convert.ToBase64String((byte[])Session["BackgroundImage"]);
+            imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+        }
+
+        body::after {
+            content: "";
+            background-image: url( @imgSrc );
+            background-size: cover;
+            /*opacity: 0.85;*/
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            position: absolute;
+            opacity:0.7;
+            z-index: -1;
+        }
+
+        .card {
+            opacity:1 !important;
+        }
+
+        .bg-layer {
+            background: url(../_VSSPAssets/Images/Background/dotted.png);
+            position: absolute;
+            width: 100%;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            /*opacity: 0.8;*/
+        }
+        .icon-input {
+            position: absolute;
+            right: 0;
+            margin-right: 10px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            z-index: 99;
+            color: grey;
+        }
+
+        input {
+            padding-right: 30px !important;
+        }
+
+        @@media only screen and (max-width: 1200px) {
+          body {
+            background-size: auto;
+            background-position:center;
+          }
+        }
+        /*@@media only screen and (max-width: 991px) {
+            .card-body {
+                background-color: #1a1a1a !important;
+                opacity: 0.85;
+            }
+        }*/
+    </style>
+</head>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")
+
+
+<body class="app flex-row align-items-center animated fadeIn">
+    <div class="bg-layer"></div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card-group">
+                    <div class="card bg-none ml-auto mr-0 d-md-down-none border-top-0 border-left-0 border-bottom-0">
+                        <div class="card-body ">
+                            <div class="container d-flex h-100">
+                                <div class="justify-content-center align-self-center mr-0 ml-auto">
+                                    <a href="@Url.Action("MainIndex","Index")">
+
+                                        @if (Session["CompLogo"] == null)
+                                        {
+                                            <img src="~/_VSSPAssets/Images/Logo/logo-vssp-title.png" class="align-middle" width="125" alt="vssp CoreUI">
+                                        }
+                                        else
+                                        {
+                                            var base64 = Convert.ToBase64String((byte[])Session["CompLogo"]);
+                                            var imgLogo = String.Format("data:image/jpg;base64,{0}", base64);
+
+                                            <img src="@imgLogo" class="align-middle" width="125" alt="@Session["CompName"].ToString()">
+                                        }
+                                        <p class="text-light text-shadow">Welcome to @Session["AppID"].ToString() @Session["AppVersion"].ToString().@Session["AppRevision"].ToString().@Session["AppBuild"].ToString()</p>
+                                    </a>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="card text-white bg-none border-0">
+                        <div class="card-body">
+                            <div class="bg-block-transparent shadow shadow-sm rounded"></div>
+                            <div class="container d-flex h-100">
+                                <div class="justify-content-center align-self-center w-100">
+                                    <div class="text-center border-bottom mb-3 d-lg-none">
+                                        <a href="@Url.Action("MainIndex","Index")">
+
+                                            @if (Session["CompLogo"] == null)
+                                            {
+                                                <img src="~/_VSSPAssets/Images/Logo/logo-vssp-title.png" class="align-middle" width="125" alt="vssp CoreUI">
+                                            }
+                                            else
+                                            {
+                                                var base64 = Convert.ToBase64String((byte[])Session["CompLogo"]);
+                                                var imgLogo = String.Format("data:image/jpg;base64,{0}", base64);
+
+                                                <img src="@imgLogo" class="align-middle" width="125" alt="@Session["CompName"].ToString()">
+                                            }
+                                            <p class="text-light text-shadow">Welcome to @Session["AppID"].ToString() @Session["AppVersion"].ToString().@Session["AppRevision"].ToString().@Session["AppBuild"].ToString()</p>
+                                        </a>
+                                    </div>
+                                    @using (Html.BeginForm("WebLogin", null, FormMethod.Post, new { @class = "", @novalidate = "@novalidate" }))
+                                    {
+
+                                        <label class="text-light text-shadow">Sign in to your account</label>
+
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="text" id="UserID" name="UserID" class="form-control rounded" placeholder="Username" required>
+                                                <span class="icon-input">
+                                                    <i class="icon-user" aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                            <label class="error text-danger" for="UserID" style="display:none"></label>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <input type="password" id="Password" name="Password" class="form-control rounded" placeholder="Password" required>
+                                                <span class="icon-input">
+                                                    <i class="icon-lock" aria-hidden="true"></i>
+                                                </span>
+                                            </div>
+                                            <label class="error text-danger" for="Password" style="display:none"></label>
+                                        </div>
+
+                                        <input type="hidden" id="LogIpAddress" name="LogIpAddress" class="form-control">
+                                        <input type="hidden" id="LogCountry" name="LogCountry" class="form-control">
+                                        <input type="hidden" id="LogCity" name="LogCity" class="form-control">
+
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <button type="submit" id="btn-submit" class="btn btn-success btn-spin"><i class="icon-login"></i> Login</button>
+                                                <a href="@Url.Action("ForgotPassword","Account")" class="btn btn-link ml-auto mr-0 pr-0 text-light text-shadow">Forgot password?</a>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @*Geo Location Script*@
+        @*@Html.Partial("_VSSPLayout/VSSPScript/GeoLocation")*@
+
+    </div>
+    @Html.Partial("_VSSPLayout/Spinner/BlocksSpinner")
+
+</body>
+</html>
+
+@Scripts.Render("~/Core/JS/MainBottom")
+
+<script>
+//import { Session } from "inspector";
+
+
+    $(document).ready(function () {
+        @*$("#btn-submit").click(function (){
+            //$("#LogIpAddress").val($("#ipaddress").val());
+            //$("#LogCountry").val($("#country_name").val());
+            //$("#LogCity").val($("#city").val());
+            $("#LogIpAddress").val("@Session["IpAddress"].ToString()");
+            $("#LogCountry").val("@Session["ClientCountry"].ToString()");
+            $("#LogCity").val("@Session["ClientCity"].ToString()");
+
+            ftitle = "@ViewBag.Title";
+
+        })
+        $("form").submit(function (event) {
+            if ($("#UserID").val() === "" || $("#Password").val() === "") {
+                if(this.validate())
+                unloadblockspinner();
+            }
+        })*@
+
+        $("#loadblockspinner h5").html("<span class='fa fa-spinner fa-pulse'></span> Authenticating...")
+        $(function () {
+            $("form").submit(function (event) {
+
+                var resValid = true;
+
+                $("form input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.preventDefault();
+                        event.stopPropagation()
+                        unloadblockspinner();
+                        resValid = false;
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        $("#LogIpAddress").val("@Session["IpAddress"].ToString()");
+                        $("#LogCountry").val("@Session["ClientCountry"].ToString()");
+                        $("#LogCity").val("@Session["ClientCity"].ToString()");
+
+                        ftitle = "@ViewBag.Title";
+
+                    }
+
+                }, 250);
+
+            });
+        });
+    })
+
+    $("input").focus(function () {
+        setTimeout(function () {
+            return StopProcess();
+        }, 500)
+    })
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+    })
+</script>

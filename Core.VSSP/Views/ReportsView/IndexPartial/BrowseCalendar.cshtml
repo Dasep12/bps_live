@@ -1,0 +1,63 @@
+﻿
+<div class="modal animated fadeIn" id="calendarModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content bg-none">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-calendar"></span> Browse Calendar</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="control-label">Select Date :</label>
+                    <div class="input-group">
+                        <input type="text" name="daterange" class="form-control text-center" value="" />
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="icon-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="DateRangeId" />
+                <script>
+
+                    var StartDate = new Date();
+                    var EndDate = new Date();
+                    var DateRange = moment(StartDate).format('M/D/Y') + ' - ' + moment(EndDate).format('M/D/Y');
+
+                    $('input[name="daterange"]').val(DateRange);
+
+                    $(function () {
+                        $('input[name="daterange"]').daterangepicker({
+                            opens: 'center'
+                        }, function (start, end, label) {
+                            StartDate = start.format('YYYY-MM-DD');
+                            EndDate = end.format('YYYY-MM-DD');
+                        });
+                    });
+
+                    function applyDateRange() {
+                        DateRange = moment(StartDate).format('YYYY-MM-DD') + " - " + moment(EndDate).format('YYYY-MM-DD') + "";
+                        var Id = $('#DateRangeId').val();
+
+                        parameters =
+                        {
+                            FilterValues: DateRange,
+                        }
+
+                        $("#jqGridMain").jqGrid('setRowData', Id, parameters);
+
+                        $('#calendarModal').modal('hide');
+
+                    }
+
+                </script>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="applyDateRange();"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

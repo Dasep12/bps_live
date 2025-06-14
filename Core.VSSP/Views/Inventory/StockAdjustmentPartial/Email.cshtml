@@ -1,0 +1,161 @@
+﻿<div class="modal animated fadeIn" id="crudStockAdjustmentEmailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-envelope"></span> Sent Email</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <button id="btn-EmailApproval" type="button" class="btn btn-sm btn-warning btn-block" onclick="sentStockAdjustmentEmail('Approval')"><span class="fa fa-share-square"></span> To Approval</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+            <input type="hidden" id="StockAdjustmentNumberEmail" />
+            <input type="hidden" id="StockAdjustmentDate" />
+            <input type="hidden" id="StockAdjustmentInventoryNumber" />
+            <input type="hidden" id="StockAdjustmentAreaId" />
+            <input type="hidden" id="StockAdjustmentLocationId" />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("../System/EmailSender")
+
+<script>
+
+    function sentStockAdjustmentEmail(action, id) {
+
+        $("#btn-EmailApproval").attr("disabled", true);
+
+
+        //var $grid = $("#jqGridMain");
+        //var rowData = $grid.jqGrid("getRowData", id),
+        //    AdjustmentDate = rowData.AdjustmentDate,
+        //    InventoryNumber = rowData.InventoryNumber,
+        //    AreaId = rowData.AreaId,
+        //    LocationId = rowData.LocationId,
+        //    ApprovalName = rowData.ApprovalName,
+        //    StatusName = rowData.StatusName;
+
+        if (id != "") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                AdjustmentNumber = Grid.jqGrid('getCell', selectedRowId, 'AdjustmentNumber'),
+                AdjustmentDate = Grid.jqGrid('getCell', selectedRowId, 'AdjustmentDate'),
+                InventoryNumber = Grid.jqGrid('getCell', selectedRowId, 'InventoryNumber'),
+                AreaId = Grid.jqGrid('getCell', selectedRowId, 'AreaId'),
+                LocationId = Grid.jqGrid('getCell', selectedRowId, 'LocationId'),
+                ApprovalName = Grid.jqGrid('getCell', selectedRowId, 'ApprovalName');
+        }
+
+        if (ApprovalName === "Created" || ApprovalName === "Checked") {
+            $("#btn-EmailApproval").removeAttr("disabled");
+        }
+
+        switch (action) {
+            case "Open":
+
+                var adjustmentDate = moment(new Date(AdjustmentDate)).format('DD-MMM-YYYY');               
+
+                $("#StockAdjustmentNumberEmail").val(AdjustmentNumber);
+                $("#StockAdjustmentDate").val(adjustmentDate);
+                $("#StockAdjustmentInventoryNumber").val(InventoryNumber);
+                $("#StockAdjustmentAreaId").val(AreaId);
+                $("#StockAdjustmentLocationId").val(LocationId);
+                $('#crudStockAdjustmentEmailModal').modal('show');
+                break;
+
+            case "Approval":
+
+                var adjustmentNumber = $("#StockAdjustmentNumberEmail").val();
+                var adjustmentdate = $("#StockAdjustmentDate").val();
+                var inventoryNumber = $("#StockAdjustmentInventoryNumber").val();
+                var areaId = $("#StockAdjustmentAreaId").val();
+                var locationId = $("#StockAdjustmentLocationId").val();
+                var subject = action + " @ViewBag.Title " + adjustmentNumber;
+                var sentto = getApprovalMailList(adjustmentNumber);
+                var attachment1 = "@Url.Action("StockAdjustment","Reports")?AdjustmentNumber=" + adjustmentNumber;
+                var attachment2 = null;
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + adjustmentNumber + " </td></tr>";
+                content += "<tr><td width='120'>Date </td><td> : </td><td> " + adjustmentdate + " </td></tr>";
+                content += "<tr><td width='120'>Inventory </td><td> : </td><td> " + inventoryNumber + " </td></tr>";
+                content += "<tr><td width='120'>Area </td><td> : </td><td> " + areaId + " </td></tr>";
+                content += "<tr><td width='120'>Location </td><td> : </td><td> " + locationId + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' target='_blank' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboApprovalMailList(adjustmentNumber);
+                sentEmail("StockAdjustmentApproval" ,subject, sentto, "", content, attachment1, attachment2, '', adjustmentNumber);
+                $('#crudStockAdjustmentEmailModal').modal('hide');
+                break;
+
+        }
+
+    }
+
+    function getApprovalMailList(AdjustmentNumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("StockAdjustmentApprovalListJson", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                Adjustmentnumber: AdjustmentNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.UserId;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboApprovalMailList(AdjustmentNumber) {
+
+        $.ajax({
+            url: '@Url.Action("StockAdjustmentApprovalListJson", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                AdjustmentNumber: AdjustmentNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.UserId + '" selected>' + raw.UserName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+
+    
+</script>

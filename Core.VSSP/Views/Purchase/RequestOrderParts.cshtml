@@ -1,0 +1,437 @@
+﻿
+@model Core.VSSP.Models.RequestOrderPartsListModel
+
+<section class="app-section" id="Purchase-RequestOrderParts">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Order Number or Line...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control input-daterange" placeholder="Start Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control date" placeholder="End Date">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Orders">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="statusFilter" class="col-form-label col-form-label-sm">Status</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.StatusList,
+                                    new SelectList(Model.StatusList, "Id", "Name"),
+                                    new { @id = "statusFilter", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridRequestOrderParts()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudRequestOrderParts('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridRequestOrderParts()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("RequestOrderPartsPartial/Crud")
+    @Html.Partial("RequestOrderPartsPartial/Email")
+
+</section>
+
+<script>
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    $(document).ready(function () {
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        $("#statusFilter").val("99");
+    })
+
+    $(function () {
+        var filterData  = $('#searchFilter').val();
+        var startdate   = $('#startdateFilter').val();
+        var enddate     = $('#enddateFilter').val();
+        var month       = $('#monthFilter').val();
+        var status      = $('#statusFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("RequestOrderPartsListJson", "Purchase")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 100, formatter: actionFormatter },
+                { label: 'Document', name: 'Document', align: 'center', fixed: true, width: 65, formatter: documentFormatter },
+                { label: 'Status', name: 'Status', align: 'center', fixed: true, width: 60, formatter: statusFormatter },
+                { label: 'Number', name: 'OrderNumber', key: true, align: 'center', fixed: true, width: 160 },
+                { label: 'Date', name: 'OrderDate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Delivery', name: 'DeliveryDate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Line', name: 'LineId', align: 'center', fixed: true, width: 70 },
+                { label: 'Line Name', name: 'LineName', align: 'left', autoResizing: { minColWidth: 60 } },
+                { label: 'Shift', name: 'ShiftId', align: 'center', fixed: true, width: 50 },
+                { label: 'Delivery', name: 'DeliveryOrder', align: 'left', hidden: true, width: 60 },
+                { label: 'Materials', name: 'TotalPart', align: 'right', formatter: 'number', fixed: true, width: 58 },
+                { label: 'Orders', name: 'TotalOrder', align: 'right', formatter: 'number', fixed: true, width: 48 },
+                { label: 'Remarks', name: 'Remarks', align: 'left', fixed: true, width: 120 },
+                { label: 'Approval', name: 'ApprovalLevel', align: 'center', fixed: true, width: 80, formatter: approvalFormatter },
+                { label: 'Approval Name', name: 'ApprovalName', align: 'left', hidden: true, width: 80 },
+                { label: 'Approval', name: 'Approval', align: 'left', fixed: true, width: 200 },
+                { label: 'Status Name', name: 'StatusName', align: 'center', hidden: true, width: 60 },
+                { label: 'User', name: 'UserId', align: 'center', fixed: true, width: 60 },
+                { label: 'Edited', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showLineGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    var newid = ids[i].replaceAll("/", "");
+                    var btnid = 'btn-' + newid;
+                    var status = $this.jqGrid('getCell', ids[i], 'StatusName')
+                    showButton(ids[i], btnid, status);
+                    //$("#" + ids[i]).attr("id", newid )
+                }
+                gridResize();
+
+                var ordernumber = "@ViewBag.OrderNumber";
+                if (ordernumber != "") {
+                    $(document).ready(function () {
+                        setTimeout(function () {
+                            crudRequestOrderParts("Delivery", ordernumber);
+                        }, 500);
+                    });
+                }
+
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var canemail = "";
+        var canupdate = "";
+        var canclosed = "";
+        var candelivery = "";
+        var approvalLevel = "@ViewBag.ApprovalLevel";
+        var btnid = rowObject.OrderNumber.replaceAll("/", "");
+
+        if (rowObject.StatusName === "Open") {
+            canupdate = '@ViewBag.canUpdate';
+        } else {
+            canupdate = 'disabled';
+        }
+        if (rowObject.StatusName != "Closed") {
+            canclosed = '@ViewBag.canUpdate';
+        } else {
+            canclosed = 'disabled';
+        }
+
+        if (rowObject.StatusName === "Open" || rowObject.StatusName === "Sent") {
+            canemail = '@ViewBag.canCreate';
+        } else {
+            canemail = 'disabled';
+        }
+
+        if (parseInt(approvalLevel) > 1) {
+            canupdate = 'disabled';
+            canclosed = 'disabled';
+            canemail = 'disabled';
+            candelivery = "";
+        } else {
+            candelivery = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-primary text-white " + canemail + "' onclick=\"sentRequestOrderPartsEmail('Open','" + rowObject.OrderNumber + "','" + rowObject.OrderDate + "','" + rowObject.LineName + "','" + rowObject.LineId + "')\" datatoogle='tooltip' title='Sent Email @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-envelope'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-success text-white " + canupdate + "' onclick=\"crudRequestOrderParts('Update','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span> ";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-warning text-dark " + candelivery + "' onclick=\"crudRequestOrderParts('Delivery','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Delivery @ViewBag.Title [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-truck'></span> ";
+        btn += "</a> ";
+        btn += "<a id='btn-" + btnid + "' tabindex='0' class='btn btn-sm btn-info text-white " + canclosed + "' role='button' data-toggle='popover' ";
+        btn += "data-timeout='2000' data-html='true' title='DN " + rowObject.OrderNumber + "' data-content='-'>";
+        btn += "<span class='fa fa-sign-out'></span>";
+        btn += "</a>";
+        btn += "</div>";
+
+
+        return btn;
+    }
+    function documentFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewRequestOrderParts('ROP','" + rowObject.OrderNumber + "')\" datatoogle='tooltip' title='Preview Delivery Note [ " + rowObject.OrderNumber + " ]'>";
+        btn += "<span class='fa fa-file-pdf-o'></span></span><small> ROP</small>";
+        btn += "</a> ";
+        btn += "</div>";
+
+        return btn;
+    }
+    function showButton(OrderNumber,id,status) {
+        var candelete = "";
+
+        if (status === "Open") {
+            candelete = '@ViewBag.canDelete';
+        } else {
+            candelete = 'disabled';
+        }
+
+        var dataContent = "<div>";
+        dataContent += "<ul class='nav'><li>";
+        dataContent += "<button type='button' class='btn btn-sm btn-info " + candelete + "' onclick=\"crudRequestOrderParts('Closed','" + OrderNumber + "')\" ><i class='fa fa-sign-out'></i> Closing</button>";
+        dataContent += "<button type='button' class='btn btn-sm btn-warning ml-2 " + candelete + "' onclick=\"crudRequestOrderParts('Canceled','" + OrderNumber + "')\" ><i class='fa fa-ban'></i> Canceled</button>";
+        dataContent += "<button type='button' class='btn btn-sm btn-danger ml-2 " + candelete + "' onclick=\"crudRequestOrderParts('Delete','" + OrderNumber + "')\" ><i class='fa fa-trash'></i> Delete</button>";
+        dataContent += "</li></ul></div>";
+
+        $('#' + id).attr('data-content', dataContent).popover();
+
+    }
+
+    function previewRequestOrderParts(action, ordernumber) {
+
+        switch (action) {
+            case "ROP":
+                var url = "@Url.Action("RequestOrderParts", "Reports", new { ordernumber = "_ordernumber_" })";
+                url = url.replace('_ordernumber_', encodeURIComponent(ordernumber));
+                window.open(url, "_blank");
+                break;
+        }
+    }
+
+    function monthFormatter(cellvalue, options, rowObject) {
+        var monthname = getMonthName(cellvalue)
+        return monthname;
+    }
+
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 0:
+                return "<span class='badge badge-primary'>" + rowObject.StatusName + "</span>"
+                break;
+            case 1:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-success text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-warning'>" + rowObject.StatusName + "</span>"
+                break;
+            case 5:
+                return "<span class='badge badge-danger'>" + rowObject.StatusName + "</span>"
+                break;
+        }
+    }
+
+    function approvalFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 1:
+                return "<span class='badge badge-warning'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-primary'>" + rowObject.ApprovalName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-success'>" + rowObject.ApprovalName + "</span>"
+                break;
+        }
+    }
+    function reloadGridRequestOrderParts() {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var month = $('#monthFilter').val();
+        var status = $('#statusFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.OrderNumber + " has been saved succesfully");
+                reloadGridRequestOrderParts();
+                var linename = $("#crud-RequestOrderPartsLineId :selected").text();
+                sentRequestOrderPartsEmail("Open", data.OrderNumber, data.OrderDate, linename, data.LineId)
+                $("#btn-EmailApproval").click();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.OrderNumber + " has been saved succesfully");
+                reloadGridRequestOrderParts();
+                var linename = $("#crud-RequestOrderPartsLineId :selected").text();
+                sentRequestOrderPartsEmail("Open", data.OrderNumber, data.OrderDate, linename, data.LineId)
+                $("#btn-EmailApproval").click();
+                break;
+            case "delivery":
+                showToast("Success", "Delivery " + data.OrderNumber + " has been saved succesfully");
+                var url = "@Url.Action("RequestOrderParts", "Purchase")";
+                window.open(url, "_top");
+
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.OrderNumber + " has been removed succesfully");
+                return reloadGridRequestOrderParts();
+                break;
+            case "canceled":
+                showToast("Failed", "Cancel order " + data.OrderNumber + " has been canceled succesfully");
+                return reloadGridRequestOrderParts();
+                break;
+            case "closed":
+                showToast("success", "Closing order " + data.OrderNumber + " has been closed succesfully");
+                return reloadGridRequestOrderParts();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridRequestOrderParts();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "Approval")
+        $("#jqGridMain").jqGrid(showhideCol, "Remarks")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

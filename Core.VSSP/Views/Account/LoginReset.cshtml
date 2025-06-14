@@ -1,0 +1,174 @@
+﻿@{ Layout = ""; }
+
+<!DOCTYPE html>
+<!--
+* CoreUI - Free Bootstrap Admin Template
+* @@version v2.0.0
+* @@link https://coreui.io
+* Copyright (c) 2018 creativeLabs Łukasz Holeczek
+* Licensed under MIT (https://coreui.io/license)
+*
+* Adaptated to ASP.NET MVC Core 2.1 by Miguel Veloso
+* http://coderepo.blog
+-->
+
+<html lang="en">
+<head>
+    @Html.Partial("_VSSPLayout/_app-meta")
+    @*<title>@ViewBag.Title</title>*@
+
+    @Styles.Render("~/Core/CSS/Icons")
+    @Styles.Render("~/Core/CSS/Style")
+
+    <!-- Bootstrap and necessary plugins-->
+    @Scripts.Render("~/Core/JS/Plugins")
+    @Scripts.Render("~/Core/JS/Main")
+    @Scripts.Render("~/Core/JS/jqGrid")
+
+    <style>
+        @{
+        var imgSrc = "";
+        }
+
+        @if (Session["BackgroundImage"] == null)
+        {
+            imgSrc = "/_VSSPAssets/Images/Background/plant-site.png";
+        }
+        else
+        {
+            var base64 = Convert.ToBase64String((byte[])Session["BackgroundImage"]);
+            imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+        }
+
+        body {
+            background-image:url(@imgSrc);
+            background-repeat:no-repeat;
+            background-size:100%
+        }
+
+        .card {
+            opacity:0.85;
+        }
+
+        @@media only screen and (max-width: 1200px) {
+            body {
+                background-size: auto;
+                background-position: center;
+            }
+        }
+
+    </style>
+
+</head>
+
+@model Core.VSSP.Models.UserResetModel
+
+<body class="app flex-row align-items-center animated fadeIn">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card-group">
+                    <div class="card p-4">
+                        <div class="card-body">
+                            @if (Session["CompLogo"] == null)
+                            {
+                                <img src="~/_VSSPAssets/Images/Logo/logo-vssp-title.png" width="125" height="35" alt="vssp CoreUI">
+                            }
+                            else
+                            {
+                                var base64 = Convert.ToBase64String((byte[])Session["CompLogo"]);
+                                var imgLogo = String.Format("data:image/jpg;base64,{0}", base64);
+
+                                <img src="@imgLogo" width="125" height="35" alt="@Session["CompName"].ToString()">
+                            }
+                            <p class="text-muted">Please type a new password.</p>
+
+                            @using (Html.BeginForm("WebLoginCrudReset", null, FormMethod.Post))
+                            {
+
+                                @Html.EditorFor(model => model.Token, new { htmlAttributes = new { @type = "hidden", @class = "form-control", @Required = true, @readonly = true } })
+                                @Html.EditorFor(model => model.EmailAddress, new { htmlAttributes = new { @type = "hidden", @class = "form-control", @Required = true, @readonly = true } })
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input type="password" id="password2" name="password2" class="form-control" placeholder="Confirm Password" required>
+                                </div>
+                                <label class="label-warning text-danger" hidden="hidden">Please type same confirmation password.</label>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <button type="submit" id="btn-submit" class="btn btn-outline-dark btn-process px-4" disabled>Submit</button>
+                                    </div>
+                                    <div class="col-6 text-right">
+                                        <a href="@Url.Action("Login","Account")" class="btn btn-link text-dark px-0">Login?</a>
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                    <div class="card text-white bg-dark py-5 d-md-down-none" style="width:44%">
+                        <div class="card-body text-center">
+                            <h1>New Password</h1>
+                            <hr />
+                            <div>
+                                @*<h2>Reset Password</h2>*@
+                                <p>Welcome to @Session["CompID"].ToString() @Session["AppID"].ToString() @Session["AppVersion"].ToString().@Session["AppRevision"].ToString().@Session["AppBuild"].ToString()</p>
+                                <br />
+                                <a href="@Url.Action("MainIndex","Index")" class="btn btn-outline-light mt-3"><span class="icon-home"></span> Home Websites</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+@Scripts.Render("~/Core/JS/MainBottom")
+
+<script>
+    $(document).ready(function () {
+        var pathname = window.location.pathname;
+        window.history.pushState(null, null, pathname.toLowerCase());
+    })
+
+    $("input").change(function () {
+        pass = $("#password").val();
+        pass2 = $("#password2").val();
+
+        $(".label-warning").removeAttr("hidden")
+        $("#btn-submit").removeAttr("disabled");
+
+        if (pass == pass2) {
+            $(".label-warning").attr("hidden", "hidden");
+            $("#btn-submit").removeAttr("disabled");
+        } else {
+            $(".label-warning").removeAttr("hidden")
+            $("#btn-submit").attr("disabled", "disabled");
+        }
+
+        $(".btn-process").html("Submit Request");
+
+    });
+
+    $("input").focus(function () {
+        setTimeout(function () {
+            return StopProcess();
+        }, 500)
+    })
+
+</script>

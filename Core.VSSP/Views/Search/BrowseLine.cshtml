@@ -1,0 +1,148 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterLineModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterLineForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Line</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterLine" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterLine" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterLine" type="button" class="btn btn-secondary" onclick="reloadGridSearchLine()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <table id="jqGridSearchLine"></table>
+                                <div id="jqGridPagerSearchLine"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterLineError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterLine" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataLine()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterLine").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterLine").button().click();
+        }
+    });
+
+    var filterData = $('#searchFilterLine').val();
+    $gridFilterLine = $("#jqGridSearchLine").jqGrid({
+        url: '@Url.Action("LineListJson", "Productions")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+        },
+        colModel: [
+            { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 50, formatter: statusLineFormatter },
+            { label: 'Id', name: 'LineId', align: 'center', fixed: true, width: 60 },
+            { label: 'Name', name: 'LineName', align: 'left', autoResizing: { minColWidth: 150 } },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchLine',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+        ondblClickRow: function () {
+            selectFilterDataLine();
+        },
+    });
+
+    $('#jqGridSearchLine').jqGrid('navGrid', '#jqGridPagerSearchLine', { search: false, edit: false, add: false, del: false });
+
+    function statusLineFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridSearchLine() {
+        var filterData = $('#searchFilterLine').val();
+
+        $("#jqGridSearchLine").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterLine() {
+
+        reloadGridSearchLine();
+
+        $('#filterLineModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataLine () {
+        var selRowId = $('#jqGridSearchLine').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchLine').jqGrid("getRowData", selRowId);
+            filterResult = rowData.LineId;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterLineModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+    }
+</script>

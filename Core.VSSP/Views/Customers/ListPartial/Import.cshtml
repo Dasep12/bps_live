@@ -1,0 +1,516 @@
+﻿<div class="modal animated fadeIn" id="importCustomerModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <form id="importCustomerForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-cloud-upload"></span> Import @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body" style="padding:2px">
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input form-control-sm" id="file-upload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="loadExcel()">
+                                <label class="custom-file-label" for="file-upload">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#customer" role="tab">
+                                Customer
+                                <i id="errorCustomer"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#contact" role="tab">
+                                Contact
+                                <i id="errorContact"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="customer" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImport"></table>
+                                @*<div id="jqGridPagerImport"></div>*@
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="contact" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImportContact"></table>
+                                @*<div id="jqGridPagerImportContact"></div>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div id="importCustomerError"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" value="false" id="replace">
+                            <label class="custom-control-label" for="replace"><small> Replace Existing</small></label>
+                        </div>
+                    </div>
+                    <a href="~/Document/Template/02. Template Customer.xlsx" target="_blank" class="btn btn-link" style="text-decoration:none">
+                        <span><i class="fa fa-cloud-download"></i> Download Templates</span>
+                    </a>
+                    <button id="btnSubmitImportCustomer" type="button" class="btn btn-sm btn-primary" onclick="submitImport()"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function importCustomer() {
+        $('.custom-file-input').siblings(".custom-file-label").addClass("selected").html("Upload template file here...");
+        $("#jqGridImport").jqGrid("clearGridData");
+        $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+        $('#importCustomerError').html("");
+        $('#errorCustomer').html("");
+        $('#errorContact').html("");
+        $('a[href="#customer"]').click();
+
+        $('#replace').prop("checked",false);
+
+        $('#importCustomerModal').modal('show');
+    }
+
+    $(function () {
+        $grid = $("#jqGridImport").jqGrid({
+            url: '@Url.Action("ImportJson", "Customers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Customer",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Customer Id', key: true, name: 'CustomerId', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Customer Code', name: 'CustomerCode', editable: false, align: 'left', fixed: true, width: 100 },
+                { label: 'Account Code', name: 'AccountCode', editable: false, align: 'left', fixed: true, width: 100 },
+                { label: 'Customer Name', name: 'CustomerName', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Address', name: 'Address', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'City', name: 'City', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Provience', name: 'Provience', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Country', name: 'Country', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Postal Code', name: 'PostalCode', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Websites', name: 'Websites', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'TaxId', name: 'TaxId', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true},
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerImport',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 167,
+            width: 'auto',
+            rowNum: 9999999,
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+        //$('#jqGridImport').jqGrid('navGrid', '#jqGridPagerImport', { search: false, edit: false, add: false, del: false });
+        //$("#jqGridImport").jqGrid('setFrozenColumns');
+
+        $grid2 = $("#jqGridImportContact").jqGrid({
+            url: '@Url.Action("ImportJson", "Customers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Customer",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Customer Id', key: true, name: 'CustomerId', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Contact Name', name: 'ContactName', key: true, align: 'left', fixed: true, width: 100 },
+                { label: 'Organization', name: 'Organization', align: 'left', fixed: true, width: 100 },
+                { label: 'Position', name: 'Position', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #1', name: 'Phone1', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #2', name: 'Phone2', align: 'left', fixed: true, width: 100 },
+                { label: 'Fax', name: 'Fax', align: 'left', fixed: true, width: 100 },
+                { label: 'Email', name: 'Email', align: 'left', fixed: true, width: 100 },
+                { label: 'Receive Order', name: 'ReceiveOrder', align: 'center', fixed: true, width: 60, formatter: statusImportFormatter },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true},
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerImportContact',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 150,
+            width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+        //$('#jqGridImportContact').jqGrid('navGrid', '#jqGridPagerImportContact', { search: false, edit: false, add: false, del: false });
+        //$("#jqGridImportContact").jqGrid('setFrozenColumns');
+    });
+
+    function reloadGridImport() {
+
+        $("#jqGridImport").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+        $("#jqGridImportContact").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+    };
+
+    function statusImportFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function loadExcel() {
+        $('#importCustomerError').html("");
+        $('#errorCustomer').html("");
+        $('#errorContact').html("");
+
+        var replace = $('#replace').prop("checked");
+
+        var gridArrayCustomer = [];
+        var gridArrayCustomerContact = [];
+
+        $("#jqGridImport")[0].grid.beginReq();
+        $("#jqGridImportContact")[0].grid.beginReq();
+
+        var fileUpload = $("#file-upload").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+        fileData.append('formaction', 'Customer-validation');
+
+        $.ajax({
+            url: '@Url.Action("ImportJson", "Customers")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importCustomerError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+                $("#jqGridImportContact").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedCustomer = 0;
+                var failedContact = 0;
+
+                if (response.ImportCustomer.length > 0 || response.ImportCustomerContact.length > 0) {
+
+                    $.each(response.ImportCustomer, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedCustomer += 1;
+                        }
+
+                        gridArrayCustomer.push(
+                            {
+                                Status: item.Status,
+                                CustomerId: item.CustomerId,
+                                CustomerCode: item.CustomerCode,
+                                AccountCode: item.AccountCode,
+                                CustomerName: item.CustomerName,
+                                Address: item.Address,
+                                City: item.City,
+                                Provience: item.Provience,
+                                Country: item.Country,
+                                PostalCode: item.PostalCode,
+                                Websites: item.Websites,
+                                TaxId: item.TaxId,
+                                Result: item.Result
+                            });
+                    });
+
+                    $.each(response.ImportCustomerContact, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedContact += 1;
+                        }
+
+                        gridArrayCustomerContact.push(
+                            {
+                                Status: item.Status,
+                                CustomerId: item.CustomerId,
+                                ContactName: item.ContactName,
+                                Organization: item.Organization,
+                                Position: item.Position,
+                                Phone1: item.Phone1,
+                                Fax: item.Fax,
+                                Email: item.Email,
+                                ReceiveOrder: item.ReceiveOrder,
+                                Result: item.Result
+                            });
+                    });
+
+                    if (failed > 0) {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixing your excel template data with error!</small></div>'
+                        $('#importCustomerError').html(errMsg);
+                        if (replace == false) {
+                            $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+                        } else {
+                            $('#btnSubmitImportCustomer').removeAttr('disabled');
+                        }
+                        if (failedCustomer > 0) {
+                            var errCustomer = '<span class="badge badge-pill badge-danger">' + failedCustomer + '</span>'
+                            $('#errorCustomer').html(errCustomer);
+                        }
+                        if (failedContact > 0) {
+                            var errContact = '<span class="badge badge-pill badge-danger">' + failedContact + '</span>'
+                            $('#errorContact').html(errContact);
+                        }
+                    } else {
+                        $('#btnSubmitImportCustomer').removeAttr('disabled');
+                    }
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importCustomerError').html(errMsg);
+                    $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+                }
+
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArrayCustomer });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+                $("#jqGridImportContact").jqGrid('setGridParam', { data: gridArrayCustomerContact });
+                $("#jqGridImportContact")[0].grid.endReq();
+                $("#jqGridImportContact").trigger('reloadGrid');
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importCustomerError').html(errMsg);
+            }
+        });
+    }
+
+    function submitImport() {
+
+        var replace = $('#replace').prop("checked");
+        $('#importCustomerError').html("");
+        $('#errorCustomer').html("");
+        $('#errorContact').html("");
+
+        $('#btnSubmitImportCustomer').blur();
+        var gridArrayCustomer = [];
+        var gridArrayCustomerContact = [];
+
+        $("#jqGridImport")[0].grid.beginReq();
+        $("#jqGridImportContact")[0].grid.beginReq();
+
+        var fileUpload = $("#file-upload").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+        fileData.append('replace', replace);
+        fileData.append('formaction', 'Customer');
+
+        $.ajax({
+            url: '@Url.Action("crudImportJson", "Customers")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importCustomerError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+                $("#jqGridImportContact").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedCustomer = 0;
+                var failedContact = 0;
+                var icount = 0;
+
+                if (response.ImportCustomer.length > 0 || response.ImportCustomerContact.length > 0) {
+                    if (response.ImportCustomer.length > 0 || response.ImportCustomerContact.length > 0) {
+                        $.each(response.ImportCustomer, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedCustomer += 1;
+                            }
+
+                            gridArrayCustomer.push(
+                                {
+                                    Status: item.Status,
+                                    CustomerId: item.CustomerId,
+                                    CustomerCode: item.CustomerCode,
+                                    AccountCode: item.AccountCode,
+                                    CustomerName: item.CustomerName,
+                                    Address: item.Address,
+                                    City: item.City,
+                                    Provience: item.Provience,
+                                    Country: item.Country,
+                                    PostalCode: item.PostalCode,
+                                    Websites: item.Websites,
+                                    TaxId: item.TaxId,
+                                    Result: item.Result
+                                });
+                        });
+
+                        $.each(response.ImportCustomerContact, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedContact += 1;
+                            }
+
+                            gridArrayCustomerContact.push(
+                                {
+                                    Status: item.Status,
+                                    CustomerId: item.CustomerId,
+                                    ContactName: item.ContactName,
+                                    Organization: item.Organization,
+                                    Position: item.Position,
+                                    Phone1: item.Phone1,
+                                    Fax: item.Fax,
+                                    Email: item.Email,
+                                    ReceiveOrder: item.ReceiveOrder,
+                                    Result: item.Result
+                                });
+                        });
+
+                        if (failed > 0) {
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixed first your excel data with error!</small></div>'
+                            $('#importCustomerError').html(errMsg);
+                            $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+                            if (failedCustomer > 0) {
+                                var errCustomer = '<span class="badge badge-pill badge-danger">' + failedCustomer + '</span>'
+                                $('#errorCustomer').html(errCustomer);
+                            }
+                            if (failedContact > 0) {
+                                var errContact = '<span class="badge badge-pill badge-danger">' + failedContact + '</span>'
+                                $('#errorContact').html(errContact);
+                            }
+                        }
+                    } else {
+                        $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+                    }
+
+                    showToast("Success", "Import " + icount + " records has been processed succesfully");
+                    reloadGridList();
+
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importCustomerError').html(errMsg);
+                    $("#btnSubmitImportCustomer").attr({ 'disabled': "disabled" });
+                };
+
+                // set the new data
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArrayCustomer });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+                $("#jqGridImportContact").jqGrid('setGridParam', { data: gridArrayCustomerContact });
+                $("#jqGridImportContact")[0].grid.endReq();
+                $("#jqGridImportContact").trigger('reloadGrid');
+
+                //$('#importCustomerModal').modal('hide');
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importCustomerError').html(errMsg);
+            }
+        });
+    }
+
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $('#replace').change(function () {
+        if (this.checked)
+            $('#replace').val(true);
+        else
+            $('#replace').val(false);
+    });
+
+
+</script>

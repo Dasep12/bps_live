@@ -1,0 +1,148 @@
+﻿
+<section>
+    <div class="modal animated fadeIn" id="filterCategoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterCategoryForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-search"></span> Browse Category</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterCategory" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterCategory" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterCategory" type="button" class="btn btn-secondary" onclick="reloadGridSearchCategory()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-12">
+                                <table id="jqGridSearchCategory"></table>
+                                <div id="jqGridPagerSearchCategory"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterCategoryError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterCategory" type="button" class="btn btn-sm btn-primary" onclick="selectFilterDataCategory()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script>
+
+    $("#searchFilterCategory").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterCategory").button().click();
+        }
+    });
+
+    var filterData = $('#searchFilterCategory').val();
+    $gridFilterCategory = $("#jqGridSearchCategory").jqGrid({
+        url: '@Url.Action("CategoriesListJson", "Measurements")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            searchFilter: filterData,
+        },
+        colModel: [
+            { label: 'Id', name: 'CategoryId', align: 'center', fixed: true, width: 60 },
+            { label: 'Name', name: 'CategoryName', align: 'left', autoResizing: { minColWidth: 150 } },
+            { label: 'Remarks', name: 'Remarks', align: 'left', fixed: true, width: 80 },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchCategory',
+        height: 240,
+        viewrecords: true,
+        rowNum: 20,
+        rowList: [20, 50, 100],
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already added!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+        ondblClickRow: function () {
+            selectFilterDataCategory();
+        },
+    });
+
+    $('#jqGridSearchCategory').jqGrid('navGrid', '#jqGridPagerSearchCategory', { search: false, edit: false, add: false, del: false });
+
+    function statusCategoryFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridSearchCategory() {
+        var filterData = $('#searchFilterCategory').val();
+
+        $("#jqGridSearchCategory").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                searchFilter: filterData,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterCategory() {
+
+        reloadGridSearchCategory();
+
+        $('#filterCategoryModal').modal('show');
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataCategory () {
+        var selRowId = $('#jqGridSearchCategory').jqGrid('getGridParam', 'selrow');
+
+        if (selRowId != null) {
+            var rowData = $('#jqGridSearchCategory').jqGrid("getRowData", selRowId);
+            filterResult = rowData.CategoryId;
+
+            if ($("#search_result")) $("#search_result").val(JSON.stringify(rowData));
+            $('#filterCategoryModal').modal('hide');
+
+        } else {
+            alert("Please select row data.");
+        }
+    }
+</script>

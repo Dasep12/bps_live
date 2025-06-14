@@ -1,0 +1,589 @@
+﻿<div class="c-subheader justify-content-between" style="top: 0px !important">
+
+    <ol class="breadcrumb m-0 px-0 shadow-sm " style="padding: 4px !important">
+        @*<li class="nav-item">
+            <div class="btn-group" role="group" aria-label="Button group">
+                <a href="#" class="nav-link">
+                    <i class="fa fa-pie-chart"></i> @ViewBag.Title
+                </a>
+            </div>
+        </li>*@
+
+        <li class="nav-item nav-dropdown">
+            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+            </a>
+            <div class="nav-dropdown dropdown-menu dropdown-menu-left shadow-sm rounded-0" style="width:250px">
+                @{
+                    string cviewGeneral = "";
+                    string cviewDelivery = "";
+                    string cviewProduction = "";
+                    string cviewProductionSum = "";
+                    string cviewReceiving = "";
+                    string cviewSales = "";
+                    string cviewPurchases = "";
+                    string cviewStock = "";
+                    string cviewQualityIncoming = "";
+                    string cviewQualityOutgoing = "";
+
+                    string cviewSummary = "";
+
+                    switch (ViewBag.ViewType)
+                    {
+                        case "General":
+                            cviewGeneral = "selected";
+                            break;
+                        case "Delivery":
+                            cviewDelivery = "selected";
+                            break;
+                        case "Production":
+                            cviewProduction = "selected";
+                            break;
+                        case "Production Summary":
+                            cviewProductionSum = "selected";
+                            break;
+                        case "Receiving":
+                            cviewReceiving = "selected";
+                            break;
+                        case "Sales":
+                            cviewSales = "selected";
+                            break;
+                        case "Purchases":
+                            cviewPurchases = "selected";
+                            break;
+                        case "Stock":
+                            cviewStock = "selected";
+                            break;
+                        case "Quality Incoming":
+                            cviewQualityIncoming = "selected";
+                            break;
+                        case "Quality Outgoing":
+                            cviewQualityOutgoing = "selected";
+                            break;
+                        case "Summary":
+                            cviewSummary = "selected";
+                            break;
+                    }
+
+                }
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "General" })" class="dropdown-item @cviewGeneral  pr-2 mr-0"><i class="fa fa-th text-dark"></i> General</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "Delivery" })" class="dropdown-item @cviewDelivery pr-2 mr-0"><i class="fa fa-truck text-dark"></i> Sales & Delivery</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "Production" })" class="dropdown-item @cviewProduction pr-2 mr-0"><i class="fa fa-industry text-dark"></i> Production</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "ProductionSummary" })" class="dropdown-item @cviewProductionSum pr-2 mr-0"><i class="fa fa-cog text-dark"></i> Production Summary</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "Receiving" })" class="dropdown-item @cviewReceiving pr-2 mr-0"><i class="fa fa-shopping-cart text-dark"></i> Purchase & Receiving</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "Stock" })" class="dropdown-item @cviewStock pr-2 mr-0"><i class="fa fa-balance-scale text-dark"></i> Stock Inventory</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "QualityIncoming" })" class="dropdown-item @cviewQualityIncoming pr-2 mr-0"><i class="fa fa-search-plus text-dark"></i> Quality Incoming</a>
+                <a href="@Url.Action("Dashboard","Home", new { viewtype = "QualityOutgoing" })" class="dropdown-item @cviewQualityOutgoing pr-2 mr-0"><i class="fa fa-search-minus text-dark"></i> Quality Outgoing</a>
+                @*<a href="@Url.Action("Dashboard","Home", new { viewtype = "Sales" })" class="dropdown-item @cviewSales" ><i class="fa fa-line-chart text-dark"></i> Sales</a>
+        <a href="@Url.Action("Dashboard","Home", new { viewtype = "Purchases" })" class="dropdown-item @cviewPurchases" ><i class="fa fa-shopping-cart text-dark"></i> Purchases</a>
+        <a href="@Url.Action("Dashboard","Home", new { viewtype = "Summary" })" class="dropdown-item @cviewSummary" ><i class="fa fa-th-large text-dark"></i> Summary</a>*@
+            </div>
+        </li>
+        @*<li class="nav-item ml-auto d-md-none" style="width:250px">
+
+        </li>*@
+    <li class="breadcrumb-menu ">
+        <div class="btn-group" role="group" aria-label="Button group">
+            @*<a href="#" id="btnRefresh" onclick="refreshDashboard()" class="nav-link">
+            <i class="icon-reload"></i>
+        </a>*@
+            <div class="dropdown">
+
+                <a href="#" class="nav-link dropdown-toggle" id="btnRefresh" data-target="form-timer" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="icon-reload"></i>
+                </a>
+                <form id="form-timer" aria-labelledby="btnRefresh" class="dropdown-menu dropdown-menu-right p-4 shadow-sm rounded-0" style="width:320px">
+                    <div class="form-group">
+                        <label for="refreshDashboardTimer" class="col-form-label col-form-label-sm">Reload Dashboard Timer (In Minutes)</label>
+                        <div class="input-group input-group-sm">
+                            <input type="number" id="refreshDashboardTimer" class="form-control" placeholder="Dashboard timer" value="5" min="5" max="60" />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <a id="btnApply" href="#" class="nav-link pull-right" onclick="refreshDashboard()"><span class="icon-check"></span> Apply Now</a>
+                </form>
+            </div>
+
+            <div class="dropdown">
+                <a id="btnFilter" class="nav-link dropdown-toggle" href="#" data-target="form-filter" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="icon-magnifier"></i>
+                </a>
+                <form id="form-filter" aria-labelledby="btnFilter" class="dropdown-menu dropdown-menu-right p-4 shadow-sm rounded-0" style="width:320px">
+                    <h6>Filter @ViewBag.Title</h6>
+                    <hr />
+                    @switch (ViewBag.ViewType)
+                    {
+                        case "General":
+                            <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                            <div class="input-group input-group-sm">
+                                <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Orders">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Delivery":
+                            <div class="form-group">
+                                <label for="dateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="dateFilter" type="date" class="form-control datepicker" placeholder="Date" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerFilter" class="col-form-label col-form-label-sm">Customer</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="customerFilter" class="custom-select custom-select-sm"></select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="partnumberFilter" class="col-form-label col-form-label-sm">Part number</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="partnumberFilter" class="form-control" placeholder="Part Number / Unique Number" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Production":
+                            <div class="form-group">
+                                <label for="dateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="dateFilter" type="date" class="form-control datepicker" placeholder="Date" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerFilter" class="col-form-label col-form-label-sm">Line</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="lineFilter" class="custom-select custom-select-sm"></select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="partnumberFilter" class="col-form-label col-form-label-sm">Part number</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="partnumberFilter" class="form-control" placeholder="Part Number / Unique Number" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Production Summary":
+                            <div class="form-group">
+                                <label for="dateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="dateFilter" type="date" class="form-control datepicker" placeholder="Date" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lineFilter" class="col-form-label col-form-label-sm">Line</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="lineFilter" class="custom-select custom-select-sm"></select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Receiving":
+                            <div class="form-group">
+                                <label for="dateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="dateFilter" type="date" class="form-control datepicker" placeholder="Date" required>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplierFilter" class="col-form-label col-form-label-sm">Supplier</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="supplierFilter" class="custom-select custom-select-sm"></select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="partnumberFilter" class="col-form-label col-form-label-sm">Part number</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="partnumberFilter" class="form-control" placeholder="Part Number / Unique Number" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Sales":
+
+                            break;
+                        case "Purchases":
+
+                            break;
+                        case "Stock":
+                            <div class="form-group">
+                                <label for="stockTypeFilter" class="col-form-label col-form-label-sm">Stock Type</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="stockTypeFilter" class="custom-select custom-select-sm" onchange="loadComboStockOwner()">
+                                        <option value="">Show All</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-dropbox"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ownerFilter" class="col-form-label col-form-label-sm">Customer / Line / Supplier</label>
+                                <div class="input-group input-group-sm">
+                                    <select id="ownerFilter" class="custom-select custom-select-sm">
+                                        <option value="">Show All</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-address-book-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="partnumberFilter" class="col-form-label col-form-label-sm">Part number</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="text" id="partnumberFilter" class="form-control" placeholder="Part Number / Unique Number" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-th"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="refreshRowTimer" class="col-form-label col-form-label-sm">Next Stock Row Timer (In Second)</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" id="refreshRowTimer" class="form-control" placeholder="Next row timer" value="60" min="5" max="60" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-clock-o"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Quality Incoming":
+                            <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                            <div class="input-group input-group-sm">
+                                <input id="monthFilter" type="text" class="form-control" placeholder="Month Year QC Inspection">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Quality Outgoing":
+                            <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                            <div class="input-group input-group-sm">
+                                <input id="monthFilter" type="text" class="form-control" placeholder="Month Year QC Inspection">
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="sw-dark" class="col-form-label col-form-label-sm">Full Screen Themes</label>
+                                <div class="mt-1">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" value="" id="sw-dark">
+                                        <label class="custom-control-label" for="sw-dark"><small> Dark mode</small></label>
+                                    </div>
+                                </div>
+                            </div>
+                            break;
+                        case "Summary":
+
+                            break;
+                    }
+
+                    <hr />
+
+                    <a href="#" id="btn-refreshFilter" class="nav-link pull-right" onclick="refreshDashboard()"><span class="icon-reload"></span> Refresh Dashboard</a>
+
+                </form>
+            </div>
+
+            <a href="#" onclick="PrintElem('#dashboardForm')" class="nav-link d-md-down-none">
+                <i class="icon-printer"></i>
+            </a>
+            <a href="#" onclick="openFullscreen()" class="nav-link d-md-down-none">
+                <i class="icon-size-fullscreen"></i>
+            </a>
+        </div>
+    </li>
+    </ol>
+</div>
+<script>
+
+    $(document).ready(function () {
+
+        $(".dropdown-menu a.selected").each(function () {
+            var xhtml = $(this).html();
+            var nhtml = xhtml;
+            nhtml += " <i class='fa fa-check text-success mt-1 pull-right'></i>"
+            $(this).html(nhtml);
+
+        })
+
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        if ($("#dateFilter").val() === "") {
+            var today = new Date();
+            today = moment(today).format("YYYY-MM-DD");
+            $("#dateFilter").val(today);
+        }
+
+    })
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    loadComboCustomer();
+    function loadComboCustomer() {
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#customerFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+    loadComboLine();
+    function loadComboLine() {
+
+        $.ajax({
+            url: '@Url.Action("LineListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#lineFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Line")
+                );
+                $.each(response, function (i, prod) {
+                    $(id).append(
+                        $('<option></option>').val(prod.LineId).html(prod.LineName)
+                    );
+                });
+            }
+        })
+    }
+    loadComboSupplier();
+    function loadComboSupplier() {
+
+        $.ajax({
+            url: '@Url.Action("SupplierListJson", "Suppliers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#supplierFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Supplier")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.SupplierId).html(sup.SupplierName)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboStockType();
+    function loadComboStockType() {
+
+        $.ajax({
+            url: '@Url.Action("StockTypeList", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            data: {},
+            success: function (response) {
+
+                var id = "#stockTypeFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("Show All")
+                );
+                $.each(response, function (i, area) {
+                    $(id).append(
+                        $('<option></option>').val(area.StockType).html(area.StockType)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboStockOwner() {
+
+        var stocktype = $("#stockTypeFilter").val();
+
+        $.ajax({
+            url: '@Url.Action("StockOwnerList", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            data: { stocktype: stocktype },
+            success: function (response) {
+
+                var id = "#ownerFilter";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("Show All")
+                );
+
+                if (response != 'ALL') {
+                    $.each(response, function (i, own) {
+                        $(id).append(
+                            $('<option></option>').val(own.OwnerId).html(own.OwnerName)
+                        );
+                    });
+                }
+            }
+        })
+    }
+
+    $(function () {
+        $("#form-filter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#customerFilter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#lineFilter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#supplierFilter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#stockTypeFilter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#ownerFilter").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#sw-dark").on("click", function (e) {
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#btn-refreshFilter").on("click", function (e) {
+            $("#form-filter").toggleClass("show", "hide");;
+        });
+    });
+    $(function () {
+        $("#btnApply").on("click", function (e) {
+            $("#form-timer").toggleClass("show", "hide");;
+        });
+    });
+</script>

@@ -1,0 +1,232 @@
+﻿<div class="modal animated fadeIn" id="crudCustomerInvoiceEmailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-envelope"></span> Sent Email</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <button id="btn-EmailApproval" type="button" class="btn btn-sm btn-warning" onclick="sentCustomerInvoiceEmail('Approval')"><span class="fa fa-share-square"></span> To Approval</button>
+                <button hidden id="btn-EmailCustomer" type="button" class="btn btn-sm btn-warning" onclick="sentCustomerInvoiceEmail('Customer')"><span class="fa fa-share-square"></span> To Customer</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+            <input type="hidden" id="CustomerInvoiceNumberEmail" />
+            <input type="hidden" id="CustomerInvoiceDateEmail" />
+            <input type="hidden" id="CustomerInvoiceCustomerIdEmail" />
+            <input type="hidden" id="CustomerInvoiceCustomerEmail" />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("../System/EmailSender")
+
+<script>
+
+    function sentCustomerInvoiceEmail(action, id, invdate, Customer) {
+
+        var $grid = $("#jqGridMain");
+        if (id != "") {
+            var rowData = $grid.jqGrid("getRowData", id),
+                ApprovalName = rowData.ApprovalName,
+                CustomerId = rowData.CustomerId,
+                StatusName = rowData.StatusName;
+        }
+
+        $("#btn-EmailApproval").attr("disabled", true);
+        $("#btn-EmailCustomer").attr("disabled", true);
+
+        if (ApprovalName === "Created" || ApprovalName === "Checked") {
+            $("#btn-EmailApproval").removeAttr("disabled");
+        } else {
+            if (StatusName === "Open" || StatusName === "Sent") {
+                $("#btn-EmailCustomer").removeAttr("disabled");
+            }
+        }
+
+        invdate = moment(invdate).format("YYYY-MM-DD");
+
+        switch (action) {
+            case "Open":
+                $("#CustomerInvoiceNumberEmail").val(id);
+                $("#CustomerInvoiceDateEmail").val(invdate);
+                $("#CustomerInvoiceCustomerIdEmail").val(CustomerId);
+                $("#CustomerInvoiceCustomerEmail").val(Customer);
+                $('#crudCustomerInvoiceEmailModal').modal('show');
+                break;
+
+            case "Approval":
+
+                var InvoiceNumber = $("#CustomerInvoiceNumberEmail").val();
+                var InvoiceDate = moment(invdate).format("MMMM, DD YYYY");
+                var Customer = $("#CustomerInvoiceCustomerEmail").val();
+
+                var subject = action + " @ViewBag.Title " + InvoiceNumber;
+                var sentto = getApprovalMailList(InvoiceNumber);
+                var attachment1 = "@Url.Action("InvoiceNotaFaktur", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=Pdf';
+                var attachment2 = "@Url.Action("InvoiceRecapDelivery", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=pdf';
+                var attachment3 = "@Url.Action("InvoiceRecapPartNumber", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=pdf';
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + InvoiceNumber + " </td></tr>";
+                content += "<tr><td width='120'>Date </td><td> : </td><td> " + InvoiceDate + " </td></tr>";
+                content += "<tr><td width='120'>Customer</td><td> : </td><td> " + Customer + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' target='_blank' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboApprovalMailList(InvoiceNumber);
+                sentEmail("CustomerInvoiceApproval" ,subject, sentto, "", content, attachment1, attachment2, attachment3, InvoiceNumber);
+                $('#crudCustomerInvoiceEmailModal').modal('hide');
+                break;
+
+            case "Customer":
+
+                var InvoiceNumber = $("#CustomerInvoiceNumberEmail").val();
+                var InvoiceDate = moment(invdate).format("MMMM, DD YYYY");
+                var Customerid = $("#CustomerInvoiceCustomerIdEmail").val();
+                var Customer = $("#CustomerInvoiceCustomerEmail").val();
+
+                var subject = action + " @ViewBag.Title " + InvoiceNumber;
+                var sentto = getCustomerMailList(Customerid);
+                var sentcc = "@ViewBag.EmailCC";
+                var attachment1 = "@Url.Action("InvoiceNotaFaktur", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=Pdf';
+                var attachment2 = "@Url.Action("InvoiceRecapDelivery", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=pdf';
+                var attachment3 = "@Url.Action("InvoiceRecapPartNumber", "Reports")?InvoiceNumber=" + InvoiceNumber + '&FileFormat=pdf';
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + InvoiceNumber + " </td></tr>";
+                content += "<tr><td width='120'>Date </td><td> : </td><td> " + InvoiceDate + " </td></tr>";
+                content += "<tr><td width='120'>Customer</td><td> : </td><td> " + Customer + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboCustomerMailList(Customerid);
+                sentEmail("CustomerInvoiceCustomer", subject, sentto, sentcc, content, attachment1, attachment2, attachment3, InvoiceNumber);
+                $('#crudCustomerInvoiceEmailModal').modal('hide');
+                break;
+
+        }
+
+    }
+
+    function getApprovalMailList(InvoiceNumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("CustomerInvoiceApprovalListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                InvoiceNumber: InvoiceNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.UserId;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboApprovalMailList(InvoiceNumber) {
+
+        $.ajax({
+            url: '@Url.Action("CustomerInvoiceApprovalListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                InvoiceNumber: InvoiceNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.UserId + '" selected>' + raw.UserName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+
+    function getCustomerMailList(Customerid) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("CustomerContactListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                CustomerId: Customerid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.Email;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboCustomerMailList(Customerid) {
+
+        $.ajax({
+            url: '@Url.Action("CustomerContactListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                CustomerId: Customerid,
+                EmailContact: true,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.Email + '" selected>' + raw.ContactName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+</script>

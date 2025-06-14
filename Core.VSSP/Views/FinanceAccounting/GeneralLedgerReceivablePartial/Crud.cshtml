@@ -1,0 +1,457 @@
+﻿
+<div class="modal animated fadeIn" id="crudGeneralLedgerReceivableModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudGeneralLedgerReceivableForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivableCustomerId" class="col-form-label col-form-label-sm">Customer</label>
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-GeneralLedgerReceivableCustomerId" onchange="loadComboCustomerInvoice()" value="" required></select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivableInvoiceNumber" class="col-form-label col-form-label-sm">Invoice Number</label>
+                                    <select class="custom-select custom-select-sm bg-white" id="crud-GeneralLedgerReceivableInvoiceNumber" onchange="loadSummaryCustomerInvoice()" value="" required></select>
+                                </div>
+                            </div>
+
+                            <div class="form-group row mt-3 ml-0 mr-0 border-bottom bg-light">
+                                <label class="col-form-label col-form-label-sm font-weight-bold">Summary :</label>
+                            </div>
+
+                            <div class="form-row">
+                                <label for="crud-GeneralLedgerReceivableSubTotal" class="col-md-4 col-form-label col-form-label-sm">DPP</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm border-secondary bg-light text-right" id="crud-GeneralLedgerReceivableSubTotal" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row mt-3">
+                                <label for="crud-GeneralLedgerReceivablePPN" class="col-md-4 col-form-label col-form-label-sm">PPN</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm border-secondary bg-light text-right" id="crud-GeneralLedgerReceivablePPN" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row mt-3">
+                                <label for="crud-GeneralLedgerReceivablePPH23" class="col-md-4 col-form-label col-form-label-sm">PPH 23</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm border-secondary bg-light text-right" id="crud-GeneralLedgerReceivablePPH23" readonly>
+                                </div>
+                            </div>
+                            <div class="form-row mt-3">
+                                <label for="crud-GeneralLedgerReceivableGrandTotal" class="col-md-4 col-form-label col-form-label-sm">Receive Amount</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm border-secondary bg-light text-right" id="crud-GeneralLedgerReceivableGrandTotal" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivableTaxNumber" class="col-form-label col-form-label-sm">Tax Number</label>
+                                    <input type="text" class="form-control form-control-sm" id="crud-GeneralLedgerReceivableTaxNumber" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivableTransferDate" class="col-form-label col-form-label-sm">Exchange Invoice Date</label>
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-GeneralLedgerReceivableTransferDate" />
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivablePaymentSchedule" class="col-form-label col-form-label-sm">Payment Schedule</label>
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-GeneralLedgerReceivablePaymentSchedule" />
+                                </div>
+                            </div>
+                            <div class="form-group row mt-3 mb-1 ml-0 mr-0 border-bottom bg-light">
+                                <label for="crud-GeneralLedgerReceivablePaid" class="pl-0 col-md-3 col-form-label col-form-label-sm font-weight-bold">Payment</label>
+                                <div class="col-md-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-GeneralLedgerReceivablePaid" onclick="activatePayment()">
+                                            <label for="crud-GeneralLedgerReceivablePaid" class="custom-control-label"><small>Paid</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivablePaymentAmount" class="col-form-label col-form-label-sm">Payment Amount</label>
+                                    <input type="number" class="form-control form-control-sm" id="crud-GeneralLedgerReceivablePaymentAmount">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-12">
+                                    <label for="crud-GeneralLedgerReceivablePaymentDate" class="col-form-label col-form-label-sm">Payment Date</label>
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-GeneralLedgerReceivablePaymentDate" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="crudGeneralLedgerReceivableError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudGeneralLedgerReceivable" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="GeneralLedgerReceivableAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationGeneralLedgerReceivableModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationGeneralLedgerReceivable" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteGeneralLedgerReceivable()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudGeneralLedgerReceivable(action, id){
+
+        document.getElementById("crudGeneralLedgerReceivableForm").reset();
+        $('#crudGeneralLedgerReceivableForm').removeClass('was-validated');
+        $('#crudGeneralLedgerReceivableError').html("");
+        $("#btn-crudGeneralLedgerReceivable").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-GeneralLedgerReceivableCustomerId").removeAttr("disabled");
+        $("#crudGeneralLedgerReceivableForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $("#crud-GeneralLedgerReceivablePaid").removeAttr("checked");
+
+        $("#crud-GeneralLedgerReceivableCustomerId").selectpicker("refresh");
+        $("#GeneralLedgerReceivableAction").val(action);
+        $("#crud-GeneralLedgerReceivableSubTotal").attr("readonly", true);
+        $("#crud-GeneralLedgerReceivablePPN").attr("readonly", true);
+        $("#crud-GeneralLedgerReceivablePPH23").attr("readonly", true);
+        $("#crud-GeneralLedgerReceivableGrandTotal").attr("readonly", true);
+
+        //var Id = $("#GeneralLedgerReceivableSelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridLedger'),
+                selectedRowId   = id,
+                CustomerId      = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                InvoiceNumber   = Grid.jqGrid('getCell', selectedRowId, 'InvoiceNumber'),
+                TaxNumber       = Grid.jqGrid('getCell', selectedRowId, 'TaxNumber'),
+                SubTotal        = parseFloat(Grid.jqGrid('getCell', selectedRowId, 'SubTotal')),
+                PPN             = parseFloat(Grid.jqGrid('getCell', selectedRowId, 'PPN')),
+                PPH23           = parseFloat(Grid.jqGrid('getCell', selectedRowId, 'PPH23')),
+                GrandTotal      = parseFloat(Grid.jqGrid('getCell', selectedRowId, 'GrandTotal')),
+                TransferDate    = Grid.jqGrid('getCell', selectedRowId, 'TransferDate'),
+                PaymentSchedule = Grid.jqGrid('getCell', selectedRowId, 'PaymentSchedule'),
+                Paid            = Grid.jqGrid('getCell', selectedRowId, 'Paid'),
+                PaymentAmount   = Grid.jqGrid('getCell', selectedRowId, 'PaymentAmount'),
+                PaymentDate     = Grid.jqGrid('getCell', selectedRowId, 'PaymentDate');
+
+            if (isNullOrEmpty(TransferDate)) TransferDate = moment(TransferDate).format("YYYY-MM-DD");
+            if (isNullOrEmpty(PaymentSchedule)) PaymentSchedule = moment(PaymentSchedule).format("YYYY-MM-DD");
+            if (isNullOrEmpty(PaymentDate)) PaymentDate = moment(PaymentDate).format("YYYY-MM-DD");
+
+            if (CustomerId === false) {
+                alert("Please select Ledger");
+                return false
+            };
+
+            Paid = parseBool(Paid);
+
+            loadComboCustomerInvoice(CustomerId,99);
+
+            $("#crud-GeneralLedgerReceivableCustomerId").val(CustomerId).selectpicker("refresh");
+            $("#crud-GeneralLedgerReceivableInvoiceNumber").val(InvoiceNumber);
+            $("#crud-GeneralLedgerReceivableSubTotal").val(SubTotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+            $("#crud-GeneralLedgerReceivablePPN").val(PPN.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+            $("#crud-GeneralLedgerReceivablePPH23").val(PPH23.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+            $("#crud-GeneralLedgerReceivableGrandTotal").val(GrandTotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+            $("#crud-GeneralLedgerReceivableTaxNumber").val(TaxNumber);
+            $("#crud-GeneralLedgerReceivableTransferDate").val(TransferDate);
+            $("#crud-GeneralLedgerReceivablePaymentSchedule").val(PaymentSchedule);
+            $("#crud-GeneralLedgerReceivablePaid").attr("checked", Paid).change();
+            $("#crud-GeneralLedgerReceivablePaymentAmount").val(PaymentAmount);
+            $("#crud-GeneralLedgerReceivablePaymentDate").val(PaymentDate);
+
+        }
+
+        activatePayment();
+
+        switch (action) {
+            case "Create":
+                loadComboCustomerInvoice("*", 99);
+                $("#crudGeneralLedgerReceivableModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-primary")
+                $("#crudGeneralLedgerReceivableModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Ledger');
+                $('#crudGeneralLedgerReceivableModal').modal('show');
+                $("#crud-GeneralLedgerReceivableCustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-GeneralLedgerReceivableCustomerId").attr("disabled", true);
+                $("#crud-GeneralLedgerReceivableInvoiceNumber").attr("disabled", true);
+                $("#crudGeneralLedgerReceivableModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-info").addClass("modal-success")
+                $("#crudGeneralLedgerReceivableModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Ledger');
+                $('#crudGeneralLedgerReceivableModal').modal('show');
+                $("#crud-GeneralLedgerReceivableTaxNumber").focus();
+                break;
+            case "Delete":
+                $("#crudGeneralLedgerReceivableForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-GeneralLedgerReceivableCustomerId").attr("disabled", true);
+                $("#crud-GeneralLedgerReceivableInvoiceNumber").attr("disabled", true);
+                $("#btn-crudGeneralLedgerReceivable").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudGeneralLedgerReceivableModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-info").addClass("modal-danger")
+                $("#crudGeneralLedgerReceivableModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' Ledger');
+                $('#crudGeneralLedgerReceivableModal').modal('show');
+                break;
+            case "Closed":
+                $("#crudGeneralLedgerReceivableForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-GeneralLedgerReceivableCustomerId").attr("disabled", true);
+                $("#btn-crudGeneralLedgerReceivable").html("<span class='fa fa-sign-out'></span> Closing");
+                $("#crudGeneralLedgerReceivableModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").addClass("modal-info")
+                $("#crudGeneralLedgerReceivableModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' Ledger');
+                $('#crudGeneralLedgerReceivableModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-GeneralLedgerReceivableInvoiceNumber').change(function () {
+        $('#crudGeneralLedgerReceivableError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudGeneralLedgerReceivableForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudGeneralLedgerReceivableForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            CustomerInvoiceReceivable: {
+                                CustomerId: $("#crud-GeneralLedgerReceivableCustomerId").val(),
+                                InvoiceNumber: $("#crud-GeneralLedgerReceivableInvoiceNumber").val(),
+                                TaxNumber: $("#crud-GeneralLedgerReceivableTaxNumber").val(),
+                                TransferDate: $("#crud-GeneralLedgerReceivableTransferDate").val(),
+                                PaymentSchedule: $("#crud-GeneralLedgerReceivablePaymentSchedule").val(),
+                                Paid: $("#crud-GeneralLedgerReceivablePaid").prop("checked"),
+                                PaymentAmount: $("#crud-GeneralLedgerReceivablePaymentAmount").val(),
+                                PaymentDate: $("#crud-GeneralLedgerReceivablePaymentDate").val(),
+                                UserID: "",
+                                EditDate: null
+                            },
+                            uid: "@ViewBag.UserId",
+                            formAction: $("#GeneralLedgerReceivableAction").val()
+                        };
+
+                        //console.log(JSON.stringify(jsonData));
+                        //return false;
+
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudGeneralLedgerReceivable", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudGeneralLedgerReceivableModal').modal('hide');
+                                var act = $("#GeneralLedgerReceivableAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.TaxNumber + " has been saved succesfully");
+                                        reloadGridGeneralLedgerReceivable();
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.TaxNumber + " has been saved succesfully");
+                                        reloadGridGeneralLedgerReceivable();
+                                        break;
+                                    case "closed":
+                                        showToast("Success", "Closing " + data.TaxNumber + " has been closed succesfully");
+                                        reloadGridGeneralLedgerReceivable();
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.TaxNumber + " has been removed succesfully");
+                                        reloadGridGeneralLedgerReceivable();
+                                        break;
+                                }
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudGeneralLedgerReceivableError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+    loadComboCustomer();
+    function loadComboCustomer() {
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {},
+            success: function (response) {
+
+                var id = "#crud-GeneralLedgerReceivableCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, Customer) {
+                    $(id).append(
+                        $('<option></option>').val(Customer.CustomerId).html(Customer.CustomerName)
+                    );
+                });
+            }
+        })
+    }
+
+    function loadComboCustomerInvoice(customerid = "", Status = 2) {
+
+        if (customerid === "") customerid = $("#crud-GeneralLedgerReceivableCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerInvoiceListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                searchFilter: customerid,
+                status: Status
+            },
+            success: function (response) {
+
+                var id = "#crud-GeneralLedgerReceivableInvoiceNumber";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Invoice")
+                );
+                $.each(response, function (i, inv) {
+
+                    var invoicedate = moment(new Date(parseInt(inv.InvoiceDate.substr(6)))).format("DD-MMM-YYYY");
+                    $(id).append(
+                        $('<option></option>').val(inv.InvoiceNumber).html(inv.InvoiceNumber + " : " + invoicedate)
+                    );
+                });
+            }
+        })
+    }
+    function loadSummaryCustomerInvoice() {
+
+        var invoicenumber = $("#crud-GeneralLedgerReceivableInvoiceNumber").val();
+        if (invoicenumber === "") invoicenumber = "*";
+
+        $("#crud-GeneralLedgerReceivableSubTotal").val("0.00");
+        $("#crud-GeneralLedgerReceivablePPN").val("0.00");
+        $("#crud-GeneralLedgerReceivablePPH23").val("0.00");
+        $("#crud-GeneralLedgerReceivableGrandTotal").val("0.00");
+
+        $.ajax({
+            url: '@Url.Action("CustomerInvoiceListJson", "FinanceAccounting")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                searchFilter: invoicenumber,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, inv) {
+                    var _subtotal = inv.SubTotal;
+                    var _ppn = inv.PPN;
+                    var _pph23 = inv.PPH23;
+                    var _grandtotal = inv.GrandTotal;
+
+                    $("#crud-GeneralLedgerReceivableSubTotal").val(_subtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+                    $("#crud-GeneralLedgerReceivablePPN").val(_ppn.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+                    $("#crud-GeneralLedgerReceivablePPH23").val(_pph23.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+                    $("#crud-GeneralLedgerReceivableGrandTotal").val(_grandtotal.toLocaleString(undefined, { minimumFractionDigits: 2 }));
+
+                });
+            }
+        })
+    }
+
+    function activatePayment() {
+        var paid = $("#crud-GeneralLedgerReceivablePaid").prop("checked");
+
+        if (paid) {
+            var amount = $("#crud-GeneralLedgerReceivableGrandTotal").val();
+            var today = moment(new Date()).format("YYYY-MM-DD");
+
+            $("#crud-GeneralLedgerReceivablePaymentAmount").removeAttr("readonly").attr("required", true).focus().val(amount.replaceAll(",",""));
+            $("#crud-GeneralLedgerReceivablePaymentDate").removeAttr("readonly").attr("required", true).val(today);
+        } else {
+            $("#crud-GeneralLedgerReceivablePaymentAmount").attr("readonly", true).removeAttr("required").val("");
+            $("#crud-GeneralLedgerReceivablePaymentDate").attr("readonly", true).removeAttr("required").val("");
+        }
+    }
+</script>
+

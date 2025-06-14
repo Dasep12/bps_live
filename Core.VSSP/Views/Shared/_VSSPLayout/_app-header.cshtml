@@ -1,0 +1,142 @@
+﻿@*@using Microsoft.AspNetCore.Identity*@
+
+@*@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager*@
+
+<header class="app-header navbar">
+
+    <button class="navbar-toggler larr sidebar-toggler d-lg-none" type="button" data-toggle="sidebar-show" data-target="#sidebar-menu">
+        <span> </span>
+        <span> </span>
+        <span> </span>
+    </button>
+    <button class="navbar-toggler rarr sidebar-toggler d-md-down-none" type="button" data-toggle="sidebar-lg-show" data-target="#sidebar-menu">
+        <span> </span>
+        <span> </span>
+        <span> </span>
+    </button>
+
+    <!-- APP-HEADER-NAV -->
+    @Html.Partial("_VSSPLayout/_app-header-nav")
+    <!-- /APP-HEADER-NAV -->
+    @if (Session["UserID"] != null)
+    {
+        <ul class="nav navbar-nav ml-auto">
+            <li id="user-notification" class="nav-item dropdown">
+
+                @{
+                    Html.RenderAction("NotificationItem", "System");
+                }
+            </li>
+            <li class="nav-item dropdown">
+                <a href="#" class="navbar-toggler aside-menu-toggler" data-toggle="aside-menu-show" title="Configuration">
+                    <i class="cui-settings icons"></i>
+                </a>
+            </li>
+            <!-- /USER-NAV -->
+            @Html.Partial("_VSSPLayout/_user-nav")
+
+        </ul>
+
+        @*<a href="#" class="navbar-toggler aside-menu-toggler d-md-down-none" data-toggle="aside-menu-lg-show">
+                <i class="icon-equalizer text-dark"></i>
+            </a>*@
+    }
+    else
+    {
+        <ul class="nav navbar-nav ml-auto">
+            <li class="nav-item px-3">
+                <a href="@Url.Action("Register","Account")" class="nav-link">Register</a>
+            </li>
+            <li class="nav-item px-3">
+                <a href="@Url.Action("Login","Account")" class="nav-link">Login</a>
+            </li>
+        </ul>
+    }
+</header>
+
+    @*<script>
+    $(document).ready(function () {
+        //changeMenu();
+    });
+    function changeMenu() {
+        //var path = window.location.href.toLowerCase();
+        var base_url = window.location.origin;
+
+        var path = window.location.pathname.toLowerCase();
+        window.history.pushState(null, null, path);
+
+        $('.nav-item a').each(function () {
+            var url = $(this).attr('href').toLowerCase();
+            var urlParts = url.split('?');
+            var href = urlParts[0].toLowerCase();
+
+            //alert(path + ' | ' + href);
+
+            if (href===path) {
+
+                alert(path + ' <> ' + href);
+                //$('.nav-link').addClass('active');
+                $(this).closest('.nav-link').addClass('active expand');
+
+            }
+        });
+    };
+    </script>*@
+
+<script>
+
+    @*var counterNotifDate = new Date();
+    counterNotifDate.setMinutes(counterNotifDate.getMinutes() + 2);
+    var valtimer = "";
+
+    // Update the count down every 1 second
+    var notif = setInterval(function () {
+
+        // Get today's date and time
+        var now = new Date().getTime();
+        var distance = counterNotifDate - now;
+
+        if (distance < 1) {
+            counterNotifDate = new Date();
+            counterNotifDate.setMinutes(counterNotifDate.getMinutes() + 2);
+
+            setTimeout(function () {
+                refreshNotification();
+            }, 2000);
+        }
+
+    }, 1000);
+
+    function refreshNotification() {
+
+        $("#user-notification").load('@Url.Action("NotificationItem", "System")');
+        setTimeout(function () {
+            refreshNotification();
+            countNotifChange();
+        }, 500);
+
+        counterNotifDate = new Date();
+        counterNotifDate.setMinutes(counterNotifDate.getMinutes() + 2);
+    }*@
+
+
+    $(document).ready(function () {
+       var countcategory = $("#count-category").text();
+       if (countcategory != "") {
+            showToast("Notification", "You have " + countcategory + " notification items", "toast-bottom-center");
+        }
+    })
+
+    //function countNotifChange() {
+    //    var newcountcategory = $("#count-category").text();
+    //    if (newcountcategory != "") {
+    //        if (parseInt(newcountcategory) > parseInt(countcategory)) {
+    //            showToast("Notification", "You have " + newcountcategory + " notification items", "toast-bottom-center");
+    //        }
+    //    }
+
+    //    countcategory = newcountcategory;
+
+    //}
+</script>

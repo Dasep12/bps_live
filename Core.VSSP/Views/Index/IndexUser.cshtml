@@ -1,0 +1,111 @@
+﻿<!-- Cart -->
+<style>
+    tr td {
+        padding: 6px !important;
+    }
+</style>
+<div class="wrap-header-cart js-panel-cart">
+    <div class="s-full js-hide-cart"></div>
+
+    <div class="header-cart flex-col-l p-l-65 p-r-25">
+        <div class="header-cart-title flex-w flex-sb-m p-b-8">
+            <span class="mtext-103 cl2">
+                Account Info
+            </span>
+
+            <div class="fs-35 lh-10 cl2 p-lr-5 pointer hov-cl1 trans-04 js-hide-cart">
+                <i class="zmdi zmdi-close"></i>
+            </div>
+        </div>
+
+        <div class="header-cart-content flex-w js-pscroll">
+            <ul class="header-cart-wrapitem w-full border-bottom">
+                <li class="header-cart-item flex-w flex-t m-b-12">
+                    <div class="header-cart-item-img">
+                        @if (@Session["Images"] == null)
+                        {
+                            <img src="~/_VSSPAssets/User/user.png" alt="@Session["UserName"]" />
+                        }
+                        else
+                        {
+                            var base64 = Convert.ToBase64String((byte[])@Session["Images"]);
+                            var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+                            <img src="@imgSrc" alt="@Session["UserName"]" />
+                        }
+                    </div>
+
+                    @if (Session["UserID"] != null)
+                    {
+                        <div class="header-cart-item-txt p-t-8">
+                            <a href="#" class="header-cart-item-name m-b-18 hov-cl1 trans-04">
+                                @Session["UserName"].ToString()
+                            </a>
+
+                            <span class="header-cart-item-info">
+                                @Session["Email"].ToString()
+                            </span>
+                        </div>
+                    }
+                </li>
+                <li>
+                    @if (Session["UserID"] != null)
+                    {
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <td>User ID</td>
+                                    <td class="">@Session["UserID"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>Role</td>
+                                    <td class="">@Session["UserType"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>IP Address</td>
+                                    <td class="">@Session["IpAddress"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>Country</td>
+                                    <td class="">@Session["Country"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>City</td>
+                                    <td class="">@Session["City"].ToString()</td>
+                                </tr>
+                                <tr>
+                                    <td>Application</td>
+                                    <td class="">@Session["AppID"].ToString() @Session["AppVersion"].ToString().@Session["AppRevision"].ToString().@Session["AppBuild"].ToString()</td>
+                                </tr>
+                                @if (Session["UserType"].ToString() == "DEV")
+                                {
+                                    <tr>
+                                        <td>Server</td>
+                                        <td class="">@Session["ServerName"].ToString()</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Database</td>
+                                        <td class="">@Session["DatabaseName"].ToString()</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+
+                </li>
+            </ul>
+
+        </div>
+        <div class="w-full" style="margin-bottom:0px">
+
+            <div class="header-cart-buttons flex-w w-full">
+                <a href="@Url.Action("Dashboard","Home")" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+                    View Portal
+                </a>
+                <a href="@Url.Action("SignOut","Account")" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+                    Sign Out
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

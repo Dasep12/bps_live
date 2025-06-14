@@ -1,0 +1,516 @@
+﻿<section class="app-section" id="Suppliers-List">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-12">
+                    <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-1">
+                    <div class="list-group" id="list-tab" role="tablist">
+                        <a class="list-group-item list-group-item-action active" id="list-bank-list" data-toggle="tab" href="#list-bank" role="tab" aria-controls="list-bank" aria-selected="true" onclick="setActionTab('bank')"><i class="fa fa-bank"></i> Bank</a>
+                        <a class="list-group-item list-group-item-action" id="list-classification-list" data-toggle="tab" href="#list-classification" role="tab" aria-controls="list-classification" aria-selected="false" onclick="setActionTab('classification')"><i class="fa fa-list"></i> Classification</a>
+                        <a class="list-group-item list-group-item-action" id="list-payment-list" data-toggle="tab" href="#list-payment" role="tab" aria-controls="list-payment" aria-selected="false" onclick="setActionTab('payment')"><i class="fa fa-suitcase"></i> Account Payment</a>
+                        <a class="list-group-item list-group-item-action" id="list-category-list" data-toggle="tab" href="#list-category" role="tab" aria-controls="list-category" aria-selected="false" onclick="setActionTab('category')"><i class="fa fa-tasks"></i> Category</a>
+                        <a class="list-group-item list-group-item-action" id="list-bankaccount-list" data-toggle="tab" href="#list-bankaccount" role="tab" aria-controls="list-bankaccount" aria-selected="false" onclick="setActionTab('bankaccount')"><i class="fa fa-building"></i> Bank Account</a>
+                    </div>
+                    <input type="text" id="actionTab" value="bank" hidden />
+                </div>
+                <div class="col-md-8">
+                    <div class="tab-content" id="nav-tabContent">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGrid()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="pull-right">
+                                        <button id="btnAdd" class="btn btn-sm btn-outline-primary" type="button" title="Add New" onclick="crudMasterData('Create')" @ViewBag.canCreate><i class="fa fa-plus"></i></button>
+                                        <button id="btnEdit" class="btn btn-sm btn-outline-success" type="button" title="Edit Selected" onclick="crudMasterData('Update')" disabled><i class="fa fa-pencil"></i></button>
+                                        <button id="btnDelete" class="btn btn-sm btn-outline-danger" type="button" title="Delete Selected" onclick="crudMasterData('Delete')" disabled><i class="fa fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade active show" id="list-bank" role="tabpanel" aria-labelledby="list-bank-list">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="jqGridBank"></table>
+                                    <div id="jqGridPagerBank"></div>
+                                    <input id="BankSelected" type="text" class="form-control form-control-sm" hidden />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="list-classification" role="tabpanel" aria-labelledby="list-classification-list">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="jqGridClassification"></table>
+                                    <div id="jqGridPagerClassification"></div>
+                                    <input id="ClassificationSelected" type="text" class="form-control form-control-sm" hidden />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="list-payment" role="tabpanel" aria-labelledby="list-payment-list">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="jqGridPayment"></table>
+                                    <div id="jqGridPagerPayment"></div>
+                                    <input id="PaymentSelected" type="text" class="form-control form-control-sm" hidden />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="list-category" role="tabpanel" aria-labelledby="list-category-list">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="jqGridCategory"></table>
+                                    <div id="jqGridPagerCategory"></div>
+                                    <input id="CategorySelected" type="text" class="form-control form-control-sm" hidden />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="list-bankaccount" role="tabpanel" aria-labelledby="list-bankaccount-list">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table id="jqGridBankAccount"></table>
+                                    <div id="jqGridPagerBankAccount"></div>
+                                    <input id="BankAccountSelected" type="text" class="form-control form-control-sm" hidden />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            @*<button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="importSupplier()" @ViewBag.canCreate><i class="fa fa-cloud-upload"></i> Import</button>*@
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGrid()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@Html.Partial("MasterDataPartial/CrudBank")
+@Html.Partial("MasterDataPartial/CrudClassification")
+@Html.Partial("MasterDataPartial/CrudPayment")
+@Html.Partial("MasterDataPartial/CrudCategory")
+@Html.Partial("MasterDataPartial/CrudBankAccount")
+
+<script>
+
+    function setActionTab(action) {
+        $('#actionTab').val(action);
+        reloadGrid();
+    }
+
+    $(document).ready(function () {
+        setActionTab("bank");
+    })
+
+    /* Bank MASTER */
+    $(function () {
+
+        $grid = $("#jqGridBank").jqGrid({
+            url: '@Url.Action("BankListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {},
+            colModel: [
+                { label: 'Bank Id', key: true, name: 'BankId', align: 'left', fixed: true, width: 90 },
+                { label: 'Bank Name', name: 'BankName', align: 'left', fixed: true, width: 150 },
+                { label: 'Transfer Fee', name: 'TransferFee', align: 'right', fixed: true, width: 80, formatter: "number" },
+                { label: 'Remarks', name: 'Remarks', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerBank',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var BankSelected = $(this).getLocalRow(rowid)
+                $("#BankSelected").val(BankSelected.BankId);
+
+                if (BankSelected === "[]") {
+                    $("#btnEdit").attr('disabled', true);
+                    $("#btnDelete").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEdit").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDelete").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridBank').jqGrid('navGrid', '#jqGridPagerBank', { search: false, edit: false, add: false, del: false });
+    });
+
+    /* Classification MASTER */
+    $(function () {
+
+        $grid = $("#jqGridClassification").jqGrid({
+            url: '@Url.Action("ClassificationListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {},
+            colModel: [
+                { label: 'Classification Id', key: true, name: 'ClassificationId', align: 'left', fixed: true, width: 90 },
+                { label: 'Classification Name', name: 'ClassificationName', align: 'left', fixed: true, width: 150 },
+                { label: 'PPN', name: 'PPN', align: 'center', fixed: true, width: 60, formatter: "number" },
+                { label: 'PPH23', name: 'PPH23', align: 'center', fixed: true, width: 60, formatter: "number" },
+                { label: 'Remarks', name: 'Remarks', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerClassification',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var ClassificationSelected = $(this).getLocalRow(rowid)
+                $("#ClassificationSelected").val(ClassificationSelected.ClassificationId);
+
+                if (ClassificationSelected === "[]") {
+                    $("#btnEdit").attr('disabled', true);
+                    $("#btnDelete").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEdit").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDelete").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridClassification').jqGrid('navGrid', '#jqGridPagerClassification', { search: false, edit: false, add: false, del: false });
+    });
+
+    /* Payment MASTER */
+    $(function () {
+
+        $grid = $("#jqGridPayment").jqGrid({
+            url: '@Url.Action("PaymentListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {},
+            colModel: [
+                { label: 'Payment Id', key: true, name: 'PaymentId', align: 'left', fixed: true, width: 90 },
+                { label: 'Payment Name', name: 'PaymentName', align: 'left', fixed: true, width: 150 },
+                { label: 'Remarks', name: 'Remarks', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerPayment',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var PaymentSelected = $(this).getLocalRow(rowid)
+                $("#PaymentSelected").val(PaymentSelected.PaymentId);
+
+                if (PaymentSelected === "[]") {
+                    $("#btnEdit").attr('disabled', true);
+                    $("#btnDelete").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEdit").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDelete").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridPayment').jqGrid('navGrid', '#jqGridPagerPayment', { search: false, edit: false, add: false, del: false });
+    });
+
+    /* Category MASTER */
+    $(function () {
+
+        $grid = $("#jqGridCategory").jqGrid({
+            url: '@Url.Action("CategoryListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {},
+            colModel: [
+                { label: 'Category Id', key: true, name: 'CategoryId', align: 'left', fixed: true, width: 90 },
+                { label: 'Category Name', name: 'CategoryName', align: 'left', fixed: true, width: 150 },
+                { label: 'Remarks', name: 'Remarks', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerCategory',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                var CategorySelected = $(this).getLocalRow(rowid)
+                $("#CategorySelected").val(CategorySelected.CategoryId);
+
+                if (CategorySelected === "[]") {
+                    $("#btnEdit").attr('disabled', true);
+                    $("#btnDelete").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEdit").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDelete").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridCategory').jqGrid('navGrid', '#jqGridPagerCategory', { search: false, edit: false, add: false, del: false });
+    });
+    /* Category MASTER */
+    $(function () {
+
+        $grid = $("#jqGridBankAccount").jqGrid({
+            url: '@Url.Action("BankAccountListJson", "FinanceAccounting")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {},
+            colModel: [
+                { label: 'Bank Id', name: 'BankId', align: 'left', hidden: true, width: 60 },
+                { label: 'Bank Name', name: 'BankName', align: 'left', fixed: true, width: 120 },
+                { label: 'Branch', name: 'Branch', align: 'left', hidden: true, width: 90 },
+                { label: 'Account Name', name: 'AccountName', align: 'left', fixed: true, width: 90 },
+                { label: 'Account Number', name: 'AccountNumber', align: 'left', fixed: true, width: 90 },
+                { label: 'Start', name: 'StartDate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'End', name: 'EndDate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerBankAccount',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            onSelectRow: function (rowid) {
+
+                //var BankAccountSelected = $(this).getLocalRow(rowid)
+                $("#BankAccountSelected").val(rowid);
+
+                if (BankAccountSelected === "[]") {
+                    $("#btnEdit").attr('disabled', true);
+                    $("#btnDelete").attr('disabled', true);
+                } else {
+                    var canupdate = '@ViewBag.canUpdate';
+                    var candelete = '@ViewBag.canDelete';
+                    if (canupdate === "") {
+                        $("#btnEdit").removeAttr('disabled');
+                    }
+                    if (candelete === "") {
+                        $("#btnDelete").removeAttr('disabled');
+                    }
+                }
+            },
+        }),
+        $('#jqGridBankAccount').jqGrid('navGrid', '#jqGridPagerBankAccount', { search: false, edit: false, add: false, del: false });
+    });
+
+    function reloadGrid() {
+
+        var actionTab = $("#actionTab").val();
+
+        switch (actionTab) {
+            case "bank":
+
+                var filterData = $('#searchFilter').val();
+                $("#jqGridBank").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        filterData: filterData,
+                    }
+                }).trigger('reloadGrid');
+
+                break;
+            case "classification":
+
+                var filterData = $('#searchFilter').val();
+                $("#jqGridClassification").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        filterData: filterData,
+                    }
+                }).trigger('reloadGrid');
+
+            case "payment":
+
+                var filterData = $('#searchFilter').val();
+                $("#jqGridPayment").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        filterData: filterData,
+                    }
+                }).trigger('reloadGrid');
+
+                break;
+            case "category":
+
+                var filterData = $('#searchFilter').val();
+                $("#jqGridCategory").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        filterData: filterData,
+                    }
+                }).trigger('reloadGrid');
+
+                break;
+
+            case "bankaccount":
+
+                var filterData = $('#searchFilter').val();
+                $("#jqGridBankAccount").jqGrid('setGridParam', {
+                    datatype: 'json',
+                    mtype: 'GET',
+                    postData: {
+                        filterData: filterData,
+                    }
+                }).trigger('reloadGrid');
+
+                break;        }
+    };
+    function crudMasterData(action) {
+        var actionTab = $("#actionTab").val();
+
+        switch (actionTab) {
+            case "bank":
+                crudBank(action);
+                break;
+            case "classification":
+                crudClassification(action);
+                break;
+            case "payment":
+                crudPayment(action);
+                break;
+            case "category":
+                crudCategory(action);
+                break;
+            case "bankaccount":
+                crudBankAccount(action);
+                break;
+        }
+    }
+
+    $(document).ready(function () {
+        gridAccountMasterResize("jqGridBank");
+        gridAccountMasterResize("jqGridClassification");
+        gridAccountMasterResize("jqGridPayment");
+        gridAccountMasterResize("jqGridCategory");
+        gridAccountMasterResize("jqGridBankAccount");
+    });
+    $(window).on("resize", function () {
+        gridAccountMasterResize("jqGridBank");
+        gridAccountMasterResize("jqGridClassification");
+        gridAccountMasterResize("jqGridPayment");
+        gridAccountMasterResize("jqGridCategory");
+        gridAccountMasterResize("jqGridBankAccount");
+    });
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

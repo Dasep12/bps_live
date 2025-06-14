@@ -1,0 +1,353 @@
+﻿@*<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>*@
+
+<section>
+    <div class="modal animated fadeIn" id="filterRecapDeliveryModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <form id="filterRecapDeliveryForm" class="needs-validation" novalidate>
+                    <div class="modal-header">
+                        <h6 class="modal-title"><span class="fa fa-truck"></span> Recap Delivery Order</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm">
+                                    <label for="searchFilterRecapDelivery" class="control-label">Search:</label>
+                                    <div class="input-group input-group-sm">
+                                        <input id="searchFilterRecapDelivery" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                                        <div class="input-group-append">
+                                            <button id="btnFilterRecapDelivery" type="button" class="btn btn-secondary" onclick="reloadGridSearchRecapDelivery()"><i class="fa fa-search"></i> Find</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            @*<div class="col-md-4">
+                                    <div class="ml-3 mt-4 pt-2">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="chk-filterImport" onclick="reloadGridSearchRecapDelivery()">
+                                            <label class="custom-control-label" for="chk-filterImport"><small> Include Import Data</small></label>
+                                        </div>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-12">
+                                <table id="jqGridSearchRecapDelivery"></table>
+                                <div id="jqGridPagerSearchRecapDelivery"></div>
+                            </div>
+
+                        </div>
+
+                        <div id="filterRecapDeliveryError"></div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <div class="ml-0 mr-auto">
+                            <div id="err-msg-search"></div>
+                        </div>
+                        <button id="btn-filterRecapDelivery" type="button" class="btn btn-sm btn-primary btn-spin" onclick="selectFilterDataRecapDelivery()" dismiss="modal"><span class="fa fa-check"></span> Select</button>
+                        <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="contextMenu" class="dropdown clearfix">
+        <div class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu" style="display:block;position:static;margin-bottom:5px;">
+            <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(1,this)"><i class="fa fa-check text-dark"></i> Select</a>
+            <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(2,this)"><i class="fa fa-check-square-o text-dark"></i> Select All</a>
+            <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(3,this)"><i class="fa fa-times text-dark"></i> Unselect</a>
+            <a class="dropdown-item pt-1 pb-1 small" href="#" onclick="selectContextMenu(4,this)"><i class="fa fa-times-rectangle-o text-dark"></i> Unselect All</a>
+            <a class="dropdown-item pt-1 pb-1 border-bottom-0 small" href="#" onclick="selectContextMenu(5,this)"><i class="fa fa-sign-out text-dark"></i> Cancel</a>
+        </div>
+
+    </div>
+
+</section>
+<script>
+
+    $("#searchFilterRecapDelivery").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilterRecapDelivery").button().click();
+        }
+    });
+
+    var searchfilter = $('#searchFilterRecapDelivery').val();
+    $gridFilterRecapDelivery = $("#jqGridSearchRecapDelivery").jqGrid({
+        url: '@Url.Action("GetCustomerInvoiceDeliveryRecap", "FinanceAccounting")',
+        datatype: "json",
+        mtype: "GET",
+        async: false,
+        postData: {
+            InvoiceNumber: "*",
+            CustomerId:"*",
+            StartDate: moment(new Date()).format("YYYY-MM-DD"),
+            EndDate: moment(new Date()).format("YYYY-MM-DD"),
+            searchFilter: searchfilter,
+            FormAction: "*",
+            IncludeImport: false,
+        },
+        colModel: [
+            { label: 'CUSTOMER', name: 'CustomerId', align: 'center', hidden: true, width: 140 },
+            { label: 'SO Number', name: 'SONumber', align: 'center', hidden: true, width: 140 },
+            { label: 'DO Number', name: 'DONumber', align: 'center', fixed: true, width: 140 },
+            { label: 'DO Date', name: 'DODate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+            { label: 'PO Number', name: 'PONumber', align: 'center', fixed: true, width: 140 },
+            { label: 'Ref Number', name: 'RefNumber', align: 'center', fixed: true, width: 120 },
+            { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 45 },
+            { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 110 },
+            { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 130 } },
+            { label: 'Delivery Qty', name: 'DeliveryUnitQty', align: 'right', fixed: true, width: 50, formatter: "number" },
+            { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 40 },
+            { label: 'Price', name: 'Price', align: 'right', fixed: true, width: 60, formatter: "number" },
+            { label: 'Amount', name: 'Amount', align: 'right', fixed: true, width: 80, formatter: "number" },
+        ],
+        gridview: true,
+        loadonce: true,
+        pager: '#jqGridPagerSearchRecapDelivery',
+        height: 240,
+        viewrecords: true,
+        rowNum: 5000,
+        rownumbers: true,
+        rownumWidth: 30,
+        autoresizeOnLoad: true,
+        shrinkToFit: false,
+        fromServer: true,
+        multiselect: true,
+        //beforedrop: function (ev, ui, getdata, $source, $target) {
+
+        //    var myGrid = $(this);
+        //    var i, selRowIds = myGrid.jqGrid("getGridParam", "selarrrow"), n, rowData;
+        //    for (i = 0, n = selRowIds.length; i < n; i++) {
+        //        rowData = myGrid.jqGrid("getLocalRow", selRowIds[i]);
+        //        console.log(rowData);
+        //    }
+
+        //},
+        //ondrop: function (ev, ui, getdata) {
+        //    //CalculateItemTotal();
+        //},
+        loadComplete: function () {
+            var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            for (i = 0; i < l; i++) {
+                $this.jqGrid('editRow', ids[i], true);
+            }
+            if (l === 0) {
+                var errmsg = "<span class='badge badge-danger'><i class='fa fa-exclamation-triangle'></i> Part not found or already invoiced!</span>"
+                $("#err-msg-search").html(errmsg);
+            } else {
+                $("#err-msg-search").html("");
+            }
+       },
+
+    });
+
+    $('#jqGridSearchRecapDelivery').jqGrid('navGrid', '#jqGridPagerSearchRecapDelivery', { search: false, edit: false, add: false, del: false });
+
+    function statusRecapDeliveryFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function reloadGridSearchRecapDelivery() {
+        var invoicenumber   = $("#crud-CustomerInvoiceNumber").val();
+        var customerid      = $("#crud-CustomerInvoiceCustomerId").val();
+        var startdate       = $("#crud-CustomerInvoiceStartDate").val();
+        var enddate         = $("#crud-CustomerInvoiceEndDate").val();
+        var formaction      = $("#CustomerInvoiceAction").val();
+        var searchfilter    = $("#searchFilterRecapDelivery").val();
+
+        //var includeimport   = $("#chk-filterImport").prop("checked");
+
+        $("#jqGridSearchRecapDelivery").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'POST',
+            postData: {
+                InvoiceNumber: invoicenumber,
+                CustomerId: customerid,
+                StartDate: startdate,
+                EndDate: enddate,
+                searchFilter: searchfilter,
+                FormAction: formaction,
+                IncludeImport: false,
+            }
+        }).trigger('reloadGrid');
+    };
+
+
+    function showfilterRecapDelivery() {
+
+        reloadGridSearchRecapDelivery();
+
+        //$("#chk-filterImport").removeAttr("checked");
+        $('#filterRecapDeliveryModal').modal('show');
+        $('#filterRecapDeliveryError').html("");
+        $("#search_result").val("");
+
+    }
+
+    function selectFilterDataRecapDelivery () {
+
+        loadblockspinner();
+
+        var selectedRows = $("#jqGridSearchRecapDelivery").jqGrid('getGridParam', 'selarrrow');
+        var invoicenumber = $("#crud-CustomerInvoiceNumber").val();
+        var formaction = $("#CustomerInvoiceAction").val();
+
+        if (formaction === "Create") invoicenumber = "@ViewBag.UserId";
+
+        if (selectedRows.length > 0) {
+
+            var data = [];
+
+            $.each(selectedRows, function (i, sel) {
+                var rowData = $('#jqGridSearchRecapDelivery').jqGrid("getRowData", sel);
+                data.push(rowData);
+            });
+
+            var jsonData = {
+                RecapDelivery: data,
+                InvoiceNumber: invoicenumber,
+            }
+
+            var formData = new FormData();
+            formData.append("jsonData", JSON.stringify(jsonData));
+            //console.log(jsonData);
+            $.ajax({
+                url: '@Url.Action("crudRecapDelivery", "FinanceAccounting")',
+                type: "POST",
+                contentType: false, // Not to set any content header
+                processData: false, // Not to process data
+                dataType: "JSON",
+                data: formData,
+                async: false,
+                success: function (response) {
+                    if (response.length > 0) {
+                        showToast("Success", "Adding " + response.length + " recap delivery has been added succesfully");
+                        $('#filterRecapDeliveryModal').modal('hide');
+                        if (formaction === "Create") {
+                            reloadGridCustomerInvoiceDetail("Create");
+                        } else {
+                            reloadGridCustomerInvoiceDetail("Re-Create");
+                        }
+                    } else {
+                        showToast("Failed", "Adding recap delivery failed");
+                    }
+                },
+                error: function (xhr, desc, err) {
+                    var responsetext = "";
+                    try {
+                        responsetext = eval(xhr.responseText);
+                    } catch {
+                        responsetext = xhr.responseText;
+                    }
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                    $('#filterRecapDeliveryError').html(errMsg);
+                }
+
+            })
+
+        } else {
+            alert("Please select row data.");
+        }
+
+        unloadblockspinner();
+
+    }
+
+    var dataSelected = [];
+
+    $(function () {
+
+        /* call selectable */
+        $("#jqGridSearchRecapDelivery").selectable({
+            filter: 'tbody tr',
+            selecting: function (event, ui) {
+                dataSelected = []
+            },
+            selected: function (event, ui) {
+                //console.log(ui);
+                //console.log("SELECTED " + ui.selected["id"]);
+                dataSelected.push(ui.selected.id)
+            }
+        });
+
+
+        /* call context menu */
+        var $contextMenu = $("#contextMenu");
+
+        $("body").on("contextmenu", "#jqGridSearchRecapDelivery", function (e) {
+            $contextMenu.css({
+                display: "block",
+                left: e.pageX,
+                top: e.pageY
+            });
+            debugger;
+            return false;
+        });
+
+        $('html').click(function () {
+            $contextMenu.hide();
+        });
+
+        $("#contextMenu li a").click(function (e) {
+            var f = $(this);
+            debugger;
+        });
+
+    });
+
+    function selectContextMenu(id, obj) {
+
+        var i, count, $grid = $("#jqGridSearchRecapDelivery");
+        var selRows = $grid.jqGrid('getGridParam', 'selarrrow');
+        var dataall = $grid.getDataIDs();
+
+        switch (id) {
+            case 1:
+                var datasel = dataSelected.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], true);
+                }
+                break;
+            case 2:
+                var datasel = dataall.filter((item) => !selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 3:
+                var datasel = dataSelected.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+            case 4:
+                var datasel = dataall.filter((item) => selRows.includes(item));
+                for (i = 0, count = datasel.length; i < count; i += 1) {
+                    $grid.jqGrid('setSelection', datasel[i], false);
+                }
+                break;
+        }
+    }
+</script>
+<style>
+    .ui-selected{
+        background-color: #b6ff00
+    }
+    .ui-selected:hover {
+        background-color: #00ff21
+    }
+    #contextMenu {
+        position: absolute;
+        display: none;
+        z-index: 2028;
+    }
+</style>

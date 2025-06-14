@@ -1,0 +1,388 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Productions-BillOfMaterials">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="BOM Part or Customers or Line...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="rawmaterialFilter" class="col-form-label col-form-label-sm">Raw Material</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="rawmaterialFilter" type="text" class="form-control" placeholder="Raw Material">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-dropbox"></i></span>
+                                    </div>
+                                </div>
+                            </div>                            
+                            @*<div class="form-group form-group-sm">
+                                <label for="statusFilter" class="col-form-label col-form-label-sm">Status</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.StatusList,
+                                    new SelectList(Model.StatusList, "Id", "Name"),
+                                    new { @id = "statusFilter", @class = "custom-select custom-select-sm", @placeholder = "Status" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>*@
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridList()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+                @*<div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>*@
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudBillOfMaterials('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-active" onclick="reloadGridList()" checked>
+                                <label class="custom-control-label" for="sw-active"><small> Active @ViewBag.Title</small></label>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-passthrough" onclick="reloadGridList()">
+                                <label class="custom-control-label" for="sw-passthrough"><small> Pass Through Part</small></label>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*@Html.Partial("BillOfMaterialsPartial/Import")*@
+    @Html.Partial("BillOfMaterialsPartial/Crud")
+    @Html.Partial("~/Views/System/PreviewImage.cshtml")
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        var rawmaterial = $('#rawmaterialFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("BillOfMaterialsJson", "Productions")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                partRawMaterial: rawmaterial,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+                { label: 'Actived', name: 'Actived', align: 'center', fixed: true, width: 60, formatter: statusFormatter },
+                { label: 'Pass Through', name: 'PassThrough', align: 'center', fixed: true, width: 80, formatter: statusFormatter },
+                { label: 'Images', name: 'Images', align: 'center', fixed: true, width: 60, formatter: imagesFormatter },
+                { label: 'Customer Id', name: 'CustomerId', align: 'center', fixed: true, width: 70 },
+                { label: 'Customer Name', name: 'CustomerName', align: 'left', fixed: true, width: 200 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 100 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'Line Id', name: 'LineId', align: 'center', fixed: true, width: 60 },
+                { label: 'Line Name', name: 'LineName', align: 'left', fixed: true, width: 100 },
+                { label: 'Revision', name: 'Revision', align: 'center', fixed: true, width: 80 },
+                { label: 'Total Item', name: 'TotalItem', align: 'center', fixed: true, width: 60 },
+                { label: 'Total Cost', name: 'TotalCost', align: 'right', fixed: true, width: 80, formatter: 'number' },
+                { label: 'Remarks', name: 'Remarks', align: 'left', fixed: true, width: 80 },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showDetailsGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    var Grid = $('#jqGridMain'),
+                        selectedRowId = ids[i],
+                        PartNumber = Grid.jqGrid('getCell', selectedRowId, 'PartNumber');
+
+                    loadImage(PartNumber);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showDetailsGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+        var canConfidential = "@ViewBag.canConfidential";
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        var Grid = $('#jqGridMain'),
+            LineId = Grid.jqGrid('getCell', parentRowKey, 'LineId'),
+            CustomerId = Grid.jqGrid('getCell', parentRowKey, 'CustomerId'),
+            PartNumber = Grid.jqGrid('getCell', parentRowKey, 'PartNumber');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("BillOfMaterialsDetailsJson", "Productions")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                lineid: LineId,
+                customerid: CustomerId,
+                parentid: PartNumber
+            },
+            page: 1,
+            colModel: [
+                { label: 'Level', name: 'BOMLevel', fixed: true, width: 60, align: 'center' },
+                { label: '1', name: 'Level01', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '2', name: 'Level02', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '3', name: 'Level03', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: '4', name: 'Level04', fixed: true, width: 30, align: 'center', formatter: levelFormatter },
+                { label: 'Part Number', name: 'PartNumber', key: true, fixed: true, width: 100, align: 'center' },
+                { label: 'Part Name', name: 'PartName', autoResizing: { minColWidth: 180 } },
+                { label: 'Rev', name: 'Revision', fixed: true, width: 50, align: 'center' },
+                { label: 'Description', name: 'LevelName', fixed: true, width: 150 },
+                { label: 'Cost Unit', name: 'CostUnit', fixed: true, width: 80, align: 'right', formatter: "number" },
+                { label: 'Qty', name: 'Qty', width: 50, fixed: true, align: 'center', formatter: "number", formatoptions: { decimalPlaces: 4 } },
+                { label: 'Unit', name: 'Unit', width: 50, fixed: true, align: 'center' },
+                { label: 'Cost', name: 'Cost', width: 80, fixed: true, align: 'right', formatter: "number" },
+                { label: 'Remarks', name: 'Remarks', width: 150 },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Part List Details',
+            //pager: "#" + childGridPagerID
+        });
+    }
+
+    function loadImage(partNumber) {
+
+        var imageId = "#Images-" + partNumber.replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", "");
+
+        $.ajax({
+            url: '@Url.Action("BillOfMaterialsImages", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                partNumber: partNumber,
+            },
+            success: function (response) {
+                if (response != null && response.ImagesLocation != null) {
+                //    var byteArray = response.Images;
+                //    var base64 = base64js.fromByteArray(byteArray);
+                //    $(imageId).removeAttr("disabled").attr("src", 'data:image/jpeg;base64,' + base64);
+                    $(imageId).attr("src", response.ImagesLocation).attr("disabled", true);
+                } else {
+                    $(imageId).attr("src", '../_VSSPAssets/Images/noimage.png').attr("disabled", true);
+                }
+            },
+            error: function (xhr, desc, err) {
+                $(imageId).attr("src", '../_VSSPAssets/Images/noimage.png').removeAttr("onclick").removeAttr("title");
+            }
+        })
+
+    }
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var rowid = options.rowId;
+        var canUpdate = '@ViewBag.canUpdate';
+        var canDelete = '@ViewBag.canDelete';
+
+        if (rowObject.PassThrough === true) {
+            canUpdate = 'disabled';
+            canDelete = 'disabled';
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='" + canUpdate + " btn btn-sm btn-primary text-white' onclick=\"crudBillOfMaterials('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='" + canDelete + " btn btn-sm btn-danger text-white' onclick=\"crudBillOfMaterials('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function imagesFormatter(cellvalue, options, rowObject) {
+
+        var partNumber = rowObject.PartNumber.replaceAll(" ", "_").replaceAll("(", "").replaceAll(")", "").replaceAll("/", "_").replaceAll(".", "");
+
+        var images = "<img id='Images-" + partNumber + "' src='../_VSSPAssets/Images/preloader/loading-buffering.gif' style='height:20px' onclick=\"previewImage('Images-" + partNumber + "','" + rowObject.PartNumber + "','" + rowObject.PartName + "')\" title='Preview Drawing " + rowObject.PartNumber + "'>";
+
+        return images;
+
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function levelFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-circle text-dark'></span>"
+        } else {
+            return ""
+        }
+    }
+
+    function reloadGridList() {
+        var isactive = $("#sw-active").prop("checked");
+        var passthrough = $("#sw-passthrough").prop("checked");
+        var filterData = $('#searchFilter').val();
+        var rawmaterial = $('#rawmaterialFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                partRawMaterial: rawmaterial,
+                isActive: isactive,
+                passthrough: passthrough,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.PartName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.PartName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.PartName + " has been removed succesfully");
+                return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridList();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "Revision")
+        $("#jqGridMain").jqGrid(showhideCol, "Remarks")
+        $("#jqGridMain").jqGrid(showhideCol, "CustomerName")
+        $("#jqGridMain").jqGrid(showhideCol, "LineName")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        $("#jqGridMain").jqGrid("hideCol", "Actived")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+        $("#jqGridMain").jqGrid("showCol", "Actived")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

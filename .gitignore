@@ -1,0 +1,30 @@
+# Ignore Visual Studio user-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore build output
+bin/
+obj/
+
+# Ignore NuGet packages
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+*.mdf
+*.ldf
+App_Data/
+
+# Ignore publish output
+wwwroot/
+node_modules/
+dist/
+out/
+
+# Ignore temporary files
+*.log
+*.tmp

@@ -1,0 +1,43 @@
+﻿<style>
+    #unauthorizeForm .card-body{
+        min-height: 76vh !important;
+    }
+    @@media (min-width: 576px) {
+        #unauthorizeForm .card-body {
+            min-height: 0;
+        }
+}
+</style>
+<div class="card card-accent-danger" id="unauthorizeForm">
+    <div class="card-body d-flex justify-content-center">
+        <div class="col-md-6 align-content-center">
+            <div class="d-flex h-100 w-100">
+                <div class="justify-content-center align-self-center">
+                    <div class="clearfix">
+                        <form id="myform" method="post" name="myform">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <h1 class="float-left display-1 mr-4 mt-3"><span class="icon-lock"></span></h1>
+                                </div>
+                                <div class="col-md-8">
+                                    <h4 class="pt-3">@ViewBag.Title</h4>
+                                    <h6 class="text-muted">Access has been locked <br /> @ViewBag.Messages</h6>
+                                    <div class="float-left display-3 mr-4">
+                                        <a href="@Url.Action("Dashboard","Home")" class="btn btn-info btn-block" type="button"><span class="fa fa-home"></span> Go Back Home </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    
+
+</script>

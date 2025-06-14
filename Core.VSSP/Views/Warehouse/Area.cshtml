@@ -1,0 +1,161 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="warehouse-area">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm mb-1">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridArea()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8" style="padding:2px">
+                    <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="addArea()" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                    <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="importArea()" @ViewBag.canCreate><i class="fa fa-cloud-upload"></i> Import</button>
+                    <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridArea()"><i class="fa fa-refresh"></i> Refresh</button>
+                </div>
+                <div class="col-md-4 pull-right" style="padding:2px">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("AreaPartial/Import")
+    @Html.Partial("AreaPartial/Create")
+    @Html.Partial("AreaPartial/Update")
+    @Html.Partial("AreaPartial/Delete")
+
+</section>
+
+<script>
+
+    /* Grid Area */
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("AreaListJson", "Warehouse")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+            },
+            colModel: [
+                { label: 'Area Id', key: true, name: 'AreaID', editable: false, align: 'left', fixed: true, width: 100 },
+                { label: 'Area Name', name: 'AreaName', editable: false, align: 'left', fixed: true, width: 250  },
+                { label: 'Remarks', name: 'Remarks', editable: false, align: 'left', autoResizing: { minColWidth: 180 } },
+                { label: 'User Id', name: 'UserID', editable: false, fixed: true, width: 100, align: 'left' },
+                { label: 'Updated', name: 'EditDate', editable: false, align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+                { label: 'Action', name: 'Action', editable: false, align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            //height: 'auto',
+            //width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+            loadError: function (jqXHR, textStatus, errorThrown) {
+                alert('HTTP status code: ' + jqXHR.status + '\n' +
+                    'Status: ' + textStatus + '\n' +
+                    'Thrown: ' + errorThrown);
+                //alert('HTTP message body (jqXHR.responseText): ' + '\n' + jqXHR.responseText);
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"editArea('" + rowObject.AreaID + "','" + rowObject.AreaName + "','" + rowObject.Remarks + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.AreaName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"removeArea('" + rowObject.AreaID + "','" + rowObject.AreaName + "','" + rowObject.Remarks + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.AreaName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function reloadGridArea() {
+        var filterData = $('#searchFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.AreaName + " has been saved succesfully");
+                return reloadGridArea();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.AreaName + " has been saved succesfully");
+                return reloadGridArea();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.AreaName + " has been removed succesfully");
+                return reloadGridArea();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    $("#export").on("click", function () {
+
+        exportGrid('#jqGridMain','A4','@ViewBag.Title');
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

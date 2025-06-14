@@ -1,0 +1,92 @@
+﻿<!-- Delete Delivery Modal -->
+<div class="modal animated fadeIn" id="deleteDeliveryOrderImportModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"> Delete @ViewBag.Title</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="deleteOrderImportForm">
+                <div class="modal-body">
+                    <h5>Are you sure you want to Delete the @ViewBag.Title</h5>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3 control-label col-form-label-sm" for="DONumber">DO Number</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="DONumber" name="DONumber" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3  control-label col-form-label-sm" for="DODate">Date</label>
+                        <div class="col-sm-9">
+                            <input type="datetime" id="DODate" name="DODate" class="form-control form-control-sm datepicker" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3  control-label col-form-label-sm" for="CustomerId">Customer</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="CustomerId" name="CustomerId" class="form-control form-control-sm" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3  control-label col-form-label-sm" for="TotalItem">Total Item</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="TotalItem" name="TotalItem" class="form-control form-control-sm" value="" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div id="deleteOrderImportError"></div>
+                <div class="modal-footer clearfix">
+                    <button id="btn-submitDelete" type="submit" class="btn btn-primary" dismiss="modal"> Yes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"> Cancel</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- /.Delete Delivery modal -->
+
+<script>
+     $(document).ready(function () {
+        $(function () {
+            $("#deleteOrderImportForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var CustomerId = $("#CustomerId").val();
+                    var DONumber = $("#DONumber").val();
+                    var DODate = $("#DODate").val();
+
+                    $.ajax({
+                        url: '@Url.Action("deleteImportJson", "Shipping")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            CustomerId: CustomerId,
+                            DONumber: DONumber,
+                            DODate: DODate,
+                        },
+                        success: function (data) {
+                            $('#deleteDeliveryOrderImportModal').modal('hide');                            
+                            doSuccess(data, "delete");
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#deleteOrderImportError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

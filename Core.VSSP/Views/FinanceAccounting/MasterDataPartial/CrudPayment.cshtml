@@ -1,0 +1,217 @@
+﻿
+<div class="modal animated fadeIn" id="crudPaymentModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudPaymentForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-PaymentId" class="col-form-label col-form-label-sm">Payment Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-PaymentId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-PaymentName" class="col-form-label col-form-label-sm">Payment Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-PaymentName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-PaymentRemarks" class="col-form-label col-form-label-sm">Remarks</label>
+                            <textarea rows="2" class="form-control form-control-sm" id="crud-PaymentRemarks" ></textarea>
+                        </div>
+                    </div>
+
+                    <div id="crudPaymentError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudPayment" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="PaymentAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationPaymentModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationPayment" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeletePayment()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudPayment(action){
+
+        document.getElementById("crudPaymentForm").reset();
+        $('#crudPaymentForm').removeClass('was-validated');
+        $('#crudPaymentError').html("");
+        $("#btn-crudPayment").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-PaymentId").removeAttr("disabled");
+        $("#crudPaymentForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#PaymentAction").val(action);
+
+        var Id = $("#PaymentSelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridPayment'),
+                selectedRowId = Id,
+                PaymentId = Grid.jqGrid('getCell', selectedRowId, 'PaymentId'),
+                PaymentName = Grid.jqGrid('getCell', selectedRowId, 'PaymentName'),
+                Remarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            if (PaymentId === false || PaymentId === "") {
+                alert("Please select Payment Master");
+                return false
+            };
+
+            $("#crud-PaymentId").val(PaymentId);
+            $("#crud-PaymentName").val(PaymentName);
+            $("#crud-PaymentRemarks").val(Remarks);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudPaymentModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudPaymentModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Payment Master');
+                $('#crudPaymentModal').modal('show');
+                $("#crud-PaymentId").focus();
+                break;
+            case "Update":
+                $("#crud-PaymentId").attr("readonly", true);
+                $("#crudPaymentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudPaymentModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Payment Master');
+                $('#crudPaymentModal').modal('show');
+                $("#crud-PaymentName").focus();
+                break;
+            case "Delete":
+                $("#crudPaymentForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#btn-crudPayment").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudPaymentModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudPaymentModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Payment Master');
+                $('#crudPaymentModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-PaymentName').change(function () {
+        $('#crudPaymentError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudPaymentForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudPaymentForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            Payment: {
+                                PaymentId: $("#crud-PaymentId").val(),
+                                Paymentname: $("#crud-PaymentName").val(),
+                                Remarks: $("#crud-PaymentRemarks").val(),
+                                UserID: "",
+                                EditDate: null
+                            },
+                            formAction: $("#PaymentAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudPaymentList", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudPaymentModal').modal('hide');
+                                var act = $("#PaymentAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.PaymentName + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.PaymentName + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.PaymentName + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGrid();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudPaymentError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+</script>
+

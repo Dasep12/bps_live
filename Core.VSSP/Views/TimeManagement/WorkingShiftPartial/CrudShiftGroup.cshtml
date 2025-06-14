@@ -1,0 +1,236 @@
+﻿
+<div class="modal animated fadeIn" id="crudWorkingShiftGroupModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudWorkingShiftGroupForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title Group</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftGroupId" class="col-form-label col-form-label-sm">Group Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-WorkingShiftGroupId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftGroupName" class="col-form-label col-form-label-sm">Group Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-WorkingShiftGroupName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftGroupWorkHour" class="col-form-label col-form-label-sm">Work Hour</label>
+                            <input type="number" min="1" class="form-control form-control-sm" id="crud-WorkingShiftGroupWorkHour" required />
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-WorkingShiftGroupSort" class="col-form-label col-form-label-sm">Sort</label>
+                            <input type="number" class="form-control form-control-sm" id="crud-WorkingShiftGroupSort" required />
+                        </div>
+                    </div>
+                    <div id="crudWorkingShiftGroupError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudWorkingShiftGroup" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button id="btn-deleteWorkingShiftGroup" type="button" class="btn btn-sm btn-danger" dismiss="modal" @ViewBag.canDelete><span class="fa fa-trash"></span> Delete</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+            <input type="hidden" id="WorkingShiftGroupAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationWorkingShiftGroupModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationWorkingShiftGroup" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteWorkingShiftGroup()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudWorkingShiftGroup(){
+
+        document.getElementById("crudWorkingShiftGroupForm").reset();
+        $('#crudWorkingShiftGroupForm').removeClass('was-validated');
+        $('#crudWorkingShiftGroupError').html("");
+        $("#btn-crudWorkingShiftGroup").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-WorkingShiftGroupId").removeAttr("disabled");
+        $("#crudWorkingShiftGroupForm input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        var groupid = $("#WorkingShiftGroupId").val();
+        if (groupid === "") {
+            groupid = "*";
+        }
+
+        if (groupid != "") {
+
+            $.ajax({
+                url: '@Url.Action("WorkingShiftGroupJson", "TimeManagement")',
+                type: 'POST',
+                dataType: "JSON",
+                async: false,
+                data: {
+                    groupid: groupid,
+                },
+                success: function (data) {
+
+                    if (data.length != 0) {
+                        $("#crud-WorkingShiftGroupId").val(data[0].GroupId);
+                        $("#crud-WorkingShiftGroupName").val(data[0].GroupName);
+                        $("#crud-WorkingShiftGroupSort").val(data[0].Sort);
+                        $("#crud-WorkingShiftGroupWorkHour").val(data[0].WorkHour);
+                        $("#WorkingShiftGroupAction").val("Update");
+                    } else {
+                        $("#WorkingShiftGroupAction").val("Create");
+                    }
+                },
+                error: function (xhr, desc, err) {
+                    var respText = "";
+                    try {
+                        respText = eval(xhr.responseText);
+                    } catch {
+                        respText = xhr.responseText;
+                    }
+
+                    respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                    $('#crudWorkingShiftGroupError').html(errMsg);
+                }
+            });
+
+        }
+
+        var action = $("#WorkingShiftGroupAction").val();
+
+        switch (action) {
+            case "Create":
+                var x = '@ViewBag.canCreate';
+                if (x != "") {
+                    $("#btn-crudWorkingShiftGroup").attr('@ViewBag.canCreate', true);
+                }
+                $("#btn-deleteWorkingShiftGroup").attr("hidden", true);
+                $("#crudWorkingShiftGroupModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudWorkingShiftGroupModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' Shift Group');
+                $('#crudWorkingShiftGroupModal').modal('show');
+                $("#crud-WorkingShiftGroupId").focus();
+                break;
+            case "Update":
+                var x = '@ViewBag.canUpdate';
+                if (x != "") {
+                    $("#btn-crudWorkingShiftGroup").attr('@ViewBag.canUpdate', true);
+                }
+                $("#btn-deleteWorkingShiftGroup").removeAttr("hidden");
+                $("#crud-WorkingShiftGroupId").attr("readonly", true);
+                $("#crudWorkingShiftGroupModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudWorkingShiftGroupModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' Shift Group');
+                $('#crudWorkingShiftGroupModal').modal('show');
+                $("#crud-WorkingShiftGroupName").focus();
+                break;
+        }
+
+    }
+
+    $('#crud-WorkingShiftGroupName').change(function () {
+        $('#crudWorkingShiftGroupError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudWorkingShiftGroupForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var shiftgroupid    = $("#crud-WorkingShiftGroupId").val();
+                    var shiftgroupname  = $("#crud-WorkingShiftGroupName").val();
+                    var shiftworkhour   = $("#crud-WorkingShiftGroupWorkHour").val();
+                    var shiftsort       = $("#crud-WorkingShiftGroupSort").val();
+                    var formaction      = $("#WorkingShiftGroupAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudWorkingShiftGroup", "TimeManagement")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            GroupId     : shiftgroupid,
+                            GroupName   : shiftgroupname,
+                            WorkHour    : parseInt(shiftworkhour),
+                            Sort        : parseInt(shiftsort),
+                            formAction  : formaction
+                        },
+                        success: function (data) {
+                            $('#crudWorkingShiftGroupModal').modal('hide');
+                            var act = $("#WorkingShiftGroupAction").val();
+                            act = act.toLowerCase();
+                            switch (act) {
+                                case "create":
+                                    showToast("Success", "Create " + data.GroupName + " has been saved succesfully");
+                                    break;
+                                case "update":
+                                    showToast("Success", "Update " + data.GroupName + " has been saved succesfully");
+                                    break;
+                                case "delete":
+                                    showToast("Failed", "Delete " + data.GroupName + " has been removed succesfully");
+                                    break;
+                            }
+
+                            loadComboShiftGroup();
+
+                        },
+                        error: function (xhr, desc, err) {
+                            var errMsg = "";
+                            try {
+                                errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                            } catch {
+                                var acc = []
+                                $.each(xhr, function (index, value) {
+                                    acc.push(index + ': ' + value);
+                                });
+                                errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                            }
+                            $('#crudWorkingShiftGroupError').html(errMsg);
+                        },
+                    });
+                }
+            });
+        });
+    });
+
+    $("#btn-deleteWorkingShiftGroup").click(function () {
+        $('#deleteConfirmationWorkingShiftGroupModal').modal('show');
+    });
+
+    function confirmDeleteWorkingShiftGroup() {
+        $("#WorkingShiftGroupAction").val("Delete")
+        $("#btn-crudWorkingShiftGroup").click();
+        $('#deleteConfirmationWorkingShiftGroupModal').modal('hide');
+    }
+
+</script>
+

@@ -1,0 +1,361 @@
+﻿
+<div class="modal animated fadeIn" id="crudDailyPlanningListModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudDailyPlanningForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> crud @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningOrderNumber" class="col-sm-4 col-form-label col-form-label-sm">MLOK Number</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-DailyPlanningOrderNumber" name="DailyPlanningOrderNumber" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningLineId" class="col-sm-4 col-form-label col-form-label-sm">Line</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DailyPlanningLineId" name="LineId" onchange="loadComboPart()" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningCustomerId" class="col-sm-4 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-8">
+                                    @*<select class="custom-select custom-select-sm" id="crud-DailyPlanningCustomerId" name="DailyPlanningCustomerId" required></select>*@
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-DailyPlanningCustomerId" name="DailyPlanningCustomerId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningPartNumber" class="col-sm-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-sm-8">
+                                    @*<select class="custom-select custom-select-sm" id="crud-DailyPlanningPartNumber" name="DailyPlanningPartNumber" required></select>*@
+                                    <select class="form-control form-control-sm selectpicker" data-live-search="true" data-size="8" id="crud-DailyPlanningPartNumber" name="DailyPlanningPartNumber" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningProductionDate" class="col-sm-4 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-8">
+                                    <input type="date" class="form-control form-control-sm datepicker" id="crud-DailyPlanningProductionDate" name="DailyPlanningProductionDate" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningShiftId" class="col-sm-4 col-form-label col-form-label-sm">Shift</label>
+                                <div class="col-sm-8">
+                                    <select class="custom-select custom-select-sm" id="crud-DailyPlanningShiftId" name="DailyPlanningShiftId" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DailyPlanningProductionQty" class="col-sm-4 col-form-label col-form-label-sm">Qty</label>
+                                <div class="col-sm-8">
+                                    <input type="number" class="form-control form-control-sm datepicker" id="crud-DailyPlanningProductionQty" name="DailyPlanningProductionQty" required>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div id="crudDailyPlanningListError"></div>
+                    <input type="hidden" id="DailyPlanningAction" />
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudDailyPlanningList" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function crudDailyPlanningList(action, id) {
+
+        document.getElementById("crudDailyPlanningForm").reset();
+        $('#crudDailyPlanningForm').removeClass('was-validated');
+        $('#crudDailyPlanningListError').html("");
+        $("#btn-crudDailyPlanningList").html("<span class='fa fa-dot-circle-o'></span> Submit");
+
+        $("#crudDailyPlanningForm input,textarea,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#DailyPlanningAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId   = id,
+                OrderNumber     = Grid.jqGrid('getCell', selectedRowId, 'OrderNumber'),
+                LineId          = Grid.jqGrid('getCell', selectedRowId, 'LineId'),
+                CustomerId      = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                PartNumber      = Grid.jqGrid('getCell', selectedRowId, 'PartNumber'),
+                ProductionDate  = Grid.jqGrid('getCell', selectedRowId, 'ProductionDate'),
+                ShiftId         = Grid.jqGrid('getCell', selectedRowId, 'ShiftId'),
+                ProductionQty   = Grid.jqGrid('getCell', selectedRowId, 'ProductionQty');
+
+            ProductionDate = moment(new Date(ProductionDate)).format("YYYY-MM-DD");
+
+            $("#crud-DailyPlanningOrderNumber").val(OrderNumber).change();
+            $("#crud-DailyPlanningLineId").val(LineId);
+            $("#crud-DailyPlanningCustomerId").val(CustomerId).change();
+            $("#crud-DailyPlanningPartNumber").val(PartNumber);
+            $("#crud-DailyPlanningProductionDate").val(ProductionDate);
+            $("#crud-DailyPlanningShiftId").val(ShiftId);
+            $("#crud-DailyPlanningProductionQty").val(ProductionQty);
+
+        }
+
+        $('.selectpicker').selectpicker('refresh');
+
+        switch (action) {
+            case "Create":
+                $("#crudDailyPlanningListModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudDailyPlanningListModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDailyPlanningListModal').modal('show');
+                $("#crud-DailyPlanningLineId").attr("disabled",true);
+                $("#crud-DailyPlanningOrderNumber").focus();
+                break;
+            case "Update":
+                $("#crudDailyPlanningForm :input").not(type = "button").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-DailyPlanningProductionQty").removeAttr("disabled");
+
+                $("#crudDailyPlanningListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudDailyPlanningListModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDailyPlanningListModal').modal('show');
+                $("#crud-DailyPlanningProductionQty").focus();
+                break;
+            case "Delete":
+                $("#crudDailyPlanningForm :input").not(type = "button").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#btn-crudDailyPlanningList").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudDailyPlanningListModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudDailyPlanningListModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDailyPlanningListModal').modal('show');
+                break
+        }
+
+    }
+
+
+    //CrudFG
+    $(document).ready(function () {
+        $(function () {
+            $("#crudDailyPlanningForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var id = $("#crud-DailyPlanningOrderNumber").val(),
+                        OrderNumber = $("#crud-DailyPlanningOrderNumber").val(),
+                        LineId = $("#crud-DailyPlanningLineId").val(),
+                        CustomerId = $("#crud-DailyPlanningCustomerId").val(),
+                        PartNumber = $("#crud-DailyPlanningPartNumber").val(),
+                        ProductionDate = $("#crud-DailyPlanningProductionDate").val(),
+                        ShiftId = $("#crud-DailyPlanningShiftId").val(),
+                        ProductionQty = $("#crud-DailyPlanningProductionQty").val(),
+                        action = $("#DailyPlanningAction").val();
+
+                    $.ajax({
+                        url: '@Url.Action("crudDailyPlanningList", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            OrderNumber: OrderNumber,
+                            LineId: LineId,
+                            CustomerId: CustomerId,
+                            PartNumber: PartNumber,
+                            ProductionDate: ProductionDate,
+                            ShiftId: ShiftId,
+                            ProductionQty: ProductionQty,
+                            formAction: action,
+                        },
+                        success: function (data) {
+                            $('#crudDailyPlanningListModal').modal('hide');
+                            var act = $("#DailyPlanningAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudDailyPlanningListError').html(errMsg);
+                        },
+                    });
+                    unloadblockspinner();
+                } else {
+                    unloadblockspinner();
+                    event.stopPropagation();
+                }
+            });
+        });
+    });
+
+    loadComboOrderNumber();
+
+    function loadComboOrderNumber(ordernumber) {
+
+        $.ajax({
+            url: '@Url.Action("ControlPlanningListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            data: { searchFilter: ordernumber },
+            success: function (response) {
+
+                var id = "#crud-DailyPlanningOrderNumber";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose MLOK Number")
+                );
+
+                $.each(response, function (i, mlok) {
+                    $(id).append(
+                        $('<option></option>').val(mlok.OrderNumber).html(mlok.OrderNumber + ' [' + mlok.StatusName + ']')
+                    );
+                });
+            }
+        })
+    }
+
+    $("#crud-DailyPlanningOrderNumber").on("change", function () {
+        var ordernumber = $(this).val();
+        loadLine(ordernumber);
+        loadComboCustomer(ordernumber);
+        loadComboShift(ordernumber);
+    });
+    $("#crud-DailyPlanningCustomerId").on("change", function () {
+        var ordernumber = $("#crud-DailyPlanningOrderNumber").val();
+        var customerid = $(this).val();
+        loadComboPart(ordernumber,customerid);
+    });
+
+    function loadLine(ordernumber) {
+
+        $.ajax({
+            url: '@Url.Action("ControlPlanningListJson", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { searchFilter: ordernumber },
+            success: function (response) {
+
+                var id = "#crud-DailyPlanningLineId";
+
+                $.each(response, function (i, mlok) {
+                    $(id).val(mlok.LineId);
+                });
+            }
+        })
+    }
+
+    function loadComboCustomer(ordernumber) {
+
+        var id = "#crud-DailyPlanningCustomerId";
+
+        $.ajax({
+            url: '@Url.Action("MLOKCustomerList", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { ordernumber: ordernumber },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Customer")
+                );
+
+                $.each(response, function (i, Customer) {
+                    $(id).append(
+                        $('<option></option>').val(Customer.CustomerId).html(Customer.CustomerId + ' : ' + Customer.CustomerName)
+                    );
+                });
+            }
+        });
+
+        $(id).selectpicker('refresh');
+
+    }
+
+    function loadComboPart(ordernumber,customerid) {
+
+        var id = "#crud-DailyPlanningPartNumber";
+        if (ordernumber === '') {
+            alert("Please select MLOK number.");
+            return false;
+        }
+
+        $.ajax({
+            url: '@Url.Action("MLOKPartList", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { ordernumber: ordernumber, customerid: customerid },
+            success: function (response) {
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Part Number")
+                );
+
+                $.each(response, function (i, part) {
+                    $(id).append(
+                        $('<option></option>').val(part.PartNumber).html('[' + part.UniqueNumber + '] ' + part.PartNumber + ' : ' + part.PartName)
+                    );
+                });
+            }
+        });
+
+        $(id).selectpicker('refresh');
+
+    }
+
+    function loadComboShift(ordernumber) {
+
+        $.ajax({
+            url: '@Url.Action("MLOKShiftList", "Productions")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: { ordernumber: ordernumber },
+            success: function (response) {
+
+                var id = "#crud-DailyPlanningShiftId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Shift")
+                );
+
+                $.each(response, function (i, shift) {
+                    $(id).append(
+                        $('<option></option>').val(shift.ShiftId).html(shift.ShiftId + ' : ' + shift.ShiftName)
+                    );
+                });
+            }
+        })
+    }
+</script>
+
+

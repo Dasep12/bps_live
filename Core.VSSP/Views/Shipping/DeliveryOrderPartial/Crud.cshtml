@@ -1,0 +1,1713 @@
+﻿<div class="modal animated fadeIn" id="crudDeliveryOrderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudDeliveryOrderForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderNumber" class="col-sm-3 col-form-label col-form-label-sm">Number</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Auto Generate" id="crud-DeliveryOrderNumber">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderDate" class="col-sm-3 col-form-label col-form-label-sm">Date</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control form-control-sm bg-white datepicker" id="crud-DeliveryOrderDate" required>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-5 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderCustomerId" class="col-sm-3 col-form-label col-form-label-sm">Customer</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-DeliveryOrderCustomerId" name="CustomerId" onchange="loadSalesNumber()" required></select>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderSONumber" class="col-sm-3 col-form-label col-form-label-sm">Sales Number</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control form-control-sm selectpicker bg-white" data-live-search="true" data-size="8" id="crud-DeliveryOrderSONumber" name="SONumber" required></select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 pr-0 pl-0">
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderRefNumber" class="col-sm-4 col-form-label col-form-label-sm">Ref. Number</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control form-control-sm bg-white" placeholder="Customer DN Number" id="crud-DeliveryOrderRefNumber" required>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm p-0 m-1 row">
+                                <label for="crud-DeliveryOrderRemarks" class="col-sm-4 col-form-label col-form-label-sm">Remarks</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="1" class="form-control form-control-sm bg-white" style="height:30px" id="crud-DeliveryOrderRemarks" name="Remarks"></textarea>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-md-12 pt-2">
+                            <table id="jqGridCrudDeliveryDetail"></table>
+                            <div id="jqGridPagerCrudDeliveryDetail"></div>
+                        </div>
+                    </div>
+
+                    <div id="crudDeliveryOrderError"></div>
+                    <input type="hidden" id="DeliveryOrderAction" />
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                @*<button id="btn-scanDeliveryOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="scanKanbanOrderDetail('Scan','')"><span class="fa fa-qrcode"></span> Scan Kanban Production</button>*@
+                                <button id="btn-addDeliveryOrderDetail" type="button" class="btn btn-sm btn-outline-dark" style="margin-top: 0 !important" onclick="crudDeliveryOrderDetail('Create','')"><span class="fa fa-plus"></span> New Part Item</button>
+
+                                <button id="btn-uploadKanbanOrderDetail" type="button" class="btn btn-sm btn-outline-dark" onclick="uploadDNOrderDetail('Upload','')"><span class="fa fa-qrcode"></span> Upload DN</button>
+
+                                @*<span class="alert alert-success" role="alert" style="top: 2px !important; padding-left:8px !important">
+                                        <b>  Info<i class="fa fa-exclamation"></i> </b>
+                                        Order time schedule <u>+</u> 1 hour from schedule order
+                                    </span>*@
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-crudDeliveryOrder" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="crudDeliveryOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="crudDeliveryOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> DeliveryOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="#" id="btn-searchPart" class="btn btn-sm btn-outline-primary" onclick="callFilterFinishGoods()"><span class="fa fa-search"></span> Find Part Number</a>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailUniqueNumber" class="col-md-4 col-form-label col-form-label-sm">Unique Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailUniqueNumber" required readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailPartNumber" class="col-md-4 col-form-label col-form-label-sm">Part Number</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailPartNumber" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailPartName" class="col-md-4 col-form-label col-form-label-sm">Part Name</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailPartName" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailPartModel" class="col-md-4 col-form-label col-form-label-sm">Model</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailPartModel" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailUnitQty" class="col-md-4 col-form-label col-form-label-sm">Qty / Kanban</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailUnitQty" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailUnit" class="col-md-4 col-form-label col-form-label-sm">Unit</label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control form-control-sm bg-light" id="crud-DeliveryOrderDetailUnit" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailStockKanban" class="col-md-4 col-form-label col-form-label-sm">Stock</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Stock Kanban">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">KBN</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm border-success" id="crud-DeliveryOrderDetailStockKanban" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailStockQty" class="col-md-4 col-form-label col-form-label-sm"></label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Stock Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm border-success" id="crud-DeliveryOrderDetailStockQty" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailOutstandingKanban" class="col-md-4 col-form-label col-form-label-sm">Outstanding</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Outstanding Kanban">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">KBN</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm border-primary" id="crud-DeliveryOrderDetailOutstandingKanban" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailOutstandingQty" class="col-md-4 col-form-label col-form-label-sm"></label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Outstanding Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm border-primary" id="crud-DeliveryOrderDetailOutstandingQty" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailDeliveryKanban" class="col-md-4 col-form-label col-form-label-sm">Delivery Order</label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Delivery Kanban">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">KBN</span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm" id="crud-DeliveryOrderDetailDeliveryKanban" onchange="calculateOrderUnitQty()" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm row">
+                                <label for="crud-DeliveryOrderDetailDeliveryUnitQty" class="col-md-4 col-form-label col-form-label-sm"></label>
+                                <div class="col-md-8">
+                                    <div class="input-group input-group-sm" title="Delivery Quantity">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">QTY</span>
+                                        </div>
+                                        <input type="number" class="form-control form-control-sm" id="crud-DeliveryOrderDetailDeliveryUnitQty" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="DeliveryOrderDetailAction" />
+                    <input type="hidden" id="DeliveryOrderDetailRowStatus" />
+                    <div id="crudDeliveryOrderDetailError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute;left:0">
+                        <a href="#" id="btn-prev" class="btn btn-sm btn-outline-primary" onclick="crudDeliveryOrderDetailMove('prev')"><span class="fa fa-arrow-left fa-2x"></span></a>
+                        <a href="#" id="btn-next" class="btn btn-sm btn-outline-primary" onclick="crudDeliveryOrderDetailMove('next')"><span class="fa fa-arrow-right fa-2x"></span></a>
+                    </div>
+                    <button id="btn-crudDeliveryOrderDetail" type="submit" class="btn btn-sm btn-primary btn-spin" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+<div class="modal animated fadeIn" id="scanKanbanOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="scanKanbanOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> KanbanOrderDetail</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-lg">
+                                <label for="scan-KanbanOrderDetailKanbanKey" class="col-form-label">Scan Kanban Production</label>
+                                <input type="text" class="form-control form-control-lg text-center border-primary" id="scan-KanbanOrderDetailKanbanKey" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="scanKanbanOrderKanbanError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-scanKanbanOrderDetail" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-sign-out"></span> Finish</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@*Modal Upload Kanban*@
+<div class="modal animated fadeIn" id="uploadDNOrderDetailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form id="uploadKanbanOrderDetailForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> KanbanOrderDetail</h6>
+                    <button type="button" id="btnCloseUploadKanban" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-2">
+                            <div class="form-group"><input type="number" id="NumberPageDN" placeholder="Number of Page" class="form-control form-control-sm" /></div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group form-group-lg">
+                                <input type="file" class="form-control form-control-sm mb-1" name="file" id="kanbanInput" accept="application/pdf" required />
+                                <div id="loading" style="display: none; color: blue;">Processing...</div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <table id="jqGridTempDetailDN"></table>
+                            <div id="jqGridTempDetailDNPager"></div>
+                        </div>
+                    </div>
+
+                    <div id="uploadKanbanOrderKanbanError"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="ml-3" style="position:absolute; left:0 !important">
+                        <div class="row">
+                            <div class="col">
+                                <button id="btn-uploadKanbanOrderDetailReset" type="button" class="btn btn-sm btn-outline-dark" onclick="ResetuploadKanbanOrderDetail()"><span class="fa fa-refresh"></span> Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger" id="btn-finishUploadDNOrderDetail"><span class="fa fa-sign-out"></span> Finish</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $('#crudDeliveryOrderDetailModal').on('keydown', 'input, select', function (e) {
+        if (e.which === 13) {
+            var self = $(this), form = self.parents('form:eq(0)'), focusable, next;
+            focusable = form.find('input').filter(':visible');
+            next = focusable.eq(focusable.index(this) + 1);
+            if (next.length) {
+                next.focus();
+            }
+            if (this.id === "crud-DeliveryOrderDetailDeliveryKanban") {
+                $("#btn-crudDeliveryOrderDetail").focus();
+            };
+            return false;
+        }
+    });
+
+    // New Module Upload Part From Kanban
+    function uploadDNOrderDetail(action, id) {
+        var CustomerId = $("#crud-DeliveryOrderCustomerId").val();
+        var SalesNumber = $("#crud-DeliveryOrderSONumber").val();
+
+        if (CustomerId === "" || SalesNumber === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer, Sales Number completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudDeliveryOrderError').html(errMsg);
+            return false;
+        }
+        var headercolor = "modal-primary";
+        var KanbanUsage = "";
+
+        switch (action) {
+            case "Upload":
+                $("#uploadDNOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass(headercolor)
+                $("#uploadDNOrderDetailModal .modal-title").html('<span class="fa fa-qrcode"></span> ' + action + ' ' + KanbanUsage + ' @ViewBag.Title');
+                $('#uploadDNOrderDetailModal').modal('show');
+                $("#btn-finishUploadDNOrderDetail").attr("disabled", true);
+             break;
+        }
+    }
+
+    function deleteTempDNDetail(rowid) {
+        $('#jqGridTempDetailDN').jqGrid('delRowData', rowid);
+        // Cek apakah masih ada "Stock Out" di kolom Action
+        var allRows = $("#jqGridTempDetailDN").jqGrid("getRowData");
+        var hasStockOut = allRows.some(row => row.Action === "Stock Out");
+
+        // Jika ada "Stock Out", tombol tetap disabled, jika tidak ada, enable tombol
+        if (hasStockOut) {
+            $("#btn-finishUploadDNOrderDetail").attr("disabled", true);
+        } else {
+            $("#btn-finishUploadDNOrderDetail").attr("disabled", false);
+        }
+    }
+    $(function () {
+        $("#kanbanInput").change(function () {
+        var file = this.files[0];
+        if (!file) return; // Jika tidak ada file, keluar
+        var formData = new FormData();
+        var page = $("#NumberPageDN").val();
+        formData.append("file", file);
+        formData.append("page", page);
+
+        $("#loading").show(); // Tampilkan indikator loading
+            $.ajax({
+             url: '@Url.Action("ExtractDataFromDN", "Shipping")',
+              type: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              success: function (response) {
+                  $("#loading").hide();
+                  console.log(response);
+
+                  if (!response.success) {
+                      alert(response.message);
+                      return false;
+                  }
+                  var stock = '';
+                  var data = response.TableData;
+                  let err = 0;
+                  $("#crud-DeliveryOrderRefNumber").val(response.Barcode)
+                  // Bersihkan grid sebelum menambahkan data baru
+                  $("#jqGridTempDetailDN").jqGrid("clearGridData");
+                  for (let i = 0; i < data.length; i++) {
+                      var rowId = data[i].PartNumber; // Pastikan ID unik
+                      var existingRow = $("#jqGridTempDetailDN").jqGrid("getRowData", rowId);
+                      var res = GetOutstandingStock($("#crud-DeliveryOrderSONumber").val(), $("#crud-DeliveryOrderCustomerId").val(), data[i].PartNumber);
+                      stock = parseFloat(data[i].KanbanDelivery) > parseFloat(res.StockKanban) ? "<span class='badge badge-danger'>Stock Out</span>" : "<span class='badge badge-success'>Stock Safety</span>";
+                      parseFloat(data[i].KanbanDelivery) > parseFloat(res.StockKanban) ? err++ : "";
+                      if (existingRow.UniqueNumber) {
+                          // Jika Unique sudah ada, update row
+                          parametersUpdate =
+                          {
+                              Act: `<a href="#" onclick="deleteTempDNDetail('${rowId}')" class="btn btn-sm btn-danger text-white">
+                                    <span class="fa fa-trash"></span>
+                                  </a>`,
+                              UniqueNumber: data[i].Unique,
+                              PartNumber: data[i].PartNumber,
+                              PartName: data[i].PartName,
+                              CustomerUnitModel: data[i].Model,
+                              UnitQty: data[i].QtyKanban,
+                              UnitLevel2: data[i].Units,
+                              StockKanban: res.StockKanban,
+                              StockQty: res.StockQty,
+                              OutstandingQty: res.OutstandingKanban,
+                              OutstandingUnitQty: res.OutstandingQty,
+                              DeliveryQty: data[i].KanbanDelivery,
+                              DeliveryUnitQty: data[i].QtyDelivery,
+                              Action: stock,
+                          }
+
+                          $("#jqGridTempDetailDN").jqGrid('setRowData', rowId, parametersUpdate);
+                      } else {
+                          // Jika Unique belum ada, tambahkan row baru
+                          parameters =
+                          {
+                              rowID: rowId ,
+                              initdata: {
+                                  Act: `<a href="#" onclick="deleteTempDNDetail('${rowId}')" class="btn btn-sm btn-danger text-white">
+                                        <span class="fa fa-trash"></span>
+                                      </a>`,
+                                  RowStatus: 'Create',
+                                  UniqueNumber: data[i].Unique,
+                                  PartNumber: data[i].PartNumber,
+                                  PartName: data[i].PartName,
+                                  CustomerUnitModel: data[i].Model ,
+                                  UnitQty: data[i].QtyKanban ,
+                                  UnitLevel2: data[i].Units,
+                                  StockKanban:'' ,
+                                  StockQty:'' ,
+                                  OutstandingQty: '',
+                                  OutstandingUnitQty:'' ,
+                                  DeliveryQty: data[i].KanbanDelivery,
+                                  DeliveryUnitQty: data[i].QtyDelivery,
+                              },
+                              position: "last",
+                          }
+                          $("#jqGridTempDetailDN").jqGrid('addRow', parameters);
+
+                          parametersUpdate =
+                          {
+                              Action   : stock,
+                              StockKanban: res.StockKanban,
+                              StockQty: res.StockQty,
+                              OutstandingQty: res.OutstandingKanban,
+                              OutstandingUnitQty: res.OutstandingQty,
+                          }
+
+                          $("#jqGridTempDetailDN").jqGrid('setRowData', rowId, parametersUpdate);
+                      }
+                  }
+                  if (err <= 0) $("#btn-finishUploadDNOrderDetail").attr("disabled", false);
+                  //$("#btn-finishUploadDNOrderDetail").attr("disabled", false)
+                  $("#kanbanInput").val('');
+              },
+              error: function (xhr, desc, err) {
+                  $("#loading").hide();
+                  var responsetext = "";
+                  try {
+                      responsetext = eval(xhr.responseText);
+                  } catch {
+                      responsetext = xhr.responseText;
+                  }
+                  var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>';
+                  alert(errMsg);
+              }
+         });
+
+        });
+    })
+
+    $(function () {
+        $grid = $("#jqGridTempDetailDN").jqGrid({
+            datatype: "local",
+            colModel: [
+                { label: 'Action', name: 'Act', editable: false, align: 'center', fixed: true, width: 80, sortable: false, },
+                { label: '#', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, sortable: false, },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', key: true, fixed: true, width: 50, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', key: true, fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 270, sortable: false },
+                { label: 'MODEL', name: 'CustomerUnitModel', align: 'center', fixed: true, width: 98, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 40, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'KANBAN QTY', name: 'StockKanban', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'StockQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'KANBAN QTY', name: 'OutstandingQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'OutstandingUnitQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'KANBAN QTY', name: 'DeliveryQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'DeliveryUnitQty', align: 'right', fixed: true, width: 60, formatter: 'number, formatoptions: { decimalPlaces: 0 }', sortable: false },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridTempDetailDNPager',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showCustomerGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+
+            },
+        });
+
+        $('#jqGridTempDetailDN').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 2, titleText: 'STOCK' },
+                { startColumnName: 'OutstandingQty', numberOfColumns: 2, titleText: 'OUTSTANDING' },
+                { startColumnName: 'DeliveryQty', numberOfColumns: 2, titleText: 'DELIVERY' },
+            ]
+        });
+    });
+
+    function ResetuploadKanbanOrderDetail() {
+        $("#jqGridTempDetailDN").jqGrid("clearGridData");
+        $("#kanbanInput").val('');
+        $("#btn-finishUploadKanbanOrderDetail").prop("disabled", true);
+    }
+
+    function processDNGridRows() {
+        var grid = $("#jqGridTempDetailDN");
+
+        var rowIds = grid.getDataIDs(); // Ambil semua ID baris
+        for (let i = 0; i < rowIds.length; i++) {
+           var Rows = $("#jqGridTempDetailDN").jqGrid("getRowData", rowIds[i]);
+            parameters =
+            {
+                rowID: rowIds[i],
+                initdata: {
+                    RowStatus: 'Create',
+                    UniqueNumber: Rows.UniqueNumber,
+                    PartNumber: Rows.PartNumber,
+                    PartName: Rows.PartName,
+                    CustomerUnitModel: Rows.CustomerUnitModel,
+                    UnitQty: Rows.UnitQty,
+                    UnitLevel2: Rows.UnitLevel2,
+                    StockKanban: Rows.StockKanban,
+                    StockQty: Rows.StockQty,
+                    OutstandingQty: Rows.OutstandingQty,
+                    OutstandingUnitQty: Rows.OutstandingUnitQty,
+                    DeliveryQty: Rows.DeliveryQty,
+                    DeliveryUnitQty: Rows.DeliveryUnitQty,
+                },
+                position: "last",
+            }
+
+
+            var check = $("#jqGridCrudDeliveryDetail").jqGrid("getRowData", rowIds[i]);
+            if (Object.keys(check).length === 0) {
+                $("#jqGridCrudDeliveryDetail").jqGrid('addRow', parameters);
+            } else {
+                $("#jqGridCrudDeliveryDetail").jqGrid('setRowData', rowIds[i], parameters);
+            }
+        }
+        showToast("Success", "Create @ViewBag.Title  has been saved succesfully");
+
+        $('#uploadDNOrderDetailModal').modal('hide');
+    }
+
+    // Panggil fungsi setelah grid siap atau dengan event tertentu
+    $("#btn-finishUploadDNOrderDetail").on("click", function () {
+        processDNGridRows();
+    });
+
+    function crudDeliveryOrder(action, id) {
+
+        //call partial on _Layout
+        loadblockspinner();
+        $('#search_content').html("").load('@Url.Action("SearchPartFinishGoods","Search")');
+
+        document.getElementById("crudDeliveryOrderForm").reset();
+        $('#crudDeliveryOrderForm').removeClass('was-validated');
+        $('#crudDeliveryOrderError').html("");
+        $('#btn-addDeliveryOrderDetail').removeAttr('disabled');
+        $('#btn-scanDeliveryOrderDetail').removeAttr('disabled');
+        $("#btn-crudDeliveryOrder").html("<span class='fa fa-dot-circle-o'></span> Submit").removeAttr('disabled');
+        $("#crudDeliveryOrderForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#crud-showhide").removeAttr("checked");
+        $("#approvalInfo").text("");
+        $("#DeliveryOrderAction").val(action);
+
+        newdate = moment(new Date()).format("YYYY-MM-DD");
+
+        if (id != "*") {
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                DeliveryOrderStatus         = Grid.jqGrid('getCell', selectedRowId, 'StatusName'),
+                DeliveryOrderDate           = Grid.jqGrid('getCell', selectedRowId, 'DODate'),
+                DeliveryOrderCustomerId     = Grid.jqGrid('getCell', selectedRowId, 'CustomerId'),
+                DeliveryOrderSONumber       = Grid.jqGrid('getCell', selectedRowId, 'SONumber'),
+                DeliveryOrderRefNumber      = Grid.jqGrid('getCell', selectedRowId, 'RefNumber');
+                DeliveryOrderRemarks        = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            DeliveryOrderDate = moment(new Date(DeliveryOrderDate)).format("YYYY-MM-DD");
+
+            $("#crud-DeliveryOrderNumber").val(id);
+            $("#crud-DeliveryOrderDate").val(DeliveryOrderDate);
+            $("#crud-DeliveryOrderCustomerId").val(DeliveryOrderCustomerId);
+            $("#crud-DeliveryOrderSONumber").val(DeliveryOrderSONumber);
+            $("#crud-DeliveryOrderRefNumber").val(DeliveryOrderRefNumber);
+            $("#crud-DeliveryOrderRemarks").val(DeliveryOrderRemarks);
+            var showhide=''
+            if (DeliveryOrderStatus.includes('Open')) {
+                showhide = 'showCol';
+            } else {
+                showhide = 'hideCol';
+            }
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "Action")
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "RowStatus")
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "StockKanban")
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "StockQty")
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "OutstandingKanban")
+            $("#jqGridCrudDeliveryDetail").jqGrid(showhide, "OutstandingQty")
+
+            loadSalesNumber(DeliveryOrderSONumber);
+
+
+        }
+
+        $(".selectpicker").selectpicker('refresh');
+
+        switch (action) {
+            case "Create":
+
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "Action")
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "RowStatus")
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "StockKanban")
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "StockQty")
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "OutstandingKanban")
+                $("#jqGridCrudDeliveryDetail").jqGrid('showCol', "OutstandingQty")
+
+                $("#crud-DeliveryOrderNumber").attr("readonly", true);
+                //$("#crud-DeliveryOrderDate").attr("readonly", true);
+                $("#crud-DeliveryOrderDate").val(newdate);
+                $("#crudDeliveryOrderModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudDeliveryOrderModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDeliveryOrderModal').modal('show');
+                $("#crud-DeliveryOrderCustomerId").focus();
+                break;
+            case "Update":
+                $("#crud-DeliveryOrderNumber").attr("readonly", true);
+                //$("#crud-DeliveryOrderDate").attr("readonly", true);
+                $("#crud-DeliveryOrderCustomerId").attr("disabled", true);
+                $("#crud-DeliveryOrderSONumber").attr("disabled", true);
+                $("#crudDeliveryOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudDeliveryOrderModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDeliveryOrderModal').modal('show');
+                $("#crud-DeliveryOrderRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudDeliveryOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-DeliveryOrderCustomerId").attr("disabled", true);
+                $("#crud-DeliveryOrderSONumber").attr("disabled", true);
+                $('#btn-addDeliveryOrderDetail').attr('disabled', true);
+                $('#btn-scanDeliveryOrderDetail').attr('disabled', true);
+                $("#btn-crudDeliveryOrder").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudDeliveryOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudDeliveryOrderModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDeliveryOrderModal').modal('show');
+                break
+            case "Canceled":
+                $("#crudDeliveryOrderForm input").each(function () {
+                    $(this).attr("disabled",true);
+                });
+                $("#crud-DeliveryOrderCustomerId").attr("disabled", true);
+                $("#crud-DeliveryOrderSONumber").attr("disabled", true);
+                $('#btn-addDeliveryOrderDetail').attr('disabled', true);
+                $('#btn-scanDeliveryOrderDetail').attr('disabled', true);
+                $("#btn-crudDeliveryOrder").html("<span class='fa fa-ban'></span> Cancel Order");
+                $("#crudDeliveryOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-info").addClass("modal-warning")
+                $("#crudDeliveryOrderModal .modal-title").html('<span class="fa fa-ban"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDeliveryOrderModal').modal('show');
+                break
+            case "Closed":
+                $("#crudDeliveryOrderForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-DeliveryOrderCustomerId").attr("disabled", true);
+                $("#crud-DeliveryOrderSONumber").attr("disabled", true);
+                $('#btn-addDeliveryOrderDetail').attr('disabled', true);
+                $('#btn-scanDeliveryOrderDetail').attr('disabled', true);
+                $("#btn-crudDeliveryOrder").html("<span class='fa fa-sign-out'></span> Closing Order");
+                $("#crudDeliveryOrderModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").addClass("modal-info")
+                $("#crudDeliveryOrderModal .modal-title").html('<span class="fa fa-sign-out"></span> ' + action + ' @ViewBag.Title');
+                $('#crudDeliveryOrderModal').modal('show');
+                break;
+
+            case "UpdateReff":
+                $("#update-ReffNumber").focus();
+                $("#update-doNumberReff").val(id);
+                $("#update-ReffNumber").val(DeliveryOrderRefNumber);
+                $("#ReffNumberModal .modal-title").html('<span class="fa fa-pencil"></span> Update Reff Number');
+                $('#ReffNumberModal').modal('show');
+                break;
+        }
+
+        reloadGridDeliveryDetail();
+
+    }
+
+    $('#crud-DeliveryOrderCustomerId').change(function () {
+        $('#crudDeliveryOrderError').html("");
+    });
+
+    $('#crud-DeliveryOrderSONumber').change(function () {
+        $('#crudDeliveryOrderError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(function () {
+        $gridDeliveryDetail = $("#jqGridCrudDeliveryDetail").jqGrid({
+            url: "@Url.Action("DeliveryOrderDetailListJson", "Shipping")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { DONumber: "*" },
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, sortable: false, formatter: actionDeliveryDetailFormatter },
+                { label: 'STATUS', name: 'RowStatus', editable: false, align: 'center', fixed: true, width: 60, sortable: false, formatter: statusCrudFormatter },
+                { label: 'UNIQUE NUMBER', name: 'UniqueNumber', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'PART NUMBER', name: 'PartNumber', key: true, fixed: true, width: 120, sortable: false },
+                { label: 'PART NAME', name: 'PartName', align: 'left', fixed: true, width: 270, sortable: false },
+                { label: 'MODEL', name: 'CustomerUnitModel', align: 'center', fixed: true, width: 98, sortable: false },
+                { label: 'QTY/ KBN', name: 'UnitQty', align: 'center', fixed: true, width: 40, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 50, sortable: false },
+                { label: 'KANBAN QTY', name: 'StockKanban', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'StockQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'KANBAN QTY', name: 'OutstandingQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'OutstandingUnitQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'KANBAN QTY', name: 'DeliveryQty', align: 'right', fixed: true, width: 60, formatter: 'number', formatoptions: { decimalPlaces: 0 }, sortable: false },
+                { label: 'UNIT QTY', name: 'DeliveryUnitQty', align: 'right', fixed: true, width: 60, formatter: 'number, formatoptions: { decimalPlaces: 0 }', sortable: false },
+            ],
+            gridview: true,
+            pager: '#jqGridPagerCrudDeliveryDetail',
+            loadonce: true,
+            height: 220,
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: true,
+            rowNum: 9999,
+            rownumbers: true,
+            rownumWidth: 30,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: true,
+            fromServer: true,
+            //subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            //subGridRowExpanded: showKanbanGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+
+                var action = $("#DeliveryOrderAction").val();
+                if (action === "Create") {
+                    var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+
+                    for (i = 0; i < l; i++) {
+                        //$this.jqGrid('editRow', ids[i], true);
+                        parameters =
+                        {
+                            RowStatus: action,
+                        }
+                        $("#jqGridCrudDeliveryDetail").jqGrid('setRowData', ids[i], parameters);
+
+                    }
+                }
+            },
+            ondblClickRow: function (rowid) {
+                crudDeliveryOrderDetail("Update", rowid);
+            },
+        });
+        $('#jqGridCrudDeliveryDetail').jqGrid('navGrid', '#jqGridPagerCrudDeliveryDetail',
+            { search: false, edit: false, add: false, del: false},
+        );
+
+        $('#jqGridCrudDeliveryDetail').jqGrid('setGroupHeaders', {
+            useColSpanStyle: true,
+            groupHeaders: [
+                { startColumnName: 'StockKanban', numberOfColumns: 2, titleText: 'STOCK' },
+                { startColumnName: 'OutstandingQty', numberOfColumns: 2, titleText: 'OUTSTANDING' },
+                { startColumnName: 'DeliveryQty', numberOfColumns: 2, titleText: 'DELIVERY' },
+            ]
+        });
+    });
+
+    function showKanbanGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+        var DONumber = $('#crud-KanbanOrderDONumber').val();
+        if (DONumber === "") {
+            DONumber="@ViewBag.TransId"
+        }
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("KanbanOrderDetailTempJson", "Shipping")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                DONumber: DONumber,
+                PartNumber: parentRowKey ,
+            },
+            page: 1,
+            colModel: [
+                { label: 'ACTION', name: 'Action', editable: false, align: 'center', fixed: true, width: 80, sortable: false, formatter: actionKanbanDetailFormatter },
+                { label: 'KANBAN #', name: 'KanbanNumber', align: 'center', fixed: true, width: 80 },
+                { label: 'UNIQUE', name: 'UniqueNumber', fixed: true, align: 'center', width: 50 },
+                { label: 'PART NUMBER', name: 'PartNumber', align: 'center', fixed: true, width: 100 },
+                { label: 'PART NAME', name: 'PartName', fixed: true, width: 210 },
+                { label: 'QTY / KBN', name: 'DeliveryQty', align: 'center', fixed: true, width: 80, formatter: 'number', formatoptions: { decimalPlaces: 0 } },
+                { label: 'UNIT', name: 'UnitLevel2', align: 'center', fixed: true, width: 60 },
+                { label: 'KANBAN DATA', name: 'KanbanData', align: 'left', fixed: true, width: 250 },
+                { label: 'USER', name: 'UserId', align: 'center', fixed: true, width: 60 },
+                { label: 'SCANNED', name: 'ScanTime', align: 'center', fixed: true, width: 120, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Details',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+
+    function reloadGridDeliveryDetail() {
+
+        var ordernumber = $("#crud-DeliveryOrderNumber").val();
+
+        $("#jqGridCrudDeliveryDetail").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                DONumber: ordernumber,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function actionDeliveryDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = rowObject.PartNumber;
+        var formaction = $("#DeliveryOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-primary text-white " + canupdate + "' onclick=\"crudDeliveryOrderDetail('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title Item [ " + rowObject.PartNumber + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' id='btn-delete" + rowid + "' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudDeliveryOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.PartueNumber + " ]'>";
+        btn += "<span class='fa fa-trash-o'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function actionKanbanDetailFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var kanbannumber = rowObject.KanbanNumber;
+        var partnumber = rowObject.PartNumber;
+        var formaction = $("#DeliveryOrderAction").val();
+        var canupdate = '@ViewBag.canUpdate';
+        var candelete = '@ViewBag.canDelete';
+
+        if (formaction === "Closed" || formaction === "Canceled" || formaction === "Delete") {
+            canupdate = "disabled";
+            candelete = "disabled";
+        }
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' id='btn-update" + rowid + "' class='btn btn-sm btn-danger text-light" + candelete + "' onclick=\"crudKanbanOrderDetail('Delete','" + rowid + "','" + kanbannumber + "','" + partnumber + "')\" datatoogle='tooltip' title='Remove @ViewBag.Title Item [ " + rowid + " : " + kanbannumber + " - " + partnumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span> Remove";
+        btn += "</a> ";
+        @*btn += "<a href='#' id='btn-delete" + rowid + "' class='text-danger " + candelete + "' onclick=\"crudKanbanOrderDetail('Delete','" + rowid + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title Item [ " + rowObject.UniqueNumber + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";*@
+        return btn;
+    }
+
+    function statusCrudFormatter(cellvalue, options, rowObject) {
+        var action = $("#DeliveryOrderAction").val();
+        switch (cellvalue) {
+            case "Create":
+                return "<span class='badge badge-primary'>New</span>"
+                break;
+            case "Update":
+                return "<span class='badge badge-success'>Updated</span>"
+                break;
+            case "Delete":
+                return "<span class='badge badge-danger'>Removed</span>"
+                break;
+            default:
+                //if (action === "Create") {
+                //    return "<span class='badge badge-primary'>New</span>"
+                //} else {
+                //    return "";
+                //}
+                return "";
+                break;
+        }
+    }
+
+    function crudDeliveryOrderDetailMove(action) {
+        var $grid = $("#jqGridCrudDeliveryDetail");
+        var id = $("#crud-DeliveryOrderDetailPartNumber").val();
+        var rowIndex = $grid.jqGrid('getInd', id);
+        var dataIDs = $grid.getDataIDs();
+        var datalen = (dataIDs.length) - 1;
+
+        $("#btn-prev").removeClass("disabled");
+        $("#btn-next").removeClass("disabled");
+
+
+        switch (action) {
+            case "prev":
+
+                rowIndex = parseInt(rowIndex) - 2;
+
+                if (dataIDs.length >= rowIndex && rowIndex >= 0) {
+
+                    var prevID = dataIDs[rowIndex];
+                    crudDeliveryOrderDetail("Update", prevID)
+                    $grid.setSelection(prevID, false);
+
+                }
+
+                if (rowIndex <= 0) {
+                    $("#btn-prev").addClass("disabled");
+                }
+
+                break;
+
+            case "next":
+
+                if (dataIDs.length > rowIndex) {
+
+                    var nextID = dataIDs[rowIndex];
+                    crudDeliveryOrderDetail("Update", nextID)
+                    $grid.setSelection(nextID, false);
+
+                }
+
+                if (datalen <= rowIndex) {
+                    $("#btn-next").addClass("disabled");
+                }
+
+                break;
+
+        }
+
+    }
+
+    function crudDeliveryOrderDetail(action, id) {
+
+        document.getElementById("crudDeliveryOrderDetailForm").reset();
+        $('#crudDeliveryOrderDetailForm').removeClass('was-validated');
+        $('#crudDeliveryOrderError').html("");
+        $('#crudDeliveryOrderDetailError').html("");
+        $("#btn-crudDeliveryOrderDetail").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#btn-prev").addClass("disabled");
+        $("#btn-next").addClass("disabled");
+        $("#btn-searchPart").removeClass("disabled");
+
+        $("#crudDeliveryOrderDetailForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#DeliveryOrderDetailAction").val(action);
+        var CustomerId = $("#crud-DeliveryOrderCustomerId").val();
+        var SalesNumber = $("#crud-DeliveryOrderSONumber").val();
+
+        if (CustomerId === "" || SalesNumber === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer, Sales Number completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudDeliveryOrderError').html(errMsg);
+            return false;
+        }
+
+        if (id != "") {
+            var $grid = $("#jqGridCrudDeliveryDetail");
+            var rowData = $grid.jqGrid("getRowData", id),
+                RowStatus = rowData.RowStatus.split(">"),
+                UniqueNumber = rowData.UniqueNumber,
+                PartNumber = rowData.PartNumber,
+                PartName = rowData.PartName,
+                Model = rowData.PartModel,
+                QtyUnit = rowData.UnitQty,
+                Unit = rowData.UnitLevel2,
+                DeliveryQty = rowData.DeliveryQty,
+                DeliveryUnitQty = rowData.DeliveryUnitQty;
+
+            if (RowStatus != "") {
+                RowStatus = RowStatus[1].split("<");
+                RowStatus = RowStatus[0];
+            }
+
+            var res = GetOutstandingStock($("#crud-DeliveryOrderSONumber").val(), $("#crud-DeliveryOrderCustomerId").val(), PartNumber);
+
+            var MaxOrder = parseFloat(res.StockKanban);
+            var MinOrder = 1;
+            if (parseFloat(res.StockKanban) < 1) {
+                MinOrder = 1;
+                MaxOrder = 0;
+            }
+            /* additional request 2022-09-29
+               delivery tidak boleh melebihi outstanding
+               req by: ahmad, dewi
+             */
+            if (MaxOrder > res.OutstandingKanban) {
+                MaxOrder = res.OutstandingKanban;
+            }
+
+            $("#DeliveryOrderDetailRowStatus").val(RowStatus);
+            $("#crud-DeliveryOrderDetailUniqueNumber").val(UniqueNumber);
+            $("#crud-DeliveryOrderDetailPartNumber").val(PartNumber);
+            $("#crud-DeliveryOrderDetailPartName").val(PartName);
+            $("#crud-DeliveryOrderDetailPartModel").val(Model);
+            $("#crud-DeliveryOrderDetailUnitQty").val(QtyUnit);
+            $("#crud-DeliveryOrderDetailUnit").val(Unit);
+
+            $("#crud-DeliveryOrderDetailStockKanban").val(res.StockKanban)
+            $("#crud-DeliveryOrderDetailStockQty").val(res.StockQty)
+            $("#crud-DeliveryOrderDetailOutstandingKanban").val(res.OutstandingKanban)
+            $("#crud-DeliveryOrderDetailOutstandingQty").val(res.OutstandingQty)
+
+            $("#crud-DeliveryOrderDetailDeliveryKanban").val(DeliveryQty).attr("min", MinOrder).attr("max", MaxOrder);
+            $("#crud-DeliveryOrderDetailDeliveryUnitQty").val(DeliveryUnitQty);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crud-DeliveryOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartName").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartModel").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailUnit").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailStockKanban").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailStockQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailOutstandingKanban").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailOutstandingQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailDeliveryUnitQty").attr("disabled", true);
+                $("#crudDeliveryOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudDeliveryOrderDetailModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudDeliveryOrderDetailModal').modal('show');
+                $("#btn-searchPart").focus();
+                break;
+            case "Update":
+                $("#crud-DeliveryOrderDetailUniqueNumber").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartNumber").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartName").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailPartModel").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailUnitQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailUnit").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailStockKanban").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailStockQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailOutstandingKanban").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailOutstandingQty").attr("disabled", true);
+                $("#crud-DeliveryOrderDetailDeliveryUnitQty").attr("disabled", true);
+                $("#crudDeliveryOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudDeliveryOrderDetailModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudDeliveryOrderDetailModal').modal('show');
+                $("#crud-DeliveryOrderDetailOrderQty").focus().select();
+
+                var rowIndex = $grid.jqGrid('getInd', PartNumber);
+                var dataIDs = $grid.getDataIDs();
+                var datalen = (dataIDs.length);
+
+                $("#btn-prev").removeClass("disabled");
+                $("#btn-next").removeClass("disabled");
+
+                if (rowIndex === 1) {
+                    $("#btn-prev").addClass("disabled");
+                }
+                if (rowIndex === datalen) {
+                    $("#btn-next").addClass("disabled");
+                }
+                break;
+            case "Delete":
+                $("#crudDeliveryOrderDetailForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#btn-searchPart").addClass("disabled");
+                $("#btn-crudDeliveryOrderDetail").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudDeliveryOrderDetailModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudDeliveryOrderDetailModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title Item');
+                $('#crudDeliveryOrderDetailModal').modal('show');
+                break;
+        }
+    }
+
+    function crudKanbanOrderDetail(action, kanbankey, kanbannumber, partnumber) {
+
+        $('#crudKanbanOrderDetailError').html("");
+
+        $("#KanbanOrderDetailAction").val(action);
+        $("#KanbanOrderDetailKanbanKey").val(kanbankey);
+        $("#KanbanOrderDetailKanbanNumber").val(kanbannumber);
+        $("#KanbanOrderDetailKanbanPartNumber").val(partnumber);
+        $("#KanbanOrderDetailKanbanKeyInfo").html('<b>'+ kanbankey + ' : ' + kanbannumber + ' - ' + partnumber + '</b>')
+
+        $('#crudKanbanOrderDetailModal').modal('show');
+
+    }
+
+    function scanKanbanOrderDetail(action, id) {
+
+        document.getElementById("scanKanbanOrderDetailForm").reset();
+        $('#scanKanbanOrderDetailError').html("");
+        $('#scanKanbanOrderDetailForm').removeClass('was-validated');
+        $("#scanKanbanOrderDetailForm input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#KanbanOrderDetailAction").val(action);
+        var CustomerId = $("#crud-DeliveryOrderCustomerId").val();
+        var SalesNumber = $("#crud-DeliveryOrderSONumber").val();
+
+        if (CustomerId === "" || SalesNumber === "") {
+            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b>Not completed fields!</b><br/>Please type Customer, Sales Number completely before add @ViewBag.Title Detail.</small></div>'
+            $('#crudDeliveryOrderError').html(errMsg);
+            return false;
+        }
+
+        switch (action) {
+            case "Scan":
+                $("#scanKanbanOrderDetailModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-dark")
+                $("#scanKanbanOrderDetailModal .modal-title").html('<span class="fa fa-qrcode"></span> ' + action + ' @ViewBag.Title');
+                $('#scanKanbanOrderDetailModal').modal('show');
+                $("#scan-KanbanOrderDetailKanbanKey").val("").focus();
+                break;
+        }
+    }
+
+    $("#scan-KanbanOrderDetailKanbanKey").on("change",function () {
+        $('#scanKanbanOrderKanbanError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#scanKanbanOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($(this).valid()) {
+
+                    var DONumber = $("#crud-DeliveryOrderDONumber").val();
+                    var DODate = $("#crud-DeliveryOrderDate").val();
+                    var CustomerId = $("#crud-DeliveryOrderCustomerId").val();
+                    var SONumber = $("#crud-DeliveryOrderSONumber").val();
+                    var kanban = $("#scan-KanbanOrderDetailKanbanKey").val();
+                    //var kanbankey = kanban.split(';');
+                    //var kanbankey = kanbankey[0];
+
+                    var action = $('#DeliveryOrderAction').val();
+
+                    if (action === 'Create') {
+                        DONumber = '@ViewBag.TransId';
+                    }
+
+                    $.ajax({
+                        url: '@Url.Action("kanbanProductionReader", "Shipping")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        async: false,
+                        data: {
+                            DONumber: DONumber,
+                            DODate: DODate,
+                            CustomerId: CustomerId,
+                            OrderNumber: SONumber,
+                            KanbanData: kanban,
+                        },
+                        success: function (response) {
+
+                            var res = response;
+                            var message = res.ErrMessages;
+
+                            if (message.includes('Error')) {
+                                message = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger">' + message + '</div>';
+                                $('#scanKanbanOrderKanbanError').html(message);
+                                scanKanbanOrderDetail("Scan", "");
+                            } else {
+                                showToast("Success", message);
+                                reloadGridDeliveryDetail();
+                                scanKanbanOrderDetail("Scan", "");
+                            }
+
+                        },
+                        error: function (xhr, desc, err) {
+                            var responsetext = "";
+                            try {
+                                responsetext = eval(xhr.responseText);
+                            } catch {
+                                responsetext = xhr.responseText;
+                            }
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>';
+                            $('#scanKanbanOrderKanbanError').html(errMsg);
+
+                            $("#scan-KanbanOrderDetailKanbanKey").val("").focus();
+
+                        }
+                    });
+                } else {
+                    unloadblockspinner();
+                    $("#scan-KanbanOrderDetailKanbanKey").focus();
+                }
+            });
+        });
+    });
+
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudDeliveryOrderDetailForm").submit(function (event) {
+
+                $(this).validate();
+                event.preventDefault();
+
+                if ($("#crud-DeliveryOrderDetailPartNumber").val() === "") {
+                    showToast("Failed", "Please select part before submit.");
+                    event.preventDefault();
+                    event.stopPropagation();
+                    return false;
+                }
+
+                if ($(this).valid()) {
+
+                    var action = $('#DeliveryOrderDetailAction').val();
+                    var rowStatus = $('#DeliveryOrderDetailRowStatus').val();
+
+                    switch (action) {
+                        case "Create":
+
+                            parameters =
+                            {
+                                rowID: $("#crud-DeliveryOrderDetailPartNumber").val(),
+                                initdata: {
+                                    RowStatus: action,
+                                    UniqueNumber: $("#crud-DeliveryOrderDetailUniqueNumber").val(),
+                                    PartNumber: $("#crud-DeliveryOrderDetailPartNumber").val(),
+                                    PartName: $("#crud-DeliveryOrderDetailPartName").val(),
+                                    CustomerUnitModel: $("#crud-DeliveryOrderDetailPartModel").val(),
+                                    UnitQty: $("#crud-DeliveryOrderDetailUnitQty").val(),
+                                    UnitLevel2: $("#crud-DeliveryOrderDetailUnit").val(),
+                                    StockKanban: $("#crud-DeliveryOrderDetailStockKanban").val(),
+                                    StockQty: $("#crud-DeliveryOrderDetailStockQty").val(),
+                                    OutstandingQty: $("#crud-DeliveryOrderDetailOutstandingKanban").val(),
+                                    OutstandingUnitQty: $("#crud-DeliveryOrderDetailOutstandingQty").val(),
+                                    DeliveryQty: $("#crud-DeliveryOrderDetailDeliveryKanban").val(),
+                                    DeliveryUnitQty: $("#crud-DeliveryOrderDetailDeliveryUnitQty").val(),
+                                },
+                                position: "last",
+                            }
+
+                            $("#jqGridCrudDeliveryDetail").jqGrid('addRow', parameters);
+                            showToast("Success", "Create @ViewBag.Title " + $("#crud-DeliveryOrderDetailPartName").val() + " has been saved succesfully");
+                            $('#crudDeliveryOrderDetailModal').modal('hide');
+
+                            break;
+
+                        case "Update":
+
+                            var rowid = $("#crud-DeliveryOrderDetailPartNumber").val()
+
+                            if (rowStatus != "New") {
+                                rowStatus = action
+                            } else {
+                                rowStatus = "Create"
+                            }
+
+                            parameters =
+                            {
+                                RowStatus: rowStatus,
+                                StockKanban: $("#crud-DeliveryOrderDetailStockKanban").val(),
+                                StockQty: $("#crud-DeliveryOrderDetailStockQty").val(),
+                                OutstandingQty: $("#crud-DeliveryOrderDetailOutstandingKanban").val(),
+                                OutstandingUnitQty: $("#crud-DeliveryOrderDetailOutstandingQty").val(),
+                                DeliveryQty: $("#crud-DeliveryOrderDetailDeliveryKanban").val(),
+                                DeliveryUnitQty: $("#crud-DeliveryOrderDetailDeliveryUnitQty").val(),
+                            }
+
+                            $("#jqGridCrudDeliveryDetail").jqGrid('setRowData', rowid, parameters);
+                            showToast("Success", "Update @ViewBag.Title " + $("#crud-DeliveryOrderDetailPartName").val() + " has been saved succesfully");
+
+                            var lastrow = $("#btn-next").hasClass("disabled");
+                            if (lastrow === true) {
+                                $('#crudDeliveryOrderDetailModal').modal('hide');
+                            } else {
+                                $("#btn-next").click();
+                            }
+
+                            break;
+
+                        case "Delete":
+
+                            var rowid = $("#crud-DeliveryOrderDetailPartNumber").val()
+
+                            if (rowStatus === "New") {
+                                $('#jqGridCrudDeliveryDetail').jqGrid('delRowData', rowid);
+                            } else {
+                                parameters =
+                                {
+                                    RowStatus: action,
+                                }
+                                $("#jqGridCrudDeliveryDetail").jqGrid('setRowData', rowid, parameters);
+                            }
+
+                            showToast("Failed", "Delete @ViewBag.Title " + $("#crud-DeliveryOrderDetailPartName").val() + " has been removed succesfully");
+                            $('#crudDeliveryOrderDetailModal').modal('hide');
+
+                            break;
+                    }
+                    unloadblockspinner();
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudDeliveryOrderForm").submit(function (event) {
+
+                var btnSubmitHtml = $("#btn-crudDeliveryOrder").html();
+                $("#btn-crudDeliveryOrder").html("<span class='fa fa-spinner fa-spin'></span> Submit").attr('disabled', true);
+
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    loadblockspinner();
+
+                    var $grid = $("#jqGridCrudDeliveryDetail");
+                    var dataIDs = $grid.getDataIDs();
+                    var datalen = (dataIDs.length);
+                    var formaction = $("#DeliveryOrderAction").val();
+                    var connStatus = checkConnection();
+
+                    if (connStatus != "Success") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error 404!</b><br/>' + connStatus + ' Please try again later after you connected to server.</small></div>'
+                        $('#crudDeliveryOrderError').html(errMsg);
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    if (datalen === 0 && formaction != "Delete") {
+                        alert("Please add Part Item for @ViewBag.Title before submit.");
+                        unloadblockspinner();
+                        event.stopPropagation;
+                        return false;
+                    }
+
+                    var formData = new FormData();
+
+                    var jsonData = {
+                        DeliveryOrder: {
+                            DONumber    : $("#crud-DeliveryOrderNumber").val(),
+                            DODate      : $("#crud-DeliveryOrderDate").val(),
+                            CustomerId  : $("#crud-DeliveryOrderCustomerId").val(),
+                            SONumber    : $("#crud-DeliveryOrderSONumber").val(),
+                            RefNumber   : $("#crud-DeliveryOrderRefNumber").val(),
+                            Remarks     : $("#crud-DeliveryOrderRemarks").val(),
+                            KanbanOrder : false,
+                            Status      : null,
+                            EditDate    : null,
+                            UserID      : null
+                        },
+                        DeliveryOrderDetail: $("#jqGridCrudDeliveryDetail").jqGrid('getGridParam', 'data'),
+                        uid: "@ViewBag.UserId",
+                        formAction: $("#DeliveryOrderAction").val()
+                    };
+
+                    //console.log(JSON.stringify(jsonData));
+                    //return false;
+                    formData.append("jsonData", JSON.stringify(jsonData));
+
+                    setTimeout(function () {
+                        $.ajax({
+                            url: '@Url.Action("crudDeliveryOrderList", "Shipping")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            data: formData,
+                            async: false,
+                            success: function (data) {
+                                //$('#crudDeliveryOrderModal').modal('hide');
+                                //var act = $("#DeliveryOrderAction").val();
+                                //act = act.toLowerCase();
+                                //doSuccess(data, act);
+                                if (data.err != "00") {
+                                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error 404 !</b><br/>' + data.data + '</small></div>';
+                                    $('#crudDeliveryOrderError').html(errMsg);
+                                } else {
+                                    $('#crudDeliveryOrderModal').modal('hide');
+                                    var act = $("#DeliveryOrderAction").val();
+                                    act = act.toLowerCase();
+                                    doSuccess({ DONumber: data.data }, act);
+                                }
+                            },
+                            error: function (xhr, desc, err) {
+                                var responsetext = "";
+                                try {
+                                    responsetext = eval(xhr.responseText);
+                                } catch {
+                                    responsetext = xhr.responseText;
+                                }
+                                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + responsetext + '</small></div>'
+                                $('#crudDeliveryOrderError').html(errMsg);
+                                $("#btn-crudDeliveryOrder").html(btnSubmitHtml).removeAttr('disabled');
+
+                            }
+                        });
+                    }, 100);
+
+                } else {
+                    unloadblockspinner();
+                }
+            });
+        });
+    });
+
+    loadComboCustomer();
+
+    function loadComboCustomer() {
+
+        Customerid = $("#crud-DeliveryOrderCustomerId").val();
+
+        $.ajax({
+            url: '@Url.Action("CustomerListJson", "Customers")',
+            type: "GET",
+            dataType: "JSON",
+            data: { CustomerId:Customerid },
+            success: function (response) {
+
+                var id = "#crud-DeliveryOrderCustomerId";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Customer")
+                );
+                $.each(response, function (i, sup) {
+                    $(id).append(
+                        $('<option></option>').val(sup.CustomerId).html(sup.CustomerName)
+                    );
+                });
+
+            }
+        })
+    }
+
+    function loadSalesNumber(selected="") {
+
+        Customerid = $("#crud-DeliveryOrderCustomerId").val();
+        orderdate = $("#crud-DeliveryOrderDate").val();
+        var action = $('#DeliveryOrderAction').val(),
+            includeClose = false;
+
+        if (action != 'Create') {
+            includeClose = true;
+        }
+
+        if (orderdate === "") {
+            orderdate = new Date();
+        } else {
+            orderdate = new Date(orderdate);
+        }
+
+        monthfilter = moment(orderdate).format("MM/YYYY");
+
+
+        $.ajax({
+            url: '@Url.Action("SalesOrderListJson", "Marketing")',
+            type: "GET",
+            dataType: "JSON",
+            data: {
+                searchFilter: Customerid,
+                incClosed: includeClose,
+                status: 99,
+            },
+            success: function (response) {
+
+                var id = "#crud-DeliveryOrderSONumber";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Sales Number")
+                );
+                $.each(response, function (i, sales) {
+                    $(id).append(
+                        $('<option></option>').val(sales.SONumber).html(sales.SONumber + ': ' + sales.PONumber + ' [' + sales.StatusName + ']')
+                    );
+                });
+
+                if (selected != "") $(id).val(selected);
+                $(id).selectpicker("refresh");
+
+            }
+        })
+
+
+    }
+
+    function loadComboFinishGoods(sid) {
+
+        if (sid === "*") {
+            sid = $("#crud-KanbanDeliveryOrderNumber").val();
+        }
+
+        $.ajax({
+            url: '@Url.Action("FinishGoodsListJson", "DeliveryOrders")',
+            type: "GET",
+            dataType: "JSON",
+            data: { searchFilter: sid },
+            success: function (response) {
+
+                var id = "#crud-KanbanPartNumberFinishGoods";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Choose Raw Material")
+                );
+
+                $.each(response, function (i, raw) {
+                    $(id).append(
+                        $('<option></option>').val(raw.PartNumber).html(raw.PartNumber + ' : ' + raw.PartName)
+                    );
+                });
+            }
+        })
+    }
+
+    loadComboShift();
+
+    function loadComboShift() {
+
+        $.ajax({
+            url: '@Url.Action("ShiftGroupJson", "TimeManagement")',
+            type: "GET",
+            dataType: "JSON",
+            data: { },
+            success: function (response) {
+
+                var id = "#crud-DeliveryOrderShift";
+
+                $(id).html("");
+                $(id).append(
+                    $('<option></option>').val("").html("*Shift")
+                );
+
+                $.each(response, function (i, shift) {
+                    $(id).append(
+                        $('<option></option>').val(shift.TotalShift).html(shift.GroupName)
+                    );
+                });
+            }
+        })
+    }
+
+    function callFilterFinishGoods() {
+
+        var SONumber = $("#crud-DeliveryOrderSONumber").val();
+        var Customerid = $("#crud-DeliveryOrderCustomerId").val();
+        var partexist = $("#jqGridCrudDeliveryDetail").getDataIDs();
+
+        var status = $("#DeliveryOrderDetailAction").val()
+        if (status === "Update") {
+            partexist = "";
+        }
+
+        showfilterPartFinishGoods(Customerid, partexist, null, SONumber);
+
+    }
+
+    $(document).on('hide.bs.modal', '#filterPartFinishGoodsModal', function (e) {
+
+        if ($("#search_result").val() != "") {
+            var searchresult = JSON.parse($("#search_result").val());
+            var action = $("#DeliveryOrderDetailAction").val();
+
+            setTimeout(function () {
+
+                if (searchresult.length != 0) {
+
+                    switch (action) {
+                        case "Create":
+                            $("#crud-DeliveryOrderDetailUniqueNumber").val(searchresult.UniqueNumber);
+                            $("#crud-DeliveryOrderDetailPartNumber").val(searchresult.PartNumber);
+                            $("#crud-DeliveryOrderDetailPartName").val(searchresult.PartName);
+                            $("#crud-DeliveryOrderDetailPartModel").val(searchresult.CustomerUnitModel);
+                            $("#crud-DeliveryOrderDetailUnitQty").val(searchresult.UnitQty);
+                            $("#crud-DeliveryOrderDetailUnit").val(searchresult.UnitLevel2);
+                            //$("#crud-DeliveryOrderDetailPackingId").val(searchresult.PackingId);
+
+                            var res = GetOutstandingStock($("#crud-DeliveryOrderSONumber").val(), $("#crud-DeliveryOrderCustomerId").val(), searchresult.PartNumber);
+
+                            //console.log(res);
+                            var MaxOrder = parseFloat(res.StockKanban);
+                            var MinOrder = 1;
+                            if (parseFloat(res.StockKanban) < 1) {
+                                MinOrder = 1;
+                                MaxOrder = 0;
+                            }
+                            /* additional request 2022-09-29
+                               delivery tidak boleh melebihi outstanding
+                               req by: ahmad, dewi
+                             */
+                            if (MaxOrder > res.OutstandingKanban) {
+                                MaxOrder = res.OutstandingKanban;
+                            }
+                            $("#crud-DeliveryOrderDetailStockKanban").val(res.StockKanban)
+                            $("#crud-DeliveryOrderDetailStockQty").val(res.StockQty)
+                            $("#crud-DeliveryOrderDetailOutstandingKanban").val(res.OutstandingKanban)
+                            $("#crud-DeliveryOrderDetailOutstandingQty").val(res.OutstandingQty)
+
+                            $("#crud-DeliveryOrderDetailDeliveryKanban").val(0).attr("min", MinOrder).attr("max", MaxOrder).focus().select();
+                            $("#crud-DeliveryOrderDetailDeliveryUnitQty").val(0);
+
+                            //calculateOrderUnitQty();
+
+                            break;
+                        case "Update":
+
+                            crudDeliveryOrderDetail(action, searchresult.PartNumber);
+                            $("#crud-DeliveryOrderDetailOrderQty").focus().select();
+
+                            break;
+                    }
+                }
+            }, 100);
+        }
+
+    });
+
+    function calculateOrderUnitQty() {
+        var QtyUnit = $("#crud-DeliveryOrderDetailUnitQty").val();
+        var OrderQty = $("#crud-DeliveryOrderDetailDeliveryKanban").val();
+        var OrderUnitQty = 0;
+
+        OrderUnitQty = parseInt(QtyUnit) * parseInt(OrderQty);
+        $("#crud-DeliveryOrderDetailDeliveryUnitQty").val(OrderUnitQty);
+
+    }
+
+    function GetOutstandingStock(salesnumber,customerid,partnumber) {
+
+        var result = "";
+        $.ajax({
+            url: '@Url.Action("GetOutstandingStock", "Shipping")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                salesnumber: salesnumber,
+                customerid: customerid,
+                partnumber: partnumber
+            },
+            success: function (response) {
+                result = response;
+                //$.each(response, function (i, res) {
+                //    $("#crud-DeliveryOrderDetailStockKanban").val(res.StockKanban)
+                //    $("#crud-DeliveryOrderDetailStockQty").val(res.StockQty)
+                //    $("#crud-DeliveryOrderDetailOutstandingKanban").val(OutstandingKanban)
+                //    $("#crud-DeliveryOrderDetailOutstandingQty").val(OutstandingQty)
+                //});
+            }
+        })
+
+        return result;
+    }
+
+</script>
+

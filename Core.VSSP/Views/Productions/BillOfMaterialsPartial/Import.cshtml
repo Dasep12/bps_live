@@ -1,0 +1,756 @@
+﻿<div class="modal animated fadeIn" id="importSupplierModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dark" role="document">
+        <div class="modal-content">
+            <form id="importSupplierForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-cloud-upload"></span> Import @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body" style="padding:2px">
+                        <div class="form-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input form-control-sm" id="file-upload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" onchange="loadExcel()">
+                                <label class="custom-file-label" for="file-upload">Choose file</label>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#Supplier" role="tab">
+                                Supplier
+                                <i id="errorSupplier"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#contact" role="tab">
+                                Contact
+                                <i id="errorContact"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-primary" data-toggle="tab" href="#Kanban" role="tab">
+                                Kanban
+                                <i id="errorKanban"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-success" data-toggle="tab" href="#CostCenter" role="tab">
+                                Cost Center
+                                <i id="errorCostCenter"></i>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="Supplier" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImport"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="contact" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImportContact"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="Kanban" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImportKanban"></table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="CostCenter" role="tabpanel">
+                            <div class="card-body" style="padding:2px 4px 2px 2px">
+                                <table id="jqGridImportCostCenter"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="importSupplierError"></div>
+                </div>
+                <div class="modal-footer">
+                    <div class="pull-left">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" value="false" id="replace">
+                            <label class="custom-control-label" for="replace"><small> Replace Existing</small></label>
+                        </div>
+                    </div>
+                    <a href="~/Document/Template/03. Template Supplier.xlsx" target="_blank" class="btn btn-link" style="text-decoration:none">
+                        <span><i class="fa fa-cloud-download"></i> Download Templates</span>
+                    </a>
+                    <button id="btnSubmitImportSupplier" type="button" class="btn btn-sm btn-primary" onclick="submitImport()"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-close"></span> Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function importSupplier() {
+        $('.custom-file-input').siblings(".custom-file-label").addClass("selected").html("Upload template file here...");
+        $("#jqGridImport").jqGrid("clearGridData");
+        $("#jqGridImportKanban").jqGrid("clearGridData");
+        $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+        $('#importSupplierError').html("");
+        $('#errorSupplier').html("");
+        $('#errorContact').html("");
+        $('#errorKanban').html("");
+        $('a[href="#Supplier"]').click();
+
+        $('#replace').prop("checked",false);
+
+        $('#importSupplierModal').modal('show');
+    }
+
+    $(function () {
+        $grid = $("#jqGridImport").jqGrid({
+            url: '@Url.Action("ImportJson", "Suppliers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Supplier",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Supplier Id', key: true, name: 'SupplierId', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Supplier Name', name: 'SupplierName', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Address', name: 'Address', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'City', name: 'City', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Provience', name: 'Provience', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Country', name: 'Country', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Postal Code', name: 'PostalCode', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Websites', name: 'Websites', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'TaxId', name: 'TaxId', editable: false, align: 'left', fixed: true, width: 150 },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true},
+            ],
+            gridview: true,
+            loadonce: true,
+            //pager: '#jqGridPagerImport',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 167,
+            width: 'auto',
+            rowNum: 9999999,
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+
+        $grid2 = $("#jqGridImportContact").jqGrid({
+            url: '@Url.Action("ImportJson", "Suppliers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Supplier",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Supplier Id', key: true, name: 'SupplierId', editable: false, align: 'left', fixed: true, width: 80 },
+                { label: 'Contact Name', name: 'ContactName', key: true, align: 'left', fixed: true, width: 100 },
+                { label: 'Organization', name: 'Organization', align: 'left', fixed: true, width: 100 },
+                { label: 'Position', name: 'Position', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #1', name: 'Phone1', align: 'left', fixed: true, width: 100 },
+                { label: 'Phone #2', name: 'Phone2', align: 'left', fixed: true, width: 100 },
+                { label: 'Fax', name: 'Fax', align: 'left', fixed: true, width: 100 },
+                { label: 'Email', name: 'Email', align: 'left', fixed: true, width: 100 },
+                { label: 'Receive Order', name: 'ReceiveOrder', align: 'center', fixed: true, width: 60, formatter: statusImportFormatter },
+                { label: 'Receive Invoice', name: 'ReceiveInvoice', align: 'center', fixed: true, width: 60, formatter: statusImportFormatter },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true},
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerImportContact',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 150,
+            width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+
+        $grid3 = $("#jqGridImportKanban").jqGrid({
+            url: '@Url.Action("ImportJson", "Suppliers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Supplier",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Supplier Id', name: 'SupplierId', key: true, fixed: true, width: 100 },
+                { label: 'Start Date', name: 'StartDate', editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'End Date', name: 'EndDate', editable: false, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Cycle #1', name: 'Cycle1', align: 'center', fixed: true, width: 60 },
+                { label: 'Cycle #2', name: 'Cycle2', align: 'center', fixed: true, width: 60 },
+                { label: 'Cycle #3', name: 'Cycle3', align: 'center', fixed: true, width: 60 },
+                { label: 'Cycle Time', name: 'CycleTime', align: 'left', fixed: true, width: 150 },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerImportKanban',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 167,
+            width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+        $grid4 = $("#jqGridImportCostCenter").jqGrid({
+            url: '@Url.Action("ImportJson", "Suppliers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                formaction: "Supplier",
+            },
+            colModel: [
+                { label: 'Status', name: 'Status', editable: false, align: 'center', fixed: true, width: 40, formatter: statusImportFormatter },
+                { label: 'Supplier Id', name: 'SupplierId', key: true, fixed: true, width: 100 },
+                { label: 'Cost Id', name: 'CostId', align: 'center', fixed: true, width: 80 },
+                { label: 'Cost Name', name: 'CostName', align: 'left' },
+                { label: 'Result', name: 'Result', editable: false, align: 'left', width: 160, fixed: true },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerImportCostCenter',
+            pgbuttons: false,
+            pgtext: null,
+            viewrecords: false,
+            height: 167,
+            width: 'auto',
+            rownumbers: true,
+            rownumWidth: 40,
+            autowidth: false,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        })
+    });
+
+    function reloadGridImport() {
+
+        $("#jqGridImport").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+        $("#jqGridImportContact").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+        $("#jqGridImportKanban").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+        $("#jqGridImportCostCenter").jqGrid('setGridParam', {
+        }).trigger('reloadGrid');
+
+    };
+
+    function statusImportFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function loadExcel() {
+        $('#importSupplierError').html("");
+        $('#errorSupplier').html("");
+        $('#errorContact').html("");
+        $('#errorKanban').html("");
+        $('#errorCostCenter').html("");
+
+        var replace = $('#replace').prop("checked");
+
+        var gridArraySupplier = [];
+        var gridArraySupplierContact = [];
+        var gridArrayKanbanCycle = [];
+        var gridArrayCostCenter = [];
+
+        $("#jqGridImport")[0].grid.beginReq();
+        $("#jqGridImportContact")[0].grid.beginReq();
+        $("#jqGridImportKanban")[0].grid.beginReq();
+        $("#jqGridImportCostCenter")[0].grid.beginReq();
+
+        var fileUpload = $("#file-upload").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+        fileData.append('formaction', 'Supplier-validation');
+
+        $.ajax({
+            url: '@Url.Action("ImportJson", "Suppliers")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importSupplierError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        $("#jqGridImportContact")[0].grid.endReq();
+                        $("#jqGridImportKanban")[0].grid.endReq();
+                        $("#jqGridImportCostCenter")[0].grid.endReq();
+
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+                $("#jqGridImportContact").jqGrid("clearGridData");
+                $("#jqGridImportKanban").jqGrid("clearGridData");
+                $("#jqGridImportCostCenter").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedSupplier = 0;
+                var failedContact = 0;
+                var failedKanban = 0;
+                var failedCostCenter = 0;
+
+                if (response.ImportSupplier.length > 0 || response.ImportSupplierContact.length > 0 || response.ImportKanbanCycle.length > 0 || response.ImportSupplierCostCenter.length > 0) {
+
+                    $.each(response.ImportSupplier, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedSupplier += 1;
+                        }
+
+                        gridArraySupplier.push(
+                            {
+                                Status: item.Status,
+                                SupplierId: item.SupplierId,
+                                SupplierName: item.SupplierName,
+                                Address: item.Address,
+                                City: item.City,
+                                Provience: item.Provience,
+                                Country: item.Country,
+                                PostalCode: item.PostalCode,
+                                Websites: item.Websites,
+                                TaxId: item.TaxId,
+                                Result: item.Result
+                            });
+                    });
+
+                    $.each(response.ImportSupplierContact, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedContact += 1;
+                        }
+
+                        gridArraySupplierContact.push(
+                            {
+                                Status: item.Status,
+                                SupplierId: item.SupplierId,
+                                ContactName: item.ContactName,
+                                Organization: item.Organization,
+                                Position: item.Position,
+                                Phone1: item.Phone1,
+                                Fax: item.Fax,
+                                Email: item.Email,
+                                ReceiveOrder: item.ReceiveOrder,
+                                ReceiveInvoice: item.ReceiveInvoice,
+                                Result: item.Result
+                            });
+                    });
+
+                    $.each(response.ImportKanbanCycle, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedKanban += 1;
+                        }
+
+                        gridArrayKanbanCycle.push(
+                            {
+                                SupplierId: item.SupplierId,
+                                StartDate: item.StartDate,
+                                EndDate: item.EndDate,
+                                Cycle1: item.Cycle1,
+                                Cycle2: item.Cycle2,
+                                Cycle3: item.Cycle3,
+                                CycleTime: item.CycleTime,
+                                Status: item.Status,
+                                Result: item.Result
+                            });
+                    });
+
+                    $.each(response.ImportSupplierCostCenter, function (i, item) {
+
+                        if (item.Status === false) {
+                            failed += 1;
+                            failedCostCenter += 1;
+                        }
+
+                        gridArrayCostCenter.push(
+                            {
+                                SupplierId: item.SupplierId,
+                                CostId: item.CostId,
+                                CostName: item.CostName,
+                                Status: item.Status,
+                                Result: item.Result
+                            });
+                    });
+
+                    if (failed > 0) {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixing your excel template data with error!</small></div>'
+                        $('#importSupplierError').html(errMsg);
+                        if (replace == false) {
+                            $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+                        } else {
+                            $('#btnSubmitImportSupplier').removeAttr('disabled');
+                        }
+                        if (failedSupplier > 0) {
+                            var errSupplier = '<span class="badge badge-pill badge-danger">' + failedSupplier + '</span>'
+                            $('#errorSupplier').html(errSupplier);
+                        }
+                        if (failedContact > 0) {
+                            var errContact = '<span class="badge badge-pill badge-danger">' + failedContact + '</span>'
+                            $('#errorContact').html(errContact);
+                        }
+                        if (failedKanban > 0) {
+                            var errKanban = '<span class="badge badge-pill badge-danger">' + failedKanban + '</span>'
+                            $('#errorKanban').html(errKanban);
+                        }
+                        if (failedCostCenter > 0) {
+                            var errCostCenter = '<span class="badge badge-pill badge-danger">' + failedCostCenter + '</span>'
+                            $('#errorCostCenter').html(errCostCenter);
+                        }
+
+                    } else {
+                        $('#btnSubmitImportSupplier').removeAttr('disabled');
+                    }
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importSupplierError').html(errMsg);
+                    $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+                }
+
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArraySupplier });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+                $("#jqGridImportContact").jqGrid('setGridParam', { data: gridArraySupplierContact });
+                $("#jqGridImportContact")[0].grid.endReq();
+                $("#jqGridImportContact").trigger('reloadGrid');
+
+                $("#jqGridImportKanban").jqGrid('setGridParam', { data: gridArrayKanbanCycle });
+                $("#jqGridImportKanban")[0].grid.endReq();
+                $("#jqGridImportKanban").trigger('reloadGrid');
+
+                $("#jqGridImportCostCenter").jqGrid('setGridParam', { data: gridArrayCostCenter });
+                $("#jqGridImportCostCenter")[0].grid.endReq();
+                $("#jqGridImportCostCenter").trigger('reloadGrid');
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importSupplierError').html(errMsg);
+            }
+        });
+    }
+
+    function submitImport() {
+
+        var replace = $('#replace').prop("checked");
+        $('#importSupplierError').html("");
+        $('#errorSupplier').html("");
+        $('#errorContact').html("");
+        $('#errorKanban').html("");
+        $('#errorCostCenter').html("");
+
+        $('#btnSubmitImportSupplier').blur();
+        var gridArraySupplier = [];
+        var gridArraySupplierContact = [];
+        var gridArrayKanbanCycle = [];
+        var gridArrayCostCenter = [];
+
+        $("#jqGridImport")[0].grid.beginReq();
+        $("#jqGridImportContact")[0].grid.beginReq();
+        $("#jqGridImportKanban")[0].grid.beginReq();
+        $("#jqGridImportCostCenter")[0].grid.beginReq();
+
+        var fileUpload = $("#file-upload").get(0);
+        var files = fileUpload.files;
+
+        var fileData = new FormData();
+        for (var i = 0; i < files.length; i++) {
+            fileData.append(files[i].name, files[i]);
+        }
+
+        fileData.append('replace', replace);
+        fileData.append('formaction', 'Supplier');
+
+        $.ajax({
+            url: '@Url.Action("crudImportJson", "Suppliers")',
+            type: "POST",
+            dataType: "JSON",
+            contentType: false,
+            processData: false,
+            data: fileData,
+            success: function (response) {
+                try {
+                    var iseror = response;
+                    iseror = iseror.substring(0, 5);
+
+                    if (iseror == "Error") {
+                        var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>' + response + '</small></div>'
+                        $('#importSupplierError').html(errMsg);
+                        $("#jqGridImport").jqGrid("clearGridData");
+                        $("#jqGridImportContact").jqGrid("clearGridData");
+                        $("#jqGridImportKanban").jqGrid("clearGridData");
+                        $("#jqGridImportCostCenter").jqGrid("clearGridData");
+                        $("#jqGridImport")[0].grid.endReq();
+                        $("#jqGridImportContact")[0].grid.endReq();
+                        $("#jqGridImportKanban")[0].grid.endReq();
+                        $("#jqGridImportCostCenter")[0].grid.endReq();
+                        return false;
+                    }
+                } catch {
+                    // nothing
+                }
+
+                $("#jqGridImport").jqGrid("clearGridData");
+                $("#jqGridImportContact").jqGrid("clearGridData");
+                $("#jqGridImportKanban").jqGrid("clearGridData");
+                $("#jqGridImportCostCenter").jqGrid("clearGridData");
+
+                var failed = 0;
+                var failedSupplier = 0;
+                var failedContact = 0;
+                var failedKanban = 0;
+                var failedCostCenter = 0;
+                var icount = 0;
+
+                if (response.ImportSupplier.length > 0 || response.ImportSupplierContact.length > 0 || response.ImportKanbanCycle.length > 0 || response.ImportSupplierCostCenter.length > 0) {
+                    if (response.ImportSupplier.length > 0 || response.ImportSupplierContact.length > 0 || response.ImportKanbanCycle.length > 0 || response.ImportSupplierCostCenter.length > 0) {
+                        $.each(response.ImportSupplier, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedSupplier += 1;
+                            }
+
+                            gridArraySupplier.push(
+                                {
+                                    Status: item.Status,
+                                    SupplierId: item.SupplierId,
+                                    SupplierName: item.SupplierName,
+                                    Address: item.Address,
+                                    City: item.City,
+                                    Provience: item.Provience,
+                                    Country: item.Country,
+                                    PostalCode: item.PostalCode,
+                                    Websites: item.Websites,
+                                    TaxId: item.TaxId,
+                                    Result: item.Result
+                                });
+                        });
+
+                        $.each(response.ImportSupplierContact, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedContact += 1;
+                            }
+
+                            gridArraySupplierContact.push(
+                                {
+                                    Status: item.Status,
+                                    SupplierId: item.SupplierId,
+                                    ContactName: item.ContactName,
+                                    Organization: item.Organization,
+                                    Position: item.Position,
+                                    Phone1: item.Phone1,
+                                    Fax: item.Fax,
+                                    Email: item.Email,
+                                    ReceiveOrder: item.ReceiveOrder,
+                                    ReceiveInvoice: item.ReceiveInvoice,
+                                    Result: item.Result
+                                });
+                        });
+
+                        $.each(response.ImportKanbanCycle, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedKanban += 1;
+                            }
+
+                            gridArrayKanbanCycle.push(
+                                {
+                                    SupplierId: item.SupplierId,
+                                    StartDate: item.StartDate,
+                                    EndDate: item.EndDate,
+                                    Cycle1: item.Cycle1,
+                                    Cycle2: item.Cycle2,
+                                    Cycle3: item.Cycle3,
+                                    CycleTime: item.CycleTime,
+                                    Status: item.Status,
+                                    Result: item.Result
+                                });
+                        });
+
+                        $.each(response.ImportSupplierCostCenter, function (i, item) {
+
+                            icount += 1;
+                            if (item.Status === false) {
+                                failed += 1;
+                                failedCostCenter += 1;
+                            }
+
+                            gridArrayCostCenter.push(
+                                {
+                                    SupplierId: item.SupplierId,
+                                    CostId: item.CostId,
+                                    CostName: item.CostName,
+                                    Status: item.Status,
+                                    Result: item.Result
+                                });
+                        });
+                        if (failed > 0) {
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Found!</b><br/>Upload has been succesfull with ' + failed + ' status error. Please fixed first your excel data with error!</small></div>'
+                            $('#importSupplierError').html(errMsg);
+                            $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+                            if (failedSupplier > 0) {
+                                var errSupplier = '<span class="badge badge-pill badge-danger">' + failedSupplier + '</span>'
+                                $('#errorSupplier').html(errSupplier);
+                            }
+                            if (failedContact > 0) {
+                                var errContact = '<span class="badge badge-pill badge-danger">' + failedContact + '</span>'
+                                $('#errorContact').html(errContact);
+                            }
+                            if (failedKanban > 0) {
+                                var errKanban = '<span class="badge badge-pill badge-danger">' + failedKanban + '</span>'
+                                $('#errorKanban').html(errKanban);
+                            }
+                            if (failedCostCenter > 0) {
+                                var errCostCenter = '<span class="badge badge-pill badge-danger">' + failedCostCenter + '</span>'
+                                $('#errorCostCenter').html(errCostCenter);
+                            }
+                        }
+                    } else {
+                        $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+                    }
+
+                    showToast("Success", "Import " + icount + " records has been processed succesfully");
+                    reloadGridList();
+
+                }
+                else {
+                    var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Upload!</b><br/>Invalid template or no records found.</small></div>'
+                    $('#importSupplierError').html(errMsg);
+                    $("#btnSubmitImportSupplier").attr({ 'disabled': "disabled" });
+                    $("#jqGridImportContact")[0].grid.endReq();
+                    $("#jqGridImportKanban")[0].grid.endReq();
+                    $("#jqGridImportCostCenter")[0].grid.endReq();
+               };
+
+                // set the new data
+                $("#jqGridImport").jqGrid('setGridParam', { data: gridArraySupplier });
+                $("#jqGridImport")[0].grid.endReq();
+                $("#jqGridImport").trigger('reloadGrid');
+
+                $("#jqGridImportContact").jqGrid('setGridParam', { data: gridArraySupplierContact });
+                $("#jqGridImportContact")[0].grid.endReq();
+                $("#jqGridImportContact").trigger('reloadGrid');
+
+                $("#jqGridImportKanban").jqGrid('setGridParam', { data: gridArrayKanbanCycle });
+                $("#jqGridImportKanban")[0].grid.endReq();
+                $("#jqGridImportKanban").trigger('reloadGrid');
+
+                $("#jqGridImportCostCenter").jqGrid('setGridParam', { data: gridArrayCostCenter });
+                $("#jqGridImportCostCenter")[0].grid.endReq();
+                $("#jqGridImportCostCenter").trigger('reloadGrid');
+
+            },
+            error: function (xhr, desc, err) {
+                var respText = "";
+                try {
+                    respText = eval(xhr.responseText);
+                } catch {
+                    respText = xhr.responseText;
+                }
+
+                var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                $('#importSupplierError').html(errMsg);
+                $("#jqGridImportContact")[0].grid.endReq();
+                $("#jqGridImportKanban")[0].grid.endReq();
+                $("#jqGridImportCostCenter")[0].grid.endReq();
+            }
+        });
+    }
+
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    $('#replace').change(function () {
+        if (this.checked)
+            $('#replace').val(true);
+        else
+            $('#replace').val(false);
+    });
+
+
+</script>

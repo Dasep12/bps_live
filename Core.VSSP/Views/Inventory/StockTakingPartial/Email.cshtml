@@ -1,0 +1,153 @@
+﻿<div class="modal animated fadeIn" id="crudStockTakingEmailModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-envelope"></span> Sent Email</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <button id="btn-EmailApproval" type="button" class="btn btn-sm btn-warning btn-block" onclick="sentStockTakingEmail('Approval')"><span class="fa fa-share-square"></span> To Approval</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Close</button>
+            </div>
+            <input type="hidden" id="StockTakingNumberEmail" />
+            <input type="hidden" id="StockTakingDate" />
+            <input type="hidden" id="StockTakingStartTime" />
+            <input type="hidden" id="StockTakingEndTime" />
+        </div>
+    </div>
+</div>
+
+@Html.Partial("../System/EmailSender")
+
+<script>
+
+    function sentStockTakingEmail(action, id, inventorydate, starttime, endtime) {
+
+        var $grid = $("#jqGridMain");
+        if (id != "") {
+            var rowData = $grid.jqGrid("getRowData", id),
+                InventoryNumber = rowData.InventoryNumber,
+                ApprovalName = rowData.ApprovalName,
+                StatusName = rowData.StatusName;
+        }
+
+        $("#btn-EmailApproval").attr("disabled", true);
+
+        if (ApprovalName === "Created" || ApprovalName === "Checked") {
+            $("#btn-EmailApproval").removeAttr("disabled");
+        }
+
+        switch (action) {
+            case "Open":
+
+                inventorydate = moment(new Date(parseInt(inventorydate.substr(6)))).format('DD-MMM-YYYY');
+                starttime = moment(new Date(parseInt(starttime.substr(6)))).format('HH:mm');
+                endtime = moment(new Date(parseInt(endtime.substr(6)))).format('HH:mm');
+
+                $("#StockTakingNumberEmail").val(InventoryNumber);
+                $("#StockTakingDate").val(inventorydate);
+                $("#StockTakingStartTime").val(starttime);
+                $("#StockTakingEndTime").val(endtime);
+                $('#crudStockTakingEmailModal').modal('show');
+                break;
+
+            case "Approval":
+
+                var InventoryNumber = $("#StockTakingNumberEmail").val();
+                var InventoryDate = $("#StockTakingDate").val();
+                var StartTime = $("#StockTakingStartTime").val();
+                var EndTime = $("#StockTakingEndTime").val();
+
+                if (InventoryNumber === "") {
+                    InventoryNumber = id;
+                    InventoryDate = moment(new Date(parseInt(inventorydate.substr(6)))).format('DD-MMM-YYYY');
+                    StartTime = moment(new Date(parseInt(starttime.substr(6)))).format('HH:mm');
+                    EndTime = moment(new Date(parseInt(endtime.substr(6)))).format('HH:mm');
+                }
+
+                var subject = action + " @ViewBag.Title " + InventoryNumber;
+                var sentto = getApprovalMailList(InventoryNumber);
+                var attachment1 = "@Url.Action("StockList","Reports")?InventoryNumber=" + InventoryNumber;
+                var attachment2 = "@Url.Action("StockCard","Reports")?InventoryNumber=" + InventoryNumber;
+
+                var content = "";
+                content += "Please approve the following @ViewBag.Title : <br/>"
+                content += "<table>";
+                content += "<tr><td width='120'>Number </td><td> : </td><td> " + InventoryNumber + " </td></tr>";
+                content += "<tr><td width='120'>Date </td><td> : </td><td> " + InventoryDate + " </td></tr>";
+                content += "<tr><td width='120'>Time </td><td> : </td><td> " + StartTime + ' to ' + EndTime + " </td></tr>";
+                content += "<tr><td width='120'>Attachment </td><td> : </td><td><a id='url-api' href='{urlapi}' target='_blank' class='text-primary btn-confirm'>Click here to open the document</a> </td></tr>";
+                content += "</table><br/><br/>";
+                content += "Best Regards,<br/>";
+                content += "@ViewBag.UserName";
+
+                loadComboApprovalMailList(InventoryNumber);
+                sentEmail("StockTakingApproval" ,subject, sentto, "", content, attachment1, attachment2, '', InventoryNumber);
+                $('#crudStockTakingEmailModal').modal('hide');
+                break;
+
+        }
+
+    }
+
+    function getApprovalMailList(InventoryNumber) {
+
+        var result = "";
+
+        $.ajax({
+            url: '@Url.Action("StockTakingApprovalListJson", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                inventorynumber: InventoryNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                $.each(response, function (i, raw) {
+
+                    if (result != "") result += ";";
+                    result += raw.UserId;
+
+                });
+
+            }
+        })
+
+        return result;
+
+    }
+
+    function loadComboApprovalMailList(InventoryNumber) {
+
+        $.ajax({
+            url: '@Url.Action("StockTakingApprovalListJson", "Inventory")',
+            type: "GET",
+            dataType: "JSON",
+            async: false,
+            data: {
+                InventoryNumber: InventoryNumber,
+                approved: false,
+            },
+            success: function (response) {
+
+                var id = "#EmailTo";
+
+                $(id).html("");
+                $.each(response, function (i, raw) {
+                    $(id).append('<option value="' + raw.UserId + '" selected>' + raw.UserName + '</option>');
+                });
+
+                $(id).selectpicker("refresh")
+            }
+        })
+
+    }
+
+    
+</script>

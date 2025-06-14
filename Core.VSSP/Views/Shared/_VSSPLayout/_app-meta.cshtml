@@ -1,0 +1,34 @@
+﻿<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+@if (Session["CompLogoSmall"] == null)
+{
+    <meta name="description" content="vssp CoreUI - Open Source Bootstrap Admin Template">
+    <meta name="author" content="Łukasz Holeczek">
+    <meta name="keyword" content="Bootstrap,Admin,Template,Open,Source,jQuery,CSS,HTML,RWD,Dashboard,vssp,Compusoft">
+    <link rel="shortcut icon" type="image/png" href="~/_VSSPAssets/Images/Logo/logo-vssp.png">
+}
+else
+{
+    var base64 = Convert.ToBase64String((byte[])Session["CompLogoSmall"]);
+    var imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+
+    <meta name="description" content="@Session["AppDescription"]">
+    <meta name="author" content="@Session["AppWebsite"]">
+    <meta name="keyword" content="@Session["AppID"].ToString(), @Session["AppName"].ToString(), @Session["CompID"].ToString(),@Session["CompName"].ToString(),@ViewBag.Title, VSSP @Session["CompID"].ToString(),PORTAL @Session["CompID"].ToString(), Inventory @Session["CompID"].ToString(), Vendor @Session["CompName"].ToString(), Karir @Session["CompName"].ToString()">
+    <link rel="shortcut icon" type="image/x-icon" href="~/_VSSPAssets/Images/Logo/logo-default-sm.png">
+    <link rel="icon" type="image/x-icon" href="~/_VSSPAssets/Images/Logo/logo-default-sm.png">
+    @*<link rel="shortcut icon" type="image/x-icon" href="@imgSrc">
+        <link rel="icon" type="image/x-icon" href="@imgSrc">*@
+    @*<link rel="icon" href="~/_VSSPAssets/Images/Logo/logo-vssp.png">*@
+    if (@Session["AppID"] != null)
+    {
+        <title>@ViewBag.Title | @Session["AppID"].ToString()</title>
+    }
+    else
+    {
+        <title>@ViewBag.Title</title>
+    }
+
+}

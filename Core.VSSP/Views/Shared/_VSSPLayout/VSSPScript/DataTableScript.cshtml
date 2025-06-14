@@ -1,0 +1,92 @@
+﻿<script>
+    $(function () {
+        $("#GridData1").DataTable({
+            searchDelay: 500,
+            Responsive: true,
+            JQueryUI: true,
+            //scrollY: '60vh',
+            //scrollCollapse: true,
+            //Paginate: true,
+            pagingtype: 'full',
+            language: {
+                processing: "<div class=''><i class='fa fa-cog fa-spin site-loader-color'></i></div>",
+                //search: '<button class="btn btn-light btn-sm input-group-append"><span class="fa fa-search"></span></button>',
+                lengthMenu: '<span class="glyphicon glyphicon-list"></span> _MENU_',
+                /*searchPlaceholder: "Type search here...",*/
+                paginate: {
+                    first: '<i class="fa fa-angle-double-left"></i>',
+                    previous: '<i class="fa fa-angle-left"></i>',
+                    next: '<i class="fa fa-angle-right"></i>',
+                    last: '<i class="fa fa-angle-double-right"></i>'
+                },
+                aria: {
+                    paginate: {
+                        first: 'First',
+                        previous: 'Previous',
+                        next: 'Next',
+                        last: 'Last'
+                    }
+                },
+            },
+            select: true,
+            processing: true,
+            ServerSide: true,
+            searching: true,
+            paging: true,
+            info: true,
+            sort: true,
+            // TO DISPLAY THE INFO 'SHOWING 1 TO X OF Y ENTRIES'
+            //lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            columnDefs: [{
+                "targets": [-1],
+                "orderable": false
+            }],
+            initComplete: (settings, json) => {
+                $('#GridData1_info').removeClass().addClass("font-small text-muted").appendTo('#pageInfo');
+
+                $('#GridData1_length select').addClass("form-control form-control-sm");
+                $('#GridData1_length').appendTo('#pageLength');
+
+                $('#GridData1_paginate .paginate_button').addClass('btn btn-sm btn-light text-primary');
+                $('#GridData1_paginate').appendTo('#pagination');
+                $('#pagination').addClass("pull-right")
+            },
+            "drawCallback": function (settings) {
+                $('#GridData1_paginate .paginate_button').addClass('btn btn-sm btn-light text-primary');
+            },
+        });
+    });
+
+    $(function () {
+
+        //$('#pagination .paginate_button').addClass('btn btn-sm btn-light');
+
+        setTimeout(function () {
+            $('#GridData1').removeClass('dataTable').addClass('border-bottom');
+            $('.dataTables_filter').remove();
+
+            var filterHtml = "";
+            filterHtml += '<div class="input-group input-group-sm pull-right">';
+            filterHtml += '<div class="input-group-prepend">';
+            filterHtml += '<span class="input-group-text"><i class="fa fa-search"></i></span>';
+            filterHtml += '</div>';
+            filterHtml += '<input id="filterTable" type="text" class="form-control" onchange="filterData()" placeholder="Search..." />';
+            filterHtml += '</div>';
+
+            $('#searchFilter').html(filterHtml);
+
+            //var pagingTable = $('.dataTables_paginate');
+            //$('#pagination').html(pagingTable.html());
+            //pagingTable.remove();
+            //$('#pagination .paginate_button').addClass('btn btn-sm btn-light')
+
+        }, 1);
+    });
+
+    function filterData() {
+        oTable = $('#GridData1').DataTable();
+        oTable.search($("#filterTable").val()).draw();
+    }
+
+</script>
+

@@ -1,0 +1,217 @@
+﻿
+<div class="modal animated fadeIn" id="crudCategoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudCategoryForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-CategoryId" class="col-form-label col-form-label-sm">Category Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-CategoryId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-CategoryName" class="col-form-label col-form-label-sm">Category Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-CategoryName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-CategoryRemarks" class="col-form-label col-form-label-sm">Remarks</label>
+                            <textarea rows="2" class="form-control form-control-sm" id="crud-CategoryRemarks" ></textarea>
+                        </div>
+                    </div>
+
+                    <div id="crudCategoryError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudCategory" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="CategoryAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationCategoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationCategory" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteCategory()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudCategory(action){
+
+        document.getElementById("crudCategoryForm").reset();
+        $('#crudCategoryForm').removeClass('was-validated');
+        $('#crudCategoryError').html("");
+        $("#btn-crudCategory").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-CategoryId").removeAttr("disabled");
+        $("#crudCategoryForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#CategoryAction").val(action);
+
+        var Id = $("#CategorySelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridCategory'),
+                selectedRowId = Id,
+                CategoryId = Grid.jqGrid('getCell', selectedRowId, 'CategoryId'),
+                CategoryName = Grid.jqGrid('getCell', selectedRowId, 'CategoryName'),
+                Remarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            if (CategoryId === false || CategoryId === "") {
+                alert("Please select Category Master");
+                return false
+            };
+
+            $("#crud-CategoryId").val(CategoryId);
+            $("#crud-CategoryName").val(CategoryName);
+            $("#crud-CategoryRemarks").val(Remarks);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudCategoryModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudCategoryModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Category Master');
+                $('#crudCategoryModal').modal('show');
+                $("#crud-CategoryId").focus();
+                break;
+            case "Update":
+                $("#crud-CategoryId").attr("readonly", true);
+                $("#crudCategoryModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudCategoryModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Category Master');
+                $('#crudCategoryModal').modal('show');
+                $("#crud-CategoryName").focus();
+                break;
+            case "Delete":
+                $("#crudCategoryForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#btn-crudCategory").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudCategoryModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudCategoryModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Category Master');
+                $('#crudCategoryModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-CategoryName').change(function () {
+        $('#crudCategoryError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudCategoryForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudCategoryForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            Category: {
+                                CategoryId: $("#crud-CategoryId").val(),
+                                Categoryname: $("#crud-CategoryName").val(),
+                                Remarks: $("#crud-CategoryRemarks").val(),
+                                UserID: "",
+                                EditDate: null
+                            },
+                            formAction: $("#CategoryAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudCategoryList", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudCategoryModal').modal('hide');
+                                var act = $("#CategoryAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.CategoryName + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.CategoryName + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.CategoryName + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGrid();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudCategoryError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+</script>
+

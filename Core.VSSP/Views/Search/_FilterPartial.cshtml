@@ -1,0 +1,139 @@
+﻿
+@Html.Partial("BrowseCalendar")
+@Html.Partial("BrowseCalendarTime")
+@Html.Partial("BrowseDate")
+@Html.Partial("BrowseYear")
+@Html.Partial("BrowseMonth")
+@Html.Partial("BrowseCustomer")
+@Html.Partial("BrowseSupplier")
+@Html.Partial("BrowseLine")
+@Html.Partial("BrowseInspectionGate")
+@Html.Partial("BrowseCategory")
+@Html.Partial("BrowseInspectionType")
+@*@Html.Partial("BrowseTime")*@
+
+@Html.Partial("SearchPartFinishGoods")
+@Html.Partial("SearchPartRawMaterial")
+@*@Html.Partial("SearchPartStockRawReturn")*@
+
+<script>
+    function browseFilter(id, filtertype, filtername, gridname) {
+
+        var $grid = $("#" + gridname);
+        filterRowId = id;
+        filterName = filtername;
+        filterResult = "";
+
+        switch (filtername) {
+            case "DateRangePicker":
+
+                showfilterCalendar();
+
+                break;
+
+            case "DateTimeRangePicker":
+
+                showfilterCalendarTime();
+
+                break;
+
+            case "DatePicker":
+
+                showfilterDate();
+
+                break;
+
+            case "TimePicker":
+
+                showfilterTime();
+
+                break;
+
+            case "YearPicker":
+
+                showfilterYear();
+
+                break;
+
+            case "MonthPicker":
+
+                showfilterMonth();
+
+                break;
+
+            case "FinishGoods":
+
+                showfilterPartFinishGoods("*", "", null);
+
+                break;
+
+            case "RawMaterial":
+
+                showfilterPartRawMaterial("*", "");
+
+                break;
+
+            case "Customer":
+
+                showfilterCustomer();
+
+                break;
+
+            case "Supplier":
+
+                showfilterSupplier();
+
+                break;
+
+            case "Category":
+
+                showfilterCategory();
+
+                break;
+
+            case "Line":
+
+                showfilterLine();
+
+                break;
+
+            case "InspectionType":
+
+                showfilterInspectionType();
+
+                break;
+
+            case "InspectionGate":
+
+                showfilterInspectionGate();
+
+                break;
+
+            case "N/A":
+
+                if ($grid) {
+                    $grid.jqGrid("editRow", id, true);
+                }
+                break;
+
+            case "reset":
+
+                if ($grid) {
+
+                    parameters =
+                    {
+                        FilterValues: "",
+                    }
+
+                    $grid.jqGrid('setRowData', filterRowId, parameters);
+                }
+
+                break;
+
+            default:
+                //nothing
+
+                break;
+        }
+    }
+</script>

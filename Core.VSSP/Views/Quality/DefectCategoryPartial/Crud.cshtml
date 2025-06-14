@@ -1,0 +1,186 @@
+﻿
+
+<div class="modal animated fadeIn" id="crudDefectCategoryModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-primary" role="document" style="width:90% !important">
+        <div class="modal-content">
+            <form id="crudDefectCategoryForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectCategoryId" class="col-sm-3 col-form-label col-form-label-sm">Category Id</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DefectCategoryId" name="Id" required />
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectCategoryName" class="col-sm-3 col-form-label col-form-label-sm">Category Name</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control form-control-sm" id="crud-DefectCategoryName" name="Name" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group form-group-sm mb-1 row">
+                                <label for="crud-DefectCategoryActived" class="col-sm-3 col-form-label col-form-label-sm">Status</label>
+                                <div class="col-sm-9">
+                                    <div class="mt-1">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" value="" id="crud-DefectCategoryActived">
+                                            <label class="custom-control-label" for="crud-DefectCategoryActived"><small> Actived</small></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>                            
+                        </div>
+                    </div>
+                    <div id="crudDefectCategoryError"></div>
+                    <input type="hidden" id="DefectCategoryAction" />
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudDefectCategory" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudDefectCategory(action, id) {
+
+        document.getElementById("crudDefectCategoryForm").reset();
+        $('#crudDefectCategoryForm').removeClass('was-validated');
+        $('#crudDefectCategoryError').html("");
+        $('#btn-addDefectCategoryDetail').removeAttr('disabled');
+        $('#btn-importDefectCategoryDetail').removeAttr('disabled');
+        $('#btn-crudDefectCategory').removeAttr('disabled');
+
+        $("#btn-crudDefectCategory").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crudDefectCategoryForm input,select").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+        $('#crud-DefectCategoryActived').attr("checked", true);
+
+        $("#DefectCategoryAction").val(action);
+
+        if (id != "*") {
+
+            var Grid = $('#jqGridMain'),
+                selectedRowId = id,
+                DefectCategoryId = Grid.jqGrid('getCell', selectedRowId, 'CategoryId'),
+                DefectCategoryName = Grid.jqGrid('getCell', selectedRowId, 'CategoryName'),
+                DefectCategoryActived = Grid.jqGrid('getCell', selectedRowId, 'Actived');
+
+            DefectCategoryActived = DefectCategoryActived.includes("success");
+
+            $("#crud-DefectCategoryId").val(DefectCategoryId);
+            $("#crud-DefectCategoryName").val(DefectCategoryName);
+            $("#crud-DefectCategoryActived").attr("checked", DefectCategoryActived);
+
+        }
+
+        switch (action) {
+            case "Create":
+
+                $('#crud-DefectCategoryActived').attr("disabled", true);
+                $("#crudDefectCategoryModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-primary")
+                $("#crudDefectCategoryModal .modal-title").html('<span class="fa fa-plus-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDefectCategoryModal').modal('show');
+                $("#crud-DefectCategoryId").focus();
+
+                break;
+            case "Update":
+                $("#crud-DefectCategoryId").attr("disabled", true);
+                $("#crudDefectCategoryModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").removeClass("modal-warning").removeClass("modal-info").addClass("modal-success")
+                $("#crudDefectCategoryModal .modal-title").html('<span class="fa fa-pencil-square"></span> '+ action + ' @ViewBag.Title');
+                $('#crudDefectCategoryModal').modal('show');
+                $("#crud-DefectCategoryRemarks").focus();
+                break;
+            case "Delete":
+                $("#crudDefectCategoryForm input").each(function () {
+                    $(this).attr("disabled", true);
+                });
+                $("#crud-DefectCategoryId").attr("disabled", true);
+                $('#btn-addDefectCategoryDetail').attr('disabled', true);
+                $("#btn-crudDefectCategory").html("<span class='fa fa-trash'></span> Delete @ViewBag.Title");
+                $("#crudDefectCategoryModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").removeClass("modal-warning").removeClass("modal-info").addClass("modal-danger")
+                $("#crudDefectCategoryModal .modal-title").html('<span class="fa fa-trash"></span> ' + action + ' @ViewBag.Title');
+                $('#crudDefectCategoryModal').modal('show');
+                break;
+        }
+
+    }
+
+    $('#crud-DefectCategoryId').change(function () {
+        $('#crudDefectCategoryError').html("");
+    });
+
+    $(function () {
+        var focusedElement;
+        $(document).on('focus', 'input', function () {
+            if (focusedElement == this) return; //already focused, return so user can now place cursor at specific point in input.
+            focusedElement = this;
+            setTimeout(function () { focusedElement.select(); }, 100); //select all text in any field on focus for easy re-entry. Delay sightly to allow focus to "stick" before selecting.
+        });
+    });
+
+    $(document).ready(function () {
+
+        $(function () {
+            $("#crudDefectCategoryForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var formaction = $("#DefectCategoryAction").val(),
+                        Id = $("#crud-DefectCategoryId").val(),
+                        Name = $("#crud-DefectCategoryName").val(),
+                        Actived = $("#crud-DefectCategoryActived").prop("checked"),
+                        Uid = "@ViewBag.UserId";
+
+                    $.ajax({
+                        url: '@Url.Action("crudDefectCategory", "Quality")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            Categoryid: Id,
+                            Categoryname: Name,
+                            actived: Actived,
+                            uid: Uid,
+                            formAction: formaction
+                        },
+                        success: function (data) {
+                            $('#crudDefectCategoryModal').modal('hide');
+                            var act = $("#DefectCategoryAction").val();
+                            act = act.toLowerCase();
+                            doSuccess(data, act);
+                        },
+                        error: function (xhr, desc, err) {
+
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#crudDefectCategoryError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+

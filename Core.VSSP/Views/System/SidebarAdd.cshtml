@@ -1,0 +1,144 @@
+﻿@model Core.VSSP.Models.SidebarAddModel
+@{
+    ViewBag.Title = @Session["AppID"].ToString() + " | Add Menu";
+}
+@using (Html.BeginForm("CreateSidebar", null, FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="card">
+        <div class="card-header">
+            <i class="fa fa-file-o"></i> Add Menu
+        </div>
+        <div class="card-body row">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MenuID, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.MenuID, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                        @Html.ValidationMessageFor(model => model.MenuID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MenuName, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.MenuName, new { htmlAttributes = new { @class = "form-control", @Required = true } })
+                        @Html.ValidationMessageFor(model => model.MenuName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MenuLevel, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.MenuLevel,
+                                    new SelectList(Model.MenuLevelList, "LevelID", "LevelName"),
+                                    new { @class = "form-control selectpicker", @data_live_search = "true", @Required = true, @onchange = "FillComboParent()" })
+                        @Html.ValidationMessageFor(model => model.MenuLevel, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ParrentID, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.ParrentID,
+                                    new SelectList(Model.ParentList, "MenuID", "MenuName"),
+                                    new { @class = "form-control selectpicker", @data_live_search = "true", @Required = true, @style = "font-family:Arial, FontAwesome" })
+                        @Html.ValidationMessageFor(model => model.ParrentID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.IconClass, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.DropDownListFor(model => model.IconClass,
+                                    new SelectList(Model.ClassIconList, "IconID", "IconName"),
+                                    new { @class = "form-control  selectpicker", @data_live_search = "true", @Required = true, @style = "font-family: FontAwesome, sans-serif;" })
+                        @Html.ValidationMessageFor(model => model.IconClass, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ControllerName, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ControllerName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ControllerName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ActionName, htmlAttributes: new { @class = "control-label col-md-6" })
+                    <div class="col-md-12">
+                        @Html.EditorFor(model => model.ActionName, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ActionName, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="form-group form-group-sm">
+                    @Html.CheckBoxFor(model => model.NeedApproval, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.LabelFor(model => model.NeedApproval, htmlAttributes: new { @class = "control-label" })
+                    @Html.ValidationMessageFor(model => model.NeedApproval, "", new { @class = "text-danger" })
+                </div>
+
+
+            </div>
+        </div>
+
+
+
+        <div class="card-footer">
+            <div>
+                <a href="@Url.Action("SidebarList")" class="btn btn-primary btn-sm"><span class="fa fa-arrow-left"></span> Back to List</a>
+                <button type="submit" class="btn btn-success btn-sm"><span class="fa fa-save"></span> Create</button>
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<script>
+    function FillComboParent() {
+        var menulevel = document.getElementById("MenuLevel").value;
+        $.ajax({
+            url: '@Url.Action("ComboMenuParent", "System")',
+                type: "GET",
+                dataType: "JSON",
+                data: { MenuLevel: menulevel },
+                success: function (response) {
+                    $("#ParrentID").html(""); // clear before appending new list
+                    //alert(menulevel);
+
+                    $.each(response, function (i, parent) {
+                        $("#ParrentID").append(
+                            $('<option></option>').val(parent.MenuID).html(parent.MenuName));
+                    });
+
+                    $('select').selectpicker('refresh');
+
+                }
+        });
+
+        //return FillComboIcon();
+
+    }
+
+    function FillComboIcon() {
+        $.ajax({
+            url: '@Url.Action("ComboIconClass", "System")',
+            type: "GET",
+            dataType: "JSON",
+            success: function (response) {
+                $("#IconClass").html(""); // clear before appending new list
+                //alert("CLEAR");
+
+                $.each(response, function (i, iconclass) {
+                    $("#IconClass").append(
+                        $('<option data-icon="'+ iconclass.IconID +'"></option>').val(iconclass.IconID).html(iconclass.IconName));
+                    //alert(iconclass.IconID);
+                });
+            }
+        });
+    }
+
+    window.load(FillComboIcon());
+
+</script>

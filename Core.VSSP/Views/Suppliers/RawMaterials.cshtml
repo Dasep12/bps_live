@@ -1,0 +1,371 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="RawMaterials-List">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card-title mt-1">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group input-group-sm">
+                        <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                        <div class="input-group-append">
+                            <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudRawMaterialList('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="importRawMaterial()" @ViewBag.canCreate><i class="fa fa-cloud-upload"></i> Import</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-active" onclick="reloadGridList()" checked>
+                                <label class="custom-control-label" for="sw-active"><small> Active Parts</small></label>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showNoPrice" onclick="reloadGridList()">
+                                <label class="custom-control-label" for="sw-showNoPrice"><small> Show No Price</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("RawMaterialsPartial/Import")
+    @Html.Partial("RawMaterialsPartial/Crud")
+
+</section>
+
+<script>
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("RawMaterialsListJson", "Suppliers")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                isActive: true,
+            },
+            colModel: [
+                //{ label: 'Logo', name: 'Logo', align: 'center', fixed: true, width: 60, formatter: imagesFormatter },
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 50, formatter: actionFormatter },
+                { label: 'Actived', name: 'IsActived', align: 'center', fixed: true, width: 50, formatter: statusFormatter },
+                { label: 'Key', name: 'RawMaterialKey', key: true, hidden: true },
+                { label: 'Supplier Id', name: 'SupplierId', align: 'center', fixed: true, width: 60 },
+                { label: 'Supplier Name', name: 'SupplierName', align: 'center', hidden: true, width: 160 },
+                { label: 'Part Number', name: 'PartNumber', align: 'left', fixed: true, width: 100 },
+                { label: 'Supplier Part Number', name: 'PartNumberSupplier', align: 'left', fixed: true, width: 120 },
+                { label: 'Unq', name: 'UniqueNumber', align: 'center', fixed: true, width: 45 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 150 } },
+                { label: 'Model', name: 'PartModel', align: 'left', fixed: true, width: 60 },
+                { label: 'Area', name: 'AreaId', align: 'left', fixed: true, width: 80 },
+                { label: 'Location', name: 'LocationId', align: 'left', fixed: true, width: 80 },
+                { label: 'Category', name: 'CategoryId', align: 'left', fixed: true, width: 80 },
+                { label: 'Packing', name: 'PackingId', align: 'left', fixed: true, width: 80 },
+                { label: 'Units', name: 'UnitLevel1', align: 'center', fixed: true, width: 40 },
+                { label: 'Min Stock', name: 'MinStock', fixed: true, width: 70, align: 'center', formatter: 'number' },
+                { label: 'Max Stock', name: 'MaxStock', fixed: true, width: 70, align: 'center', formatter: 'number' },
+                { label: 'Unit', name: 'UnitLevel2', align: 'center', fixed: true, width: 40 },
+                { label: 'Unit Qty', name: 'UnitQty', fixed: true, width: 50, align: 'center', formatter: 'number' },
+                { label: 'Safety', name: 'SafetyHours', fixed: true, width: 50, align: 'center', formatter: 'number' },
+                { label: 'SSP', name: 'SSP', align: 'left', hidden: true, width: 80 },
+                { label: 'SSP', name: 'ProcessName', align: 'left', fixed: true, width: 80 },
+                { label: 'Price', name: 'Price', fixed: true, width: 60, align: 'right', formatter: 'number' },
+                { label: 'End Date', name: 'EndDate', hidden: true, width: 70, align: 'center', formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y", reformatAfterEdit: true } },
+                { label: 'Expired', name: 'Expired', fixed: true, width: 60, align: 'center', formatter: expiredFormatter },
+                { label: 'User Id', name: 'UserId', fixed: true, width: 50, align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i", reformatAfterEdit: true } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showPriceGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+    });
+
+    function showPriceGrid(parentRowID, parentRowKey) {
+        var confidential = "@ViewBag.canConfidential";
+
+        //CostCenter
+        var childGridID = parentRowID + "_tableCostCenter";
+        var childGridPagerID = parentRowID + "_pagerCostCenter";
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("RawMaterialsCostCenterListJson", "Suppliers")",
+            mtype: "GET",
+            datatype: "json",
+            postData: { key: parentRowKey },
+            page: 1,
+            colModel: [
+                { label: 'Start Date', name: 'StartDate', key: true, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'End Date', name: 'EndDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Cost Center', name: 'CostId', width: 100, align: 'center', fixed: true },
+                { label: 'Classification', name: 'ClassificationId', width: 100, align: 'center', fixed: true },
+                { label: 'Account Payment', name: 'PaymentId', width: 100, align: 'center', fixed: true },
+                { label: 'Category', name: 'CategoryId', width: 100, align: 'center', fixed: true },
+                { label: 'User Id', name: 'UserId', align: 'left' },
+                { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Cost Center',
+            //pager: "#" + childGridPagerID
+        });
+
+        if (confidential === "") {
+
+            //PRICE
+            childGridID = parentRowID + "_tablePrice";
+            childGridPagerID = parentRowID + "_pagerPrice";
+
+            // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+            $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+            $("#" + childGridID).jqGrid({
+                url: "@Url.Action("RawMaterialsPriceListJson", "Suppliers")",
+                mtype: "GET",
+                datatype: "json",
+                postData: { key: parentRowKey },
+                page: 1,
+                colModel: [
+                    { label: 'Start Date', name: 'StartDate', key: true, align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                    { label: 'End Date', name: 'EndDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                    { label: 'Price', name: 'Price', width: 100, align: 'center', fixed: true, formatter: "number" },
+                    { label: 'User Id', name: 'UserId', align: 'left' },
+                    { label: 'Updated', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+                ],
+                loadonce: true,
+                width: 'auto',
+                height: '100%',
+                caption: 'Price',
+                //pager: "#" + childGridPagerID
+            });
+
+        } else {
+
+            $('#' + parentRowID).append("<div class='col-md-5'> <div class='alert alert-warning mt-3' role='alert'><div class='text-danger'><b> Securty Alert!</b><br/>You don't have permission to access confidential price data.</div></div></div>")
+        }
+
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-primary text-white' onclick=\"crudRawMaterialList('Update','" + rowObject.RawMaterialKey + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-pencil'></span>";
+        btn += "</a> ";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white' onclick=\"crudRawMaterialList('Delete','" + rowObject.RawMaterialKey + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.PartName + " ]'>";
+        btn += "<span class='fa fa-trash'></span>";
+        btn += "</a></div>";
+        return btn;
+    }
+
+    function imagesFormatter(cellvalue, options, rowObject) {
+        if (cellvalue != null) {
+            var byteArray = cellvalue;
+            var base64 = base64js.fromByteArray(byteArray);
+            var images = "<img id='logo-" + rowObject.PartNumber + "' src='" + 'data:image/jpeg;base64,' + base64 + "' style='width:40px'>"
+
+            return images;
+        } else {
+            return "";
+        }
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+    function expiredFormatter(cellvalue, options, rowObject) {
+        rowObject.Actived = cellvalue;
+        if (rowObject.Price != null) {
+            if (cellvalue == true) {
+                return "<span class='badge badge-danger'><i class='fa fa-times'></i>Expired</span>"
+            } else {
+                return "<span class='badge badge-success'><i class='fa fa-check'></i>None</span>"
+            }
+        } else {
+            return "<span class='badge badge-danger'><i class='fa fa-times'></i>No Price</span>"
+        }
+    }
+    function reloadGridList() {
+        var filterData = $('#searchFilter').val();
+        var isactive = $("#sw-active").prop("checked");
+        var noprice = $("#sw-showNoPrice").prop("checked");
+
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                noprice: noprice,
+                isActive: isactive,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+
+        var rowid = data.RawMaterialKey;
+
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.PartName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.PartName + " has been saved succesfully");
+
+                parameters = JSON.parse(JSON.stringify(data).replace("Actived", "IsActived"));
+                $("#jqGridMain").jqGrid('setRowData', rowid, parameters);
+
+                //return reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data.PartName + " has been removed succesfully");
+
+                rowid = data.SupplierId + data.PartNumber;
+                $('#jqGridMain').jqGrid('delRowData', rowid);
+
+                //return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridList();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "SupplierName")
+        $("#jqGridMain").jqGrid(showhideCol, "PartNumberSupplier")
+        $("#jqGridMain").jqGrid(showhideCol, "CategoryId")
+        $("#jqGridMain").jqGrid(showhideCol, "PackingId")
+        $("#jqGridMain").jqGrid(showhideCol, "AreaId")
+        $("#jqGridMain").jqGrid(showhideCol, "LocationId")
+        $("#jqGridMain").jqGrid(showhideCol, "UnitLevel1")
+        $("#jqGridMain").jqGrid(showhideCol, "MinStock")
+        $("#jqGridMain").jqGrid(showhideCol, "MaxStock")
+        $("#jqGridMain").jqGrid(showhideCol, "EndDate")
+
+        let seePrice = "@ViewBag.canConfidential"
+        //console.log(seePrice);
+        if (seePrice != "disabled") {
+            $("#jqGridMain").jqGrid('showCol', "Price")
+            //$("#jqGridMain").jqGrid('showCol', "EndDate")
+            $("#jqGridMain").jqGrid('showCol', "Expired")
+        } else {
+            $("#jqGridMain").jqGrid('hideCol', "Price")
+            //$("#jqGridMain").jqGrid('hideCol', "EndDate")
+            $("#jqGridMain").jqGrid('hideCol', "Expired")
+        }
+
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        $("#jqGridMain").jqGrid("hideCol", "Actived")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+        $("#jqGridMain").jqGrid("showCol", "Actived")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

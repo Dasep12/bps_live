@@ -1,0 +1,219 @@
+﻿<style type="text/css">
+    #url-api {
+        pointer-events: none;
+    }
+</style>
+
+<div class="modal animated fadeIn" id="emailSenderModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-light" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title text-dark"><span class="fa fa-envelope"></span> Email Sender</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <label for="EmailTo" class="col-md-3 col-form-label-sm">To</label>
+                    <div class="col-md-9">
+                        <select id="EmailTo" class="form-control form-control-sm selectpicker" required multiple>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="EmailCC" class="col-md-3 col-form-label-sm">CC</label>
+                    <div class="col-md-9">
+                        <input type="text" id="EmailCC" class="form-control form-control-sm" readonly>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="EmailSubject" class="col-md-3 col-form-label-sm">Subject</label>
+                    <div class="col-md-9">
+                        <div class="input-group input-group-sm">
+                            <input id="EmailSubject" type="text" class="form-control form-control-sm bg-light" readonly />
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-pencil"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <label for="EmailAttachment" class="col-md-3 col-form-label-sm">Attachment <i class="fa fa-attachment"></i></label>
+                    <div class="col-md-9">
+                        <div class="input-group input-group-sm">
+                            <a id="EmailAttachment1" href="#" target="_blank" class="btn btn-sm btn-outline-danger"></a>
+                            <a id="EmailAttachment2" href="#" target="_blank" class="btn btn-sm btn-outline-danger ml-1"></a>
+                            <a id="EmailAttachment3" href="#" target="_blank" class="btn btn-sm btn-outline-danger ml-1"></a>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div id="EmailContent"></div>
+                <input type="hidden" id="OrderNumber" />
+                <input type="hidden" id="formAction" />
+            </div>
+            <div class="modal-footer" id="email-button">
+                <button id="btn-emailSender" type="button" class="btn btn-sm btn-primary btn-spin" onclick="processEmail()"><span class="fa fa-dot-circle-o"></span> Sent Email</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Sent Later</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    function sentEmail(formaction, subject, sentto, sentcc, content, attachment1, attachment2, attachment3, ordernumber) {
+
+        //console.log(formaction);
+        $("#EmailCC").val(sentcc);
+        $("#EmailSubject").val(subject.replace('amp;', ''));
+        $("#EmailContent").html(content);
+
+        switch (formaction) {
+            case "ForecastApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> ' + '@ViewBag.Title' + '.pdf').attr("href", attachment1);
+                if (attachment2 != null) {
+                    $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> Master List Of Kanban.pdf').attr("href", attachment2).removeClass("invisible");
+                } else {
+                    $("#EmailAttachment2").addClass("invisible");
+                }
+                $("#EmailAttachment3").addClass("invisible");
+
+                break;
+            case "ForecastSupplier":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> ' + '@ViewBag.Title' + '.pdf').attr("href", attachment1);
+                if (attachment2 != null) {
+                    $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> Master List Of Kanban.pdf').attr("href", attachment2).removeClass("invisible");
+                } else {
+                    $("#EmailAttachment2").addClass("invisible");
+                }
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "SupplierOrder":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> Delivery Note.pdf').attr("href", attachment1);
+                if (attachment2 != null) {
+                    $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> Kanban Order.pdf').attr("href", attachment2).removeClass("invisible");
+                } else {
+                    $("#EmailAttachment2").addClass("invisible");
+                }
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "ReturnPart":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> Delivery Return.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").addClass("invisible");
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "StockTakingApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> STOCK LIST.pdf').attr("href", attachment1);
+                if (attachment2 != null) {
+                    $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> STOCK CARD.pdf').attr("href", attachment2).removeClass("invisible");
+                } else {
+                    $("#EmailAttachment2").addClass("invisible");
+                }
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "StockAdjustmentApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> STOCK ADJUSTMENT.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").addClass("invisible");
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "InvoiceRecapApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> ' + '@ViewBag.Title' + '.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").html('<i class="fa fa-file-excel-o"></i> ' + '@ViewBag.Title' + '.xlsx').attr("href", attachment2);
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+             case "InvoiceRecapSupplier":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> ' + '@ViewBag.Title' + '.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").html('<i class="fa fa-file-excel-o"></i> ' + '@ViewBag.Title' + '.xlsx').attr("href", attachment2);
+                $("#EmailAttachment3").addClass("invisible");
+                break;
+            case "CustomerInvoiceApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> Nota Faktur.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> Recapitulation By Delivery.pdf').attr("href", attachment2);
+                $("#EmailAttachment3").html('<i class="fa fa-file-pdf-o"></i> Recapitulation By Part Number.pdf').attr("href", attachment3);
+            case "CustomerInvoiceCustomer":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> Nota Faktur.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").html('<i class="fa fa-file-pdf-o"></i> Recapitulation By Delivery.pdf').attr("href", attachment2);
+                $("#EmailAttachment3").html('<i class="fa fa-file-pdf-o"></i> Recapitulation By Part Number.pdf').attr("href", attachment3);
+                break;
+            case "ControlPlanningApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> Master List Of Kanban Production.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").addClass("invisible");
+                $("#EmailAttachment3").addClass("invisible");
+
+                break;
+            case "RequestOrderPartsApproval":
+                $("#EmailAttachment1").html('<i class="fa fa-file-pdf-o"></i> ' + '@ViewBag.Title' + '.pdf').attr("href", attachment1);
+                $("#EmailAttachment2").addClass("invisible");
+                $("#EmailAttachment3").addClass("invisible");
+
+                break;
+        }
+
+        $("#formAction").val(formaction);
+        $("#OrderNumber").val(ordernumber);
+
+        $("#email-button").removeClass("invisible");
+        $('#emailSenderModal').modal('show');
+    }
+
+    function processEmail() {
+
+        var FormAction  = $("#formAction").val();
+        var OrderNumber = $("#OrderNumber").val();
+        var SentTo      = $("#EmailTo").val();
+        var CopyTo      = $("#EmailCC").val();
+        var Subject     = $("#EmailSubject").val();
+        var Content     = $("#EmailContent")[0].innerHTML;
+        Content         = window.escape(Content);
+
+        if (OrderNumber === '') {
+            alert("Order Number not defined, please contact your administrators.");
+            return false;
+        }
+        if (SentTo.length === 0) {
+            alert("Please add sent to email address before sent.");
+            $("#loadblockspinner").modal("hide");
+            $("#EmailTo").focus();
+            return false;
+        }
+
+        $.ajax({
+            url: '@Url.Action("SentApproval", "Email")',
+            type: "POST",
+            dataType: "JSON",
+            data: {
+                FormAction: FormAction,
+                SentTo: SentTo,
+                CopyTo: CopyTo,
+                Subject: Subject,
+                Content: Content,
+                OrderNumber: OrderNumber,
+            },
+            success: function (response) {
+                var result = "<h6>Sent Email Status:</h6><table class='table table-sm table-bordered'>";
+                result += "<thead><tr><td>Email Address</td><td>Sent</td><td>Error</td></tr></thead><tbody>"
+
+                $.each(response, function (i, raw) {
+                    var status = "";
+                    var messages = "-";
+                    //console.log(raw.SentEmail);
+                    if (raw.SentEmail === true) {
+                        status = "<span class='fa fa-check text-success'></span>"
+                    } else {
+                        status = "<span class='fa fa-times text-danger'></span>";
+                        messages = "Check email address or email sender configuration!";
+                    }
+                    result += "<tr><td>" + raw.ApprovalEmail + "</td><td class='text-center'>" + status + "</td><td>"+ messages +"</td></tr>";
+                });
+                result += "</tbody></table>"
+
+                $("#EmailContent").html(result);
+                $("#email-button").addClass("invisible");
+            }
+        })
+    }
+
+</script>

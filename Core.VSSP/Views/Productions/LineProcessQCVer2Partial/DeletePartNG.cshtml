@@ -1,0 +1,84 @@
+﻿<!-- Delete Delivery Modal -->
+<div class="modal animated fadeIn" id="deleteProdPartNGModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"> Delete @ViewBag.Title</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="deletePartNGForm">
+                <div class="modal-body">
+                    <h5>Are you sure you want to Delete <br />the @ViewBag.Title</h5>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3 control-label col-form-label-sm" for="ProductionNGNumber">Production #</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="ProductionNGNumber" name="ProductionNGNumber" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3  control-label col-form-label-sm" for="ProductionNGDate">Date</label>
+                        <div class="col-sm-9">
+                            <input type="datetime" id="ProductionNGDate" name="ProductionNGDate" class="form-control form-control-sm datepicker" value="" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm row">
+                        <label class="col-md-3  control-label col-form-label-sm" for="LineIdNG">Line</label>
+                        <div class="col-sm-9">
+                            <input type="text" id="LineIdNG" name="LineIdNG" class="form-control form-control-sm" value="" readonly>
+                        </div>
+                    </div>                   
+
+                    <div id="deletePartNGError"></div>
+
+                </div>
+                <div class="modal-footer clearfix">
+                    <button id="btn-submitDeleteNG" type="submit" class="btn btn-primary" dismiss="modal"> Yes</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal"> Cancel</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- /.Delete Delivery modal -->
+
+<script>
+     $(document).ready(function () {
+        $(function () {
+            $("#deletePartNGForm").submit(function (event) {
+                event.preventDefault();
+                if ($(this).valid()) {
+
+                    var ProductionNumber = $("#ProductionNGNumber").val();
+
+                    $.ajax({
+                        url: '@Url.Action("deletePartNGProcessJson", "Productions")',
+                        type: 'POST',
+                        dataType: "JSON",
+                        data: {
+                            prodnumber: ProductionNumber,
+                        },
+                        success: function (data) {
+                            $('#deleteProdPartNGModal').modal('hide');                            
+                            doSuccess(data, "delete");
+                        },
+                        error: function (xhr, desc, err) {
+                            var respText = "";
+                            try {
+                                respText = eval(xhr.responseText);
+                            } catch {
+                                respText = xhr.responseText;
+                            }
+
+                            respText = unescape(respText).replaceAll("_n_", "<br/>")
+
+                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + respText + '</small></div>'
+                            $('#deletePartNGError').html(errMsg);
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

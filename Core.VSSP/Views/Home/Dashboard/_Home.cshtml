@@ -1,0 +1,195 @@
+﻿
+<style>
+    .image-sign {
+        width: 100%;
+        max-width: 200px !important;
+        text-align: center;
+    }
+
+    #img-sign {
+        width: 100%;
+        max-width: 200px !important;
+    }
+</style>
+
+@{
+    var imgSrc = "";
+}
+
+@if (Session["BackgroundImage"] == null)
+{
+    imgSrc = "/_VSSPAssets/Images/Background/plant-site.png";
+}
+else
+{
+    var base64 = Convert.ToBase64String((byte[])Session["BackgroundImage"]);
+    imgSrc = String.Format("data:image/jpg;base64,{0}", base64);
+}
+
+
+
+@using (Html.BeginForm("UpdateUserProfile", "Account", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <form>
+        <div class="banner">
+            <img class="img-banner" src="@imgSrc" />
+        </div>
+        <div class="form-profile">
+            <div class="card bg-none border-0">
+                <h3 class="pb-1 text-light">Hello @Session["UserName"].ToString()</h3>
+                <h6 class="small text-secondary">Welcome to @Session["AppName"].</h6>
+                <h6 class="small text-secondary">This is your dashboard page, choose what you want to display.</h6>
+            </div>
+            <div class="card pl-2 pr-2 pt-2 pb-0">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">General</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-th fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "General" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Delivery</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-truck fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "Delivery" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Production</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-industry fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "Production" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Production Summary By Line</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-industry fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "ProductionSummary" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Receiving</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-shopping-cart fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "Receiving" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Stock</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-balance-scale fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "Stock" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Quality Incoming</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-search-plus fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "QualityIncoming" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4">
+                                    <div class="card fa-border-0 shadow-sm">
+                                        <div class="card-body bg-light">
+                                            <div class="row">
+                                                <div class="col-sm-7">
+                                                    <h5 class="pt-2">Quality Outgoing</h5>
+                                                </div>
+                                                <div class="col-sm-5">
+                                                    <div class="h1 text-right mb-2">
+                                                        <i class="fa fa-search-minus fa-2x"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <a href="@Url.Action("Dashboard","Home", new { viewtype = "QualityOutgoing" })" class="btn btn-link pl-0 pr-0">See Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+}
+
+

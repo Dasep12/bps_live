@@ -1,0 +1,386 @@
+﻿@model Core.VSSP.Models.DeliveryOrderListModel
+
+<section class="app-section" id="Delivery-List">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                @*<div class="col-md-4">
+                        <div class="input-group input-group-sm">
+                            <input id="searchFilter" name="searchFilter" type="text" class="form-control border-secondary" placeholder="Search key here...">
+                            <div class="input-group-append">
+                                <button id="btnFilter" type="button" class="btn btn-secondary" onclick="reloadGridList()"><i class="fa fa-search"></i> Find</button>
+                            </div>
+                        </div>
+                    </div>*@
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="Order Number or Customer...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="startdateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="startdateFilter" type="date" class="form-control input-daterange" placeholder="Start Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">To</span>
+                                    </div>
+                                    <input id="enddateFilter" type="date" class="form-control date" placeholder="End Date">
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="monthFilter" class="col-form-label col-form-label-sm">Month</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="monthFilter" type="text" class="form-control" placeholder="Month Year Orders">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="statusFilter" class="col-form-label col-form-label-sm">Status</label>
+                                <div class="input-group input-group-sm">
+                                    @Html.DropDownListFor(model => model.StatusList,
+                                    new SelectList(Model.StatusList, "Id", "Name"),
+                                    new { @id = "statusFilter", @class = "custom-select custom-select-sm", @placeholder = "Status", @disabled="true" })
+
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-check"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridList()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            @*<button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudDeliveryOrder('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>*@
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="importOrder()" @ViewBag.canCreate><i class="fa fa-cloud-upload"></i> Import</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridList()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportOption,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*@Html.Partial("DeliveryOrderImportPartial/Crud")*@
+    @Html.Partial("DeliveryImportPartial/Import")
+    @Html.Partial("DeliveryImportPartial/DeleteImport")
+
+</section>
+
+<script>
+
+    $("#monthFilter").datepicker({
+        format: "mm/yyyy",
+        startView: "year",
+        minViewMode: "months",
+        autoclose: true,
+    }).datepicker("setDate", moment(new Date).format("MM/YYYY"));
+
+    $(document).ready(function () {
+        var mstart = $("#monthFilter");
+        if (mstart.val() === "") {
+            mstart.val(moment(new Date).format("MM/YYYY"))
+        }
+
+        $("#statusFilter").val("99");
+    });
+
+    $(function () {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var month = $('#monthFilter').val();
+        var status = $('#statusFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("DeliveryOrderListJson", "Shipping")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+                imported : true,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 60, formatter: actionFormatter },
+                //{ label: 'OrderId', key: true, name: 'OrderId', align: 'left', hidden: true, width: 120 },
+                { label: 'Delivery Number', name: 'DONumber', align: 'center', fixed: true, width: 140 },
+                { label: 'Date', name: 'DODate', align: 'center', fixed: true, width: 70, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Cust. Id', name: 'CustomerId', align: 'center', fixed: true, width: 50 },
+                { label: 'Cust. Name', name: 'CustomerName', align: 'left', autoResizing: { minColWidth: 150 } },
+                { label: 'Delivery Address', name: 'DeliveryAddress', align: 'left', autoResizing: { minColWidth: 200 } },
+                { label: 'Ref Number', name: 'RefNumber', align: 'center', fixed: true, width: 120 },
+                { label: 'Total Item', name: 'TotalItem', align: 'right', fixed: true, width: 60, formatter: 'number' },
+                { label: 'Total Delivery', name: 'TotalDelivery', align: 'right', fixed: true, width: 80, formatter: 'number' },
+                { label: 'Remarks', name: 'Remarks', align: 'left', autoResizing: { minColWidth: 60 }},
+                { label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'center' },
+                { label: 'Update', name: 'EditDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20,50,100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            subGrid: true, // set the subGrid property to true to show expand buttons for each row
+            subGridRowExpanded: showDetailsGrid, // javascript function that will take care of showing the child
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+                for (i = 0; i < l; i++) {
+                    $this.jqGrid('editRow', ids[i], true);
+                }
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function showDetailsGrid(parentRowID, parentRowKey) {
+        var childGridID = parentRowID + "_table";
+        var childGridPagerID = parentRowID + "_pager";
+
+        // send the parent row primary key to the server so that we know which grid to show
+        //var childGridURL = parentRowKey + ".json";
+        var Grid = $('#jqGridMain'),
+            selectedRowId = parentRowKey,
+            DONumber = Grid.jqGrid('getCell', selectedRowId, 'DONumber');
+
+        // add a table and pager HTML elements to the parent grid row - we will render the child grid here
+        $('#' + parentRowID).append('<table id=' + childGridID + '></table><div id=' + childGridPagerID + ' class=scroll></div>');
+
+        $("#" + childGridID).jqGrid({
+            url: "@Url.Action("DeliveryOrderDetailListJson", "Shipping")",
+            mtype: "GET",
+            datatype: "json",
+            postData: {
+                DONumber: DONumber,
+                import: true
+            },
+            page: 1,
+            colModel: [
+                { label: 'Part Number', name: 'PartNumber', key: true, align: 'center', width: 100 },
+                { label: 'Part Number Customer', name: 'PartNumberCustomer', align: 'center', width: 100 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', width: 60 },
+                { label: 'Part Name', name: 'PartName', align: 'left', width: 250 },
+                { label: 'Qty / KBN', name: 'UnitQty', align: 'center', width: 60 },
+                { label: 'Del. KBN', name: 'DeliveryQty', align: 'center', width: 60 },
+                //{ label: 'Unit', name: 'UnitLevel1', align: 'center', width: 50 },
+                { label: 'Del. Qty', name: 'DeliveryUnitQty', align: 'center', width: 60 },
+                { label: 'Units', name: 'UnitLevel1', align: 'center', width: 50 },
+                //{ label: 'Price Unit', name: 'PriceUnit', align: 'center', fixed: true, width: 80, formatter: priceFormatter },
+                //{ label: 'Price Total', name: 'PriceTotal', align: 'center', fixed: true, width: 80, formatter: priceFormatter },
+                //{ label: 'User Id', name: 'UserId', fixed: true, width: 60, align: 'center' },
+                //{ label: 'Imported', name: 'ImportDate', align: 'center', fixed: true, width: 100, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y H:i" } },
+            ],
+            loadonce: true,
+            width: 'auto',
+            height: '100%',
+            caption: 'Details',
+            //pager: "#" + childGridPagerID
+        });
+
+    }
+
+    function actionFormatter(cellvalue, options, rowObject) {
+        var rowid = options.rowId;
+        var btn = "<div class='table-link'>";
+        //btn += "<a href='#' class='@ViewBag.canUpdate btn btn-sm btn-success text-white ml-1' onclick=\"crudOrderList('" + escape(rowObject.DONumber) + "','" + rowObject.DODate + "','" + rowObject.CustomerId + "','" + rowObject.TotalItem + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.DONumber + " ]'><span class='fa fa-pencil'></span></a>";
+        btn += "<a href='#' class='@ViewBag.canDelete btn btn-sm btn-danger text-white ml-1' onclick=\"deleteOrderList('" + escape(rowObject.DONumber) + "','" + rowObject.DODate + "','" + rowObject.CustomerId + "','" + rowObject.TotalItem + "')\" datatoogle='tooltip' title='Delete @ViewBag.Title [ " + rowObject.DONumber + " ]'><span class='fa fa-trash-o'></span></a> ";
+        btn += "<a href='#' class='btn btn-sm btn-light text-danger border-danger @ViewBag.canSee' onclick=\"previewOrderList('@ViewBag.canConfidential','" + escape(rowObject.DONumber) + "')\" datatoogle='tooltip' title='Preview  @ViewBag.Title [ " + rowObject.DONumber + " ]'><span class='fa fa-file-pdf-o'></span></a>";
+        btn += "</div>";
+        return btn;
+    }
+
+    function deleteOrderList(ordernumber, date, customer, totalitem) {
+        var dodate = moment(new Date(parseInt(date.substr(6)))).format("YYYY-MM-DD");
+
+        $('#DONumber').val(unescape(ordernumber));
+        $('#DODate').val(dodate);
+        $('#CustomerId').val(customer);
+        $('#TotalItem').val(totalitem);
+
+        $('#deleteOrderImportError').html("");
+        $('#deleteDeliveryOrderImportModal').modal('show');
+
+    }
+
+    function previewOrderList(confidential, ordernumber) {
+        var url = "@Url.Action("DeliveryOrders","Reports", new { donumber = "_ordernumber_" })";
+        url = url.replace('_ordernumber_', encodeURIComponent(unescape(ordernumber)));
+        url += "&import=true"
+        window.open(url, "_blank");
+    }
+
+    function imagesFormatter(cellvalue, options, rowObject) {
+        if (cellvalue != null) {
+            var byteArray = cellvalue;
+            var base64 = base64js.fromByteArray(byteArray);
+            var images = "<img id='logo-" + rowObject.OrderId + "' src='" + 'data:image/jpeg;base64,' + base64 + "' style='width:40px'>"
+
+            return images;
+        } else {
+            return "";
+        }
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        if (cellvalue == true) {
+            return "<span class='fa fa-check text-success'></span>"
+        } else {
+            return "<span class='fa fa-times text-danger'></span>"
+        }
+    }
+
+    function priceFormatter(cellvalue, options, rowObject) {
+        var confidential = '@ViewBag.canConfidential';
+        console.log(confidential);
+        if ( confidential === 'True') {
+            return parseFloat(cellvalue).toLocaleString(window.document.documentElement.lang)
+        } else {
+            return "<span class='badge badge-danger'>Confidential</span>"
+        }
+    }
+
+    function reloadGridList() {
+        var filterData = $('#searchFilter').val();
+        var startdate = $('#startdateFilter').val();
+        var enddate = $('#enddateFilter').val();
+        var month = $('#monthFilter').val();
+        var status = $('#statusFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                startdate: startdate,
+                enddate: enddate,
+                month: month,
+                status: status,
+                imported: true,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data.OrderName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "update":
+                showToast("Success", "Update " + data.OrderName + " has been saved succesfully");
+                return reloadGridList();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data + " has been removed succesfully");
+                return reloadGridList();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridList();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "Remarks")
+        $("#jqGridMain").jqGrid(showhideCol, "DeliveryAddress")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

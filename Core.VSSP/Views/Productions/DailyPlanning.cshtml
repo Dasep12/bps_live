@@ -1,0 +1,273 @@
+﻿@model Core.VSSP.Models.ExportOptionModel
+
+<section class="app-section" id="Productions-DailyPlanning">
+    <div class="card card-accent-secondary">
+        <div class="card-header bg-white">
+            <div class="row">
+                <div class="col-md-11">
+                    <div class="card-title">
+                        <i class="@ViewBag.IconClass"></i> @ViewBag.Title
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="fa fa-filter"></span> Filter
+                        </button>
+                        <form id="form-filter" class="dropdown-menu dropdown-menu-right p-4 bg-light" style="width:320px">
+                            <h6>Filter @ViewBag.Title</h6>
+                            <hr />
+                            <div class="form-group form-group-sm">
+                                <div class="input-group input-group-sm">
+                                    <input id="searchFilter" name="searchFilter" type="text" class="form-control" placeholder="MLOK or Customer or Line or Part...">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-navicon"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <label for="productiondateFilter" class="col-form-label col-form-label-sm">Date</label>
+                                <div class="input-group input-group-sm">
+                                    <input id="productiondateFilter" type="date" class="form-control datepicker" placeholder="Production Date">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button type="button" class="btn btn-sm btn-dark" onclick="reloadGridDailyPlanning()"><span class="fa fa-search"></span> Search</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="padding:2px 4px 2px 2px">
+            <table id="jqGridMain"></table>
+            <div id="jqGridPagerMain"></div>
+        </div>
+        <div class="card-footer bg-gray-active">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="ml-3" style="padding:2px!important">
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="crudDailyPlanningList('Create','*')" @ViewBag.canCreate><i class="fa fa-pencil-square-o"></i> Create</button>
+                            <button class="btn btn-sm btn-outline-dark" type="button" style="width:80px" onclick="reloadGridDailyPlanning()"><i class="fa fa-refresh"></i> Refresh</button>
+                        </div>
+                        <div class="ml-3 mt-1">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" value="" id="sw-showhide" onclick="showhideCol('click')">
+                                <label class="custom-control-label" for="sw-showhide"><small> Show all column</small></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" style="padding-top:2px!important">
+                    <div class="input-group input-group-sm">
+                        <div class="input-group-prepend">
+                            <button id="export" type="button" class="btn btn-primary" style="width:80px"><i class="fa fa-file-text-o"></i> Export</button>
+                        </div>
+                        @Html.DropDownListFor(model => model.ExportList,
+                        new SelectList(Model.ExportList, "ExportID", "ExportName"),
+                        new { @id = "ExportOption", @class = "form-control border-primary" })
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @Html.Partial("DailyPlanningPartial/Crud")
+
+</section>
+
+<script>
+
+    $(document).ready(function () {
+        var mstart = $("#productiondateFilter");
+        if (mstart.val() === "") {
+            var date = '@ViewBag.DateTime'
+            mstart.val(date);
+        }
+    })
+
+    $(function () {
+        var filterData      = $('#searchFilter').val();
+        var productiondate  = $('#productiondateFilter').val();
+        $grid = $("#jqGridMain").jqGrid({
+            url: '@Url.Action("DailyPlanningListJson", "Productions")',
+            datatype: "json",
+            mtype: "GET",
+            postData: {
+                searchFilter: filterData,
+                productiondate: productiondate,
+            },
+            colModel: [
+                { label: 'Action', name: 'Action', align: 'center', fixed: true, width: 70, formatter: actionFormatter },
+                { label: 'MLOK Number', name: 'OrderNumber', align: 'center', fixed: true, width: 120 },
+                { label: 'Line', name: 'LineId', align: 'center', fixed: true, width: 110 },
+                { label: 'Line Name', name: 'LineName', align: 'left', fixed: true, width: 120 },
+                { label: 'Customer', name: 'CustomerId', align: 'center', fixed: true, width: 60 },
+                { label: 'Customer Name', name: 'CustomerName', align: 'left', fixed: true, width: 160 },
+                { label: 'Unique', name: 'UniqueNumber', align: 'center', fixed: true, width: 50 },
+                { label: 'Part Number', name: 'PartNumber', align: 'center', fixed: true, width: 110 },
+                { label: 'Part Name', name: 'PartName', align: 'left', autoResizing: { minColWidth: 80 } },
+                { label: 'Shift', name: 'ShiftId', align: 'center', fixed: true, width: 40 },
+                { label: 'Date', name: 'ProductionDate', align: 'center', fixed: true, width: 80, formatter: "date", formatoptions: { srcformat: "ISO8601Long", newformat: "d M Y" } },
+                { label: 'Qty', name: 'ProductionQty', align: 'center', fixed: true, width: 60 },
+            ],
+            gridview: true,
+            loadonce: true,
+            pager: '#jqGridPagerMain',
+            rowNum: 20,
+            rowList: [20, 50, 100],
+            viewrecords: true,
+            rownumbers: true,
+            rownumWidth: 40,
+            autoresizeOnLoad: true,
+            autowidth: true,
+            shrinkToFit: false,
+            fromServer: true,
+            loadComplete: function () {
+                var $this = $(this), ids = $this.jqGrid('getDataIDs'), i, l = ids.length;
+            },
+        }),
+        $('#jqGridMain').jqGrid('navGrid', '#jqGridPagerMain', { search: false, edit: false, add: false, del: false });
+
+    });
+
+    function actionFormatter(cellvalue, options, rowObject) {
+
+        var canupdate = "";
+        var candelete = "";
+        var rowid = options.rowId;
+        var date = new Date(parseInt(rowObject.ProductionDate.substr(6)));
+        date = moment(date).format('DD-MMM-YYYY');
+        canupdate = '@ViewBag.canUpdate';
+        candelete = '@ViewBag.canDelete';
+
+        @*if (rowObject.StatusName === "Open" || rowObject.StatusName === "Sent") {
+            canupdate = '@ViewBag.canUpdate';
+            candelete = '@ViewBag.canDelete';
+        } else {
+            canupdate = 'disabled';
+            candelete = 'disabled';
+        }*@
+
+        var btn = "<div class='table-link'>";
+        btn += "<a href='#' class='btn btn-sm btn-success text-white " + canupdate + "' onclick=\"crudDailyPlanningList('Update','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowid + " ]'>";
+        btn += "<span class='fa fa-pencil'></span> ";
+        btn += "</a> ";
+        btn += "<a href='#' class='btn btn-sm btn-danger text-white " + candelete + "' onclick=\"crudDailyPlanningList('Delete','" + rowid + "')\" datatoogle='tooltip' title='Edit @ViewBag.Title [ " + rowid + " ]'>";
+        btn += "<span class='fa fa-trash-o'></span> ";
+        btn += "</a>";
+        btn += "</div>";
+
+
+        return btn;
+    }
+
+    function statusFormatter(cellvalue, options, rowObject) {
+        switch (cellvalue) {
+            case 0:
+                return "<span class='badge badge-primary'>" + rowObject.StatusName + "</span>"
+                break;
+            case 1:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 2:
+                return "<span class='badge badge-info text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 3:
+                return "<span class='badge badge-success text-white'>" + rowObject.StatusName + "</span>"
+                break;
+            case 4:
+                return "<span class='badge badge-warning'>" + rowObject.StatusName + "</span>"
+                break;
+            case 5:
+                return "<span class='badge badge-danger'>" + rowObject.StatusName + "</span>"
+                break;
+        }
+    }
+
+    function reloadGridDailyPlanning() {
+        var filterData      = $('#searchFilter').val();
+        var productiondate  = $('#productiondateFilter').val();
+        $("#jqGridMain").jqGrid('setGridParam', {
+            datatype: 'json',
+            mtype: 'GET',
+            postData: {
+                searchFilter: filterData,
+                productiondate: productiondate,
+            }
+        }).trigger('reloadGrid');
+    };
+
+    function doSuccess(data, action) {
+        switch (action) {
+            case "create":
+                showToast("Success", "Create " + data + " has been saved succesfully");
+                return reloadGridDailyPlanning();
+                break;
+            case "update":
+                showToast("Success", "Update " + data + " has been saved succesfully");
+                return reloadGridDailyPlanning();
+                break;
+            case "delete":
+                showToast("Failed", "Delete " + data + " has been removed succesfully");
+                return reloadGridDailyPlanning();
+                break;
+        }
+    }
+
+    $("#searchFilter").on('keypress', function (e) {
+        if (e.which == 13) {
+            $("#btnFilter").button().click();
+        }
+    });
+
+    function showhideCol(event) {
+
+        var res = $("#sw-showhide").prop("checked");
+        var showhideCol = "";
+
+        if (res === true) {
+            showhideCol = 'showCol';
+        } else {
+            showhideCol = 'hideCol';
+        }
+
+
+        if (event != "load") {
+            window.location.reload();
+            //reloadGridDailyPlanning();
+        }
+
+        $("#jqGridMain").jqGrid(showhideCol, "LineName")
+        $("#jqGridMain").jqGrid(showhideCol, "CustomerName")
+
+    };
+
+    $(document).ready(function () {
+        showhideCol("load");
+    });
+
+    $("#export").on("click", function () {
+        var res = $("#sw-showhide").prop("checked");
+        var orientation;
+        if (res === true) {
+            orientation = "landscape";
+        } else {
+            orientation = "portrait";
+        }
+
+        $("#jqGridMain").jqGrid("hideCol", "Logo")
+        exportGrid('#jqGridMain', 'A4', '@ViewBag.Title', orientation);
+        $("#jqGridMain").jqGrid("showCol", "Logo")
+
+    })
+
+
+</script>
+
+<!-- toast-alert -->
+@Html.Partial("_VSSPLayout/Messages/toast_alert")

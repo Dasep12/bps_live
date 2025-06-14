@@ -1,0 +1,227 @@
+﻿
+<div class="modal animated fadeIn" id="crudBankModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-sm modal-dialog-centered modal-primary" role="document">
+        <div class="modal-content">
+            <form id="crudBankForm" class="needs-validation" novalidate>
+                <div class="modal-header">
+                    <h6 class="modal-title"><span class="fa fa-plus-square"></span> @ViewBag.Title</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankId" class="col-form-label col-form-label-sm">Bank Id</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-BankId" value="" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankName" class="col-form-label col-form-label-sm">Bank Name</label>
+                            <input type="text" class="form-control form-control-sm" id="crud-BankName" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankTransferFee" class="col-form-label col-form-label-sm">Transfer Fee</label>
+                            <input type="number" min="0" class="form-control form-control-sm" id="crud-BankTransferFee" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-12">
+                            <label for="crud-BankRemarks" class="col-form-label col-form-label-sm">Remarks</label>
+                            <textarea rows="2" class="form-control form-control-sm" id="crud-BankRemarks" ></textarea>
+                        </div>
+                    </div>
+
+                    <div id="crudBankError"></div>
+
+                </div>
+                <div class="modal-footer">
+                    <button id="btn-crudBank" type="submit" class="btn btn-sm btn-primary" dismiss="modal"><span class="fa fa-dot-circle-o"></span> Submit</button>
+                    <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+                </div>
+            </form>
+
+            <input type="hidden" id="BankAction" />
+
+        </div>
+    </div>
+</div>
+
+<div class="modal animated fadeIn" id="deleteConfirmationBankModal" tabindex="-1" role="dialog" aria-hidden="true" data-keyboard="false" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-danger" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title"><span class="fa fa-trash"></span> Delete Confirmation</h6>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure awant to delete this item?</h4>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-confirmationBank" type="button" class="btn btn-sm btn-primary" dismiss="modal" onclick="confirmDeleteBank()"><span class="fa fa-dot-circle-o"></span> Confirm</button>
+                <button type="button" class="btn btn-sm btn-danger" data-dismiss="modal"><span class="fa fa-times"></span> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function crudBank(action){
+
+        document.getElementById("crudBankForm").reset();
+        $('#crudBankForm').removeClass('was-validated');
+        $('#crudBankError').html("");
+        $("#btn-crudBank").html("<span class='fa fa-dot-circle-o'></span> Submit");
+        $("#crud-BankId").removeAttr("disabled");
+        $("#crudBankForm :input").each(function () {
+            $(this).removeAttr("readonly").removeAttr("disabled").removeClass('error').next('label.error').remove().val("");
+        });
+
+        $("#BankAction").val(action);
+
+        var Id = $("#BankSelected").val();
+
+        if (action != "Create") {
+
+            var Grid = $('#jqGridBank'),
+                selectedRowId = Id,
+                BankId = Grid.jqGrid('getCell', selectedRowId, 'BankId'),
+                BankName = Grid.jqGrid('getCell', selectedRowId, 'BankName'),
+                TransferFee = Grid.jqGrid('getCell', selectedRowId, 'TransferFee'),
+                Remarks = Grid.jqGrid('getCell', selectedRowId, 'Remarks');
+
+            if (BankId === false || BankId === "") {
+                alert("Please select Bank Master");
+                return false
+            };
+
+            $("#crud-BankId").val(BankId);
+            $("#crud-BankName").val(BankName);
+            $("#crud-BankTransferFee").val(TransferFee);
+            $("#crud-BankRemarks").val(Remarks);
+
+        }
+
+        switch (action) {
+            case "Create":
+                $("#crudBankModal .modal-dialog").removeClass("modal-success").removeClass("modal-danger").addClass("modal-primary")
+                $("#crudBankModal .modal-title").html('<span class="fa fa-plus-square"></span> ' + action + ' Bank Master');
+                $('#crudBankModal').modal('show');
+                $("#crud-BankId").focus();
+                break;
+            case "Update":
+                $("#crud-BankId").attr("readonly", true);
+                $("#crudBankModal .modal-dialog").removeClass("modal-primary").removeClass("modal-danger").addClass("modal-success")
+                $("#crudBankModal .modal-title").html('<span class="fa fa-pencil-square"></span> ' + action + ' Bank Master');
+                $('#crudBankModal').modal('show');
+                $("#crud-BankName").focus();
+                break;
+            case "Delete":
+                $("#crudBankForm :input").each(function () {
+                    $(this).attr("readonly", true);
+                });
+                $("#crud-BankTransferFee").attr("disabled", true);
+                $("#btn-crudBank").html("<span class='fa fa-trash'></span> Delete");
+                $("#crudBankModal .modal-dialog").removeClass("modal-primary").removeClass("modal-success").addClass("modal-danger")
+                $("#crudBankModal .modal-title").html('<span class="fa fa-trash"></span> '+ action + ' Bank Master');
+                $('#crudBankModal').modal('show');
+                break
+        }
+
+    }
+
+    $('#crud-BankName').change(function () {
+        $('#crudBankError').html("");
+    });
+
+    $(document).ready(function () {
+        $(function () {
+            $("#crudBankForm").submit(function (event) {
+
+                event.preventDefault();
+
+                var resValid = true;
+
+                $("#crudBankForm :input").each(function () {
+                    if ($(this).valid() === false) {
+                        $(this).focus();
+                        event.stopPropagation()
+                        resValid = false;
+                        return false
+                    }
+                })
+
+                setTimeout(function () {
+
+                    if (resValid) {
+
+                        var formData = new FormData();
+
+                        var jsonData = {
+                            Bank: {
+                                BankId: $("#crud-BankId").val(),
+                                Bankname: $("#crud-BankName").val(),
+                                TransferFee: parseFloat($("#crud-BankTransferFee").val()),
+                                Remarks: $("#crud-BankRemarks").val(),
+                                UserID: "",
+                                EditDate: null
+                            },
+                            formAction: $("#BankAction").val()
+                        };
+                        formData.append("jsonData", JSON.stringify(jsonData));
+
+                        $.ajax({
+                            url: '@Url.Action("crudBankList", "FinanceAccounting")',
+                            type: 'POST',
+                            contentType: false, // Not to set any content header
+                            processData: false, // Not to process data
+                            dataType: "JSON",
+                            async: false,
+                            data: formData,
+                            success: function (data) {
+                                $('#crudBankModal').modal('hide');
+                                var act = $("#BankAction").val();
+                                act = act.toLowerCase();
+                                switch (act) {
+                                    case "create":
+                                        showToast("Success", "Create " + data.BankName + " has been saved succesfully");
+                                        break;
+                                    case "update":
+                                        showToast("Success", "Update " + data.BankName + " has been saved succesfully");
+                                        break;
+                                    case "delete":
+                                        showToast("Failed", "Delete " + data.BankName + " has been removed succesfully");
+                                        break;
+                                }
+
+                                reloadGrid();
+
+                            },
+                            error: function (xhr, desc, err) {
+                                var errMsg = "";
+                                try {
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + eval(xhr.responseText) + '</small></div>'
+                                } catch {
+                                    var acc = []
+                                    $.each(xhr, function (index, value) {
+                                        acc.push(index + ': ' + value);
+                                    });
+                                    errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error ' + xhr.status + '!</b><br/>' + xhr.responseText + '</small></div>'
+                                }
+                                $('#crudBankError').html(errMsg);
+                            },
+                        });
+                    }
+                }, 250);
+            });
+        });
+    });
+
+</script>
+
