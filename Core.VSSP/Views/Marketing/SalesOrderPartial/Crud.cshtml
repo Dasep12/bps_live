@@ -1040,6 +1040,7 @@
 
                         formData.append("jsonData", JSON.stringify(jsonData));
                         //console.log(JSON.stringify(jsonData));
+                        console.log("Ukuran data (bytes):", new Blob([JSON.stringify(jsonData)]).size);
                         //return false;
 
                         $.ajax({
@@ -1367,304 +1368,259 @@
                     enddate: moment(endVal).format('YYYY-MM-DD'),
                 },
                 success: function (response) {
-
-                    var results = response;
-
-                    //console.log(response);
-                    // get the first result set, or you can loop trhrough all, assuming that each reuslt set is the same.
-                    if (results.length > 0) {
-
-                        colN = [];
+                    const results = response;
+                    const hasData = results.length > 0;
                         colM = [];
+                        colN = [];
+                        let colDArray = [];
+                        if (hasData) {
+                                const firstRow = results[0];
+                                colM.push({ label: 'Action', name: 'action', align: 'center', sortable: false, width: 55, fixed: true, formatter: actionScheduleFormatter });
 
-                        columnsIn = results[0];
-                        colNV = "";
-                        colMV = "";
-                        colL = "";
-                        colI = "";
-                        colM.push({ label: 'Action', name: 'action', index: '' + colMV + '', align: 'center', sortable: false, width: 55, fixed: true, formatter: actionScheduleFormatter },);
+                                if (Array.isArray(firstRow)) {
+                                    firstRow.forEach((item, index) => {
+                                        const colKey = item?.Key ?? `col${index}`;
+                                        let colConfig = {
+                                            label: colKey,
+                                            name: colKey,
+                                            index: colKey,
+                                            align: 'center',
+                                            editable: false,
+                                            sortable: false,
+                                            width: 55,
+                                            fixed: true,
+                                        };
+                                        switch (index) {
+                                            case 0:
+                                            case 1:
+                                                colConfig.hidden = true;
+                                                colConfig.label = index === 0 ? 'SO Number' : 'Customer';
+                                                break;
+                                            case 2:
+                                                colConfig.width = 50;
+                                                colConfig.frozen = true;
+                                                colConfig.label = 'UNIQUE';
+                                                break;
+                                            case 3:
+                                                colConfig.width = 100;
+                                                colConfig.frozen = true;
+                                                colConfig.label = 'PART NUMBER';
+                                                break;
+                                            case 4:
+                                                colConfig.align = 'left';
+                                                colConfig.width = 200;
+                                                colConfig.frozen = true;
+                                                colConfig.label = 'PART NAME';
+                                                break;
+                                            case 5:
+                                                colConfig.label = 'ORDER QTY';
+                                                colConfig.frozen = true;
+                                                colConfig.formatter = 'number';
+                                                colConfig.formatoptions = { decimalPlaces: 0 };
+                                                break;
+                                            case 6:
+                                                colConfig.label = 'QTY / KBN';
+                                                colConfig.frozen = true;
+                                                colConfig.formatter = 'number';
+                                                colConfig.formatoptions = { decimalPlaces: 0 };
+                                                break;
+                                            case 7:
+                                                colConfig.label = 'DEL. / DAY';
+                                                colConfig.frozen = true;
+                                                colConfig.formatter = 'number';
+                                                colConfig.formatoptions = { decimalPlaces: 0 };
+                                                break;
+                                            default:
+                                                if (colKey.toLowerCase() !== 'total') {
+                                                    colConfig.label = moment(colKey).format("DD MMM Y").toUpperCase();
+                                                    colConfig.editable = true;
+                                                    colConfig.editrules = { number: true };
+                                                    colConfig.width = 38;
+                                                    colConfig.formatter = 'number';
+                                                    colConfig.formatoptions = { decimalPlaces: 0 };
+                                                } else {
+                                                    colConfig.label = 'TOTAL';
+                                                    colConfig.width = 55;
+                                                    colConfig.formatter = 'number';
+                                                    colConfig.formatoptions = { decimalPlaces: 0 };
+                                                }
+                                                break;
+                                        }
 
-                        for (var keys in columnsIn) {
-                            //console.log(keys); // here is your column name you are looking for
-                            $.map(results, function (value, key) {
-                                //headers
-                                if (key === 0) {
-                                    colNV += "'" + value[keys].Key + "',";
-                                    colMV = value[keys].Key;
-
-                                    switch (keys) {
-                                        case "0": {
-                                            colM.push({ label: 'SO Number', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, hidden: true },);
-                                            break;
-                                        }
-                                        case "1": {
-                                            colM.push({ label: 'Customer', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 55, hidden: true },);
-                                            break;
-                                        }
-                                        case "2": {
-                                            colM.push({ label: 'UNIQUE', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, width: 50, fixed: true, frozen: true },);
-                                            break;
-                                        }
-                                        case "3": {
-                                            colM.push({ label: 'PART NUMBER', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 100, frozen: true },);
-                                            break;
-                                        }
-                                        case "4": {
-                                            colM.push({ label: 'PART NAME', name: '' + colMV + '', index: '' + colMV + '', align: 'left', editable: false, sortable: false, width: 200, frozen: true },);
-                                            break;
-                                        }
-                                        case "5": {
-                                            colM.push({ label: 'ORDER QTY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                                            break;
-                                        }
-                                        case "6": {
-                                            colM.push({ label: 'QTY / KBN', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                                            break;
-                                        }
-                                        case "7": {
-                                            colM.push({ label: 'DEL. / DAY', name: '' + colMV + '', index: '' + colMV + '', align: 'center', editable: false, sortable: false, fixed: true, width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                                            break;
-                                        }
-                                        default:
-
-                                            if (colMV.toLowerCase() != "total") {
-                                                colL = moment(new Date(colMV)).format("DD MMM Y").toUpperCase();
-                                                colI = "X" + moment(new Date(colMV)).format("YMMDD");
-                                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 38, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                                            } else {
-                                                colL = colMV.toUpperCase();
-                                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: false, editrules: { number: true }, align: 'center', width: 55, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                                            }
-
-                                            break;
-                                    }
-
+                                        colM.push(colConfig);
+                                    });
                                 }
 
-                            });
-                        }
+                                results.forEach(row => {
+                                    let rowData = {};
+                                    let totals = 0;
 
-                        //data json
-                        colD = "[{";
-                        //console.log(results);
-                        for (var res in results) {
-
-                            columnsIn = results[res];
-                            //console.log('data ' + res);
-                            //console.log(columnsIn);
-
-                            var totals = 0;
-                            var i = 0;
-                            if (colD != "[{") colD += '},{';
-
-                            columnsIn.map(getData);
-
-                            var keyVal = "";
-                            var objVal = "";
-                            function getData(item) {
-                                keyVal = item.Key;
-                                objVal = item.Value === null ? 0 : item.Value;
-
-                                i += 1;
-
-                                if (keyVal != "Total") {
-
-                                    if (i > 8) {
-                                        totals += parseFloat(objVal);
+                                    if (!Array.isArray(row)) {
+                                        colDArray.push(row);
+                                        return;
                                     }
-                                    colD += '"' + keyVal + '":"' + objVal + '",'
 
-                                } else {
-
-                                    colD += '"' + keyVal + '":"' + totals + '"'
-
-                                }
-                            }
-
-                        };
-
-                        var len = colD.length;
-                        colD = colD.substring(0, len);
-                        colN.push(colNV);
-                        colD += "}]";
-
-                        if (generateSchedule === false) {
-                            gridArrayData = JSON.parse(JSON.stringify(colD));
-                            gridArrayData = JSON.parse(gridArrayData);
-                        }
-
-                    } else {
-
-                        //console.log('null data');
-
-                        $("#crud-SalesOrderStartDateDelivery").val(moment(startVal).format("YYYY-MM-DD"))
-                        $("#crud-SalesOrderEndDateDelivery").val(moment(endVal).format("YYYY-MM-DD"))
-
-                        colM.push({ label: 'SO Number', name: 'SONumber', index: 'SONumber', align: 'center', width: 55, hidden: true, frozen: true },);
-                        colM.push({ label: 'Customer', name: 'CustomerId', index: 'CustomerId', align: 'center', width: 55, hidden: true, frozen: true },);
-                        colM.push({ label: 'UNIQUE', name: 'UniqueNumber', index: 'UniqueNumber', align: 'center', width: 50, frozen: true },);
-                        colM.push({ label: 'PART NUMBER', name: 'PartNumber', index: 'PartNumber', align: 'center', width: 100, frozen: true },);
-                        colM.push({ label: 'PART NAME', name: 'PartName', index: 'PartName', align: 'left', width: 200 },);
-                        colM.push({ label: 'ORDER QTY', name: 'OrderQty', index: 'OrderQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                        colM.push({ label: 'QTY / KBN', name: 'UnitQty', index: 'UnitQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                        colM.push({ label: 'DEL. / DAY', name: 'DeliveryPerDay', index: 'DeliveryPerDay', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-
-                        startVal = new Date(startVal);
-                        endVal = new Date(endVal);
-
-                        try {
-                            for (var d = startVal; d <= endVal; d.setDate(d.getDate() + 1)) {
-                                colMV = moment(d).format("YYYY-MM-DD");
-                                colL = moment(d).format("DD MMM Y").toUpperCase()
-                                colI = "X" + moment(d).format("YMMDD")
-                                colM.push({ label: '' + colL + '', name: '' + colMV + '', index: '' + colMV + '', editable: true, editrules: { number: true }, align: 'center', width: 38, fixed: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-                            }
-                        } catch {
-                            //nothing
-                        }
-
-                        colM.push({ label: 'TOTAL', name: 'Total', index: 'Total', align: 'center', width: 55, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },);
-
-                    }
-
-                    if (generateSchedule === true) {
-
-                        //console.log('local');
-
-                        var jsonData = {
-                            SalesOrderDetail: $("#jqGridCrudSalesDetail").jqGrid('getGridParam', 'data')
-                        };
-
-                        //console.log(jsonData);
-
-                        if (jsonData.SalesOrderDetail.length === 0) {
-                            var errMsg = '<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Generate Schedule!</b><br/>Please add Part Item before generating schedule.</small></div>'
-                            $('#crudControlPlanningError').html(errMsg);
-                            unloadblockspinner();
-                            return false;
-                        }
-
-                        //console.log(jsonData.SalesOrderDetail);
-                        var count = 0;
-                        var total = 0;
-                        var sumTotal = 0;
-                        var dqty = 0;
-                        colD = "[{";
-                        colMV = "";
-
-                        var sonumber = $("#crud-SalesSONumber").val();
-                        var customerid = $("#crud-SalesOrderCustomerId").val();
-
-                        //$("#jqGridCrudSchedule").jqGrid('clearGridData');
-                        //console.log(jsonData);
-                        let totalworkday = getWorkDay($("#crud-SalesOrderStartDateDelivery").val(), $("#crud-SalesOrderEndDateDelivery").val(), 'N');
-                        let deliveryPerDay = 0;
-                        if (totalworkday === null) {
-                            alert("Workday not found, please check your working schedule.")
-                            unloadblockspinner();
-                            return false;
-                        }
-
-                        //console.log(totalworkday);
-                        $.each(jsonData.SalesOrderDetail, function (i, order) {
-
-                            deliveryPerDay = (parseFloat(order.OrderQty) / parseFloat(totalworkday));
-                            if (deliveryPerDay < parseFloat(order.QtyByKanban)) {
-                                deliveryPerDay = parseFloat(order.QtyByKanban);
-                            }
-
-
-                            order.DeliveryPerDay = deliveryPerDay;
-
-                            parameters =
-                            {
-                                DeliveryPerDay: deliveryPerDay,
-                            }
-
-                            $("#jqGridCrudSalesDetail").jqGrid('setRowData', order.PartNumber, parameters);
-
-                            //console.log(deliveryPerDay);
-
-                            if (colD != "[{") colD += '},{';
-
-                            colD += '"SONumber":"' + sonumber + '",';
-                            colD += '"CustomerId":"' + customerid + '",';
-                            colD += '"UniqueNumber":"' + order.UniqueNumber + '",';
-                            colD += '"PartNumber":"' + order.PartNumber + '",';
-                            colD += '"PartName":"' + order.PartName + '",';
-                            colD += '"OrderQty":' + parseFloat(order.OrderQty) + ',';
-                            colD += '"UnitQty":' + parseFloat(order.QtyByKanban) + ',';
-                            colD += '"DeliveryPerDay":' + parseFloat(order.DeliveryPerDay) + ',';
-
-                            dqty = 0;
-
-                            startVal = $("#crud-SalesOrderStartDateDelivery").val();
-                            endVal = $("#crud-SalesOrderEndDateDelivery").val();
-
-                            startVal = moment(startVal).format('YYYY-MM-DD');
-                            endVal = moment(endVal).format('YYYY-MM-DD');
-
-                            startVal = new Date(startVal);
-                            endVal = new Date(endVal);
-
-                            //console.log(startVal);
-                            //console.log('data : ' + i)
-                            sumTotal = 0;
-                            total = 0;
-                            try {
-                                for (var d = startVal; d <= endVal; d.setDate(d.getDate() + 1)) {
-
-                                    var dateEvt = JSON.parse(JSON.stringify(getWorkingDay(moment(d).format('YYYY-MM-DD'))));
-
-                                    dqty = 0;
-                                    if (dateEvt.length != 0) {
-
-                                        if (dateEvt[0].Holidays === false) {
-                                            dqty = parseFloat(order.DeliveryPerDay);
-                                        }
-
-                                    } else {
-                                        var dayname = moment(d).format("ddd");
-                                        if (dayname === "Sat" || dayname === "Sun") {
-                                            dqty = 0;
+                                    row.forEach((item, index) => {
+                                        const key = item?.Key ?? `col${index}`;
+                                        const value = item?.Value;
+                                        if (key.toLowerCase() !== 'total') {
+                                            if (index >= 8) totals += value;
+                                            rowData[key] = value;
                                         } else {
-                                            dqty = parseFloat(order.DeliveryPerDay);
+                                            rowData[key] = totals;
+                                        }
+                                    });
+
+                                    colDArray.push(rowData);
+                                });
+
+                                colD = JSON.stringify(colDArray);
+                                colN.push(Object.keys(colDArray[0]).join(","));
+
+                                if (!generateSchedule) {
+                                    gridArrayData = colDArray;
+                                }
+                        } else {
+                            $("#crud-SalesOrderStartDateDelivery").val(moment(startVal).format("YYYY-MM-DD"));
+                            $("#crud-SalesOrderEndDateDelivery").val(moment(endVal).format("YYYY-MM-DD"));
+
+                            colM = [
+                                { label: 'SO Number', name: 'SONumber', index: 'SONumber', align: 'center', width: 55, hidden: true, frozen: true },
+                                { label: 'Customer', name: 'CustomerId', index: 'CustomerId', align: 'center', width: 55, hidden: true, frozen: true },
+                                { label: 'UNIQUE', name: 'UniqueNumber', index: 'UniqueNumber', align: 'center', width: 50, frozen: true },
+                                { label: 'PART NUMBER', name: 'PartNumber', index: 'PartNumber', align: 'center', width: 100, frozen: true },
+                                { label: 'PART NAME', name: 'PartName', index: 'PartName', align: 'left', width: 200 },
+                                { label: 'ORDER QTY', name: 'OrderQty', index: 'OrderQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },
+                                { label: 'QTY / KBN', name: 'UnitQty', index: 'UnitQty', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },
+                                { label: 'DEL. / DAY', name: 'DeliveryPerDay', index: 'DeliveryPerDay', align: 'center', width: 55, frozen: true, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true },
+                            ];
+
+                            const emptyRow = {
+                                SONumber: "N/A",
+                                CustomerId: "N/A",
+                                UniqueNumber: "N/A",
+                                PartNumber: "N/A",
+                                PartName: "N/A",
+                                OrderQty: 0,
+                                UnitQty: 0,
+                                DeliveryPerDay: 0,
+                                Total: 0
+                            };
+
+                            let d = new Date(startVal);
+                            const e = new Date(endVal);
+
+                            while (d <= e) {
+                                const colMV = moment(d).format("YYYY-MM-DD");
+                                const colL = moment(d).format("DD MMM Y").toUpperCase();
+
+                                colM.push({
+                                    label: colL,
+                                    name: colMV,
+                                    index: colMV,
+                                    editable: true,
+                                    editrules: { number: true },
+                                    align: 'center',
+                                    width: 38,
+                                    fixed: true,
+                                    formatter: 'number',
+                                    //formatoptions: { decimalPlaces: 0 },
+                                    reformatAfterEdit: true
+                                });
+
+                                emptyRow[colMV] = 0;
+                                d.setDate(d.getDate() + 1);
+                            }
+
+                            colM.push({ label: 'TOTAL', name: 'Total', index: 'Total', align: 'center', width: 55, formatter: 'number', formatoptions: { decimalPlaces: 0 }, reformatAfterEdit: true });
+                            if (!generateSchedule) {
+                                gridArrayData = [emptyRow];
+                            }
+                        }
+                        if (generateSchedule) {
+                            const jsonData = {
+                                SalesOrderDetail: $("#jqGridCrudSalesDetail").jqGrid('getGridParam', 'data')
+                            };
+
+                            if (jsonData.SalesOrderDetail.length === 0) {
+                                $('#crudControlPlanningError').html('<div class="alert alert-warning mt-2" role="alert"><small class="text-danger"><b> Error Generate Schedule!</b><br/>Please add Part Item before generating schedule.</small></div>');
+                                unloadblockspinner();
+                                return false;
+                            }
+
+                            const sonumber = $("#crud-SalesSONumber").val();
+                            const customerid = $("#crud-SalesOrderCustomerId").val();
+                            const totalworkday = getWorkDay($("#crud-SalesOrderStartDateDelivery").val(), $("#crud-SalesOrderEndDateDelivery").val(), 'N');
+
+                            if (totalworkday === null) {
+                                alert("Workday not found, please check your working schedule.");
+                                unloadblockspinner();
+                                return false;
+                            }
+
+                            colDArray = [];
+                            let count = 0;
+
+                            jsonData.SalesOrderDetail.forEach(order => {
+                                const rowData = {
+                                    SONumber: sonumber,
+                                    CustomerId: customerid,
+                                    UniqueNumber: order.UniqueNumber,
+                                    PartNumber: order.PartNumber,
+                                    PartName: order.PartName,
+                                    OrderQty: parseFloat(order.OrderQty),
+                                    UnitQty: parseFloat(order.QtyByKanban),
+                                };
+
+                                let deliveryPerDay = parseFloat(order.OrderQty) / parseFloat(totalworkday);
+                                if (deliveryPerDay < parseFloat(order.QtyByKanban)) {
+                                    deliveryPerDay = parseFloat(order.QtyByKanban);
+                                }
+
+                                order.DeliveryPerDay = deliveryPerDay;
+                                $("#jqGridCrudSalesDetail").jqGrid('setRowData', order.PartNumber, { DeliveryPerDay: deliveryPerDay });
+
+                                rowData.DeliveryPerDay = deliveryPerDay;
+
+                                let total = 0;
+                                let start = moment($("#crud-SalesOrderStartDateDelivery").val()).toDate();
+                                const end = moment($("#crud-SalesOrderEndDateDelivery").val()).toDate();
+
+                                while (start <= end) {
+                                    const currentDate = moment(start).format("YYYY-MM-DD");
+                                    const dateEvt = getWorkingDay(currentDate);
+
+                                    let dqty = 0;
+                                    if (dateEvt.length > 0 && dateEvt[0].Holidays === false) {
+                                        dqty = deliveryPerDay;
+                                    } else {
+                                        const dayname = moment(start).format("ddd");
+                                        if (dayname !== "Sat" && dayname !== "Sun") {
+                                            dqty = deliveryPerDay;
                                         }
                                     }
 
-                                    sumTotal = total + dqty;
-
+                                    let sumTotal = total + dqty;
                                     if (sumTotal > parseFloat(order.OrderQty)) {
                                         dqty = parseFloat(order.OrderQty) - total;
-
-                                        if ((dqty / parseFloat(order.QtyByKanban)) != 0) {
-                                            dqty = Math.ceil(dqty / parseFloat(order.QtyByKanban)) * parseFloat(order.QtyByKanban)
+                                        if (dqty / parseFloat(order.QtyByKanban) !== 0) {
+                                            dqty = Math.ceil(dqty / parseFloat(order.QtyByKanban)) * parseFloat(order.QtyByKanban);
                                         }
                                     }
 
                                     total += dqty;
-
-                                    colMV = moment(d).format("YYYY-MM-DD");
-                                    colD += '"' + colMV + '":' + dqty + ',';
+                                    rowData[currentDate] = dqty;
+                                    start.setDate(start.getDate() + 1);
                                 }
 
-                            } catch {
-                                console.log('error generate ' + order.PartNumber);
-                            }
+                                rowData.Total = total;
+                                colDArray.push(rowData);
+                                count++;
+                            });
 
-                            colD += '"Total":' + total + '';
-                            count += 1;
-
-                        });
-
-                        colD += '}]'
-                        gridArrayData = JSON.parse(JSON.stringify(colD));
-                        //console.log(gridArrayData);
-                        gridArrayData = JSON.parse(gridArrayData.replace(",{}", ""));
-                        showToast("Success", "Generate Delivery Schedule [" + count + "] part items has been created succesfully");
-
-                    }
-
+                            gridArrayData = colDArray;
+                            showToast("Success", `Generate Delivery Schedule [${count}] part items has been created successfully.`);
+                        }
                 }
             });
             $("#jqGridCrudSchedule").jqGrid({
